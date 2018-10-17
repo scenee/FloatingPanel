@@ -20,8 +20,5 @@
       <FileRef
          location = "group:Stocks/Stocks.xcodeproj">
       </FileRef>
-      <FileRef
-         location = "group:Samples/Samples.xcodeproj">
-      </FileRef>
    </Group>
 </Workspace>
