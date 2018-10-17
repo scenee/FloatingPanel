@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:README.md">
+   </FileRef>
+   <Group
+      location = "group:Framework"
+      name = "Framework">
+      <FileRef
+         location = "group:/Users/shin/Workspace/scenee/FloatingPanel/Framework/FloatingPanel.xcodeproj">
+      </FileRef>
+   </Group>
+   <Group
+      location = "group:Examples"
+      name = "Examples">
+      <FileRef
+         location = "group:Maps/Maps.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Stocks/Stocks.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Samples/Samples.xcodeproj">
+      </FileRef>
+   </Group>
+</Workspace>
