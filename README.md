@@ -6,6 +6,7 @@ The new interface displays the related contents and utilities in parallel as a u
 ![Maps](https://github.com/SCENEE/FloatingPanel/blob/master/assets/maps.gif)
 ![Stocks](https://github.com/SCENEE/FloatingPanel/blob/master/assets/stocks.gif)
 
+![Maps(Landscape)](https://github.com/SCENEE/FloatingPanel/blob/master/assets/maps-landscape.gif)
 
 ## Features
 
