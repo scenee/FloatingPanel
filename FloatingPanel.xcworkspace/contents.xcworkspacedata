@@ -8,7 +8,7 @@
       location = "group:Framework"
       name = "Framework">
       <FileRef
-         location = "group:/Users/shin/Workspace/scenee/FloatingPanel/Framework/FloatingPanel.xcodeproj">
+         location = "group:FloatingPanel.xcodeproj">
       </FileRef>
    </Group>
    <Group
