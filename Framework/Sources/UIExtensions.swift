@@ -75,6 +75,6 @@ extension UIGestureRecognizer.State: CustomDebugStringConvertible {
 
 extension UIScrollView {
     var contentOffsetZero: CGPoint {
-        return CGPoint(x: 0.0, y: 0.0 + contentInset.top)
+        return CGPoint(x: 0.0, y: 0.0 - contentInset.top)
     }
 }
