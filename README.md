@@ -59,24 +59,26 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Initialize FloatingPanelController and add the view
+        // Initialize a `FloatingPanelController` object.
         fpc = FloatingPanelController()
-        fpc.delegate = self
 
-        // Add a content view controller
+        // Assign self as the delegate of the controller.
+        fpc.delegate = self // Optional
+
+        // Add a content view controller.
         let contentVC = ContentViewController()
         fpc.show(contentVC, sender: nil)
 
-        // Track a scroll view in the Content VC.
+        // Track a scroll view(or the siblings) in the content view controller.
         fpc.track(scrollView: contentVC.tableView)
 
-        //  Add FloatingPanel to self.view
+        // Add the views managed by the `FloatingPanelController` object to self.view.
         fpc.add(toParent: self)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        //  Remove FloatingPanel from self.view
+        // Remove the views managed by the `FloatingPanelController` object from self.view.
         fpc.removeFromParent()
     }
     ...
@@ -216,7 +218,7 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
 
 ## Author
 
-Shin Yamamoto, shin@scenee.com
+Shin Yamamoto <shin@scenee.com>
 
 ## License
 
