@@ -47,6 +47,12 @@ public enum FloatingPanelPosition: Int {
 ///
 public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
 
+    /// Constants indicating how safe area insets are added to the adjusted content inset.
+    public enum ContentInsetAdjustmentBehavior: Int {
+        case always
+        case never
+    }
+
     /// The delegate of the floating panel controller object.
     public weak var delegate: FloatingPanelControllerDelegate?
 
@@ -70,7 +76,16 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         return floatingPanel.state
     }
 
+    /// The insets derived from the content insets and the safe area of the tracking scroll view.
+    public var adjustedContentInsets: UIEdgeInsets {
+        return floatingPanel.layoutAdapter.adjustedContentInsets
+    }
+
+    /// The behavior for determining the adjusted content offsets.
+    public var contentInsetAdjustmentBehavior: ContentInsetAdjustmentBehavior = .always
+
     private var floatingPanel: FloatingPanel!
+    private var layoutInsetsObserves: [NSKeyValueObservation] = []
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -115,7 +130,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         guard previousTraitCollection != traitCollection else { return }
 
         if let parent = parent {
-            floatingPanel.safeAreaInsets = parent.layoutInsets
+            self.update(safeAreaInsets: parent.layoutInsets)
         }
         floatingPanel.layoutAdapter.updateHeight()
         floatingPanel.backdropView.isHidden = (traitCollection.verticalSizeClass == .compact)
@@ -123,10 +138,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        // Must set `parent.view.layoutInsets` to floatingPanel.safeAreaInsets` here
-        // because it ensures that parent.view.layoutInsets` has a correct value.
         if let parent = parent {
-            floatingPanel.safeAreaInsets = parent.layoutInsets
             floatingPanel.backdropView.frame = parent.view.bounds
         }
     }
@@ -142,6 +154,17 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     private func fetchBehavior(for traitCollection: UITraitCollection) -> FloatingPanelBehavior {
         return self.delegate?.floatingPanel(self, behaviorFor: traitCollection) ?? FloatingPanelDefaultBehavior()
+    }
+
+    private func update(safeAreaInsets: UIEdgeInsets) {
+        floatingPanel.safeAreaInsets = safeAreaInsets
+        switch contentInsetAdjustmentBehavior {
+        case .always:
+            scrollView?.contentInset = adjustedContentInsets
+            scrollView?.scrollIndicatorInsets = adjustedContentInsets
+        default:
+            break
+        }
     }
 
     // MARK: Container view controller responsibilities
@@ -168,6 +191,28 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         }
 
         parent.addChild(self)
+
+        // Must track safeAreaInsets/{top,bottom}LayoutGuide of the `parent.view` to update floatingPanel.safeAreaInsets`.
+        // Because the parent VC does not call viewSafeAreaInsetsDidChange() expectedly on the bottom inset's update.
+        // So I needs to observe them. It ensures that the `adjustedContentInsets` has a correct value.
+        if #available(iOS 11.0, *) {
+            let observe = parent.observe(\.view.safeAreaInsets) { [weak self] (vc, chaneg) in
+                guard let self = self else { return }
+                self.update(safeAreaInsets: vc.layoutInsets)
+            }
+            layoutInsetsObserves.append(observe)
+        } else {
+            let topOb = parent.observe(\.topLayoutGuide) { [weak self] (vc, chaneg) in
+                guard let self = self else { return }
+                self.update(safeAreaInsets: vc.layoutInsets)
+            }
+            layoutInsetsObserves.append(topOb)
+            let bottomOb = parent.observe(\.bottomLayoutGuide) { [weak self] (vc, chaneg) in
+                guard let self = self else { return }
+                self.update(safeAreaInsets: vc.layoutInsets)
+            }
+            layoutInsetsObserves.append(bottomOb)
+        }
 
         // Must set a layout again here because `self.traitCollection` is applied correctly on it's added to a parent VC
         floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
@@ -223,6 +268,18 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     /// Tracks the specified scroll view for the inteface to correspond with the scroll pan gesture.
     public func track(scrollView: UIScrollView) {
         floatingPanel.scrollView = scrollView
+        switch contentInsetAdjustmentBehavior {
+        case .always:
+            if #available(iOS 11.0, *) {
+                scrollView.contentInsetAdjustmentBehavior = .never
+            } else {
+                children.forEach { (vc) in
+                    vc.automaticallyAdjustsScrollViewInsets = false
+                }
+            }
+        default:
+            break
+        }
     }
 
     /// Returns the y-coordinate of the point at the origin of the surface view

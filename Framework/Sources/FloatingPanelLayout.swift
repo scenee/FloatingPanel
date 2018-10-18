@@ -123,6 +123,13 @@ class FloatingPanelLayoutAdapter {
         return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + tipInset)
     }
 
+    var adjustedContentInsets: UIEdgeInsets {
+        return UIEdgeInsets(top: 0.0,
+                            left: 0.0,
+                            bottom: (safeAreaInsets.top + topInset) + (heightBuffer + safeAreaInsets.bottom),
+                            right: 0.0)
+    }
+
     func positionY(for pos: FloatingPanelPosition) -> CGFloat {
         switch pos {
         case .full:
