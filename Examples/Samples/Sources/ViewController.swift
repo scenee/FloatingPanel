@@ -278,9 +278,8 @@ class DebugTextViewController: UIViewController, UITextViewDelegate {
     }
 
     @IBAction func close(sender: UIButton) {
-        // Now impossible
-        // dismiss(animated: true, completion: nil)
-        (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
+        // (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
 }
 
@@ -452,9 +451,8 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
 class DetailViewController: UIViewController {
     @IBOutlet weak var closeButton: UIButton!
     @IBAction func close(sender: UIButton) {
-        // Now impossible
-        // dismiss(animated: true, completion: nil)
-        (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
+        // (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
 
     @IBAction func buttonPressed(_ sender: UIButton) {
