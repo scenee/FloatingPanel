@@ -265,9 +265,15 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         vc.didMove(toParent: self)
     }
 
-    /// Tracks the specified scroll view for the inteface to correspond with the scroll pan gesture.
+    /// Tracks the specified scroll view for the inteface to correspond with the scroll.
+    ///
+    /// - Attention:
+    ///     The specified scroll view must be already assigned the delegate property because the controller intemediates the several delegate methods.
+    ///
     public func track(scrollView: UIScrollView) {
         floatingPanel.scrollView = scrollView
+        floatingPanel.userScrollViewDelegate = scrollView.delegate
+        scrollView.delegate = floatingPanel
         switch contentInsetAdjustmentBehavior {
         case .always:
             if #available(iOS 11.0, *) {
