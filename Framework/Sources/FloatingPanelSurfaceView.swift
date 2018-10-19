@@ -13,6 +13,11 @@ public class FloatingPanelSurfaceView: UIView {
     /// A GrabberHandleView object displayed at the top of the surface view
     public var grabberHandle: GrabberHandleView!
 
+    /// The height of the grabber bar area
+    public static var topGrabberBarHeight: CGFloat {
+        return Default.grabberTopPadding * 2 + GrabberHandleView.Default.height // 17.0
+    }
+
     /// A UIView object that can have the surface view added to it.
     public var contentView: UIView!
 
@@ -50,13 +55,10 @@ public class FloatingPanelSurfaceView: UIView {
     /// The color of the surface border.
     public var borderWidth: CGFloat = 0.0  { didSet { setNeedsLayout() } }
 
-
     private var shadowLayer: CAShapeLayer!  { didSet { setNeedsLayout() } }
-    public struct Default {
+
+    private struct Default {
         public static let grabberTopPadding: CGFloat = 6.0
-    }
-    private var topGrabberBarHeight: CGFloat {
-        return Default.grabberTopPadding * 2 + GrabberHandleView.Default.height
     }
 
     override init(frame: CGRect) {
