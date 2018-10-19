@@ -57,7 +57,6 @@ public enum FloatingPanelPosition: Int, CaseIterable {
 /// A container view controller to display a floating panel to present contents in parallel as a user wants.
 ///
 public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
-
     /// Constants indicating how safe area insets are added to the adjusted content inset.
     public enum ContentInsetAdjustmentBehavior: Int {
         case always
@@ -134,6 +133,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         floatingPanel = FloatingPanel(self,
                                       layout: fetchLayout(for: self.traitCollection),
                                       behavior: fetchBehavior(for: self.traitCollection))
+        setUp()
     }
 
     /// Initialize a newly created floating panel controller.
@@ -143,6 +143,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         floatingPanel = FloatingPanel(self,
                                       layout: fetchLayout(for: self.traitCollection),
                                       behavior: fetchBehavior(for: self.traitCollection))
+        setUp()
     }
 
     /// Creates the view that the controller manages.
@@ -398,6 +399,40 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             return floatingPanel.layoutAdapter.middleY
         case .tip:
             return floatingPanel.layoutAdapter.bottomY
+        }
+    }
+}
+
+extension FloatingPanelController {
+    private static let dismissSwizzling: Any? = {
+        let aClass: AnyClass! = UIViewController.self //object_getClass(vc)
+        if let imp = class_getMethodImplementation(aClass, #selector(dismiss(animated:completion:))),
+            let originalAltMethod = class_getInstanceMethod(aClass, #selector(fp_original_dismiss(animated:completion:))) {
+            method_setImplementation(originalAltMethod, imp)
+        }
+        let originalMethod = class_getInstanceMethod(aClass, #selector(dismiss(animated:completion:)))
+        let swizzledMethod = class_getInstanceMethod(aClass, #selector(fp_dismiss(animated:completion:)))
+        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+            // switch implementation..
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+        return nil
+    }()
+
+    private func setUp() {
+        _ = FloatingPanelController.dismissSwizzling
+    }
+}
+
+public extension UIViewController {
+    @objc public func fp_original_dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        // Implementation will be replaced by IMP of self.dismiss(animated:completion:)
+    }
+    @objc public func fp_dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        if let fpc = parent as? FloatingPanelController, fpc.parent != nil {
+            fpc.removePanelFromParent(animated: flag, completion: completion)
+        } else {
+            self.fp_original_dismiss(animated: flag, completion: completion)
         }
     }
 }
