@@ -225,7 +225,10 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     ///     - animated: Pass true to animate the presentation; otherwise, pass false.
     ///     - completion: The block to execute after the view controller is dismissed. This block has no return value and takes no parameters. You may specify nil for this parameter.
     public func removeFromParent(animated: Bool = false, completion: (() -> Void)? = nil) {
-        guard self.parent != nil else { return }
+        guard self.parent != nil else {
+            completion?()
+            return
+        }
 
         floatingPanel.dismiss(animated: animated) { [weak self] in
             guard let self = self else { return }
