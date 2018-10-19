@@ -138,9 +138,6 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if let parent = parent {
-            floatingPanel.backdropView.frame = parent.view.bounds
-        }
     }
 
     private func fetchLayout(for traitCollection: UITraitCollection) -> FloatingPanelLayout {

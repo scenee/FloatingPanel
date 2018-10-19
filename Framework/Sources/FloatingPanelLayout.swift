@@ -88,6 +88,7 @@ public class FloatingPanelDefaultLandscapeLayout: FloatingPanelLayout {
 
 class FloatingPanelLayoutAdapter {
     private weak var surfaceView: FloatingPanelSurfaceView!
+    private weak var backdropVIew: FloatingPanelBackdropView!
 
     var layout: FloatingPanelLayout
 
@@ -141,9 +142,10 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
-    init(surfaceView: FloatingPanelSurfaceView, layout: FloatingPanelLayout) {
+    init(surfaceView: FloatingPanelSurfaceView, backdropView: FloatingPanelBackdropView, layout: FloatingPanelLayout) {
         self.layout = layout
         self.surfaceView = surfaceView
+        self.backdropVIew = backdropView
 
         // Verify layout configurations
         assert(layout.supportedPositions.count > 1)
@@ -155,10 +157,25 @@ class FloatingPanelLayoutAdapter {
 
     func prepareLayout(toParent parent: UIViewController) {
         surfaceView.translatesAutoresizingMaskIntoConstraints = false
+        backdropVIew.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.deactivate(fixedConstraints + fullConstraints + halfConstraints + tipConstraints + offConstraints)
 
-        fixedConstraints = layout.prepareLayout(surfaceView: surfaceView, in: parent.view!)
+        // Fixed constraints of surface and backdrop views
+        let surfaceConstraints = layout.prepareLayout(surfaceView: surfaceView, in: parent.view!)
+        let backdroptConstraints = [
+            backdropVIew.topAnchor.constraint(equalTo: parent.view.topAnchor,
+                                              constant: 0.0),
+            backdropVIew.leftAnchor.constraint(equalTo: parent.view.leftAnchor,
+                                               constant: 0.0),
+            backdropVIew.rightAnchor.constraint(equalTo: parent.view.rightAnchor,
+                                                constant: 0.0),
+            backdropVIew.bottomAnchor.constraint(equalTo: parent.view.bottomAnchor,
+                                                 constant: 0.0),
+            ]
+        fixedConstraints = surfaceConstraints + backdroptConstraints
 
+        // Flexible surface constarints for full, half, tip and off
         fullConstraints = [
             surfaceView.topAnchor.constraint(equalTo: parent.layoutGuide.topAnchor,
                                              constant: topInset),
