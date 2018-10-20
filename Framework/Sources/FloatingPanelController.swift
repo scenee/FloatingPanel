@@ -108,8 +108,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         let layout = fetchLayout(for: self.traitCollection)
         let behavior = fetchBehavior(for: self.traitCollection)
         floatingPanel = FloatingPanel(self,
-                                    layout: layout,
-                                    behavior: behavior)
+                                      layout: layout,
+                                      behavior: behavior)
     }
 
     public override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -138,6 +138,13 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if #available(iOS 11.0, *) {
+            // Do nothing
+        } else {
+            if let parent = parent {
+                self.update(safeAreaInsets: parent.layoutInsets)
+            }
+        }
     }
 
     private func fetchLayout(for traitCollection: UITraitCollection) -> FloatingPanelLayout {
@@ -201,16 +208,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             }
             layoutInsetsObserves.append(observe)
         } else {
-            let topOb = parent.observe(\.topLayoutGuide) { [weak self] (vc, chaneg) in
-                guard let self = self else { return }
-                self.update(safeAreaInsets: vc.layoutInsets)
-            }
-            layoutInsetsObserves.append(topOb)
-            let bottomOb = parent.observe(\.bottomLayoutGuide) { [weak self] (vc, chaneg) in
-                guard let self = self else { return }
-                self.update(safeAreaInsets: vc.layoutInsets)
-            }
-            layoutInsetsObserves.append(bottomOb)
+            // KVOs for topLayoutGuide & bottomLayoutGuide are not effective. Instead, safeAreaInsets will be updated in viewDidAppear()
         }
 
         // Must set a layout again here because `self.traitCollection` is applied correctly on it's added to a parent VC
