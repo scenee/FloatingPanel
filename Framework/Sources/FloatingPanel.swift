@@ -33,12 +33,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
     private(set) var state: FloatingPanelPosition = .tip {
         didSet {
-            switch state {
-            case .full:
-                backdropView.alpha = layoutAdapter.layout.backdropAlpha
-            default:
-                backdropView.alpha = 0.0
-            }
             configureScrollable()
         }
     }
@@ -89,8 +83,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         if animated {
             let animator = behavior.presentAnimator(from: state, to: to)
             animator.addAnimations { [weak self] in
-                self?.updateLayout(to: to)
-                self?.state = to
+                guard let self = self else { return }
+
+                self.updateLayout(to: to)
+                self.state = to
             }
             animator.addCompletion { _ in
                 completion?()
@@ -112,7 +108,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         if animated {
             let animator = behavior.dismissAnimator(from: state)
             animator.addAnimations { [weak self] in
-                self?.updateLayout(to: nil)
+                guard let self = self else { return }
+
+                self.updateLayout(to: nil)
             }
             animator.addCompletion { _ in
                 completion?()
@@ -273,6 +271,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         let targetY = layoutAdapter.positionY(for: targetPosition)
         let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: velocity.y/distance) : .zero
         let animator = behavior.interactionAnimator(to: targetPosition, with: velocityVector)
+        animator.isInterruptible = false // To prevent a backdrop color's punk
         animator.addAnimations { [weak self] in
             guard let self = self else { return }
             if self.state == targetPosition {
@@ -303,6 +302,12 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
     private func updateLayout(to target: FloatingPanelPosition?) {
         self.layoutAdapter.activateLayout(of: target)
+        switch target {
+        case .full?:
+            self.backdropView.alpha = layoutAdapter.layout.backdropAlpha
+        default:
+            self.backdropView.alpha = 0.0
+        }
     }
 
     private func updateBackdropAlpha(with translation: CGPoint) -> CGFloat {
