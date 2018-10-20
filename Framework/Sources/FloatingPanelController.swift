@@ -189,6 +189,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
         parent.addChild(self)
 
+        layoutInsetsObserves.removeAll()
+
         // Must track safeAreaInsets/{top,bottom}LayoutGuide of the `parent.view` to update floatingPanel.safeAreaInsets`.
         // Because the parent VC does not call viewSafeAreaInsetsDidChange() expectedly on the bottom inset's update.
         // So I needs to observe them. It ensures that the `adjustedContentInsets` has a correct value.
@@ -220,7 +222,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         }
     }
 
-    /// Removes the view controller from its parent.
+    /// Removes the controller and the view managed it from its parent view controller
     /// - Parameters:
     ///     - animated: Pass true to animate the presentation; otherwise, pass false.
     ///     - completion: The block to execute after the view controller is dismissed. This block has no return value and takes no parameters. You may specify nil for this parameter.
@@ -230,14 +232,24 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             return
         }
 
+        layoutInsetsObserves.removeAll()
+
         floatingPanel.dismiss(animated: animated) { [weak self] in
             guard let self = self else { return }
 
             self.willMove(toParent: nil)
             self.view.removeFromSuperview()
-            self.removeFromParent()
+            self._removeFromParent()
             completion?()
         }
+    }
+
+    public override func removeFromParent() {
+        self.removeFromParent(animated: false, completion: nil)
+    }
+
+    private func _removeFromParent() {
+        super.removeFromParent()
     }
 
     /// Moves the position to the specified position.
