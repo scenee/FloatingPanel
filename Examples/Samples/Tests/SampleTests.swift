@@ -3,7 +3,7 @@
 //  FloatingModalSampleTests
 //
 //  Created by Shin Yamamoto on 2018/09/18.
-//  Copyright © 2018 scenee. All rights reserved.
+//  Copyright © 2018 Shin Yamamoto. All rights reserved.
 //
 
 import XCTest
