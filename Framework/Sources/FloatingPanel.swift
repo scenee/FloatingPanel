@@ -133,6 +133,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private func updateLayout(to target: FloatingPanelPosition?) {
         self.layoutAdapter.activateLayout(of: target)
+        self.setBackdropAlpha(of: target)
+    }
+
+    private func setBackdropAlpha(of target: FloatingPanelPosition?) {
         switch target {
         case .full?:
             self.backdropView.alpha = layoutAdapter.layout.backdropAlpha
@@ -141,7 +145,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         }
     }
 
-    private func updateBackdropAlpha(with translation: CGPoint) -> CGFloat {
+    private func getBackdropAlpha(with translation: CGPoint) -> CGFloat {
         let topY = layoutAdapter.topY
         let middleY = layoutAdapter.middleY
         let currentY = getCurrentY(from: initialFrame, with: translation)
@@ -236,7 +240,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         var frame = initialFrame
         frame.origin.y = currentY
         surfaceView.frame = frame
-        backdropView.alpha = updateBackdropAlpha(with: translation)
+        backdropView.alpha = getBackdropAlpha(with: translation)
 
         viewcontroller.delegate?.floatingPanelDidMove(viewcontroller)
     }
@@ -308,6 +312,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             guard let self = self else { return }
             if self.state == targetPosition {
                 self.surfaceView.frame.origin.y = targetY
+                self.setBackdropAlpha(of: targetPosition)
             } else {
                 self.updateLayout(to: targetPosition)
             }
