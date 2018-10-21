@@ -38,7 +38,7 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
         fpc.show(newsVC, sender: self)
         fpc.track(scrollView: newsVC.scrollView)
 
-        fpc.add(toParent: self, belowView: bottomToolView, animated: false)
+        fpc.addPanel(toParent: self, belowView: bottomToolView, animated: false)
 
         topBannerView.frame = .zero
         topBannerView.alpha = 0.0

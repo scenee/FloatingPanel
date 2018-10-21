@@ -72,11 +72,11 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             fatalError()
         }
         //  Add FloatingPanel to self.view
-        mainPanelVC.add(toParent: self, belowView: nil, animated: true)
+        mainPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
     }
 
     @objc func dismissDetailPanelVC()  {
-        detailPanelVC.removeFromParent(animated: true, completion: nil)
+        detailPanelVC.removePanelFromParent(animated: true, completion: nil)
     }
 
     // MARK:- TableViewDatasource
@@ -119,13 +119,13 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             // (contentVC as? DetailViewController)?.closeButton?.addTarget(self, action: #selector(dismissDetailPanelVC), for: .touchUpInside)
 
             //  Add FloatingPanel to self.view
-            detailPanelVC.add(toParent: self, belowView: nil, animated: true)
+            detailPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
         case .showModal:
             let modalVC = contentVC
             present(modalVC, animated: true, completion: nil)
         default:
-            detailPanelVC?.removeFromParent(animated: true, completion: nil)
-            mainPanelVC?.removeFromParent(animated: true) {
+            detailPanelVC?.removePanelFromParent(animated: true, completion: nil)
+            mainPanelVC?.removePanelFromParent(animated: true) {
                 self.addMainPanel(with: contentVC)
             }
         }
@@ -153,7 +153,7 @@ class DebugTextViewController: UIViewController, UITextViewDelegate {
     @IBAction func close(sender: UIButton) {
         // Now impossible
         // dismiss(animated: true, completion: nil)
-        (self.parent as? FloatingPanelController)?.removeFromParent(animated: true, completion: nil)
+        (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
     }
 }
 
@@ -169,7 +169,7 @@ class DebugTableViewController: UITableViewController {
 
     @objc func close(sender: UIButton) {
         //  Remove FloatingPanel from a view
-        (self.parent as! FloatingPanelController).removeFromParent(animated: true, completion: nil)
+        (self.parent as! FloatingPanelController).removePanelFromParent(animated: true, completion: nil)
     }
 
     override func viewWillLayoutSubviews() {
@@ -236,7 +236,7 @@ class DetailViewController: UIViewController {
     @IBAction func close(sender: UIButton) {
         // Now impossible
         // dismiss(animated: true, completion: nil)
-        (self.parent as? FloatingPanelController)?.removeFromParent(animated: true, completion: nil)
+        (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
     }
 }
 
@@ -260,13 +260,13 @@ class ModalViewController: UIViewController {
         fpc.track(scrollView: consoleVC.textView)
 
         //  Add FloatingPanel to self.view
-        fpc.add(toParent: self, belowView: safeAreaView)
+        fpc.addPanel(toParent: self, belowView: safeAreaView)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         //  Remove FloatingPanel from a view
-        fpc.removeFromParent()
+        fpc.removePanelFromParent(animated: false)
     }
 
     @IBAction func close(sender: UIButton) {

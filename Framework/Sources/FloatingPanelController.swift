@@ -173,12 +173,12 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     // MARK: Container view controller responsibilities
 
-    /// Adds the controller as a child of the specified view controller.
+    /// Adds the view mangaed the controller as a child of the specified view controller.
     /// - Parameters:
     ///     - parent: A parent view controller object that displays FloatingPanelController's view. A conatiner view controller object isn't applicable.
     ///     - belowView: Insert the surface view managed by the controller below the specified view. As default, the surface view will be added to the end of the parent list of subviews.
     ///     - animated: Pass true to animate the presentation; otherwise, pass false.
-    public func add(toParent parent: UIViewController, belowView: UIView? = nil, animated: Bool = false) {
+    public func addPanel(toParent parent: UIViewController, belowView: UIView? = nil, animated: Bool = false) {
         guard self.parent == nil else {
             log.warning("Already added to a parent(\(parent))")
             return
@@ -224,7 +224,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     /// - Parameters:
     ///     - animated: Pass true to animate the presentation; otherwise, pass false.
     ///     - completion: The block to execute after the view controller is dismissed. This block has no return value and takes no parameters. You may specify nil for this parameter.
-    public func removeFromParent(animated: Bool = false, completion: (() -> Void)? = nil) {
+    public func removePanelFromParent(animated: Bool, completion: (() -> Void)? = nil) {
         guard self.parent != nil else {
             completion?()
             return
@@ -237,17 +237,9 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
             self.willMove(toParent: nil)
             self.view.removeFromSuperview()
-            self._removeFromParent()
+            self.removeFromParent()
             completion?()
         }
-    }
-
-    public override func removeFromParent() {
-        self.removeFromParent(animated: false, completion: nil)
-    }
-
-    private func _removeFromParent() {
-        super.removeFromParent()
     }
 
     /// Moves the position to the specified position.
