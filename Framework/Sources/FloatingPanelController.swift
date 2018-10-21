@@ -76,12 +76,14 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         return floatingPanel.state
     }
 
-    /// The insets derived from the content insets and the safe area of the tracking scroll view.
+    /// The content insets of the tracking scroll view derived the safe area of the parent view
     public var adjustedContentInsets: UIEdgeInsets {
         return floatingPanel.layoutAdapter.adjustedContentInsets
     }
 
     /// The behavior for determining the adjusted content offsets.
+    ///
+    /// This property specifies how the content area of the tracking scroll view are modified using `adjustedContentInsets`. The default value of this property is FloatingPanelController.ContentInsetAdjustmentBehavior.always.
     public var contentInsetAdjustmentBehavior: ContentInsetAdjustmentBehavior = .always
 
     private var floatingPanel: FloatingPanel!
@@ -171,9 +173,9 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         }
     }
 
-    // MARK: Container view controller responsibilities
+    // MARK: - Container view controller interface
 
-    /// Adds the view mangaed the controller as a child of the specified view controller.
+    /// Adds the view managed the controller as a child of the specified view controller.
     /// - Parameters:
     ///     - parent: A parent view controller object that displays FloatingPanelController's view. A conatiner view controller object isn't applicable.
     ///     - belowView: Insert the surface view managed by the controller below the specified view. As default, the surface view will be added to the end of the parent list of subviews.
@@ -220,7 +222,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         }
     }
 
-    /// Removes the controller and the view managed it from its parent view controller
+    /// Removes the controller and the managed view from its parent view controller
     /// - Parameters:
     ///     - animated: Pass true to animate the presentation; otherwise, pass false.
     ///     - completion: The block to execute after the view controller is dismissed. This block has no return value and takes no parameters. You may specify nil for this parameter.
@@ -267,7 +269,9 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         vc.didMove(toParent: self)
     }
 
-    /// Tracks the specified scroll view for the inteface to correspond with the scroll.
+    // MARK: - Scroll view tracking
+
+    /// Tracks the specified scroll view to correspond with the scroll.
     ///
     /// - Attention:
     ///     The specified scroll view must be already assigned the delegate property because the controller intemediates the several delegate methods.
@@ -289,6 +293,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             break
         }
     }
+
+    // MARK: - Helpers
 
     /// Returns the y-coordinate of the point at the origin of the surface view
     public func originYOfSurface(for pos: FloatingPanelPosition) -> CGFloat {
