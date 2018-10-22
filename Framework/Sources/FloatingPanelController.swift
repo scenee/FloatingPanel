@@ -87,7 +87,6 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     public var contentInsetAdjustmentBehavior: ContentInsetAdjustmentBehavior = .always
 
     private var floatingPanel: FloatingPanel!
-    private var layoutInsetsObserves: [NSKeyValueObservation] = []
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -140,12 +139,12 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if #available(iOS 11.0, *) {
-            // Do nothing
-        } else {
-            if let parent = parent {
-                self.update(safeAreaInsets: parent.layoutInsets)
-            }
+
+        // I needs to update safeAreaInsets here to ensure that the `adjustedContentInsets` has a correct value.
+        // Because the parent VC does not call viewSafeAreaInsetsDidChange() expectedly and
+        // `view.safeAreaInsets` has a correct value of the bottom inset here.
+        if let parent = parent {
+            self.update(safeAreaInsets: parent.layoutInsets)
         }
     }
 
@@ -198,21 +197,6 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
         parent.addChild(self)
 
-        layoutInsetsObserves.removeAll()
-
-        // Must track safeAreaInsets/{top,bottom}LayoutGuide of the `parent.view` to update floatingPanel.safeAreaInsets`.
-        // Because the parent VC does not call viewSafeAreaInsetsDidChange() expectedly on the bottom inset's update.
-        // So I needs to observe them. It ensures that the `adjustedContentInsets` has a correct value.
-        if #available(iOS 11.0, *) {
-            let observe = parent.observe(\.view.safeAreaInsets) { [weak self] (vc, chaneg) in
-                guard let self = self else { return }
-                self.update(safeAreaInsets: vc.layoutInsets)
-            }
-            layoutInsetsObserves.append(observe)
-        } else {
-            // KVOs for topLayoutGuide & bottomLayoutGuide are not effective. Instead, safeAreaInsets will be updated in viewDidAppear()
-        }
-
         // Must set a layout again here because `self.traitCollection` is applied correctly on it's added to a parent VC
         floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
         floatingPanel.layoutViews(in: parent)
@@ -231,8 +215,6 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             completion?()
             return
         }
-
-        layoutInsetsObserves.removeAll()
 
         floatingPanel.dismiss(animated: animated) { [weak self] in
             guard let self = self else { return }
