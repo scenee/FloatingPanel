@@ -190,6 +190,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             let velocity = panGesture.velocity(in: panGesture.view)
             let location = panGesture.location(in: panGesture.view)
 
+            log.debug(panGesture.state, ">>>", "{ translation: \(translation), velocity: \(velocity) }")
+
             if let scrollView = scrollView, scrollView.frame.contains(location) {
                 log.debug("ScrollView.contentOffset >>>", scrollView.contentOffset)
                 if state == .full {
@@ -199,13 +201,11 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                     if scrollView.isDecelerating {
                         return
                     }
-                    if interactionInProgress == false, velocity.y < 0 {
+                    if interactionInProgress == false, velocity.y < 0 || velocity.y > 2500.0 {
                         return
                     }
                 }
             }
-
-            log.debug(panGesture.state, ">>>", "{ translation: \(translation), velocity: \(velocity) }")
 
             switch panGesture.state {
             case .began:
