@@ -88,7 +88,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         }
 
         if animated {
-            let animator = behavior.presentAnimator(from: state, to: to)
+            let animator = behavior.presentAnimator(self.viewcontroller, from: state, to: to)
             animator.addAnimations { [weak self] in
                 guard let self = self else { return }
 
@@ -113,7 +113,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     func dismiss(animated: Bool, completion: (() -> Void)? = nil) {
         if animated {
-            let animator = behavior.dismissAnimator(from: state)
+            let animator = behavior.dismissAnimator(self.viewcontroller, from: state)
             animator.addAnimations { [weak self] in
                 guard let self = self else { return }
 
@@ -306,7 +306,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private func startAnimation(to targetPosition: FloatingPanelPosition, at distance: CGFloat, with velocity: CGPoint) {
         let targetY = layoutAdapter.positionY(for: targetPosition)
         let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: max(min(velocity.y/distance, 30.0), -30.0)) : .zero
-        let animator = behavior.interactionAnimator(to: targetPosition, with: velocityVector)
+        let animator = behavior.interactionAnimator(self.viewcontroller, to: targetPosition, with: velocityVector)
         animator.isInterruptible = false // To prevent a backdrop color's punk
         animator.addAnimations { [weak self] in
             guard let self = self else { return }

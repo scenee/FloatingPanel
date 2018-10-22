@@ -78,3 +78,12 @@ extension UIScrollView {
         return CGPoint(x: 0.0, y: 0.0 - contentInset.top)
     }
 }
+
+extension UISpringTimingParameters {
+    public convenience init(dampingRatio: CGFloat, frequencyResponse: CGFloat, initialVelocity: CGVector = .zero) {
+        let mass = 1 as CGFloat
+        let stiffness = pow(2 * .pi / frequencyResponse, 2) * mass
+        let damp = 4 * .pi * dampingRatio * mass / frequencyResponse
+        self.init(mass: mass, stiffness: stiffness, damping: damp, initialVelocity: initialVelocity)
+    }
+}
