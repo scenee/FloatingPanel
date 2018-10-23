@@ -134,11 +134,31 @@
                                     <action selector="closeWithSender:" destination="YC8-ae-15L" eventType="touchUpInside" id="Z2v-19-S5k"/>
                                 </connections>
                             </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8yw-OC-Ubk">
+                                <rect key="frame" x="0.0" y="690" width="375" height="88"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="88" id="jwV-YU-tXG"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kva-Z7-0qY" customClass="OnSafeAreaView" customModule="Samples" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="734" width="375" height="44"/>
+                                <color key="backgroundColor" red="0.0078431372550000003" green="0.72156862749999995" blue="0.45882352939999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="DQJ-cY-cKx"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="noi-1a-5bZ" firstAttribute="top" secondItem="g7l-kO-y7q" secondAttribute="top" constant="12" id="EQy-cr-F2Y"/>
+                            <constraint firstItem="8yw-OC-Ubk" firstAttribute="bottom" secondItem="g7l-kO-y7q" secondAttribute="bottom" id="JOL-wC-w74"/>
+                            <constraint firstItem="8yw-OC-Ubk" firstAttribute="leading" secondItem="tAi-nk-rDB" secondAttribute="leading" id="RiJ-Hb-OOZ"/>
+                            <constraint firstItem="8yw-OC-Ubk" firstAttribute="trailing" secondItem="tAi-nk-rDB" secondAttribute="trailing" id="Sof-yL-mwK"/>
+                            <constraint firstItem="Kva-Z7-0qY" firstAttribute="trailing" secondItem="tAi-nk-rDB" secondAttribute="trailing" id="kkp-Yo-FQW"/>
                             <constraint firstItem="tAi-nk-rDB" firstAttribute="trailing" secondItem="noi-1a-5bZ" secondAttribute="trailing" constant="12" id="lv9-Nf-HNB"/>
+                            <constraint firstItem="Kva-Z7-0qY" firstAttribute="leading" secondItem="tAi-nk-rDB" secondAttribute="leading" id="oVC-i1-TwS"/>
+                            <constraint firstItem="tAi-nk-rDB" firstAttribute="bottom" secondItem="Kva-Z7-0qY" secondAttribute="bottom" id="rW2-mF-5DR"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="tAi-nk-rDB"/>
                     </view>
@@ -149,7 +169,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Wqk-xl-O3I" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="836" y="493.5960591133005"/>
+            <point key="canvasLocation" x="836" y="492.95352323838085"/>
         </scene>
         <!--Debug Text View Controller-->
         <scene sceneID="Bkq-O7-q4A">
