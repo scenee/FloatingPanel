@@ -189,7 +189,7 @@ class DebugTableViewController: UITableViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        print("Content View: viewDidAppear")
+        print("Content View: viewDidAppear", view.bounds)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
