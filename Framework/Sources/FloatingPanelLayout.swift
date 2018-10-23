@@ -127,7 +127,7 @@ class FloatingPanelLayoutAdapter {
     var adjustedContentInsets: UIEdgeInsets {
         return UIEdgeInsets(top: 0.0,
                             left: 0.0,
-                            bottom: (safeAreaInsets.top + topInset) + (heightBuffer + safeAreaInsets.bottom),
+                            bottom: safeAreaInsets.bottom,
                             right: 0.0)
     }
 
@@ -202,12 +202,16 @@ class FloatingPanelLayoutAdapter {
             }
         }
 
-        if let heightConstraints = self.heightConstraints {
-            NSLayoutConstraint.deactivate([heightConstraints])
+        if let consts = self.heightConstraints {
+            NSLayoutConstraint.deactivate([consts])
         }
-        let heightConstraints = surfaceView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height + heightBuffer)
-        NSLayoutConstraint.activate([heightConstraints])
-        self.heightConstraints = heightConstraints
+
+        let height = UIScreen.main.bounds.height - (safeAreaInsets.top + topInset)
+        let consts = surfaceView.heightAnchor.constraint(equalToConstant: height)
+
+        NSLayoutConstraint.activate([consts])
+        heightConstraints = consts
+        surfaceView.bottomOverflow = heightBuffer
     }
 
     func activateLayout(of state: FloatingPanelPosition?) {

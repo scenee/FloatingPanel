@@ -22,6 +22,7 @@ public class FloatingPanelSurfaceView: UIView {
     public var contentView: UIView!
 
     private var color: UIColor? = .white { didSet { setNeedsDisplay() } }
+    var bottomOverflow: CGFloat = 0.0 { didSet { setNeedsDisplay() }}
 
     public override var backgroundColor: UIColor? {
         get { return color }
@@ -73,6 +74,7 @@ public class FloatingPanelSurfaceView: UIView {
 
     private func render() {
         super.backgroundColor = .clear
+        self.clipsToBounds = false
 
         let contentView = FloatingPanelSurfaceContentView()
         addSubview(contentView)
@@ -120,7 +122,9 @@ public class FloatingPanelSurfaceView: UIView {
     private func makeShadowLayer() -> CAShapeLayer {
         log.debug("SurfaceView bounds", bounds)
         let shadowLayer = CAShapeLayer()
-        let path = UIBezierPath(roundedRect: bounds,
+        var rect = bounds
+        rect.size.height += bottomOverflow
+        let path = UIBezierPath(roundedRect: rect,
                                 byRoundingCorners: [.topLeft, .topRight],
                                 cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
         shadowLayer.path = path.cgPath
