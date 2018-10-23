@@ -92,7 +92,11 @@ class FloatingPanelLayoutAdapter {
 
     var layout: FloatingPanelLayout
 
-    var safeAreaInsets: UIEdgeInsets = .zero
+    var safeAreaInsets: UIEdgeInsets = .zero {
+        didSet {
+            updateHeight()
+        }
+    }
 
     private var heightBuffer: CGFloat = 88.0 // For bounce
     private var fixedConstraints: [NSLayoutConstraint] = []
