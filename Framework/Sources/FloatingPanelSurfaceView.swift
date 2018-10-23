@@ -102,6 +102,10 @@ public class FloatingPanelSurfaceView: UIView {
             grabberHandle.heightAnchor.constraint(equalToConstant: grabberHandle.frame.height),
             grabberHandle.centerXAnchor.constraint(equalTo: centerXAnchor),
             ])
+
+        let shadowLayer = CAShapeLayer()
+        layer.insertSublayer(shadowLayer, at: 0)
+        self.shadowLayer = shadowLayer
     }
 
     public override func layoutSubviews() {
@@ -131,18 +135,9 @@ public class FloatingPanelSurfaceView: UIView {
     }
 
     private func updateShadowLayer() {
-        if shadowLayer != nil {
-            shadowLayer.removeFromSuperlayer()
-        }
-        shadowLayer = makeShadowLayer()
-        layer.insertSublayer(shadowLayer, at: 0)
-    }
-
-    private func makeShadowLayer() -> CAShapeLayer {
         log.debug("SurfaceView bounds", bounds)
-        let shadowLayer = CAShapeLayer()
         var rect = bounds
-        rect.size.height += bottomOverflow
+        rect.size.height += bottomOverflow // Expand the height for overflow buffer
         let path = UIBezierPath(roundedRect: rect,
                                 byRoundingCorners: [.topLeft, .topRight],
                                 cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
@@ -155,6 +150,5 @@ public class FloatingPanelSurfaceView: UIView {
             shadowLayer.shadowOpacity = shadowOpacity
             shadowLayer.shadowRadius = shadowRadius
         }
-        return shadowLayer
     }
 }
