@@ -177,7 +177,7 @@ class FloatingPanelStocksBehavior: FloatingPanelBehavior {
         return 15.0
     }
 
-    func interactionAnimator(to targetPosition: FloatingPanelPosition, with velocity: CGVector) -> UIViewPropertyAnimator {
+    func interactionAnimator(_ fpc: FloatingPanelController, to targetPosition: FloatingPanelPosition, with velocity: CGVector) -> UIViewPropertyAnimator {
         let damping = self.damping(with: velocity)
         let springTiming = UISpringTimingParameters(dampingRatio: damping, initialVelocity: velocity)
         return UIViewPropertyAnimator(duration: 0.5, timingParameters: springTiming)
