@@ -3,7 +3,7 @@
 //  Stocks
 //
 //  Created by Shin Yamamoto on 2018/10/12.
-//  Copyright © 2018 scenee. All rights reserved.
+//  Copyright © 2018 Shin Yamamoto. All rights reserved.
 //
 
 import UIKit
@@ -38,7 +38,7 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
         fpc.show(newsVC, sender: self)
         fpc.track(scrollView: newsVC.scrollView)
 
-        fpc.add(toParent: self, belowView: bottomToolView, animated: false)
+        fpc.addPanel(toParent: self, belowView: bottomToolView, animated: false)
 
         topBannerView.frame = .zero
         topBannerView.alpha = 0.0
@@ -135,27 +135,16 @@ class FloatingPanelStocksBehavior: FloatingPanelBehavior {
         return 15.0
     }
 
-    func interactionAnimator(to targetPosition: FloatingPanelPosition, with velocity: CGVector) -> UIViewPropertyAnimator {
-        let damping = self.damping(with: velocity)
-        let springTiming = UISpringTimingParameters(dampingRatio: damping,
-                                                    initialVelocity: velocity)
-        let duration = getDuration(with: velocity)
-        return UIViewPropertyAnimator(duration: duration, timingParameters: springTiming)
+    func interactionAnimator(_ fpc: FloatingPanelController, to targetPosition: FloatingPanelPosition, with velocity: CGVector) -> UIViewPropertyAnimator {
+        let timing = timeingCurve(to: targetPosition, with: velocity)
+        return UIViewPropertyAnimator(duration: 0, timingParameters: timing)
     }
 
-    private func getDuration(with velocity: CGVector) -> TimeInterval {
-        let dy = abs(velocity.dy)
-        switch dy {
-        case ..<1.0:
-            return 0.5
-        case 1.0..<velocityThreshold:
-            let a = ((dy - 1.0) / (velocityThreshold - 1.0))
-            return TimeInterval(0.5 - (0.25 * a))
-        case velocityThreshold...:
-            return 0.25
-        default:
-            fatalError()
-        }
+    private func timeingCurve(to: FloatingPanelPosition, with velocity: CGVector) -> UITimingCurveProvider {
+        let damping = self.damping(with: velocity)
+        return UISpringTimingParameters(dampingRatio: damping,
+                                        frequencyResponse: 0.4,
+                                        initialVelocity: velocity)
     }
 
     private func damping(with velocity: CGVector) -> CGFloat {

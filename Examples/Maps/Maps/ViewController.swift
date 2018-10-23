@@ -1,5 +1,5 @@
 //
-//  Copyright © 2018 scenee. All rights reserved.
+//  Copyright © 2018 Shin Yamamoto. All rights reserved.
 //
 
 import UIKit
@@ -36,7 +36,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate, 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         //  Add FloatingPanel to a view with animation.
-        fpc.add(toParent: self, animated: true)
+        fpc.addPanel(toParent: self, animated: true)
 
         // Must be here
         searchVC.searchBar.delegate = self

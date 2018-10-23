@@ -1,6 +1,6 @@
 //
 //  Created by Shin Yamamoto on 2018/09/18.
-//  Copyright © 2018 scenee. All rights reserved.
+//  Copyright © 2018 Shin Yamamoto. All rights reserved.
 //
 
 import UIKit
@@ -75,6 +75,15 @@ extension UIGestureRecognizer.State: CustomDebugStringConvertible {
 
 extension UIScrollView {
     var contentOffsetZero: CGPoint {
-        return CGPoint(x: 0.0, y: 0.0 + contentInset.top)
+        return CGPoint(x: 0.0, y: 0.0 - contentInset.top)
+    }
+}
+
+extension UISpringTimingParameters {
+    public convenience init(dampingRatio: CGFloat, frequencyResponse: CGFloat, initialVelocity: CGVector = .zero) {
+        let mass = 1 as CGFloat
+        let stiffness = pow(2 * .pi / frequencyResponse, 2) * mass
+        let damp = 4 * .pi * dampingRatio * mass / frequencyResponse
+        self.init(mass: mass, stiffness: stiffness, damping: damp, initialVelocity: initialVelocity)
     }
 }

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="RoN-h0-uBD">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="Cjh-iX-VQw">
+            <objects>
+                <navigationController id="RoN-h0-uBD" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="hNW-5m-Omi">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="jF4-A0-Eq6" kind="relationship" relationship="rootViewController" id="W9V-or-flQ"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lKu-or-aPl" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-705" y="27"/>
+        </scene>
+        <!--Samples-->
+        <scene sceneID="35L-Gs-Vts">
+            <objects>
+                <viewController id="jF4-A0-Eq6" customClass="SampleListViewController" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Smh-Bd-AAc">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="7IS-PU-x0P">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" textLabel="M0G-C8-hAO" style="IBUITableViewCellStyleDefault" id="ySY-oA-g81">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ySY-oA-g81" id="sXB-nH-2g2">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="M0G-C8-hAO">
+                                                    <rect key="frame" x="15" y="0.0" width="345" height="43.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="7IS-PU-x0P" firstAttribute="top" secondItem="Smh-Bd-AAc" secondAttribute="top" id="6yd-jv-ey3"/>
+                            <constraint firstItem="7IS-PU-x0P" firstAttribute="leading" secondItem="TkN-Oh-wF8" secondAttribute="leading" id="Z6Y-Dc-cei"/>
+                            <constraint firstItem="7IS-PU-x0P" firstAttribute="bottom" secondItem="TkN-Oh-wF8" secondAttribute="bottom" id="fNW-DP-lhV"/>
+                            <constraint firstItem="7IS-PU-x0P" firstAttribute="trailing" secondItem="TkN-Oh-wF8" secondAttribute="trailing" id="vfY-Rc-FOI"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="TkN-Oh-wF8"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Samples" id="wCF-su-7up"/>
+                    <connections>
+                        <outlet property="tableView" destination="7IS-PU-x0P" id="YFM-9W-eP4"/>
+                        <segue destination="bYI-y3-Rzb" kind="presentation" identifier="GoToTextView" id="6Ym-J6-Q6X"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eP2-DG-flv" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="57" y="27"/>
+        </scene>
+        <!--Modal View Controller-->
+        <scene sceneID="C9P-Ns-Qrq">
+            <objects>
+                <viewController storyboardIdentifier="ModalViewController" id="bYI-y3-Rzb" customClass="ModalViewController" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="qwo-GK-p1U">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vut-mK-Y4t" customClass="SafeAreaView" customModule="Samples" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="667" width="375" height="0.0"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sbF-Az-7sy">
+                                <rect key="frame" x="20" y="20" width="39" height="30"/>
+                                <state key="normal" title="Close"/>
+                                <connections>
+                                    <action selector="closeWithSender:" destination="bYI-y3-Rzb" eventType="touchUpInside" id="MSC-ch-YJK"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="sbF-Az-7sy" firstAttribute="top" secondItem="GBa-yx-8to" secondAttribute="top" id="3VR-hj-zeQ"/>
+                            <constraint firstAttribute="bottom" secondItem="vut-mK-Y4t" secondAttribute="bottom" id="6eq-Kt-heZ"/>
+                            <constraint firstItem="sbF-Az-7sy" firstAttribute="leading" secondItem="GBa-yx-8to" secondAttribute="leading" constant="20" id="T2G-1L-PRs"/>
+                            <constraint firstItem="vut-mK-Y4t" firstAttribute="leading" secondItem="qwo-GK-p1U" secondAttribute="leading" id="gVC-jv-VJX"/>
+                            <constraint firstItem="vut-mK-Y4t" firstAttribute="trailing" secondItem="GBa-yx-8to" secondAttribute="trailing" id="jkq-p2-lUm"/>
+                            <constraint firstItem="vut-mK-Y4t" firstAttribute="top" secondItem="GBa-yx-8to" secondAttribute="bottom" id="rMy-JT-t4B"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="GBa-yx-8to"/>
+                    </view>
+                    <connections>
+                        <outlet property="safeAreaView" destination="vut-mK-Y4t" id="r9P-XF-wLd"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fbi-LZ-M4Y" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="57" y="-758"/>
+        </scene>
+        <!--Detail View Controller-->
+        <scene sceneID="b6k-zi-3wn">
+            <objects>
+                <viewController storyboardIdentifier="DetailViewController" id="YC8-ae-15L" customClass="DetailViewController" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="g7l-kO-y7q">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="noi-1a-5bZ" customClass="CloseButton" customModule="Samples" customModuleProvider="target">
+                                <rect key="frame" x="319" y="12" width="44" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="0jg-5D-A1F"/>
+                                    <constraint firstAttribute="width" constant="44" id="1Cq-PA-wgW"/>
+                                </constraints>
+                                <connections>
+                                    <action selector="closeWithSender:" destination="YC8-ae-15L" eventType="touchUpInside" id="Z2v-19-S5k"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="noi-1a-5bZ" firstAttribute="top" secondItem="g7l-kO-y7q" secondAttribute="top" constant="12" id="EQy-cr-F2Y"/>
+                            <constraint firstItem="tAi-nk-rDB" firstAttribute="trailing" secondItem="noi-1a-5bZ" secondAttribute="trailing" constant="12" id="lv9-Nf-HNB"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="tAi-nk-rDB"/>
+                    </view>
+                    <size key="freeformSize" width="375" height="778"/>
+                    <connections>
+                        <outlet property="closeButton" destination="noi-1a-5bZ" id="eWQ-ha-8y7"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Wqk-xl-O3I" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="836" y="493.5960591133005"/>
+        </scene>
+        <!--Debug Text View Controller-->
+        <scene sceneID="Bkq-O7-q4A">
+            <objects>
+                <viewController storyboardIdentifier="ConsoleViewController" id="tvD-nO-QUb" customClass="DebugTextViewController" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="9YG-0j-Zzg">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rN1-HL-YHv">
+                                <rect key="frame" x="0.0" y="17" width="375" height="761"/>
+                                <color key="backgroundColor" white="1" alpha="0.5" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <string key="text">The standard Lorem Ipsum passage, used since the 1500s
+
+"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+
+Section 1.10.32 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC
+
+"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
+
+1914 translation by H. Rackham
+
+"But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
+
+Section 1.10.33 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC
+
+"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat."
+
+1914 translation by H. Rackham
+
+"On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains."
+
+The standard Lorem Ipsum passage, used since the 1500s
+
+"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+
+Section 1.10.32 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC
+
+"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
+
+1914 translation by H. Rackham
+
+"But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
+
+Section 1.10.33 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC
+
+"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat."
+
+1914 translation by H. Rackham
+
+"On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains."</string>
+                                <fontDescription key="fontDescription" name="CourierNewPSMT" family="Courier New" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="rN1-HL-YHv" firstAttribute="leading" secondItem="ix0-2W-gQN" secondAttribute="leading" id="7V3-KL-vXd"/>
+                            <constraint firstAttribute="bottom" secondItem="rN1-HL-YHv" secondAttribute="bottom" id="efD-U5-Tet"/>
+                            <constraint firstItem="rN1-HL-YHv" firstAttribute="top" secondItem="9YG-0j-Zzg" secondAttribute="top" constant="17" id="fiO-LL-nSC"/>
+                            <constraint firstItem="rN1-HL-YHv" firstAttribute="trailing" secondItem="ix0-2W-gQN" secondAttribute="trailing" id="lfg-EE-euw"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="ix0-2W-gQN"/>
+                    </view>
+                    <size key="freeformSize" width="375" height="778"/>
+                    <connections>
+                        <outlet property="textView" destination="rN1-HL-YHv" id="gmr-Uf-jd8"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x1h-y1-h8q" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="836" y="-446"/>
+        </scene>
+    </scenes>
+</document>

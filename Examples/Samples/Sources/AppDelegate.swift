@@ -1,8 +1,5 @@
 //
-//  AppDelegate.swift
-//  Stocks
-//
-//  Created by Shin Yamamoto on 2018/10/12.
+//  Created by Shin Yamamoto on 2018/09/18.
 //  Copyright © 2018 Shin Yamamoto. All rights reserved.
 //
 
@@ -12,4 +9,3 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 }
-
