@@ -133,7 +133,8 @@ class SearchPanelViewController: UIViewController, UITableViewDataSource, UITabl
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
-
+    @IBOutlet weak var visualEffectView: UIVisualEffectView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
@@ -143,6 +144,15 @@ class SearchPanelViewController: UIViewController, UITableViewDataSource, UITabl
         textField.font = UIFont(name: textField.font!.fontName, size: 15.0)
 
         hideHeader()
+
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if #available(iOS 10, *) {
+            visualEffectView.layer.cornerRadius = 9.0
+            visualEffectView.clipsToBounds = true
+        }
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

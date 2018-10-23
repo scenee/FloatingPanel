@@ -216,6 +216,23 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
 }
 ```
 
+## Notes
+
+###  FloatingPanelSurfaceContentView
+
+* On iOS 10,   `FloatingPanelSurfaceContentView.cornerRadius` isn't not automatically masked with the top rounded corners  because of UIVisualEffectView issue. See https://forums.developer.apple.com/thread/50854. 
+So you need to draw top rounding corners of your content.  Here is an example in Examples/Maps.
+```
+override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    if #available(iOS 10, *) {
+        visualEffectView.layer.cornerRadius = 9.0
+        visualEffectView.clipsToBounds = true
+    }
+}
+```
+* If you sets clear color to `FloatingPanelSurfaceContentView.backgrounColor`, please note the bottom overflow of your content on bouncing at full position. To prevent it, you need to expand your content. For example, See Example/Maps's Auto Layout settings of UIVisualEffectView in Main.storyborad.
+
 ## Author
 
 Shin Yamamoto <shin@scenee.com>
