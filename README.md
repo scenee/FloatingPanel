@@ -73,13 +73,13 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
         fpc.track(scrollView: contentVC.tableView)
 
         // Add the views managed by the `FloatingPanelController` object to self.view.
-        fpc.add(toParent: self)
+        fpc.addPanel(toParent: self)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         // Remove the views managed by the `FloatingPanelController` object from self.view.
-        fpc.removeFromParent()
+        fpc.removePanelFromParent()
     }
     ...
 }
@@ -201,7 +201,7 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
         self.searchPanelVC.show(searchVC, sender: nil)
         self.searchPanelVC.track(scrollView: contentVC.tableView)
 
-        self.searchPanelVC.add(toParent: self)
+        self.searchPanelVC.addPanel(toParent: self)
 
         // Setup Detail panel
         self.detailPanelVC = FloatingPanelController()
@@ -210,7 +210,7 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
         self.detailPanelVC.show(contentVC, sender: nil)
         self.detailPanelVC.track(scrollView: contentVC.scrollView)
 
-        self.detailPanelVC.add(toParent: self)
+        self.detailPanelVC.addPanel(toParent: self)
     }
     ...
 }
