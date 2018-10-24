@@ -17,6 +17,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case trackingTextView
         case showDetail
         case showModal
+        case showTabBar
 
         var name: String {
             switch self {
@@ -24,6 +25,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             case .trackingTextView: return "Scroll tracking (UITextView)"
             case .showDetail: return "Show Detail Panel"
             case .showModal: return "Show Modal"
+            case .showTabBar: return "Show Tab Bar"
             }
         }
 
@@ -33,6 +35,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             case .trackingTextView: return "ConsoleViewController"
             case .showDetail: return "DetailViewController"
             case .showModal: return "ModalViewController"
+            case .showTabBar: return "TabBarViewController"
             }
         }
     }
@@ -120,7 +123,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
 
             //  Add FloatingPanel to self.view
             detailPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
-        case .showModal:
+        case .showModal, .showTabBar:
             let modalVC = contentVC
             present(modalVC, animated: true, completion: nil)
         default:
@@ -271,5 +274,103 @@ class ModalViewController: UIViewController {
 
     @IBAction func close(sender: UIButton) {
         dismiss(animated: true, completion: nil)
+    }
+}
+
+class TabBarViewController: UITabBarController {}
+
+class TabBarContentViewController: UIViewController, FloatingPanelControllerDelegate {
+    var fpc: FloatingPanelController!
+    var consoleVC: DebugTextViewController!
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Initialize FloatingPanelController
+        fpc = FloatingPanelController()
+        fpc.delegate = self
+
+        // Initialize FloatingPanelController and add the view
+        fpc.surfaceView.cornerRadius = 6.0
+        fpc.surfaceView.shadowHidden = false
+
+        // Add a content view controller and connect with the scroll view
+        let consoleVC = storyboard?.instantiateViewController(withIdentifier: "ConsoleViewController") as! DebugTextViewController
+        fpc.show(consoleVC, sender: self)
+        self.consoleVC = consoleVC
+        fpc.track(scrollView: consoleVC.textView)
+
+        //  Add FloatingPanel to self.view
+        fpc.addPanel(toParent: self)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        //  Remove FloatingPanel from a view
+        fpc.removePanelFromParent(animated: false)
+    }
+
+    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
+        switch self.tabBarItem.tag {
+        case 0:
+            return OneTabBarPanelLayout()
+        case 1:
+            return TwoTabBarPanel2Layout()
+        default:
+            return nil
+        }
+    }
+
+    @IBAction func close(sender: UIButton) {
+        dismiss(animated: true, completion: nil)
+    }
+}
+
+extension FloatingPanelLayout {
+    func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
+        if #available(iOS 11.0, *) {
+            return [
+                surfaceView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 0.0),
+                surfaceView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: 0.0),
+            ]
+        } else {
+            return [
+                surfaceView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0.0),
+                surfaceView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0.0),
+            ]
+        }
+    }
+}
+
+class OneTabBarPanelLayout: FloatingPanelLayout {
+    var initialPosition: FloatingPanelPosition {
+        return .tip
+    }
+    var supportedPositions: [FloatingPanelPosition] {
+        return [.full, .tip]
+    }
+
+    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        switch position {
+        case .full: return 16.0
+        case .tip: return 22.0
+        default: return nil
+        }
+    }
+}
+
+class TwoTabBarPanel2Layout: FloatingPanelLayout {
+    var initialPosition: FloatingPanelPosition {
+        return .half
+    }
+    var supportedPositions: [FloatingPanelPosition] {
+        return [.full, .half]
+    }
+
+    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        switch position {
+        case .full: return 16.0
+        case .half: return 261
+        default: return nil
+        }
     }
 }
