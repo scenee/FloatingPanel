@@ -84,15 +84,16 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate, 
     // MARK: FloatingPanelControllerDelegate
     
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
-        switch traitCollection.verticalSizeClass {
+        switch newCollection.verticalSizeClass {
         case .compact:
             fpc.surfaceView.borderWidth = 1.0 / traitCollection.displayScale
             fpc.surfaceView.borderColor = UIColor.black.withAlphaComponent(0.2)
+            return SearchPanelLandscapeLayout()
         default:
             fpc.surfaceView.borderWidth = 0.0
             fpc.surfaceView.borderColor = nil
+            return nil
         }
-        return nil
     }
 
     func floatingPanelDidMove(_ vc: FloatingPanelController) {
@@ -200,6 +201,38 @@ class SearchPanelViewController: UIViewController, UITableViewDataSource, UITabl
             }
         }
         tableView.endUpdates()
+    }
+}
+
+public class SearchPanelLandscapeLayout: FloatingPanelLayout {
+    public var initialPosition: FloatingPanelPosition {
+        return .tip
+    }
+    
+    public var supportedPositions: Set<FloatingPanelPosition> {
+        return [.full, .tip]
+    }
+
+    public func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        switch position {
+        case .full: return 16.0
+        case .tip: return 69.0
+        default: return nil
+        }
+    }
+
+    public func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
+        if #available(iOS 11.0, *) {
+            return [
+                surfaceView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 8.0),
+                surfaceView.widthAnchor.constraint(equalToConstant: 291),
+            ]
+        } else {
+            return [
+                surfaceView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 8.0),
+                surfaceView.widthAnchor.constraint(equalToConstant: 291),
+            ]
+        }
     }
 }
 
