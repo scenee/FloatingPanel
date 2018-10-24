@@ -370,7 +370,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         switch supportedPositions {
         case Set([.full, .half]):
-            return targetPosition(from: [.half, .tip], at: currentY, velocity: velocity)
+            return targetPosition(from: [.full, .half], at: currentY, velocity: velocity)
         case Set([.half, .tip]):
             return targetPosition(from: [.half, .tip], at: currentY, velocity: velocity)
         case Set([.full, .tip]):
