@@ -120,7 +120,7 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
 
 ### Customize the layout of a floating panel with  `FloatingPanelLayout` protocol
 
-#### Change the initial position, supported positions and height
+#### Change the initial position and height
 
 ```swift
 class ViewController: UIViewController, FloatingPanelControllerDelegate {
@@ -135,9 +135,6 @@ class MyFloatingPanelLayout: FloatingPanelLayout {
     public var initialPosition: FloatingPanelPosition {
         return .tip
     }
-    public var supportedPositions: [FloatingPanelPosition] {
-        return [.full, .half, .tip]
-    }
 
     public func insetFor(position: FloatingPanelPosition) -> CGFloat? {
         switch position {
@@ -145,13 +142,6 @@ class MyFloatingPanelLayout: FloatingPanelLayout {
             case .half: return 216.0 // A bottom inset from the safe area
             case .tip: return 44.0 // A bottom inset from the safe area
         }
-    }
-
-    func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
-        return [
-            surfaceView.leftAnchor.constraint(equalTo: view.sideLayoutGuide.leftAnchor, constant: 0.0),
-            surfaceView.rightAnchor.constraint(equalTo: view.sideLayoutGuide.rightAnchor, constant: 0.0),
-        ]
     }
 }
 ```

@@ -6,10 +6,10 @@
 import UIKit
 
 public protocol FloatingPanelLayout: class {
-    /// Returns the initial position of a floating panel
+    /// Returns the initial position of a floating panel.
     var initialPosition: FloatingPanelPosition { get }
 
-    /// Returns an array of FloatingPanelPosition objects to tell the applicable positions of the floating panel controller
+    /// Returns an array of FloatingPanelPosition objects to tell the applicable positions of the floating panel controller. Default is all of them.
     var supportedPositions: [FloatingPanelPosition] { get }
 
     /// Return the interaction buffer to the top from the top position. Default is 6.0.
@@ -27,6 +27,7 @@ public protocol FloatingPanelLayout: class {
     /// Returns X-axis and width layout constraints of the surface view of a floating panel.
     /// You must not include any Y-axis and height layout constraints of the surface view
     /// because their constraints will be configured by the floating panel controller.
+    /// By default, the width of a surface view fits a safe area.
     func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint]
 
     /// Return the backdrop alpha of black color in full position. Default is 0.3.
@@ -37,13 +38,20 @@ public extension FloatingPanelLayout {
     var backdropAlpha: CGFloat { return 0.3 }
     var topInteractionBuffer: CGFloat { return 6.0 }
     var bottomInteractionBuffer: CGFloat { return 6.0 }
-}
 
-public class FloatingPanelDefaultLayout: FloatingPanelLayout {
     public var supportedPositions: [FloatingPanelPosition] {
         return [.full, .half, .tip]
     }
+    
+    func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
+        return [
+            surfaceView.leftAnchor.constraint(equalTo: view.sideLayoutGuide.leftAnchor, constant: 0.0),
+            surfaceView.rightAnchor.constraint(equalTo: view.sideLayoutGuide.rightAnchor, constant: 0.0),
+        ]
+    }
+}
 
+public class FloatingPanelDefaultLayout: FloatingPanelLayout {
     public var initialPosition: FloatingPanelPosition {
         return .half
     }
@@ -54,13 +62,6 @@ public class FloatingPanelDefaultLayout: FloatingPanelLayout {
         case .half: return 262.0
         case .tip: return 69.0
         }
-    }
-
-    public func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
-        return [
-            surfaceView.leftAnchor.constraint(equalTo: view.sideLayoutGuide.leftAnchor, constant: 0.0),
-            surfaceView.rightAnchor.constraint(equalTo: view.sideLayoutGuide.rightAnchor, constant: 0.0),
-        ]
     }
 }
 
