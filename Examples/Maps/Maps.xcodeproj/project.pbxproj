@@ -14,6 +14,7 @@
 		54B51134216C3D860033A6F3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 54B51132216C3D860033A6F3 /* LaunchScreen.storyboard */; };
 		54B5113F216C407F0033A6F3 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54B5113E216C407F0033A6F3 /* FloatingPanel.framework */; };
 		54B51140216C407F0033A6F3 /* FloatingPanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 54B5113E216C407F0033A6F3 /* FloatingPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EDD05E5321826F6200D5AD90 /* UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD05E5221826F6200D5AD90 /* UIExtensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -39,6 +40,7 @@
 		54B51133216C3D860033A6F3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		54B51135216C3D860033A6F3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		54B5113E216C407F0033A6F3 /* FloatingPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FloatingPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EDD05E5221826F6200D5AD90 /* UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +75,7 @@
 		54B51128216C3D840033A6F3 /* Maps */ = {
 			isa = PBXGroup;
 			children = (
+				EDD05E5221826F6200D5AD90 /* UIExtensions.swift */,
 				54B51129216C3D840033A6F3 /* AppDelegate.swift */,
 				54B5112B216C3D840033A6F3 /* ViewController.swift */,
 				54B5112D216C3D840033A6F3 /* Main.storyboard */,
@@ -155,6 +158,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EDD05E5321826F6200D5AD90 /* UIExtensions.swift in Sources */,
 				54B5112C216C3D840033A6F3 /* ViewController.swift in Sources */,
 				54B5112A216C3D840033A6F3 /* AppDelegate.swift in Sources */,
 			);

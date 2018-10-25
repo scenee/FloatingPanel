@@ -9,46 +9,46 @@ import FloatingPanel
 class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate, FloatingPanelControllerDelegate {
     var fpc: FloatingPanelController!
     var searchVC: SearchPanelViewController!
-
+    
     @IBOutlet weak var mapView: MKMapView!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         // Initialize FloatingPanelController
         fpc = FloatingPanelController()
         fpc.delegate = self
-
+        
         // Initialize FloatingPanelController and add the view
         fpc.surfaceView.backgroundColor = .clear
         fpc.surfaceView.cornerRadius = 9.0
         fpc.surfaceView.shadowHidden = false
-
+        
         searchVC = storyboard?.instantiateViewController(withIdentifier: "SearchPanel") as? SearchPanelViewController
-
+        
         // Add a content view controller
         fpc.show(searchVC, sender: self)
         fpc.track(scrollView: searchVC.tableView)
         
         
-
+        
         setupMapView()
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         //  Add FloatingPanel to a view with animation.
         fpc.addPanel(toParent: self, animated: true)
-
+        
         // Must be here
         searchVC.searchBar.delegate = self
     }
-
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         teardownMapView()
     }
-
+    
     func setupMapView() {
         let center = CLLocationCoordinate2D(latitude: 37.623198015869235,
                                             longitude: -122.43066818432008)
@@ -60,29 +60,29 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate, 
         mapView.showsUserLocation = true
         mapView.delegate = self
     }
-
+    
     func teardownMapView() {
         // Prevent a crash
         mapView.delegate = nil
         mapView = nil
     }
-
+    
     // MARK: UISearchBarDelegate
-
+    
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
         searchBar.showsCancelButton  = false
         searchVC.hideHeader()
         fpc.move(to: .half, animated: true)
     }
-
+    
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.showsCancelButton = true
         searchVC.showHeader()
         searchVC.tableView.alpha = 1.0
         fpc.move(to: .full, animated: true)
     }
-
+    
     // MARK: FloatingPanelControllerDelegate
     
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
@@ -96,7 +96,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate, 
         }
         return nil
     }
-
+    
     func floatingPanelDidMove(_ vc: FloatingPanelController) {
         let y = vc.surfaceView.frame.origin.y
         let tipY = vc.originYOfSurface(for: .tip)
@@ -105,19 +105,19 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate, 
             self.searchVC.tableView.alpha = progress
         }
     }
-
+    
     func floatingPanelWillBeginDragging(_ vc: FloatingPanelController) {
         if vc.position == .full {
             searchVC.searchBar.showsCancelButton = false
             searchVC.searchBar.resignFirstResponder()
         }
     }
-
+    
     func floatingPanelDidEndDragging(_ vc: FloatingPanelController, withVelocity velocity: CGPoint, targetPosition: FloatingPanelPosition) {
         if targetPosition != .full {
             searchVC.hideHeader()
         }
-
+        
         UIView.animate(withDuration: 0.25,
                        delay: 0.0,
                        options: .allowUserInteraction,
@@ -132,10 +132,10 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate, 
 }
 
 class SearchPanelViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-
+    
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
@@ -143,14 +143,14 @@ class SearchPanelViewController: UIViewController, UITableViewDataSource, UITabl
         searchBar.placeholder = "Search for a place or address"
         let textField = searchBar.value(forKey: "_searchField") as! UITextField
         textField.font = UIFont(name: textField.font!.fontName, size: 15.0)
-
+        
         hideHeader()
     }
-
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 2
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         if let cell = cell as? SearchCell {
@@ -169,19 +169,19 @@ class SearchPanelViewController: UIViewController, UITableViewDataSource, UITabl
         }
         return cell
     }
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
     }
-
+    
     func showHeader() {
         changeHeader(height: 116.0)
     }
-
+    
     func hideHeader() {
         changeHeader(height: 0.0)
     }
-
+    
     func changeHeader(height: CGFloat) {
         tableView.beginUpdates()
         if let headerView = tableView.tableHeaderView  {
@@ -214,13 +214,13 @@ public class SearchPanelLandscapeLayout: FloatingPanelLayout {
     public func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
         if #available(iOS 11.0, *) {
             return [
-                surfaceView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 8.0),
-                surfaceView.widthAnchor.constraint(equalToConstant: 291),
+                surfaceView.leftAnchor.constraint(equalTo: view.layoutGuide.leftAnchor),
+                surfaceView.rightAnchor.constraint(equalTo: view.layoutGuide.rightAnchor),
             ]
         } else {
             return [
-                surfaceView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 8.0),
-                surfaceView.widthAnchor.constraint(equalToConstant: 291),
+                surfaceView.leftAnchor.constraint(equalTo: view.layoutGuide.leftAnchor),
+                surfaceView.rightAnchor.constraint(equalTo: view.layoutGuide.rightAnchor),
             ]
         }
     }

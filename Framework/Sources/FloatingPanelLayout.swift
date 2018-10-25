@@ -80,7 +80,7 @@ public class FloatingPanelDefaultLandscapeLayout: FloatingPanelLayout {
     public func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
         return [
             surfaceView.leftAnchor.constraint(equalTo: view.sideLayoutGuide.leftAnchor, constant: 8.0),
-            surfaceView.widthAnchor.constraint(equalToConstant: 291),
+            surfaceView.rightAnchor.constraint(equalTo: view.sideLayoutGuide.rightAnchor, constant: -8.0),
             ]
     }
 }
