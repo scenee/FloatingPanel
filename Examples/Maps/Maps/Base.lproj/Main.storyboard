@@ -70,7 +70,7 @@
                                             <textInputTraits key="textInputTraits"/>
                                         </searchBar>
                                         <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="D7r-re-InH">
-                                            <rect key="frame" x="0.0" y="66" width="375" height="834"/>
+                                            <rect key="frame" x="0.0" y="66" width="375" height="748"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <view key="tableHeaderView" contentMode="scaleToFill" id="u28-LY-hIh" customClass="SearchHeaderView" customModule="Maps" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="375" height="116"/>
@@ -227,7 +227,7 @@
                                         <constraint firstAttribute="trailing" secondItem="D7r-re-InH" secondAttribute="trailing" id="BES-GA-Btp"/>
                                         <constraint firstItem="D7r-re-InH" firstAttribute="leading" secondItem="ED1-gT-FBj" secondAttribute="leading" id="UTe-YL-17h"/>
                                         <constraint firstItem="Zcj-SE-gb8" firstAttribute="top" secondItem="ED1-gT-FBj" secondAttribute="top" constant="6" id="apU-Pd-PEO"/>
-                                        <constraint firstAttribute="bottom" secondItem="D7r-re-InH" secondAttribute="bottom" id="vfS-Lx-TXz"/>
+                                        <constraint firstAttribute="bottom" secondItem="D7r-re-InH" secondAttribute="bottom" constant="86" id="vfS-Lx-TXz"/>
                                         <constraint firstItem="D7r-re-InH" firstAttribute="top" secondItem="Zcj-SE-gb8" secondAttribute="bottom" constant="4" id="vro-cd-B9c"/>
                                         <constraint firstItem="Zcj-SE-gb8" firstAttribute="leading" secondItem="ED1-gT-FBj" secondAttribute="leading" id="wMb-L2-Z0W"/>
                                     </constraints>
