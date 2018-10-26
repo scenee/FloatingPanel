@@ -60,9 +60,9 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ye3-uU-bq3">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="900"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="ED1-gT-FBj">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="900"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <searchBar contentMode="redraw" searchBarStyle="minimal" translatesAutoresizingMaskIntoConstraints="NO" id="Zcj-SE-gb8">
@@ -70,7 +70,7 @@
                                             <textInputTraits key="textInputTraits"/>
                                         </searchBar>
                                         <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="D7r-re-InH">
-                                            <rect key="frame" x="0.0" y="66" width="375" height="712"/>
+                                            <rect key="frame" x="0.0" y="66" width="375" height="748"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <view key="tableHeaderView" contentMode="scaleToFill" id="u28-LY-hIh" customClass="SearchHeaderView" customModule="Maps" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="375" height="116"/>
@@ -227,7 +227,7 @@
                                         <constraint firstAttribute="trailing" secondItem="D7r-re-InH" secondAttribute="trailing" id="BES-GA-Btp"/>
                                         <constraint firstItem="D7r-re-InH" firstAttribute="leading" secondItem="ED1-gT-FBj" secondAttribute="leading" id="UTe-YL-17h"/>
                                         <constraint firstItem="Zcj-SE-gb8" firstAttribute="top" secondItem="ED1-gT-FBj" secondAttribute="top" constant="6" id="apU-Pd-PEO"/>
-                                        <constraint firstAttribute="bottom" secondItem="D7r-re-InH" secondAttribute="bottom" id="vfS-Lx-TXz"/>
+                                        <constraint firstAttribute="bottom" secondItem="D7r-re-InH" secondAttribute="bottom" constant="86" id="vfS-Lx-TXz"/>
                                         <constraint firstItem="D7r-re-InH" firstAttribute="top" secondItem="Zcj-SE-gb8" secondAttribute="bottom" constant="4" id="vro-cd-B9c"/>
                                         <constraint firstItem="Zcj-SE-gb8" firstAttribute="leading" secondItem="ED1-gT-FBj" secondAttribute="leading" id="wMb-L2-Z0W"/>
                                     </constraints>
@@ -238,7 +238,7 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="Ye3-uU-bq3" firstAttribute="leading" secondItem="G74-X7-Za8" secondAttribute="leading" id="Kr2-sU-ZWZ"/>
-                            <constraint firstItem="Ye3-uU-bq3" firstAttribute="bottom" secondItem="G74-X7-Za8" secondAttribute="bottom" id="aWM-s3-3o4"/>
+                            <constraint firstItem="Ye3-uU-bq3" firstAttribute="bottom" secondItem="Ncl-E9-yRn" secondAttribute="bottom" constant="88" id="aWM-s3-3o4"/>
                             <constraint firstItem="Ye3-uU-bq3" firstAttribute="trailing" secondItem="G74-X7-Za8" secondAttribute="trailing" id="fEL-8y-Acc"/>
                             <constraint firstItem="Ye3-uU-bq3" firstAttribute="top" secondItem="Ncl-E9-yRn" secondAttribute="top" id="w77-ba-FrJ"/>
                         </constraints>
@@ -247,6 +247,7 @@
                     <connections>
                         <outlet property="searchBar" destination="Zcj-SE-gb8" id="BH7-Gy-RG5"/>
                         <outlet property="tableView" destination="D7r-re-InH" id="nRN-fY-b8j"/>
+                        <outlet property="visualEffectView" destination="Ye3-uU-bq3" id="rS6-Mq-OKs"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EqR-Hp-zhc" userLabel="First Responder" sceneMemberID="firstResponder"/>

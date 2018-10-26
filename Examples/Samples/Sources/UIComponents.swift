@@ -86,3 +86,18 @@ class SafeAreaView: UIView {
             ])
     }
 }
+
+
+@IBDesignable
+class OnSafeAreaView: UIView {
+    override func prepareForInterfaceBuilder() {
+        let label = UILabel()
+        label.text = "On Safe Area"
+        addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -4.0),
+            ])
+    }
+}
