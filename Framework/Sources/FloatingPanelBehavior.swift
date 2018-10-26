@@ -6,7 +6,7 @@
 import UIKit
 
 public protocol FloatingPanelBehavior {
-    // Returns a UIViewPropertyAnimator object in interacting a floating panel by a user pan gesture
+    // Returns a UIViewPropertyAnimator object for interacting with a floating panel by a user pan gesture
     func interactionAnimator(_ fpc: FloatingPanelController, to targetPosition: FloatingPanelPosition, with velocity: CGVector) -> UIViewPropertyAnimator
 
     // Returns a UIViewPropertyAnimator object to present a floating panel
