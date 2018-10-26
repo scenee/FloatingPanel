@@ -144,8 +144,14 @@ class MyFloatingPanelLayout: FloatingPanelLayout {
             case .full: return 16.0 # A top inset from safe area
             case .half: return 216.0 # A bottom inset from the safe area
             case .tip: return 44.0 # A bottom inset from the safe area
-            default: return nil
         }
+    }
+
+    func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
+        return [
+            surfaceView.leftAnchor.constraint(equalTo: view.sideLayoutGuide.leftAnchor, constant: 0.0),
+            surfaceView.rightAnchor.constraint(equalTo: view.sideLayoutGuide.rightAnchor, constant: 0.0),
+        ]
     }
 }
 ```
@@ -156,7 +162,7 @@ class MyFloatingPanelLayout: FloatingPanelLayout {
 class ViewController: UIViewController, FloatingPanelControllerDelegate {
     ...
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
-        return (newCollection.verticalSizeClass == .compact) ? FloatingPanelLandscapeLayout() : nil
+        return (newCollection.verticalSizeClass == .compact) ? FloatingPanelLandscapeLayout() : nil // Returing nil indicates to use the default layout
     }
     ...
 }
