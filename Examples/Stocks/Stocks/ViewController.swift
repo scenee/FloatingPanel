@@ -106,11 +106,14 @@ class FloatingPanelStocksLayout: FloatingPanelLayout {
         return [.full, .half, .tip]
     }
 
-    public var initialPosition: FloatingPanelPosition {
+    var initialPosition: FloatingPanelPosition {
         return .tip
     }
 
-    public func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+    var topInteractionBuffer: CGFloat { return 0.0 }
+    var bottomInteractionBuffer: CGFloat { return 0.0 }
+
+    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
         switch position {
         case .full: return 56.0
         case .half: return 262.0
@@ -118,7 +121,7 @@ class FloatingPanelStocksLayout: FloatingPanelLayout {
         }
     }
 
-    public func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
+    func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
         return [
             surfaceView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 0.0),
             surfaceView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: 0.0),

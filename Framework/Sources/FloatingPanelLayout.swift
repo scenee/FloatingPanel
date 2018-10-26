@@ -12,10 +12,10 @@ public protocol FloatingPanelLayout: class {
     /// Returns an array of FloatingPanelPosition object to tell the applicable position the floating panel controller
     var supportedPositions: [FloatingPanelPosition] { get }
 
-    /// Return the interaction buffer of full position. Default is 6.0.
+    /// Return the interaction buffer to the top from the top position. Default is 6.0.
     var topInteractionBuffer: CGFloat { get }
 
-    /// Return the interaction buffer of full position. Default is 6.0.
+    /// Return the interaction buffer to the bottom from the bottom position. Default is 6.0.
     var bottomInteractionBuffer: CGFloat { get }
 
     /// Returns a CGFloat value to determine a floating panel height for each positions(full, half and tip).
@@ -109,18 +109,22 @@ class FloatingPanelLayoutAdapter {
     private var offConstraints: [NSLayoutConstraint] = []
     private var heightConstraints: NSLayoutConstraint? = nil
 
-    var topInset: CGFloat {
+    private var fullInset: CGFloat {
         return layout.insetFor(position: .full) ?? 0.0
     }
-    var halfInset: CGFloat {
+    private var halfInset: CGFloat {
         return layout.insetFor(position: .half) ?? 0.0
     }
-    var tipInset: CGFloat {
+    private var tipInset: CGFloat {
         return layout.insetFor(position: .tip) ?? 0.0
     }
 
     var topY: CGFloat {
-        return (safeAreaInsets.top + topInset)
+        if layout.supportedPositions.contains(.full) {
+            return (safeAreaInsets.top + fullInset)
+        } else {
+            return middleY
+        }
     }
 
     var middleY: CGFloat {
@@ -128,7 +132,11 @@ class FloatingPanelLayoutAdapter {
     }
 
     var bottomY: CGFloat {
-        return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + tipInset)
+        if layout.supportedPositions.contains(.tip) {
+            return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + tipInset)
+        } else {
+            return middleY
+        }
     }
 
     var adjustedContentInsets: UIEdgeInsets {
@@ -185,7 +193,7 @@ class FloatingPanelLayoutAdapter {
         // Flexible surface constarints for full, half, tip and off
         fullConstraints = [
             surfaceView.topAnchor.constraint(equalTo: parent.layoutGuide.topAnchor,
-                                             constant: topInset),
+                                             constant: fullInset),
         ]
         halfConstraints = [
             surfaceView.topAnchor.constraint(equalTo: parent.layoutGuide.bottomAnchor,
@@ -213,7 +221,7 @@ class FloatingPanelLayoutAdapter {
             NSLayoutConstraint.deactivate([consts])
         }
 
-        let height = UIScreen.main.bounds.height - (safeAreaInsets.top + topInset)
+        let height = UIScreen.main.bounds.height - (safeAreaInsets.top + fullInset)
         let consts = surfaceView.heightAnchor.constraint(equalToConstant: height)
 
         NSLayoutConstraint.activate([consts])
