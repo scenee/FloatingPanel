@@ -288,9 +288,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         let y = rect.offsetBy(dx: 0.0, dy: dy).origin.y
 
         let topY = layoutAdapter.topY
-        let topInset = layoutAdapter.topInset
         let topBuffer = layoutAdapter.layout.topInteractionBuffer
-
         let bottomY = layoutAdapter.bottomY
         let bottomBuffer = layoutAdapter.layout.bottomInteractionBuffer
 
@@ -300,7 +298,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 return max(topY, min(bottomY, y))
             }
         }
-        return max(topY - topInset + topBuffer, min(bottomY + bottomBuffer, y))
+        return max(topY - topBuffer, min(bottomY + bottomBuffer, y))
     }
 
     private func startAnimation(to targetPosition: FloatingPanelPosition, at distance: CGFloat, with velocity: CGPoint) {

@@ -365,11 +365,14 @@ class TwoTabBarPanel2Layout: FloatingPanelLayout {
     var supportedPositions: [FloatingPanelPosition] {
         return [.full, .half]
     }
+    var bottomInteractionBuffer: CGFloat {
+        return 261.0 - 22.0
+    }
 
     func insetFor(position: FloatingPanelPosition) -> CGFloat? {
         switch position {
         case .full: return 16.0
-        case .half: return 261
+        case .half: return 261.0
         default: return nil
         }
     }
