@@ -225,7 +225,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private func panningBegan() {
         // A user interaction does not always start from Began state of the pan gesture
         // because it can be recognized in scrolling a content in a content view controller.
-        // So I don't nothing here.
+        // So I do nothing here.
         log.debug("panningBegan \(initialFrame)")
     }
 

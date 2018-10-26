@@ -66,7 +66,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         return floatingPanel.backdropView
     }
 
-    /// Returns the scroll view that the conroller tracks.
+    /// Returns the scroll view that the controller tracks.
     public weak var scrollView: UIScrollView? {
         return floatingPanel.scrollView
     }
@@ -76,14 +76,14 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         return floatingPanel.state
     }
 
-    /// The content insets of the tracking scroll view derived the safe area of the parent view
+    /// The content insets of the tracking scroll view derived from the safe area of the parent view
     public var adjustedContentInsets: UIEdgeInsets {
         return floatingPanel.layoutAdapter.adjustedContentInsets
     }
 
     /// The behavior for determining the adjusted content offsets.
     ///
-    /// This property specifies how the content area of the tracking scroll view are modified using `adjustedContentInsets`. The default value of this property is FloatingPanelController.ContentInsetAdjustmentBehavior.always.
+    /// This property specifies how the content area of the tracking scroll view is modified using `adjustedContentInsets`. The default value of this property is FloatingPanelController.ContentInsetAdjustmentBehavior.always.
     public var contentInsetAdjustmentBehavior: ContentInsetAdjustmentBehavior = .always
 
     private var floatingPanel: FloatingPanel!
@@ -92,7 +92,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         super.init(coder: aDecoder)
     }
 
-    /// Initialize a newly created a floating panel controller.
+    /// Initialize a newly created floating panel controller.
     public init() {
         super.init(nibName: nil, bundle: nil)
     }
@@ -139,7 +139,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        // I needs to update safeAreaInsets here to ensure that the `adjustedContentInsets` has a correct value.
+        // Need to update safeAreaInsets here to ensure that the `adjustedContentInsets` has a correct value.
         // Because the parent VC does not call viewSafeAreaInsetsDidChange() expectedly and
         // `view.safeAreaInsets` has a correct value of the bottom inset here.
         if let parent = parent {
@@ -173,10 +173,10 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     // MARK: - Container view controller interface
 
-    /// Adds the view managed the controller as a child of the specified view controller.
+    /// Adds the view managed by the controller as a child of the specified view controller.
     /// - Parameters:
-    ///     - parent: A parent view controller object that displays FloatingPanelController's view. A conatiner view controller object isn't applicable.
-    ///     - belowView: Insert the surface view managed by the controller below the specified view. As default, the surface view will be added to the end of the parent list of subviews.
+    ///     - parent: A parent view controller object that displays FloatingPanelController's view. A container view controller object isn't applicable.
+    ///     - belowView: Insert the surface view managed by the controller below the specified view. By default, the surface view will be added to the end of the parent list of subviews.
     ///     - animated: Pass true to animate the presentation; otherwise, pass false.
     public func addPanel(toParent parent: UIViewController, belowView: UIView? = nil, animated: Bool = false) {
         guard self.parent == nil else {
@@ -196,7 +196,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
         parent.addChild(self)
 
-        // Must set a layout again here because `self.traitCollection` is applied correctly on it's added to a parent VC
+        // Must set a layout again here because `self.traitCollection` is applied correctly once it's added to a parent VC
         floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
         floatingPanel.layoutViews(in: parent)
         floatingPanel.present(animated: animated) { [weak self] in
@@ -229,7 +229,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     /// - Parameters:
     ///     - to: Pass a FloatingPanelPosition value to move the surface view to the position.
     ///     - animated: Pass true to animate the presentation; otherwise, pass false.
-    ///     - completion: The block to execute after the view controller is dismissed. This block has no return value and takes no parameters. You may specify nil for this parameter.
+    ///     - completion: The block to execute after the view controller has finished moving. This block has no return value and takes no parameters. You may specify nil for this parameter.
     public func move(to: FloatingPanelPosition, animated: Bool, completion: (() -> Void)? = nil) {
         floatingPanel.move(to: to, animated: animated, completion: completion)
     }
@@ -255,7 +255,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     /// Tracks the specified scroll view to correspond with the scroll.
     ///
     /// - Attention:
-    ///     The specified scroll view must be already assigned the delegate property because the controller intemediates the several delegate methods.
+    ///     The specified scroll view must be already assigned to the delegate property because the controller intermediates between the various delegate methods.
     ///
     public func track(scrollView: UIScrollView) {
         floatingPanel.scrollView = scrollView

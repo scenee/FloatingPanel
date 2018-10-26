@@ -35,7 +35,7 @@ public class FloatingPanelSurfaceView: UIView {
     /// The radius to use when drawing top rounded corners.
     ///
     /// `self.contentView` is masked with the top rounded corners automatically on iOS 11 and later.
-    /// On iOS 10, they are not automatically masked because of UIVisualEffectView issue. See https://forums.developer.apple.com/thread/50854
+    /// On iOS 10, they are not automatically masked because of a UIVisualEffectView issue. See https://forums.developer.apple.com/thread/50854
     public var cornerRadius: CGFloat = 0.0 { didSet { setNeedsLayout() } }
 
     /// A Boolean indicating whether the surface shadow is displayed.
@@ -114,7 +114,7 @@ public class FloatingPanelSurfaceView: UIView {
         updateShadowLayer()
 
         if #available(iOS 11, *) {
-            // Don't use `contentView.clipToBounds` because it makes content view not able to expand the height of a subview of it
+            // Don't use `contentView.clipToBounds` because it prevents content view from expanding the height of a subview of it
             // for the bottom overflow like Auto Layout settings of UIVisualEffectView in Main.storyborad of Example/Maps.
             // Because the bottom of contentView must be fit to the bottom of a screen to work the `safeLayoutGuide` of a content VC.
             let maskLayer = CAShapeLayer()
@@ -126,7 +126,7 @@ public class FloatingPanelSurfaceView: UIView {
             maskLayer.path = path.cgPath
             contentView.layer.mask = maskLayer
         } else {
-            // Don't use `contentView.layer.mask` because of UIVisualEffectView issue on ios10, https://forums.developer.apple.com/thread/50854
+            // Don't use `contentView.layer.mask` because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
             // Instead, a user can mask the content view manually in an application.
         }
 
