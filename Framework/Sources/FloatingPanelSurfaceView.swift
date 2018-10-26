@@ -22,6 +22,7 @@ public class FloatingPanelSurfaceView: UIView {
     public var contentView: UIView!
 
     private var color: UIColor? = .white { didSet { setNeedsDisplay() } }
+    var bottomOverflow: CGFloat = 0.0 { didSet { setNeedsDisplay() }}
 
     public override var backgroundColor: UIColor? {
         get { return color }
@@ -31,7 +32,10 @@ public class FloatingPanelSurfaceView: UIView {
         }
     }
 
-    /// The radius to use when drawing rounded corners
+    /// The radius to use when drawing top rounded corners.
+    ///
+    /// `self.contentView` is masked with the top rounded corners automatically on iOS 11 and later.
+    /// On iOS 10, they are not automatically masked because of UIVisualEffectView issue. See https://forums.developer.apple.com/thread/50854
     public var cornerRadius: CGFloat = 0.0 { didSet { setNeedsLayout() } }
 
     /// A Boolean indicating whether the surface shadow is displayed.
@@ -73,6 +77,7 @@ public class FloatingPanelSurfaceView: UIView {
 
     private func render() {
         super.backgroundColor = .clear
+        self.clipsToBounds = false
 
         let contentView = FloatingPanelSurfaceContentView()
         addSubview(contentView)
@@ -97,30 +102,43 @@ public class FloatingPanelSurfaceView: UIView {
             grabberHandle.heightAnchor.constraint(equalToConstant: grabberHandle.frame.height),
             grabberHandle.centerXAnchor.constraint(equalTo: centerXAnchor),
             ])
+
+        let shadowLayer = CAShapeLayer()
+        layer.insertSublayer(shadowLayer, at: 0)
+        self.shadowLayer = shadowLayer
     }
 
     public override func layoutSubviews() {
         super.layoutSubviews()
+
         updateShadowLayer()
-        // Don't use `contentView.layer.mask` because of UIVisualEffectView issue on ios10, https://forums.developer.apple.com/thread/50854
-        contentView.layer.cornerRadius = cornerRadius
-        contentView.clipsToBounds = true
+
+        if #available(iOS 11, *) {
+            // Don't use `contentView.clipToBounds` because it makes content view not able to expand the height of a subview of it
+            // for the bottom overflow like Auto Layout settings of UIVisualEffectView in Main.storyborad of Example/Maps.
+            // Because the bottom of contentView must be fit to the bottom of a screen to work the `safeLayoutGuide` of a content VC.
+            let maskLayer = CAShapeLayer()
+            var rect = bounds
+            rect.size.height += bottomOverflow
+            let path = UIBezierPath(roundedRect: rect,
+                                    byRoundingCorners: [.topLeft, .topRight],
+                                    cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
+            maskLayer.path = path.cgPath
+            contentView.layer.mask = maskLayer
+        } else {
+            // Don't use `contentView.layer.mask` because of UIVisualEffectView issue on ios10, https://forums.developer.apple.com/thread/50854
+            // Instead, a user can mask the content view manually in an application.
+        }
+
         contentView.layer.borderColor = borderColor?.cgColor
         contentView.layer.borderWidth = borderWidth
     }
 
     private func updateShadowLayer() {
-        if shadowLayer != nil {
-            shadowLayer.removeFromSuperlayer()
-        }
-        shadowLayer = makeShadowLayer()
-        layer.insertSublayer(shadowLayer, at: 0)
-    }
-
-    private func makeShadowLayer() -> CAShapeLayer {
         log.debug("SurfaceView bounds", bounds)
-        let shadowLayer = CAShapeLayer()
-        let path = UIBezierPath(roundedRect: bounds,
+        var rect = bounds
+        rect.size.height += bottomOverflow // Expand the height for overflow buffer
+        let path = UIBezierPath(roundedRect: rect,
                                 byRoundingCorners: [.topLeft, .topRight],
                                 cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
         shadowLayer.path = path.cgPath
@@ -132,6 +150,5 @@ public class FloatingPanelSurfaceView: UIView {
             shadowLayer.shadowOpacity = shadowOpacity
             shadowLayer.shadowRadius = shadowRadius
         }
-        return shadowLayer
     }
 }

@@ -1,4 +1,10 @@
+[![Version](https://img.shields.io/cocoapods/v/FloatingPanel.svg)](https://cocoapods.org/pods/FloatingPanel)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Platform](https://img.shields.io/cocoapods/p/FloatingPanel.svg)](https://cocoapods.org/pods/FloatingPanel)
+[![Swift 4.2](https://img.shields.io/badge/Swift-4.2-orange.svg?style=flat)](https://swift.org/)
+
 #  FloatingPanel
+
 
 FloatingPanel is a simple and easy-to-use UI component for a new interface introduced in Apple Maps, Shortcuts and Stocks app.
 The new interface displays the related contents and utilities in parallel as a user wants.
@@ -7,6 +13,30 @@ The new interface displays the related contents and utilities in parallel as a u
 ![Stocks](https://github.com/SCENEE/FloatingPanel/blob/master/assets/stocks.gif)
 
 ![Maps(Landscape)](https://github.com/SCENEE/FloatingPanel/blob/master/assets/maps-landscape.gif)
+
+<!-- TOC -->
+
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+  - [CocoaPods](#cocoapods)
+  - [Carthage](#carthage)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+  - [Customize the layout of a floating panel with  `FloatingPanelLayout` protocol](#customize-the-layout-of-a-floating-panel-with--floatingpanellayout-protocol)
+    - [Change the initial position, supported positions and height](#change-the-initial-position-supported-positions-and-height)
+    - [Support your landscape layout](#support-your-landscape-layout)
+  - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
+    - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
+  - [Create an additional floating panel for a detail](#create-an-additional-floating-panel-for-a-detail)
+  - [Move a positon with an animation](#move-a-positon-with-an-animation)
+  - [Make your contents correspond with a floating panel behavior](#make-your-contents-correspond-with-a-floating-panel-behavior)
+- [Notes](#notes)
+  - [FloatingPanelSurfaceView's issue on iOS 10](#floatingpanelsurfaceviews-issue-on-ios-10)
+- [Author](#author)
+- [License](#license)
+
+<!-- /TOC -->
 
 ## Features
 
@@ -87,44 +117,39 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
 
 ## Usage
 
-### Move a positon with an animation
+### Customize the layout of a floating panel with  `FloatingPanelLayout` protocol
 
-Move a floating panel to the top and middle of a view while opening and closeing a search bar like Apple Maps.
-
-```swift
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        ...
-        fpc.move(to: .half, animated: true)
-    }
-
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        ...
-        fpc.move(to: .full, animated: true)
-    }
-```
-
-### Make your contents correspond with FloatingPanel behavior
+#### Change the initial position, supported positions and height
 
 ```swift
 class ViewController: UIViewController, FloatingPanelControllerDelegate {
     ...
-    func floatingPanelWillBeginDragging(_ vc: FloatingPanelController) {
-        if vc.position == .full {
-            searchVC.searchBar.showsCancelButton = false
-            searchVC.searchBar.resignFirstResponder()
-        }
-    }
-
-    func floatingPanelDidEndDragging(_ vc: FloatingPanelController, withVelocity velocity: CGPoint, targetPosition: FloatingPanelPosition) {
-        if targetPosition != .full {
-            searchVC.hideHeader()
-        }
+    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
+        return MyFloatingPanelLayout()
     }
     ...
 }
+
+class MyFloatingPanelLayout: FloatingPanelLayout {
+    public var initialPosition: FloatingPanelPosition {
+        return .tip
+    }
+    public var supportedPositions: [FloatingPanelPosition] {
+        return [.full, .half, .tip]
+    }
+
+    public func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        switch position {
+            case .full: return 16.0 # A top inset from safe area
+            case .half: return 216.0 # A bottom inset from the safe area
+            case .tip: return 44.0 # A bottom inset from the safe area
+            default: return nil
+        }
+    }
+}
 ```
 
-### Support your landscape layout with a `FloatingPanelLayout` object
+#### Support your landscape layout
 
 ```swift
 class ViewController: UIViewController, FloatingPanelControllerDelegate {
@@ -160,7 +185,9 @@ class FloatingPanelLandscapeLayout: FloatingPanelLayout {
 }
 ```
 
-### Modify your floating panel's interaction with a `FloatingPanelBehavior` object
+### Customize the behavior with `FloatingPanelBehavior` protocol
+
+#### Modify your floating panel's interaction
 
 ```swift
 class ViewController: UIViewController, FloatingPanelControllerDelegate {
@@ -177,7 +204,7 @@ class FloatingPanelStocksBehavior: FloatingPanelBehavior {
         return 15.0
     }
 
-    func interactionAnimator(to targetPosition: FloatingPanelPosition, with velocity: CGVector) -> UIViewPropertyAnimator {
+    func interactionAnimator(_ fpc: FloatingPanelController, to targetPosition: FloatingPanelPosition, with velocity: CGVector) -> UIViewPropertyAnimator {
         let damping = self.damping(with: velocity)
         let springTiming = UISpringTimingParameters(dampingRatio: damping, initialVelocity: velocity)
         return UIViewPropertyAnimator(duration: 0.5, timingParameters: springTiming)
@@ -215,6 +242,60 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
     ...
 }
 ```
+
+### Move a positon with an animation
+
+In the following example, I move a floating panel to full or half position while opening or closeing a search bar like Apple Maps.
+
+```swift
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        ...
+        fpc.move(to: .half, animated: true)
+    }
+
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        ...
+        fpc.move(to: .full, animated: true)
+    }
+```
+
+### Make your contents correspond with a floating panel behavior
+
+```swift
+class ViewController: UIViewController, FloatingPanelControllerDelegate {
+    ...
+    func floatingPanelWillBeginDragging(_ vc: FloatingPanelController) {
+        if vc.position == .full {
+            searchVC.searchBar.showsCancelButton = false
+            searchVC.searchBar.resignFirstResponder()
+        }
+    }
+
+    func floatingPanelDidEndDragging(_ vc: FloatingPanelController, withVelocity velocity: CGPoint, targetPosition: FloatingPanelPosition) {
+        if targetPosition != .full {
+            searchVC.hideHeader()
+        }
+    }
+    ...
+}
+```
+
+## Notes
+
+###  FloatingPanelSurfaceView's issue on iOS 10
+
+* On iOS 10,   `FloatingPanelSurfaceView.cornerRadius` isn't not automatically masked with the top rounded corners  because of UIVisualEffectView issue. See https://forums.developer.apple.com/thread/50854. 
+So you need to draw top rounding corners of your content.  Here is an example in Examples/Maps.
+```swift
+override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    if #available(iOS 10, *) {
+        visualEffectView.layer.cornerRadius = 9.0
+        visualEffectView.clipsToBounds = true
+    }
+}
+```
+* If you sets clear color to `FloatingPanelSurfaceView.backgrounColor`, please note the bottom overflow of your content on bouncing at full position. To prevent it, you need to expand your content. For example, See Example/Maps's Auto Layout settings of UIVisualEffectView in Main.storyborad.
 
 ## Author
 
