@@ -189,14 +189,42 @@
                                     <action selector="closeWithSender:" destination="bYI-y3-Rzb" eventType="touchUpInside" id="MSC-ch-YJK"/>
                                 </connections>
                             </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="44" translatesAutoresizingMaskIntoConstraints="NO" id="9p4-06-y2T">
+                                <rect key="frame" x="145" y="108" width="85" height="178"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i9x-x5-n1q">
+                                        <rect key="frame" x="0.0" y="0.0" width="80" height="30"/>
+                                        <state key="normal" title="Move to full"/>
+                                        <connections>
+                                            <action selector="moveToFullWithSender:" destination="bYI-y3-Rzb" eventType="touchUpInside" id="TDe-3J-gIR"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2u5-cH-RAN">
+                                        <rect key="frame" x="0.0" y="74" width="85" height="30"/>
+                                        <state key="normal" title="Move to half"/>
+                                        <connections>
+                                            <action selector="moveToHalfWithSender:" destination="bYI-y3-Rzb" eventType="touchUpInside" id="12s-o7-Et5"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M4A-iO-RIE">
+                                        <rect key="frame" x="0.0" y="148" width="77" height="30"/>
+                                        <state key="normal" title="Move to tip"/>
+                                        <connections>
+                                            <action selector="moveToTipWithSender:" destination="bYI-y3-Rzb" eventType="touchUpInside" id="BmL-91-9ai"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="sbF-Az-7sy" firstAttribute="top" secondItem="GBa-yx-8to" secondAttribute="top" id="3VR-hj-zeQ"/>
+                            <constraint firstItem="9p4-06-y2T" firstAttribute="top" secondItem="GBa-yx-8to" secondAttribute="top" constant="88" id="41n-Fn-hi3"/>
                             <constraint firstAttribute="bottom" secondItem="vut-mK-Y4t" secondAttribute="bottom" id="6eq-Kt-heZ"/>
                             <constraint firstItem="sbF-Az-7sy" firstAttribute="leading" secondItem="GBa-yx-8to" secondAttribute="leading" constant="20" id="T2G-1L-PRs"/>
                             <constraint firstItem="vut-mK-Y4t" firstAttribute="leading" secondItem="qwo-GK-p1U" secondAttribute="leading" id="gVC-jv-VJX"/>
                             <constraint firstItem="vut-mK-Y4t" firstAttribute="trailing" secondItem="GBa-yx-8to" secondAttribute="trailing" id="jkq-p2-lUm"/>
+                            <constraint firstItem="9p4-06-y2T" firstAttribute="centerX" secondItem="qwo-GK-p1U" secondAttribute="centerX" id="l8t-p3-ETf"/>
                             <constraint firstItem="vut-mK-Y4t" firstAttribute="top" secondItem="GBa-yx-8to" secondAttribute="bottom" id="rMy-JT-t4B"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="GBa-yx-8to"/>
