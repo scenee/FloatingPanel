@@ -35,8 +35,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private(set) var state: FloatingPanelPosition = .tip
 
+    let panGesture: FloatingPanelPanGestureRecognizer
+
     private var animator: UIViewPropertyAnimator?
-    private let panGesture: UIPanGestureRecognizer
     private var initialFrame: CGRect = .zero
     private var transOffsetY: CGFloat = 0
     private var interactionInProgress: Bool = false
@@ -60,7 +61,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                                                         layout: layout)
         self.behavior = behavior
 
-        panGesture = UIPanGestureRecognizer()
+        panGesture = FloatingPanelPanGestureRecognizer()
 
         if #available(iOS 11.0, *) {
             panGesture.name = "FloatingPanelSurface"
@@ -83,17 +84,43 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     func move(to: FloatingPanelPosition, animated: Bool, completion: (() -> Void)? = nil) {
+        move(from: state, to: to, animated: animated, completion: completion)
+    }
+
+    func present(animated: Bool, completion: (() -> Void)? = nil) {
+        self.layoutAdapter.activateLayout(of: nil)
+        move(from: nil, to: layoutAdapter.layout.initialPosition, animated: animated, completion: completion)
+    }
+
+    func dismiss(animated: Bool, completion: (() -> Void)? = nil) {
+        move(from: state, to: nil, animated: animated, completion: completion)
+    }
+
+    private func move(from: FloatingPanelPosition?, to: FloatingPanelPosition?, animated: Bool, completion: (() -> Void)? = nil) {
         if to != .full {
             lockScrollView()
         }
 
         if animated {
-            let animator = behavior.presentAnimator(self.viewcontroller, from: state, to: to)
+            let animator: UIViewPropertyAnimator
+            switch (from, to) {
+            case (nil, let to?):
+                animator = behavior.addAnimator(self.viewcontroller, to: to)
+            case (let from?, let to?):
+                animator = behavior.moveAnimator(self.viewcontroller, from: from, to: to)
+            case (let from?, nil):
+                animator = behavior.removeAnimator(self.viewcontroller, from: from)
+            case (nil, nil):
+                fatalError()
+            }
+
             animator.addAnimations { [weak self] in
                 guard let self = self else { return }
 
                 self.updateLayout(to: to)
-                self.state = to
+                if let to = to {
+                    self.state = to
+                }
             }
             animator.addCompletion { _ in
                 completion?()
@@ -101,30 +128,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             animator.startAnimation()
         } else {
             self.updateLayout(to: to)
-            self.state = to
-            completion?()
-        }
-    }
-
-    func present(animated: Bool, completion: (() -> Void)? = nil) {
-        self.layoutAdapter.activateLayout(of: nil)
-        move(to: layoutAdapter.layout.initialPosition, animated: animated, completion: completion)
-    }
-
-    func dismiss(animated: Bool, completion: (() -> Void)? = nil) {
-        if animated {
-            let animator = behavior.dismissAnimator(self.viewcontroller, from: state)
-            animator.addAnimations { [weak self] in
-                guard let self = self else { return }
-
-                self.updateLayout(to: nil)
+            if let to = to {
+                self.state = to
             }
-            animator.addCompletion { _ in
-                completion?()
-            }
-            animator.startAnimation()
-        } else {
-            self.updateLayout(to: nil)
             completion?()
         }
     }
@@ -178,10 +184,17 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         guard gestureRecognizer == panGesture else { return false }
 
         // Do not begin the pan gesture until any other gestures fail except fo the tracking scrollView's pan gesture.
-        if otherGestureRecognizer == scrollView?.panGestureRecognizer {
+        switch otherGestureRecognizer {
+        case scrollView?.panGestureRecognizer:
             return false
-        } else {
+        case is UIPanGestureRecognizer,
+             is UISwipeGestureRecognizer,
+             is UIRotationGestureRecognizer,
+             is UIScreenEdgePanGestureRecognizer,
+             is UIPinchGestureRecognizer:
             return true
+        default:
+            return false
         }
     }
 
@@ -373,16 +386,16 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private func targetPosition(with translation: CGPoint, velocity: CGPoint) -> (FloatingPanelPosition) {
         let currentY = getCurrentY(from: initialFrame, with: translation)
-        let supportedPositions = Set(layoutAdapter.layout.supportedPositions)
+        let supportedPositions: Set = layoutAdapter.layout.supportedPositions
 
         assert(supportedPositions.count > 1)
 
         switch supportedPositions {
-        case Set([.full, .half]):
+        case [.full, .half]:
             return targetPosition(from: [.full, .half], at: currentY, velocity: velocity)
-        case Set([.half, .tip]):
+        case [.half, .tip]:
             return targetPosition(from: [.half, .tip], at: currentY, velocity: velocity)
-        case Set([.full, .tip]):
+        case [.full, .tip]:
             return targetPosition(from: [.full, .tip], at: currentY, velocity: velocity)
         default:
             /*
@@ -491,6 +504,24 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             stopScrollDeceleration = false
         } else {
             userScrollViewDelegate?.scrollViewWillEndDragging?(scrollView, withVelocity: velocity, targetContentOffset: targetContentOffset)
+        }
+    }
+}
+
+class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
+    override weak var delegate: UIGestureRecognizerDelegate? {
+        get {
+            return super.delegate
+        }
+        set {
+            guard newValue is FloatingPanel else {
+                let exception = NSException(name: .invalidArgumentException,
+                                            reason: "FloatingPanelController's built-in pan gesture recognizer must have its controller as its delegate.",
+                                            userInfo: nil)
+                exception.raise()
+                return
+            }
+            super.delegate = newValue
         }
     }
 }

@@ -303,6 +303,16 @@ class ModalViewController: UIViewController {
     @IBAction func close(sender: UIButton) {
         dismiss(animated: true, completion: nil)
     }
+
+    @IBAction func moveToFull(sender: UIButton) {
+        fpc.move(to: .full, animated: true)
+    }
+    @IBAction func moveToHalf(sender: UIButton) {
+        fpc.move(to: .half, animated: true)
+    }
+    @IBAction func moveToTip(sender: UIButton) {
+        fpc.move(to: .tip, animated: true)
+    }
 }
 
 class TabBarViewController: UITabBarController {}
@@ -373,7 +383,7 @@ class OneTabBarPanelLayout: FloatingPanelLayout {
     var initialPosition: FloatingPanelPosition {
         return .tip
     }
-    var supportedPositions: [FloatingPanelPosition] {
+    var supportedPositions: Set<FloatingPanelPosition> {
         return [.full, .tip]
     }
 
@@ -390,7 +400,7 @@ class TwoTabBarPanel2Layout: FloatingPanelLayout {
     var initialPosition: FloatingPanelPosition {
         return .half
     }
-    var supportedPositions: [FloatingPanelPosition] {
+    var supportedPositions: Set<FloatingPanelPosition> {
         return [.full, .half]
     }
     var bottomInteractionBuffer: CGFloat {

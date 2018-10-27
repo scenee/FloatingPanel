@@ -102,10 +102,6 @@ class NewsViewController: UIViewController {
 // MARK: My custom layout
 
 class FloatingPanelStocksLayout: FloatingPanelLayout {
-    public var supportedPositions: [FloatingPanelPosition] {
-        return [.full, .half, .tip]
-    }
-
     var initialPosition: FloatingPanelPosition {
         return .tip
     }
@@ -119,13 +115,6 @@ class FloatingPanelStocksLayout: FloatingPanelLayout {
         case .half: return 262.0
         case .tip: return 85.0 + 44.0 // Visible + ToolView
         }
-    }
-
-    func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
-        return [
-            surfaceView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 0.0),
-            surfaceView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: 0.0),
-        ]
     }
 
     var backdropAlpha: CGFloat = 0.0

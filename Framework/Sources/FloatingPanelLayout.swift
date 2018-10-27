@@ -6,11 +6,11 @@
 import UIKit
 
 public protocol FloatingPanelLayout: class {
-    /// Returns the initial position of a floating panel
+    /// Returns the initial position of a floating panel.
     var initialPosition: FloatingPanelPosition { get }
 
-    /// Returns an array of FloatingPanelPosition objects to tell the applicable positions of the floating panel controller
-    var supportedPositions: [FloatingPanelPosition] { get }
+    /// Returns a set of FloatingPanelPosition objects to tell the applicable positions of the floating panel controller. Default is all of them.
+    var supportedPositions: Set<FloatingPanelPosition> { get }
 
     /// Return the interaction buffer to the top from the top position. Default is 6.0.
     var topInteractionBuffer: CGFloat { get }
@@ -27,6 +27,7 @@ public protocol FloatingPanelLayout: class {
     /// Returns X-axis and width layout constraints of the surface view of a floating panel.
     /// You must not include any Y-axis and height layout constraints of the surface view
     /// because their constraints will be configured by the floating panel controller.
+    /// By default, the width of a surface view fits a safe area.
     func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint]
 
     /// Return the backdrop alpha of black color in full position. Default is 0.3.
@@ -37,13 +38,20 @@ public extension FloatingPanelLayout {
     var backdropAlpha: CGFloat { return 0.3 }
     var topInteractionBuffer: CGFloat { return 6.0 }
     var bottomInteractionBuffer: CGFloat { return 6.0 }
+
+    public var supportedPositions: Set<FloatingPanelPosition> {
+        return Set(FloatingPanelPosition.allCases)
+    }
+    
+    func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
+        return [
+            surfaceView.leftAnchor.constraint(equalTo: view.sideLayoutGuide.leftAnchor, constant: 0.0),
+            surfaceView.rightAnchor.constraint(equalTo: view.sideLayoutGuide.rightAnchor, constant: 0.0),
+        ]
+    }
 }
 
 public class FloatingPanelDefaultLayout: FloatingPanelLayout {
-    public var supportedPositions: [FloatingPanelPosition] {
-        return [.full, .half, .tip]
-    }
-
     public var initialPosition: FloatingPanelPosition {
         return .half
     }
@@ -55,20 +63,13 @@ public class FloatingPanelDefaultLayout: FloatingPanelLayout {
         case .tip: return 69.0
         }
     }
-
-    public func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
-        return [
-            surfaceView.leftAnchor.constraint(equalTo: view.sideLayoutGuide.leftAnchor, constant: 0.0),
-            surfaceView.rightAnchor.constraint(equalTo: view.sideLayoutGuide.rightAnchor, constant: 0.0),
-        ]
-    }
 }
 
 public class FloatingPanelDefaultLandscapeLayout: FloatingPanelLayout {
     public var initialPosition: FloatingPanelPosition {
         return .tip
     }
-    public var supportedPositions: [FloatingPanelPosition] {
+    public var supportedPositions: Set<FloatingPanelPosition> {
         return [.full, .tip]
     }
 
@@ -82,9 +83,9 @@ public class FloatingPanelDefaultLandscapeLayout: FloatingPanelLayout {
 
     public func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
         return [
-            surfaceView.leftAnchor.constraint(equalTo: view.sideLayoutGuide.leftAnchor, constant: 8.0),
-            surfaceView.widthAnchor.constraint(equalToConstant: 291),
-            ]
+            surfaceView.leftAnchor.constraint(equalTo: view.sideLayoutGuide.leftAnchor, constant: 0.0),
+            surfaceView.rightAnchor.constraint(equalTo: view.sideLayoutGuide.rightAnchor, constant: 0.0),
+        ]
     }
 }
 
@@ -93,7 +94,9 @@ class FloatingPanelLayoutAdapter {
     private weak var surfaceView: FloatingPanelSurfaceView!
     private weak var backdropVIew: FloatingPanelBackdropView!
 
-    var layout: FloatingPanelLayout
+    var layout: FloatingPanelLayout {
+        didSet { checkConsistance(of: layout) }
+    }
 
     var safeAreaInsets: UIEdgeInsets = .zero {
         didSet {
@@ -161,13 +164,6 @@ class FloatingPanelLayoutAdapter {
         self.layout = layout
         self.surfaceView = surfaceView
         self.backdropVIew = backdropView
-
-        // Verify layout configurations
-        assert(layout.supportedPositions.count > 1)
-        assert(layout.supportedPositions.contains(layout.initialPosition))
-        if halfInset > 0 {
-            assert(halfInset >= tipInset)
-        }
     }
 
     func prepareLayout(toParent parent: UIViewController) {
@@ -257,6 +253,24 @@ class FloatingPanelLayoutAdapter {
         case .tip:
             NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + offConstraints)
             NSLayoutConstraint.activate(tipConstraints)
+        }
+    }
+
+    private func checkConsistance(of layout: FloatingPanelLayout) {
+        // Verify layout configurations
+        assert(layout.supportedPositions.count > 1)
+        assert(layout.supportedPositions.contains(layout.initialPosition),
+               "Does not include an initial potision(\(layout.initialPosition)) in supportedPositions(\(layout.supportedPositions))")
+        layout.supportedPositions.forEach { (pos) in
+            assert(layout.insetFor(position: pos) != nil,
+                   "Undefined an inset for a pos(\(pos))")
+        }
+        if halfInset > 0 {
+            assert(halfInset > tipInset, "Invalid half and tip insets")
+        }
+        if fullInset > 0 {
+            assert(middleY > topY, "Invalid insets")
+            assert(bottomY > topY, "Invalid insets")
         }
     }
 }
