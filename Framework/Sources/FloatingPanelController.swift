@@ -71,6 +71,11 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         return floatingPanel.scrollView
     }
 
+    // The underlying gesture recognizer for pan gestures
+    public var panGestureRecognizer: UIPanGestureRecognizer {
+        return floatingPanel.panGesture
+    }
+
     /// The current position of the floating panel controller's contents.
     public var position: FloatingPanelPosition {
         return floatingPanel.state
@@ -90,11 +95,19 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+
+        floatingPanel = FloatingPanel(self,
+                                      layout: fetchLayout(for: self.traitCollection),
+                                      behavior: fetchBehavior(for: self.traitCollection))
     }
 
     /// Initialize a newly created floating panel controller.
     public init() {
         super.init(nibName: nil, bundle: nil)
+
+        floatingPanel = FloatingPanel(self,
+                                      layout: fetchLayout(for: self.traitCollection),
+                                      behavior: fetchBehavior(for: self.traitCollection))
     }
 
     /// Creates the view that the controller manages.
@@ -105,12 +118,6 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         view.backgroundColor = .white
 
         self.view = view as UIView
-
-        let layout = fetchLayout(for: self.traitCollection)
-        let behavior = fetchBehavior(for: self.traitCollection)
-        floatingPanel = FloatingPanel(self,
-                                      layout: layout,
-                                      behavior: behavior)
     }
 
     public override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {

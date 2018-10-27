@@ -35,8 +35,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private(set) var state: FloatingPanelPosition = .tip
 
+    let panGesture: FloatingPanelPanGestureRecognizer
+
     private var animator: UIViewPropertyAnimator?
-    private let panGesture: UIPanGestureRecognizer
     private var initialFrame: CGRect = .zero
     private var transOffsetY: CGFloat = 0
     private var interactionInProgress: Bool = false
@@ -60,7 +61,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                                                         layout: layout)
         self.behavior = behavior
 
-        panGesture = UIPanGestureRecognizer()
+        panGesture = FloatingPanelPanGestureRecognizer()
 
         if #available(iOS 11.0, *) {
             panGesture.name = "FloatingPanelSurface"
@@ -491,6 +492,24 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             stopScrollDeceleration = false
         } else {
             userScrollViewDelegate?.scrollViewWillEndDragging?(scrollView, withVelocity: velocity, targetContentOffset: targetContentOffset)
+        }
+    }
+}
+
+class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
+    override weak var delegate: UIGestureRecognizerDelegate? {
+        get {
+            return super.delegate
+        }
+        set {
+            guard newValue is FloatingPanel else {
+                let exception = NSException(name: .invalidArgumentException,
+                                            reason: "FloatingPanelController's built-in pan gesture recognizer must have its controller as its delegate.",
+                                            userInfo: nil)
+                exception.raise()
+                return
+            }
+            super.delegate = newValue
         }
     }
 }
