@@ -373,16 +373,16 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private func targetPosition(with translation: CGPoint, velocity: CGPoint) -> (FloatingPanelPosition) {
         let currentY = getCurrentY(from: initialFrame, with: translation)
-        let supportedPositions = Set(layoutAdapter.layout.supportedPositions)
+        let supportedPositions: Set = layoutAdapter.layout.supportedPositions
 
         assert(supportedPositions.count > 1)
 
         switch supportedPositions {
-        case Set([.full, .half]):
+        case [.full, .half]:
             return targetPosition(from: [.full, .half], at: currentY, velocity: velocity)
-        case Set([.half, .tip]):
+        case [.half, .tip]:
             return targetPosition(from: [.half, .tip], at: currentY, velocity: velocity)
-        case Set([.full, .tip]):
+        case [.full, .tip]:
             return targetPosition(from: [.full, .tip], at: currentY, velocity: velocity)
         default:
             /*

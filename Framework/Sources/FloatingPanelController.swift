@@ -36,7 +36,7 @@ public extension FloatingPanelControllerDelegate {
     func floatingPanelDidEndDecelerating(_ vc: FloatingPanelController) {}
 }
 
-public enum FloatingPanelPosition: Int {
+public enum FloatingPanelPosition: Int, CaseIterable {
     case full
     case half
     case tip
