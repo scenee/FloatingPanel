@@ -94,7 +94,9 @@ class FloatingPanelLayoutAdapter {
     private weak var surfaceView: FloatingPanelSurfaceView!
     private weak var backdropVIew: FloatingPanelBackdropView!
 
-    var layout: FloatingPanelLayout
+    var layout: FloatingPanelLayout {
+        didSet { checkConsistance(of: layout) }
+    }
 
     var safeAreaInsets: UIEdgeInsets = .zero {
         didSet {
@@ -162,13 +164,6 @@ class FloatingPanelLayoutAdapter {
         self.layout = layout
         self.surfaceView = surfaceView
         self.backdropVIew = backdropView
-
-        // Verify layout configurations
-        assert(layout.supportedPositions.count > 1)
-        assert(layout.supportedPositions.contains(layout.initialPosition))
-        if halfInset > 0 {
-            assert(halfInset >= tipInset)
-        }
     }
 
     func prepareLayout(toParent parent: UIViewController) {
@@ -258,6 +253,24 @@ class FloatingPanelLayoutAdapter {
         case .tip:
             NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + offConstraints)
             NSLayoutConstraint.activate(tipConstraints)
+        }
+    }
+
+    private func checkConsistance(of layout: FloatingPanelLayout) {
+        // Verify layout configurations
+        assert(layout.supportedPositions.count > 1)
+        assert(layout.supportedPositions.contains(layout.initialPosition),
+               "Does not include an initial potision(\(layout.initialPosition)) in supportedPositions(\(layout.supportedPositions))")
+        layout.supportedPositions.forEach { (pos) in
+            assert(layout.insetFor(position: pos) != nil,
+                   "Undefined an inset for a pos(\(pos))")
+        }
+        if halfInset > 0 {
+            assert(halfInset > tipInset, "Invalid half and tip insets")
+        }
+        if fullInset > 0 {
+            assert(middleY > topY, "Invalid insets")
+            assert(bottomY > topY, "Invalid insets")
         }
     }
 }
