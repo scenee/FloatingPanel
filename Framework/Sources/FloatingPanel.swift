@@ -184,10 +184,17 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         guard gestureRecognizer == panGesture else { return false }
 
         // Do not begin the pan gesture until any other gestures fail except fo the tracking scrollView's pan gesture.
-        if otherGestureRecognizer == scrollView?.panGestureRecognizer {
+        switch otherGestureRecognizer {
+        case scrollView?.panGestureRecognizer:
             return false
-        } else {
+        case is UIPanGestureRecognizer,
+             is UISwipeGestureRecognizer,
+             is UIRotationGestureRecognizer,
+             is UIScreenEdgePanGestureRecognizer,
+             is UIPinchGestureRecognizer:
             return true
+        default:
+            return false
         }
     }
 
