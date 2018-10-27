@@ -84,17 +84,43 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     func move(to: FloatingPanelPosition, animated: Bool, completion: (() -> Void)? = nil) {
+        move(from: state, to: to, animated: animated, completion: completion)
+    }
+
+    func present(animated: Bool, completion: (() -> Void)? = nil) {
+        self.layoutAdapter.activateLayout(of: nil)
+        move(from: nil, to: layoutAdapter.layout.initialPosition, animated: animated, completion: completion)
+    }
+
+    func dismiss(animated: Bool, completion: (() -> Void)? = nil) {
+        move(from: state, to: nil, animated: animated, completion: completion)
+    }
+
+    private func move(from: FloatingPanelPosition?, to: FloatingPanelPosition?, animated: Bool, completion: (() -> Void)? = nil) {
         if to != .full {
             lockScrollView()
         }
 
         if animated {
-            let animator = behavior.presentAnimator(self.viewcontroller, from: state, to: to)
+            let animator: UIViewPropertyAnimator
+            switch (from, to) {
+            case (nil, let to?):
+                animator = behavior.addAnimator(self.viewcontroller, to: to)
+            case (let from?, let to?):
+                animator = behavior.moveAnimator(self.viewcontroller, from: from, to: to)
+            case (let from?, nil):
+                animator = behavior.removeAnimator(self.viewcontroller, from: from)
+            case (nil, nil):
+                fatalError()
+            }
+
             animator.addAnimations { [weak self] in
                 guard let self = self else { return }
 
                 self.updateLayout(to: to)
-                self.state = to
+                if let to = to {
+                    self.state = to
+                }
             }
             animator.addCompletion { _ in
                 completion?()
@@ -102,30 +128,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             animator.startAnimation()
         } else {
             self.updateLayout(to: to)
-            self.state = to
-            completion?()
-        }
-    }
-
-    func present(animated: Bool, completion: (() -> Void)? = nil) {
-        self.layoutAdapter.activateLayout(of: nil)
-        move(to: layoutAdapter.layout.initialPosition, animated: animated, completion: completion)
-    }
-
-    func dismiss(animated: Bool, completion: (() -> Void)? = nil) {
-        if animated {
-            let animator = behavior.dismissAnimator(self.viewcontroller, from: state)
-            animator.addAnimations { [weak self] in
-                guard let self = self else { return }
-
-                self.updateLayout(to: nil)
+            if let to = to {
+                self.state = to
             }
-            animator.addCompletion { _ in
-                completion?()
-            }
-            animator.startAnimation()
-        } else {
-            self.updateLayout(to: nil)
             completion?()
         }
     }
