@@ -161,7 +161,7 @@ class FloatingPanelLandscapeLayout: FloatingPanelLayout {
     public var initialPosition: FloatingPanelPosition {
         return .tip
     }
-    public var supportedPositions: [FloatingPanelPosition] {
+    public var supportedPositions: Set<FloatingPanelPosition> {
         return [.full, .tip]
     }
 

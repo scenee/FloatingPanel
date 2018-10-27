@@ -373,7 +373,7 @@ class OneTabBarPanelLayout: FloatingPanelLayout {
     var initialPosition: FloatingPanelPosition {
         return .tip
     }
-    var supportedPositions: [FloatingPanelPosition] {
+    var supportedPositions: Set<FloatingPanelPosition> {
         return [.full, .tip]
     }
 
@@ -390,7 +390,7 @@ class TwoTabBarPanel2Layout: FloatingPanelLayout {
     var initialPosition: FloatingPanelPosition {
         return .half
     }
-    var supportedPositions: [FloatingPanelPosition] {
+    var supportedPositions: Set<FloatingPanelPosition> {
         return [.full, .half]
     }
     var bottomInteractionBuffer: CGFloat {

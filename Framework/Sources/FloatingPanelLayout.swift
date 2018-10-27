@@ -9,8 +9,8 @@ public protocol FloatingPanelLayout: class {
     /// Returns the initial position of a floating panel.
     var initialPosition: FloatingPanelPosition { get }
 
-    /// Returns an array of FloatingPanelPosition objects to tell the applicable positions of the floating panel controller. Default is all of them.
-    var supportedPositions: [FloatingPanelPosition] { get }
+    /// Returns a set of FloatingPanelPosition objects to tell the applicable positions of the floating panel controller. Default is all of them.
+    var supportedPositions: Set<FloatingPanelPosition> { get }
 
     /// Return the interaction buffer to the top from the top position. Default is 6.0.
     var topInteractionBuffer: CGFloat { get }
@@ -39,8 +39,8 @@ public extension FloatingPanelLayout {
     var topInteractionBuffer: CGFloat { return 6.0 }
     var bottomInteractionBuffer: CGFloat { return 6.0 }
 
-    public var supportedPositions: [FloatingPanelPosition] {
-        return [.full, .half, .tip]
+    public var supportedPositions: Set<FloatingPanelPosition> {
+        return Set(FloatingPanelPosition.allCases)
     }
     
     func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
@@ -69,7 +69,7 @@ public class FloatingPanelDefaultLandscapeLayout: FloatingPanelLayout {
     public var initialPosition: FloatingPanelPosition {
         return .tip
     }
-    public var supportedPositions: [FloatingPanelPosition] {
+    public var supportedPositions: Set<FloatingPanelPosition> {
         return [.full, .tip]
     }
 
