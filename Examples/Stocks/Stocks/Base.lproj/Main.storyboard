@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina5_9" orientation="portrait">
+    <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -15,11 +15,11 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Stocks" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Uop-sw-I6p">
-                                <rect key="frame" x="0.0" y="109" width="375" height="624.66666666666663"/>
+                                <rect key="frame" x="0.0" y="85" width="375" height="537.5"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="375" placeholderIntrinsicHeight="625" image="stocks_list" translatesAutoresizingMaskIntoConstraints="NO" id="XJR-iK-fem">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="625"/>
@@ -34,10 +34,10 @@
                                 </constraints>
                             </scrollView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dFl-81-6ok">
-                                <rect key="frame" x="0.0" y="733.66666666666663" width="375" height="78.333333333333371"/>
+                                <rect key="frame" x="0.0" y="622.5" width="375" height="44.5"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="yahoo_bottom_bar" translatesAutoresizingMaskIntoConstraints="NO" id="NKr-gS-mpx">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="44.333333333333336"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="44.5"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="44.5" id="B5t-ZF-qUj"/>
@@ -52,18 +52,17 @@
                                     <constraint firstItem="NKr-gS-mpx" firstAttribute="leading" secondItem="dFl-81-6ok" secondAttribute="leading" id="T2r-kY-JYy"/>
                                 </constraints>
                             </view>
-                            <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" axis="vertical" alignment="top" spacing="-8" translatesAutoresizingMaskIntoConstraints="NO" id="f7r-Al-pIN">
-                                <rect key="frame" x="16" y="44.000000000000014" width="153.33333333333334" height="56.666666666666664"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="-8" translatesAutoresizingMaskIntoConstraints="NO" id="f7r-Al-pIN">
+                                <rect key="frame" x="16" y="20" width="153.5" height="57"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="STOCKS" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PCG-Wl-fXa">
-                                        <rect key="frame" x="0.0" y="0.0" width="111.66666666666667" height="32.333333333333336"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="111.5" height="32.5"/>
                                         <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="27"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="OCTOBER 5" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XmK-pu-9g4">
-                                        <rect key="frame" x="0.0" y="24.333333333333332" width="153.33333333333334" height="32.333333333333343"/>
+                                        <rect key="frame" x="0.0" y="24.5" width="153.5" height="32.5"/>
                                         <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="27"/>
                                         <color key="textColor" red="0.55308091640472412" green="0.55657511949539185" blue="0.57255202531814575" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <nil key="highlightedColor"/>
@@ -75,10 +74,12 @@
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="dFl-81-6ok" secondAttribute="trailing" id="20i-yz-AaQ"/>
                             <constraint firstItem="Uop-sw-I6p" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="44w-r8-vYl"/>
+                            <constraint firstItem="f7r-Al-pIN" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="4Bq-Km-eET"/>
                             <constraint firstItem="Uop-sw-I6p" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="65" id="CXL-Dk-8MM"/>
                             <constraint firstItem="Uop-sw-I6p" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="CsO-WF-T8L"/>
                             <constraint firstItem="dFl-81-6ok" firstAttribute="top" secondItem="Uop-sw-I6p" secondAttribute="bottom" id="Cz0-dW-r9H"/>
                             <constraint firstAttribute="bottom" secondItem="dFl-81-6ok" secondAttribute="bottom" id="KGl-8W-5ja"/>
+                            <constraint firstItem="f7r-Al-pIN" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="1.4210854715202004e-14" id="Qvt-vQ-PpT"/>
                             <constraint firstItem="dFl-81-6ok" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="nlX-Ab-1aI"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="NKr-gS-mpx" secondAttribute="bottom" id="yeu-NH-Pmp"/>
                         </constraints>
