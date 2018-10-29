@@ -34,8 +34,13 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     unowned let viewcontroller: FloatingPanelController
 
     private(set) var state: FloatingPanelPosition = .tip
+    private var isBottomState: Bool {
+        let remains = layoutAdapter.layout.supportedPositions.filter { $0.rawValue > state.rawValue }
+        return remains.count == 0
+    }
 
     let panGesture: FloatingPanelPanGestureRecognizer
+    var isRemovalInteractionEnabled: Bool = false
 
     private var animator: UIViewPropertyAnimator?
     private var initialFrame: CGRect = .zero
@@ -235,6 +240,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             case .began:
                 panningBegan()
             case .changed:
+                if interactionInProgress == false {
+                    startInteraction(with: translation)
+                }
                 panningChange(with: translation)
             case .ended, .cancelled, .failed:
                 panningEnd(with: translation, velocity: velocity)
@@ -255,9 +263,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private func panningChange(with translation: CGPoint) {
         log.debug("panningChange")
-        if interactionInProgress == false {
-            startInteraction(with: translation)
-        }
 
         let currentY = getCurrentY(from: initialFrame, with: translation)
 
@@ -275,7 +280,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             initialFrame = surfaceView.frame
         }
 
-        stopScrollDeceleration = (surfaceView.frame.minY > layoutAdapter.topY) // Projecting the dragging to the scroll dragging
+        stopScrollDeceleration = (surfaceView.frame.minY > layoutAdapter.topY) // Projecting the dragging to the scroll dragging or not
 
         let targetPosition = self.targetPosition(with: translation, velocity: velocity)
         let distance = self.distance(to: targetPosition, with: translation)
@@ -283,6 +288,21 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         endInteraction(for: targetPosition)
 
         viewcontroller.delegate?.floatingPanelDidEndDragging(viewcontroller, withVelocity: velocity, targetPosition: targetPosition)
+
+        if isRemovalInteractionEnabled, isBottomState {
+            let vth = behavior.removalVelocityThreshold
+            let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: max(min(velocity.y/distance, vth), 0.0)) : .zero
+            if velocityVector.dy == vth {
+                let animator = behavior.removalInteractionAnimator(self.viewcontroller, with: velocityVector)
+                animator.addAnimations { [weak self] in
+                    guard let self = self else { return }
+                    self.updateLayout(to: nil)
+                } 
+                animator.startAnimation()
+                return
+            }
+        }
+
         viewcontroller.delegate?.floatingPanelWillBeginDecelerating(viewcontroller)
 
         startAnimation(to: targetPosition, at: distance, with: velocity)

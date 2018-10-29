@@ -91,6 +91,12 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     /// This property specifies how the content area of the tracking scroll view is modified using `adjustedContentInsets`. The default value of this property is FloatingPanelController.ContentInsetAdjustmentBehavior.always.
     public var contentInsetAdjustmentBehavior: ContentInsetAdjustmentBehavior = .always
 
+    /// A Boolean value that determines whether the removal interaction is enabled.
+    public var isRemovalInteractionEnabled: Bool {
+        set { floatingPanel.isRemovalInteractionEnabled = newValue }
+        get { return floatingPanel.isRemovalInteractionEnabled }
+    }
+
     private var floatingPanel: FloatingPanel!
 
     required init?(coder aDecoder: NSCoder) {
@@ -208,6 +214,9 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         // Must set a layout again here because `self.traitCollection` is applied correctly once it's added to a parent VC
         floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
         floatingPanel.layoutViews(in: parent)
+
+        floatingPanel.behavior = fetchBehavior(for: traitCollection)
+
         floatingPanel.present(animated: animated) { [weak self] in
             guard let self = self else { return }
             self.didMove(toParent: parent)
