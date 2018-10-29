@@ -269,15 +269,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
         if let vc = contentViewController {
             let surfaceView = self.view as! FloatingPanelSurfaceView
-            surfaceView.contentView.addSubview(vc.view)
-            vc.view.frame = surfaceView.contentView.bounds
-            vc.view.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                vc.view.topAnchor.constraint(equalTo: surfaceView.contentView.topAnchor, constant: 0.0),
-                vc.view.leftAnchor.constraint(equalTo: surfaceView.contentView.leftAnchor, constant: 0.0),
-                vc.view.rightAnchor.constraint(equalTo: surfaceView.contentView.rightAnchor, constant: 0.0),
-                vc.view.bottomAnchor.constraint(equalTo: surfaceView.contentView.bottomAnchor, constant: 0.0),
-                ])
+            surfaceView.add(childView: vc.view)
             addChild(vc)
             vc.didMove(toParent: self)
         }
