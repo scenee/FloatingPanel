@@ -70,9 +70,10 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         mainPanelVC.surfaceView.cornerRadius = 6.0
         mainPanelVC.surfaceView.shadowHidden = false
 
-        // Add a content view controller and connect with the scroll view
-        mainPanelVC.show(contentVC, sender: self)
+        // Set a content view controller
+        mainPanelVC.set(contentViewController: contentVC)
 
+        // Track a scroll view
         switch contentVC {
         case let consoleVC as DebugTextViewController:
             mainPanelVC.track(scrollView: consoleVC.textView)
@@ -128,10 +129,8 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             detailPanelVC.surfaceView.cornerRadius = 6.0
             detailPanelVC.surfaceView.shadowHidden = false
 
-            // Add a content view controller and connect with the scroll view
-            detailPanelVC.show(contentVC, sender: self)
-
-            // (contentVC as? DetailViewController)?.closeButton?.addTarget(self, action: #selector(dismissDetailPanelVC), for: .touchUpInside)
+            // Set a content view controller
+            detailPanelVC.set(contentViewController: contentVC)
 
             //  Add FloatingPanel to self.view
             detailPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
@@ -299,6 +298,18 @@ class DetailViewController: UIViewController {
         // dismiss(animated: true, completion: nil)
         (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
     }
+
+    @IBAction func buttonPressed(_ sender: UIButton) {
+        switch sender.titleLabel?.text {
+        case "Show":
+            performSegue(withIdentifier: "ShowSegue", sender: self)
+        case "Present Modally":
+            performSegue(withIdentifier: "PresentModallySegue", sender: self)
+        default:
+            break
+        }
+    }
+
     @IBAction func tapped(_ sender: Any) {
         print("Detail panel is tapped!")
     }
@@ -323,11 +334,12 @@ class ModalViewController: UIViewController {
         fpc.surfaceView.cornerRadius = 6.0
         fpc.surfaceView.shadowHidden = false
 
-        // Add a content view controller and connect with the scroll view
+        // Set a content view controller and track the scroll view
         let consoleVC = storyboard?.instantiateViewController(withIdentifier: "ConsoleViewController") as! DebugTextViewController
-        fpc.show(consoleVC, sender: self)
-        self.consoleVC = consoleVC
+        fpc.set(contentViewController: consoleVC)
         fpc.track(scrollView: consoleVC.textView)
+
+        self.consoleVC = consoleVC
 
         //  Add FloatingPanel to self.view
         fpc.addPanel(toParent: self, belowView: safeAreaView)
@@ -370,11 +382,11 @@ class TabBarContentViewController: UIViewController, FloatingPanelControllerDele
         fpc.surfaceView.cornerRadius = 6.0
         fpc.surfaceView.shadowHidden = false
 
-        // Add a content view controller and connect with the scroll view
+        // Set a content view controller and track the scroll view
         let consoleVC = storyboard?.instantiateViewController(withIdentifier: "ConsoleViewController") as! DebugTextViewController
-        fpc.show(consoleVC, sender: self)
-        self.consoleVC = consoleVC
+        fpc.set(contentViewController: consoleVC)
         fpc.track(scrollView: consoleVC.textView)
+        self.consoleVC = consoleVC
 
         //  Add FloatingPanel to self.view
         fpc.addPanel(toParent: self)
