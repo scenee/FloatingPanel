@@ -34,8 +34,8 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
 
         newsVC = storyboard?.instantiateViewController(withIdentifier: "News") as? NewsViewController
 
-        // Add a content view controller
-        fpc.show(newsVC, sender: self)
+        // Set a content view controller
+        fpc.set(contentViewController: newsVC)
         fpc.track(scrollView: newsVC.scrollView)
 
         fpc.addPanel(toParent: self, belowView: bottomToolView, animated: false)

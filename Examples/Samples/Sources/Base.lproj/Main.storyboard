@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="RoN-h0-uBD">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="RoN-h0-uBD">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -356,7 +356,7 @@
                     </connections>
                 </swipeGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="1239" y="806"/>
+            <point key="canvasLocation" x="1311" y="806"/>
         </scene>
         <!--Detail View Controller-->
         <scene sceneID="b6k-zi-3wn">
@@ -390,14 +390,36 @@
                                     <constraint firstAttribute="height" constant="44" id="DQJ-cY-cKx"/>
                                 </constraints>
                             </view>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="22" translatesAutoresizingMaskIntoConstraints="NO" id="tP3-oJ-4EB">
+                                <rect key="frame" x="130.5" y="108" width="114" height="82"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="c5r-jU-haj">
+                                        <rect key="frame" x="0.0" y="0.0" width="114" height="30"/>
+                                        <state key="normal" title="Show"/>
+                                        <connections>
+                                            <action selector="buttonPressed:" destination="YC8-ae-15L" eventType="touchUpInside" id="Mi1-o6-TWt"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wmd-ab-Nz3">
+                                        <rect key="frame" x="0.0" y="52" width="114" height="30"/>
+                                        <state key="normal" title="Present Modallly"/>
+                                        <connections>
+                                            <action selector="buttonPressed:" destination="YC8-ae-15L" eventType="touchUpInside" id="tjH-Ev-kpx"/>
+                                            <segue destination="bYI-y3-Rzb" kind="presentation" identifier="PresentModallySegue" id="3yq-HE-Tgn"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="noi-1a-5bZ" firstAttribute="top" secondItem="g7l-kO-y7q" secondAttribute="top" constant="12" id="EQy-cr-F2Y"/>
+                            <constraint firstItem="tP3-oJ-4EB" firstAttribute="centerX" secondItem="g7l-kO-y7q" secondAttribute="centerX" id="EsD-Vf-dNZ"/>
                             <constraint firstItem="8yw-OC-Ubk" firstAttribute="bottom" secondItem="g7l-kO-y7q" secondAttribute="bottom" id="JOL-wC-w74"/>
                             <constraint firstItem="8yw-OC-Ubk" firstAttribute="leading" secondItem="tAi-nk-rDB" secondAttribute="leading" id="RiJ-Hb-OOZ"/>
                             <constraint firstItem="8yw-OC-Ubk" firstAttribute="trailing" secondItem="tAi-nk-rDB" secondAttribute="trailing" id="Sof-yL-mwK"/>
+                            <constraint firstItem="tP3-oJ-4EB" firstAttribute="top" secondItem="tAi-nk-rDB" secondAttribute="top" constant="88" id="Zhb-Ss-epe"/>
                             <constraint firstItem="Kva-Z7-0qY" firstAttribute="trailing" secondItem="tAi-nk-rDB" secondAttribute="trailing" id="kkp-Yo-FQW"/>
                             <constraint firstItem="tAi-nk-rDB" firstAttribute="trailing" secondItem="noi-1a-5bZ" secondAttribute="trailing" constant="12" id="lv9-Nf-HNB"/>
                             <constraint firstItem="Kva-Z7-0qY" firstAttribute="leading" secondItem="tAi-nk-rDB" secondAttribute="leading" id="oVC-i1-TwS"/>
@@ -413,6 +435,7 @@
                     <size key="freeformSize" width="375" height="778"/>
                     <connections>
                         <outlet property="closeButton" destination="noi-1a-5bZ" id="eWQ-ha-8y7"/>
+                        <segue destination="bYI-y3-Rzb" kind="show" identifier="ShowSegue" id="r1P-2i-NDe"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Wqk-xl-O3I" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -432,7 +455,7 @@
                     </connections>
                 </pongPressGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="1442" y="-23"/>
+            <point key="canvasLocation" x="1440.8" y="-23.388305847076463"/>
         </scene>
         <!--Debug Text View Controller-->
         <scene sceneID="Bkq-O7-q4A">
@@ -507,4 +530,7 @@ Section 1.10.33 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC
             <point key="canvasLocation" x="729" y="-23"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="3yq-HE-Tgn"/>
+    </inferredMetricsTieBreakers>
 </document>
