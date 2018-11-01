@@ -258,13 +258,17 @@ class FloatingPanelLayoutAdapter {
 
     private func checkConsistance(of layout: FloatingPanelLayout) {
         // Verify layout configurations
-        assert(layout.supportedPositions.count > 0)
-        assert(layout.supportedPositions.contains(layout.initialPosition),
-               "Does not include an initial potision(\(layout.initialPosition)) in supportedPositions(\(layout.supportedPositions))")
-        layout.supportedPositions.forEach { (pos) in
+        let supportedPositions = layout.supportedPositions
+
+        assert(supportedPositions.count > 0)
+        assert(supportedPositions.contains(layout.initialPosition),
+               "Does not include an initial potision(\(layout.initialPosition)) in supportedPositions(\(supportedPositions))")
+
+        supportedPositions.forEach { pos in
             assert(layout.insetFor(position: pos) != nil,
                    "Undefined an inset for a pos(\(pos))")
         }
+
         if halfInset > 0 {
             assert(halfInset > tipInset, "Invalid half and tip insets")
         }
