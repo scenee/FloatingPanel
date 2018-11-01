@@ -408,7 +408,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         let currentY = getCurrentY(from: initialFrame, with: translation)
         let supportedPositions: Set = layoutAdapter.layout.supportedPositions
 
-        assert(supportedPositions.count > 1)
+        if supportedPositions.count == 1 {
+            return state
+        }
 
         switch supportedPositions {
         case [.full, .half]:
