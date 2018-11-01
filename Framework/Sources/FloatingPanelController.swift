@@ -191,8 +191,10 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             return
         }
         precondition((parent is UINavigationController) == false, "UINavigationController displays only one child view controller at a time.")
-        precondition((parent is UITableViewController) == false, "UITableViewController should not be the parent because the view hierarchy will be break in reusing cells.")
-        precondition((parent is UICollectionViewController) == false, "UICollectionViewController should not be the parent because the view hierarchy will be break in reusing cells.")
+        precondition((parent is UITabBarController) == false, "UITabBarController displays child view controllers with a radio-style selection interface")
+        precondition((parent is UISplitViewController) == false, "UISplitViewController manages two child view controllers in a master-detail interface")
+        precondition((parent is UITableViewController) == false, "UITableViewController should not be the parent because the view is a table view so that a floating panel doens't work well")
+        precondition((parent is UICollectionViewController) == false, "UICollectionViewController should not be the parent because the view is a collection view so that a floating panel doens't work well")
 
         view.frame = parent.view.bounds
         if let belowView = belowView {
