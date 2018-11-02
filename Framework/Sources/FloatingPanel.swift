@@ -43,7 +43,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private var initialFrame: CGRect = .zero
     private var initialScrollOffset: CGPoint = .zero
     private var initialScrollInset: UIEdgeInsets = .zero
-    private var transOffsetY: CGFloat = 0
+    private var initialTranslationY: CGFloat = 0
 
     var interactionInProgress: Bool = false
     var isDecelerating: Bool = false
@@ -368,11 +368,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private func panningChange(with translation: CGPoint) {
         log.debug("panningChange")
 
-        let currentY = getCurrentY(from: initialFrame, with: translation)
-
-        var frame = initialFrame
-        frame.origin.y = currentY
-        surfaceView.frame = frame
+        let dy = translation.y - initialTranslationY
+        layoutAdapter.updateInteractiveTopConstraint(diff: dy)
         backdropView.alpha = getBackdropAlpha(with: translation)
 
         viewcontroller.delegate?.floatingPanelDidMove(viewcontroller)
@@ -400,8 +397,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         if isRemovalInteractionEnabled, isBottomState {
             let velocityVector = (distance != 0) ? CGVector(dx: 0,
                                                             dy: min(fabs(velocity.y)/distance, behavior.removalVelocity)) : .zero
-
-
 
             if shouldStartRemovalAnimation(with: translation, velocityVector: velocityVector) {
 
@@ -456,14 +451,18 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private func startInteraction(with translation: CGPoint) {
         /* Don't lock a scroll view to show a scroll indicator after hitting the top */
         log.debug("startInteraction")
+
         initialFrame = surfaceView.frame
         if let scrollView = scrollView {
             initialScrollOffset = scrollView.contentOffset
             initialScrollInset = scrollView.contentInset
         }
-        transOffsetY = translation.y
+
+        initialTranslationY = translation.y
 
         viewcontroller.delegate?.floatingPanelWillBeginDragging(viewcontroller)
+
+        layoutAdapter.startInteraction(at: state)
 
         if state == .full {
             viewcontroller.contentViewController?.view?.constraints.forEach({ (const) in
@@ -492,6 +491,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             lockScrollView()
         }
 
+        layoutAdapter.endInteraction(at: targetPosition)
+
         if state == .full {
             viewcontroller.contentViewController?.view?.constraints.forEach({ (const) in
                 switch viewcontroller.contentViewController?.layoutGuide.bottomAnchor {
@@ -509,7 +510,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     private func getCurrentY(from rect: CGRect, with translation: CGPoint) -> CGFloat {
-        let dy = translation.y - transOffsetY
+        let dy = translation.y - initialTranslationY
         let y = rect.offsetBy(dx: 0.0, dy: dy).origin.y
 
         let topY = layoutAdapter.topY
@@ -530,7 +531,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private func startAnimation(to targetPosition: FloatingPanelPosition, at distance: CGFloat, with velocity: CGPoint) {
         log.debug("startAnimation", targetPosition, distance, velocity)
-        let targetY = layoutAdapter.positionY(for: targetPosition)
 
         isDecelerating = true
 
@@ -538,12 +538,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         let animator = behavior.interactionAnimator(self.viewcontroller, to: targetPosition, with: velocityVector)
         animator.addAnimations { [weak self] in
             guard let `self` = self else { return }
-            if self.state == targetPosition {
-                self.surfaceView.frame.origin.y = targetY
-                self.layoutAdapter.setBackdropAlpha(of: targetPosition)
-            } else {
-                self.updateLayout(to: targetPosition)
-            }
+            self.updateLayout(to: targetPosition)
             self.state = targetPosition
         }
         animator.addCompletion { [weak self] pos in
