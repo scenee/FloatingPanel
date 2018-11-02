@@ -227,7 +227,7 @@ class FloatingPanelLayoutAdapter {
 
         NSLayoutConstraint.activate([consts])
         heightConstraints = consts
-        surfaceView.bottomOverflow = heightBuffer
+        surfaceView.set(bottomOverflow: heightBuffer)
     }
 
     func activateLayout(of state: FloatingPanelPosition?) {
