@@ -97,6 +97,13 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         get { return floatingPanel.isRemovalInteractionEnabled }
     }
 
+    /// The view controller responsible for the content portion of the floating panel.
+    public var contentViewController: UIViewController? {
+        set { set(contentViewController: newValue) }
+        get { return _contentViewController }
+    }
+    private var _contentViewController: UIViewController?
+
     private var floatingPanel: FloatingPanel!
 
     required init?(coder aDecoder: NSCoder) {
@@ -252,20 +259,44 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         floatingPanel.move(to: to, animated: animated, completion: completion)
     }
 
-    /// Presents the specified view controller as the content view controller in the surface view interface.
+    /// Sets the view controller responsible for the content portion of the floating panel..
+    public func set(contentViewController: UIViewController?) {
+        if let vc = _contentViewController {
+            vc.willMove(toParent: nil)
+            vc.view.removeFromSuperview()
+            vc.removeFromParent()
+        }
+
+        if let vc = contentViewController {
+            let surfaceView = self.view as! FloatingPanelSurfaceView
+            surfaceView.contentView.addSubview(vc.view)
+            vc.view.frame = surfaceView.contentView.bounds
+            vc.view.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                vc.view.topAnchor.constraint(equalTo: surfaceView.contentView.topAnchor, constant: 0.0),
+                vc.view.leftAnchor.constraint(equalTo: surfaceView.contentView.leftAnchor, constant: 0.0),
+                vc.view.rightAnchor.constraint(equalTo: surfaceView.contentView.rightAnchor, constant: 0.0),
+                vc.view.bottomAnchor.constraint(equalTo: surfaceView.contentView.bottomAnchor, constant: 0.0),
+                ])
+            addChild(vc)
+            vc.didMove(toParent: self)
+        }
+
+        _contentViewController = contentViewController
+    }
+
+    @available(*, unavailable, renamed: "set(contentViewController:)")
     public override func show(_ vc: UIViewController, sender: Any?) {
-        let surfaceView = self.view as! FloatingPanelSurfaceView
-        surfaceView.contentView.addSubview(vc.view)
-        vc.view.frame = surfaceView.contentView.bounds
-        vc.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            vc.view.topAnchor.constraint(equalTo: surfaceView.contentView.topAnchor, constant: 0.0),
-            vc.view.leftAnchor.constraint(equalTo: surfaceView.contentView.leftAnchor, constant: 0.0),
-            vc.view.rightAnchor.constraint(equalTo: surfaceView.contentView.rightAnchor, constant: 0.0),
-            vc.view.bottomAnchor.constraint(equalTo: surfaceView.contentView.bottomAnchor, constant: 0.0),
-            ])
-        addChild(vc)
-        vc.didMove(toParent: self)
+        if let target = self.parent?.targetViewController(forAction: #selector(UIViewController.show(_:sender:)), sender: sender) {
+            target.show(vc, sender: sender)
+        }
+    }
+
+    @available(*, unavailable, renamed: "set(contentViewController:)")
+    public override func showDetailViewController(_ vc: UIViewController, sender: Any?) {
+        if let target = self.parent?.targetViewController(forAction: #selector(UIViewController.showDetailViewController(_:sender:)), sender: sender) {
+            target.showDetailViewController(vc, sender: sender)
+        }
     }
 
     // MARK: - Scroll view tracking

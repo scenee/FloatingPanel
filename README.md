@@ -25,7 +25,7 @@ The new interface displays the related contents and utilities in parallel as a u
 - [Getting Started](#getting-started)
 - [Usage](#usage)
   - [Customize the layout of a floating panel with  `FloatingPanelLayout` protocol](#customize-the-layout-of-a-floating-panel-with--floatingpanellayout-protocol)
-    - [Change the initial position, supported positions and height](#change-the-initial-position-supported-positions-and-height)
+    - [Change the initial position and height](#change-the-initial-position-and-height)
     - [Support your landscape layout](#support-your-landscape-layout)
   - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
     - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
@@ -33,6 +33,7 @@ The new interface displays the related contents and utilities in parallel as a u
   - [Move a position with an animation](#move-a-position-with-an-animation)
   - [Make your contents correspond with a floating panel behavior](#make-your-contents-correspond-with-a-floating-panel-behavior)
 - [Notes](#notes)
+  - ['Show' or 'Show Detail' Segues from `FloatingPanelController`'s content view controller](#show-or-show-detail-segues-from-floatingpanelcontrollers-content-view-controller)
   - [FloatingPanelSurfaceView's issue on iOS 10](#floatingpanelsurfaceviews-issue-on-ios-10)
 - [Author](#author)
 - [License](#license)
@@ -96,14 +97,14 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
         // Assign self as the delegate of the controller.
         fpc.delegate = self // Optional
 
-        // Add a content view controller.
+        // Set a content view controller.
         let contentVC = ContentViewController()
-        fpc.show(contentVC, sender: nil)
+        fpc.set(viewController: contentVC)
 
         // Track a scroll view(or the siblings) in the content view controller.
         fpc.track(scrollView: contentVC.tableView)
 
-        // Add the views managed by the `FloatingPanelController` object to self.view.
+        // Add and show the views managed by the `FloatingPanelController` object to self.view.
         fpc.addPanel(toParent: self)
     }
 
@@ -222,7 +223,7 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
         self.searchPanelVC = FloatingPanelController()
 
         let searchVC = SearchViewController()
-        self.searchPanelVC.show(searchVC, sender: nil)
+        self.searchPanelVC.set(viewController: searchVC)
         self.searchPanelVC.track(scrollView: contentVC.tableView)
 
         self.searchPanelVC.addPanel(toParent: self)
@@ -231,7 +232,7 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
         self.detailPanelVC = FloatingPanelController()
 
         let contentVC = ContentViewController()
-        self.detailPanelVC.show(contentVC, sender: nil)
+        self.searchPanelVC.set(viewController: contentVC)
         self.detailPanelVC.track(scrollView: contentVC.scrollView)
 
         self.detailPanelVC.addPanel(toParent: self)
@@ -278,6 +279,39 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
 ```
 
 ## Notes
+
+### 'Show' or 'Show Detail' Segues from `FloatingPanelController`'s content view controller
+
+'Show' or 'Show Detail' segues from a content view controller will be managed by a view controller(hereinafter called 'master VC') adding a floating panel. Because a floating panel is just a subview of the master VC.
+
+`FloatingPanelController` has no way to manage a stack of view controllers like `UINavigationController`. If so, it would be so complicated and the interface will become `UINavigationController`. This component should not have the responsibility to manage the stack.
+
+By the way, a content view controller can present a view controller modally with `present(_:animated:completion:)` or 'Present Modally' segue.
+
+However, sometimes you want to show a destination view controller of 'Show' or 'Show Detail' segue with another floating panel. It's possible to override `show(_:sender)` of the master VC!
+
+Here is an example.
+
+```swift
+class ViewController: UIViewController {
+    var fpc: FloatingPanelController!
+    var secondFpc: FloatingPanelController!
+
+    ...
+    override func show(_ vc: UIViewController, sender: Any?) {
+        secondFpc = FloatingPanelController()
+
+        secondFpc.set(contentViewController: vc)
+
+        secondFpc.addPanel(toParent: self)
+    }
+    ...
+}
+```
+
+A `FloatingPanelController` object proxies an action for `show(_:sender)` to the master VC. That's why the master VC can handle a destination view controller of a 'Show' or 'Show Detail' segue and you can hook `show(_:sender)` to show a secondally floating panel set the destination view controller to the content.
+
+It's a greate way to decouple between a floating panel and the content VC.
 
 ###  FloatingPanelSurfaceView's issue on iOS 10
 

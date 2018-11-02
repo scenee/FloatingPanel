@@ -26,8 +26,8 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate, 
 
         searchVC = storyboard?.instantiateViewController(withIdentifier: "SearchPanel") as? SearchPanelViewController
 
-        // Add a content view controller
-        fpc.show(searchVC, sender: self)
+        // Set a content view controller
+        fpc.set(contentViewController: searchVC)
         fpc.track(scrollView: searchVC.tableView)
 
         setupMapView()
