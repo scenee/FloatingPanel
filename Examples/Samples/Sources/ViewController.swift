@@ -9,7 +9,7 @@
 import UIKit
 import FloatingPanel
 
-class SampleListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class SampleListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, FloatingPanelControllerDelegate {
     @IBOutlet weak var tableView: UITableView!
 
     enum Menu: Int, CaseIterable {
@@ -19,6 +19,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case showModal
         case showTabBar
         case showNestedScrollView
+        case showRemovablePanel
 
         var name: String {
             switch self {
@@ -28,6 +29,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             case .showModal: return "Show Modal"
             case .showTabBar: return "Show Tab Bar"
             case .showNestedScrollView: return "Show Nested ScrollView"
+            case .showRemovablePanel: return "Show Removable Panel"
             }
         }
 
@@ -39,12 +41,14 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             case .showModal: return "ModalViewController"
             case .showTabBar: return "TabBarViewController"
             case .showNestedScrollView: return "NestedScrollViewController"
+            case .showRemovablePanel: return "DetailViewController"
             }
         }
     }
 
     var mainPanelVC: FloatingPanelController!
     var detailPanelVC: FloatingPanelController!
+    var currentMenu: Menu = .trackingTableView
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,6 +63,8 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
     func addMainPanel(with contentVC: UIViewController) {
         // Initialize FloatingPanelController
         mainPanelVC = FloatingPanelController()
+        mainPanelVC.delegate = self
+        mainPanelVC.isRemovalInteractionEnabled = (currentMenu == .showRemovablePanel)
 
         // Initialize FloatingPanelController and add the view
         mainPanelVC.surfaceView.cornerRadius = 6.0
@@ -109,6 +115,8 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             return vc
         }()
 
+        self.currentMenu = menu
+
         switch menu {
         case .showDetail:
             detailPanelVC?.removeFromParent()
@@ -135,6 +143,14 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             mainPanelVC?.removePanelFromParent(animated: true) {
                 self.addMainPanel(with: contentVC)
             }
+        }
+    }
+
+    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
+        if currentMenu == .showRemovablePanel {
+            return TwoTabBarPanel2Layout()
+        } else {
+            return nil
         }
     }
 }
