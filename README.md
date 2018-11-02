@@ -99,7 +99,7 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
 
         // Set a content view controller.
         let contentVC = ContentViewController()
-        fpc.set(contentViewController: contentVC)
+        fpc.show(contentVC, sender: nil)
 
         // Track a scroll view(or the siblings) in the content view controller.
         fpc.track(scrollView: contentVC.tableView)
@@ -223,7 +223,7 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
         self.searchPanelVC = FloatingPanelController()
 
         let searchVC = SearchViewController()
-        self.searchPanelVC.set(contentViewController: searchVC)
+        self.searchPanelVC.show(searchVC, sender: nil)
         self.searchPanelVC.track(scrollView: contentVC.tableView)
 
         self.searchPanelVC.addPanel(toParent: self)
@@ -232,7 +232,7 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
         self.detailPanelVC = FloatingPanelController()
 
         let contentVC = ContentViewController()
-        self.detailPanelVC.set(contentViewController: contentVC)
+        self.detailPanelVC.show(contentVC, sender: nil)
         self.detailPanelVC.track(scrollView: contentVC.scrollView)
 
         self.detailPanelVC.addPanel(toParent: self)
