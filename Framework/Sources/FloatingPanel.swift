@@ -148,19 +148,29 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     private func setBackdropAlpha(of target: FloatingPanelPosition?) {
-        switch target {
-        case .full?:
-            self.backdropView.alpha = layoutAdapter.layout.backdropAlpha
-        default:
+        if let target = target {
+            self.backdropView.alpha = layoutAdapter.layout.backdropAlphaFor(position: target)
+        } else {
             self.backdropView.alpha = 0.0
         }
     }
 
     private func getBackdropAlpha(with translation: CGPoint) -> CGFloat {
-        let topY = layoutAdapter.topY
-        let middleY = layoutAdapter.middleY
         let currentY = getCurrentY(from: initialFrame, with: translation)
-        return (1 - (currentY - topY) / (middleY - topY)) * layoutAdapter.layout.backdropAlpha
+
+        let next = directionalPosition(with: translation)
+        let pre = redirectionalPosition(with: translation)
+        let nextY = layoutAdapter.positionY(for: next)
+        let preY = layoutAdapter.positionY(for: pre)
+
+        let nextAlpha = layoutAdapter.layout.backdropAlphaFor(position: next)
+        let preAlpha = layoutAdapter.layout.backdropAlphaFor(position: pre)
+
+        if preY == nextY {
+            return preAlpha
+        } else {
+            return preAlpha + max(min(1.0, 1.0 - (nextY - currentY) / (nextY - preY) ), 0.0) * (nextAlpha - preAlpha)
+        }
     }
 
     // MARK: - UIGestureRecognizerDelegate
@@ -394,6 +404,66 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             return CGFloat(fabs(Double(currentY - middleY)))
         case .tip:
             return CGFloat(fabs(Double(currentY - bottomY)))
+        }
+    }
+
+    private func directionalPosition(with translation: CGPoint) -> FloatingPanelPosition {
+        let currentY = getCurrentY(from: initialFrame, with: translation)
+
+        let supportedPositions: Set = layoutAdapter.layout.supportedPositions
+
+        if supportedPositions.count == 1 {
+            return state
+        }
+
+        switch supportedPositions {
+        case [.full, .half]: return translation.y >= 0 ? .half : .full
+        case [.half, .tip]: return translation.y >= 0 ? .tip : .half
+        case [.full, .tip]: return translation.y >= 0 ? .tip : .full
+        default:
+            let middleY = layoutAdapter.middleY
+
+            switch state {
+            case .full:
+                if translation.y <= 0 {
+                    return .full
+                }
+                return currentY > middleY ? .tip : .half
+            case .half:
+                return translation.y >= 0 ? .tip : .full
+            case .tip:
+                if translation.y >= 0 {
+                    return .tip
+                }
+                return currentY > middleY ? .half : .full
+            }
+        }
+    }
+
+    private func redirectionalPosition(with translation: CGPoint) -> FloatingPanelPosition {
+        let currentY = getCurrentY(from: initialFrame, with: translation)
+
+        let supportedPositions: Set = layoutAdapter.layout.supportedPositions
+
+        if supportedPositions.count == 1 {
+            return state
+        }
+
+        switch supportedPositions {
+        case [.full, .half]: return translation.y >= 0 ? .full : .half
+        case [.half, .tip]: return translation.y >= 0 ? .half : .tip
+        case [.full, .tip]: return translation.y >= 0 ? .full : .tip
+        default:
+            let middleY = layoutAdapter.middleY
+
+            switch state {
+            case .full:
+                return currentY > middleY ? .half : .full
+            case .half:
+                return .half
+            case .tip:
+                return currentY > middleY ? .tip : .half
+            }
         }
     }
 
