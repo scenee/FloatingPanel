@@ -30,16 +30,17 @@ public protocol FloatingPanelLayout: class {
     /// By default, the width of a surface view fits a safe area.
     func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint]
 
-    /// Return the backdrop alpha of black color in full position. Default is 0.3.
-    var backdropAlpha: CGFloat { get }
+    /// Returns a CGFloat value to determine the backdrop view's alpha for a position.
+    ///
+    /// Default is 0.3 at full position, otherwise 0.0.
+    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat
 }
 
 public extension FloatingPanelLayout {
-    var backdropAlpha: CGFloat { return 0.3 }
     var topInteractionBuffer: CGFloat { return 6.0 }
     var bottomInteractionBuffer: CGFloat { return 6.0 }
 
-    public var supportedPositions: Set<FloatingPanelPosition> {
+    var supportedPositions: Set<FloatingPanelPosition> {
         return Set(FloatingPanelPosition.allCases)
     }
     
@@ -48,6 +49,10 @@ public extension FloatingPanelLayout {
             surfaceView.leftAnchor.constraint(equalTo: view.sideLayoutGuide.leftAnchor, constant: 0.0),
             surfaceView.rightAnchor.constraint(equalTo: view.sideLayoutGuide.rightAnchor, constant: 0.0),
         ]
+    }
+
+    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
+        return position == .full ? 0.3 : 0.0
     }
 }
 
@@ -222,7 +227,7 @@ class FloatingPanelLayoutAdapter {
 
         NSLayoutConstraint.activate([consts])
         heightConstraints = consts
-        surfaceView.bottomOverflow = heightBuffer
+        surfaceView.set(bottomOverflow: heightBuffer)
     }
 
     func activateLayout(of state: FloatingPanelPosition?) {

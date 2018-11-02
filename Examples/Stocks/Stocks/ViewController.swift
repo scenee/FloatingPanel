@@ -117,7 +117,9 @@ class FloatingPanelStocksLayout: FloatingPanelLayout {
         }
     }
 
-    var backdropAlpha: CGFloat = 0.0
+    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
+        return 0.0
+    }
 }
 
 // MARK: My custom behavior

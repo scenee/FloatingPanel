@@ -148,10 +148,33 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
 
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
         if currentMenu == .showRemovablePanel {
-            return TwoTabBarPanel2Layout()
+            return RemovablePanelLayout()
         } else {
             return nil
         }
+    }
+}
+
+class RemovablePanelLayout: FloatingPanelLayout {
+    var initialPosition: FloatingPanelPosition {
+        return .half
+    }
+    var supportedPositions: Set<FloatingPanelPosition> {
+        return [.full, .half]
+    }
+    var bottomInteractionBuffer: CGFloat {
+        return 261.0 - 22.0
+    }
+
+    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        switch position {
+        case .full: return 16.0
+        case .half: return 261.0
+        default: return nil
+        }
+    }
+    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
+        return 0.3
     }
 }
 
