@@ -147,6 +147,10 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
+    var safeAreaBottomY: CGFloat {
+        return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom)
+    }
+
     var adjustedContentInsets: UIEdgeInsets {
         return UIEdgeInsets(top: 0.0,
                             left: 0.0,
@@ -205,7 +209,7 @@ class FloatingPanelLayoutAdapter {
                                              constant: -tipInset),
         ]
         offConstraints = [
-            surfaceView.topAnchor.constraint(equalTo: parent.layoutGuide.bottomAnchor, constant: 0.0),
+            surfaceView.topAnchor.constraint(equalTo: parent.view.bottomAnchor, constant: 0.0),
         ]
     }
 

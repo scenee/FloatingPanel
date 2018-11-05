@@ -20,6 +20,11 @@ public protocol FloatingPanelControllerDelegate: class {
     func floatingPanelDidEndDragging(_ vc: FloatingPanelController, withVelocity velocity: CGPoint, targetPosition: FloatingPanelPosition)
     func floatingPanelWillBeginDecelerating(_ vc: FloatingPanelController) // called on finger up as we are moving
     func floatingPanelDidEndDecelerating(_ vc: FloatingPanelController) // called when scroll view grinds to a halt
+
+    // called on start of dragging to remove its views from a parent view controller
+    func floatingPanelDidEndDraggingToRemove(_ vc: FloatingPanelController, withVelocity velocity: CGPoint)
+    // called when its views are removed from a parent view controller
+    func floatingPanelDidEndRemove(_ vc: FloatingPanelController)
 }
 
 public extension FloatingPanelControllerDelegate {
@@ -34,6 +39,9 @@ public extension FloatingPanelControllerDelegate {
     func floatingPanelDidEndDragging(_ vc: FloatingPanelController, withVelocity velocity: CGPoint, targetPosition: FloatingPanelPosition) {}
     func floatingPanelWillBeginDecelerating(_ vc: FloatingPanelController) {}
     func floatingPanelDidEndDecelerating(_ vc: FloatingPanelController) {}
+
+    func floatingPanelDidEndDraggingToRemove(_ vc: FloatingPanelController, withVelocity velocity: CGPoint) {}
+    func floatingPanelDidEndRemove(_ vc: FloatingPanelController) {}
 }
 
 public enum FloatingPanelPosition: Int, CaseIterable {
