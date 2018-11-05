@@ -297,22 +297,36 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         endInteraction(for: targetPosition)
 
-        viewcontroller.delegate?.floatingPanelDidEndDragging(viewcontroller, withVelocity: velocity, targetPosition: targetPosition)
-
         if isRemovalInteractionEnabled, isBottomState {
+            let posY = layoutAdapter.positionY(for: state)
+            let currentY = getCurrentY(from: initialFrame, with: translation)
+            let safeAreaBottomY = layoutAdapter.safeAreaBottomY
             let vth = behavior.removalVelocityThreshold
             let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: max(min(velocity.y/distance, vth), 0.0)) : .zero
-            if velocityVector.dy == vth {
-                let animator = behavior.removalInteractionAnimator(self.viewcontroller, with: velocityVector)
+
+            let startRemovalAnimation = {
+                let animator = self.behavior.removalInteractionAnimator(self.viewcontroller, with: velocityVector)
                 animator.addAnimations { [weak self] in
                     guard let self = self else { return }
                     self.updateLayout(to: nil)
-                } 
+                }
+                animator.addCompletion({ [weak self] (_) in
+                    guard let self = self else { return }
+                    self.viewcontroller.delegate?.floatingPanelDidEndRemove(self.viewcontroller)
+                })
                 animator.startAnimation()
-                return
+            }
+
+            if (currentY - posY) != 0 {
+                if (safeAreaBottomY - posY) / (currentY - posY) >= 0.5 || velocityVector.dy == vth {
+                    viewcontroller.delegate?.floatingPanelDidEndDraggingToRemove(viewcontroller, withVelocity: velocity)
+                    startRemovalAnimation()
+                    return
+                }
             }
         }
 
+        viewcontroller.delegate?.floatingPanelDidEndDragging(viewcontroller, withVelocity: velocity, targetPosition: targetPosition)
         viewcontroller.delegate?.floatingPanelWillBeginDecelerating(viewcontroller)
 
         startAnimation(to: targetPosition, at: distance, with: velocity)
