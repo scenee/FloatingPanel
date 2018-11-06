@@ -109,13 +109,14 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
+    private var parentHeight: CGFloat = 0.0
     private var heightBuffer: CGFloat = 88.0 // For bounce
     private var fixedConstraints: [NSLayoutConstraint] = []
     private var fullConstraints: [NSLayoutConstraint] = []
     private var halfConstraints: [NSLayoutConstraint] = []
     private var tipConstraints: [NSLayoutConstraint] = []
     private var offConstraints: [NSLayoutConstraint] = []
-    private var heightConstraints: NSLayoutConstraint? = nil
+    private var heightConstraints: [NSLayoutConstraint] = []
 
     private var fullInset: CGFloat {
         return layout.insetFor(position: .full) ?? 0.0
@@ -176,6 +177,8 @@ class FloatingPanelLayoutAdapter {
     }
 
     func prepareLayout(toParent parent: UIViewController) {
+        parentHeight = parent.view.frame.height
+
         surfaceView.translatesAutoresizingMaskIntoConstraints = false
         backdropVIew.translatesAutoresizingMaskIntoConstraints = false
 
@@ -222,15 +225,12 @@ class FloatingPanelLayoutAdapter {
             }
         }
 
-        if let consts = self.heightConstraints {
-            NSLayoutConstraint.deactivate([consts])
-        }
-
-        let height = UIScreen.main.bounds.height - (safeAreaInsets.top + fullInset)
-        let consts = surfaceView.heightAnchor.constraint(equalToConstant: height)
-
-        NSLayoutConstraint.activate([consts])
-        heightConstraints = consts
+        NSLayoutConstraint.deactivate(heightConstraints)
+        let height = parentHeight - (safeAreaInsets.top + fullInset)
+        heightConstraints = [
+            surfaceView.heightAnchor.constraint(equalToConstant: height)
+        ]
+        NSLayoutConstraint.activate(heightConstraints)
         surfaceView.set(bottomOverflow: heightBuffer)
     }
 

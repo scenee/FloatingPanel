@@ -76,6 +76,10 @@ public class FloatingPanelSurfaceView: UIView {
         super.backgroundColor = .clear
         self.clipsToBounds = false
 
+        let shadowLayer = CAShapeLayer()
+        layer.insertSublayer(shadowLayer, at: 0)
+        self.shadowLayer = shadowLayer
+
         let contentView = FloatingPanelSurfaceContentView()
         addSubview(contentView)
         self.contentView = contentView as UIView
@@ -99,10 +103,6 @@ public class FloatingPanelSurfaceView: UIView {
             grabberHandle.heightAnchor.constraint(equalToConstant: grabberHandle.frame.height),
             grabberHandle.centerXAnchor.constraint(equalTo: centerXAnchor),
             ])
-
-        let shadowLayer = CAShapeLayer()
-        layer.insertSublayer(shadowLayer, at: 0)
-        self.shadowLayer = shadowLayer
     }
 
     public override func layoutSubviews() {
@@ -158,5 +158,18 @@ public class FloatingPanelSurfaceView: UIView {
         self.bottomOverflow = bottomOverflow
         updateShadowLayer()
         updateContentViewMask()
+    }
+
+
+    func add(childView: UIView) {
+        contentView.addSubview(childView)
+        childView.frame = contentView.bounds
+        childView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            childView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0.0),
+            childView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 0.0),
+            childView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 0.0),
+            childView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0.0),
+            ])
     }
 }
