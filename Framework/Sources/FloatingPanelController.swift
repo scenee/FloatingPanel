@@ -113,6 +113,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     private var _contentViewController: UIViewController?
 
     private var floatingPanel: FloatingPanel!
+    private var layoutInsetsObservations: [NSKeyValueObservation] = []
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -224,6 +225,21 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             parent.view.addSubview(self.view)
         }
 
+        layoutInsetsObservations.removeAll()
+
+        // Must track safeAreaInsets/{top,bottom}LayoutGuide of the `parent.view` to update floatingPanel.safeAreaInsets`.
+        // Because the parent VC does not call viewSafeAreaInsetsDidChange() expectedly on the bottom inset's update.
+        // So I needs to observe them. It ensures that the `adjustedContentInsets` has a correct value.
+        if #available(iOS 11.0, *) {
+            let observaion = parent.observe(\.view.safeAreaInsets) { [weak self] (vc, chaneg) in
+                guard let self = self else { return }
+                self.update(safeAreaInsets: vc.layoutInsets)
+            }
+            layoutInsetsObservations.append(observaion)
+        } else {
+            // KVOs for topLayoutGuide & bottomLayoutGuide are not effective. Instead, safeAreaInsets will be updated in viewDidAppear()
+        }
+
         parent.addChild(self)
 
         // Must set a layout again here because `self.traitCollection` is applied correctly once it's added to a parent VC
@@ -247,6 +263,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             completion?()
             return
         }
+
+        layoutInsetsObservations.removeAll()
 
         floatingPanel.dismiss(animated: animated) { [weak self] in
             guard let self = self else { return }
@@ -277,15 +295,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
         if let vc = contentViewController {
             let surfaceView = self.view as! FloatingPanelSurfaceView
-            surfaceView.contentView.addSubview(vc.view)
-            vc.view.frame = surfaceView.contentView.bounds
-            vc.view.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                vc.view.topAnchor.constraint(equalTo: surfaceView.contentView.topAnchor, constant: 0.0),
-                vc.view.leftAnchor.constraint(equalTo: surfaceView.contentView.leftAnchor, constant: 0.0),
-                vc.view.rightAnchor.constraint(equalTo: surfaceView.contentView.rightAnchor, constant: 0.0),
-                vc.view.bottomAnchor.constraint(equalTo: surfaceView.contentView.bottomAnchor, constant: 0.0),
-                ])
+            surfaceView.add(childView: vc.view)
             addChild(vc)
             vc.didMove(toParent: self)
         }
