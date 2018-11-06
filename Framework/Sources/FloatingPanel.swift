@@ -419,6 +419,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         self.animator = nil
         self.viewcontroller.delegate?.floatingPanelDidEndDecelerating(self.viewcontroller)
 
+        stopScrollDeceleration = false
         // Don't unlock scroll view in animating view when presentation layer != model layer
         unlockScrollView()
     }
