@@ -222,14 +222,11 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         switch panGesture {
         case scrollView?.panGestureRecognizer:
             guard let scrollView = scrollView else { return }
-            if panGesture.state == .began {
-                initialScrollOffset = scrollView.contentOffset
-            }
             if surfaceView.frame.minY > layoutAdapter.topY {
                 switch state {
                 case .full:
                     // Prevent over scrolling from scroll top in moving the panel from full.
-                    scrollView.contentOffset.y = initialScrollOffset.y
+                    scrollView.contentOffset.y = scrollView.contentOffsetZero.y
                 case .half, .tip:
                     guard scrollView.isDecelerating == false else {
                         // Don't fix the scroll offset in animating the panel to half and tip.
@@ -358,6 +355,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private func startInteraction(with translation: CGPoint) {
         log.debug("startInteraction")
         initialFrame = surfaceView.frame
+        if let scrollView = scrollView {
+            initialScrollOffset = scrollView.contentOffset
+        }
         transOffsetY = translation.y
         viewcontroller.delegate?.floatingPanelWillBeginDragging(viewcontroller)
 
