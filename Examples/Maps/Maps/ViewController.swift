@@ -234,6 +234,10 @@ public class SearchPanelLandscapeLayout: FloatingPanelLayout {
             ]
         }
     }
+
+    public func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
+        return 0.0
+    }
 }
 
 class SearchCell: UITableViewCell {
