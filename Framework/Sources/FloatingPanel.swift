@@ -20,7 +20,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         didSet {
             guard let scrollView = scrollView else { return }
             scrollView.panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
-            scrollBouncable = scrollView.bounces
             scrollIndictorVisible = scrollView.showsVerticalScrollIndicator
         }
     }
@@ -50,7 +49,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     // Scroll handling
     private var stopScrollDeceleration: Bool = false
-    private var scrollBouncable = false
     private var scrollIndictorVisible = false
 
     // MARK: - Interface
@@ -222,6 +220,14 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         switch panGesture {
         case scrollView?.panGestureRecognizer:
             guard let scrollView = scrollView else { return }
+
+            log.debug("SrollPanGesture ScrollView.contentOffset >>>", scrollView.contentOffset.y)
+
+            // Prevent scoll slip by the top bounce
+            if scrollView.isDecelerating == false {
+                scrollView.bounces = (scrollView.contentOffset.y > 10.0)
+            }
+
             if surfaceView.frame.minY > layoutAdapter.topY {
                 switch state {
                 case .full:
@@ -243,7 +249,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             let velocity = panGesture.velocity(in: panGesture.view)
             let location = panGesture.location(in: panGesture.view)
 
-            log.debug(panGesture.state, ">>>", "{ translation: \(translation), velocity: \(velocity) }")
+            log.debug(panGesture.state, ">>>", "translation: \(translation.y), velocity: \(velocity.y)")
 
             if shouldScrollViewHandleTouch(scrollView, point: location, velocity: velocity) {
                 return
@@ -283,15 +289,15 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             return false
         }
 
-        log.debug("ScrollView.contentOffset >>>", scrollView.contentOffset)
+        log.debug("ScrollView.contentOffset >>>", scrollView.contentOffset.y)
 
-        if scrollView.contentOffset.y - scrollView.contentOffsetZero.y > 0 {
+        if scrollView.contentOffset.y - scrollView.contentOffsetZero.y != 0 {
             return true
         }
         if scrollView.isDecelerating {
             return true
         }
-        if velocity.y < 0 || velocity.y > 2500.0 {
+        if velocity.y < 0 {
             return true
         }
 
@@ -383,7 +389,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private func endInteraction(for targetPosition: FloatingPanelPosition) {
         log.debug("endInteraction for \(targetPosition)")
         if targetPosition != .full {
-            lockScrollView(withBounce: true)
+            lockScrollView()
         }
         interactionInProgress = false
     }
@@ -610,13 +616,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     // MARK: - ScrollView handling
 
-    func lockScrollView(withBounce bounce: Bool = false) {
+    func lockScrollView() {
         guard let scrollView = scrollView else { return }
 
         scrollView.isDirectionalLockEnabled = true
-        if bounce {
-            scrollView.bounces = false
-        }
         scrollView.showsVerticalScrollIndicator = false
     }
 
@@ -624,7 +627,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         guard let scrollView = scrollView else { return }
 
         scrollView.isDirectionalLockEnabled = false
-        scrollView.bounces = scrollBouncable
         scrollView.showsVerticalScrollIndicator = scrollIndictorVisible
     }
 
