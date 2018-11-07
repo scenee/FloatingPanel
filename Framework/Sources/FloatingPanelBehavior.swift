@@ -29,12 +29,17 @@ public protocol FloatingPanelBehavior {
 
     /// Returns a y-axis velocity to invoke a removal interaction at the bottom position.
     ///
-    /// This method is called when FloatingPanelController.isRemovalInteractionEnabled is true.
-    var removalVelocityThreshold: CGFloat { get }
+    /// Default is 10.0. This method is called when FloatingPanelController.isRemovalInteractionEnabled is true.
+    var removalVelocity: CGFloat { get }
+
+    /// Returns the threshold of the transition to invoke a removal interaction at the bottom position.
+    ///
+    /// The progress is represented by a floating-point value between 0.0 and 1.0, inclusive, where 1.0 indicates the floating panel is impossible to invoke the removal interaction. The default value is 0.5. Values less than 0.0 and greater than 1.0 are pinned to those limits. This method is called when FloatingPanelController.isRemovalInteractionEnabled is true.
+    var removalProgress: CGFloat { get }
 
     /// Returns a UIViewPropertyAnimator object to remove a floating panel with a velocity interactively at the bottom position.
     ///
-    /// This method is called when FloatingPanelController.isRemovalInteractionEnabled is true.
+    /// Default is a spring animator with 1.0 damping ratio. This method is called when FloatingPanelController.isRemovalInteractionEnabled is true.
     func removalInteractionAnimator(_ fpc: FloatingPanelController, with velocity: CGVector) -> UIViewPropertyAnimator
 }
 
@@ -51,8 +56,12 @@ public extension FloatingPanelBehavior {
         return UIViewPropertyAnimator(duration: 0.25, curve: .easeInOut)
     }
 
-    var removalVelocityThreshold: CGFloat {
+    var removalVelocity: CGFloat {
         return 10.0
+    }
+
+    var removalProgress: CGFloat {
+        return 0.5
     }
 
     func removalInteractionAnimator(_ fpc: FloatingPanelController, with velocity: CGVector) -> UIViewPropertyAnimator {
