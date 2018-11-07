@@ -537,14 +537,44 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             return targetPosition(from: [.full, .tip], at: currentY, velocity: velocity)
         default:
             /*
-             [topY|full]---[th1]---[middleY|default]---[th2]---[bottomY|collapsed]
+             [topY|full]---[th1]---[middleY|half]---[th2]---[bottomY|tip]
              */
             let topY = layoutAdapter.topY
             let middleY = layoutAdapter.middleY
             let bottomY = layoutAdapter.bottomY
 
-            let th1 = (topY + middleY) / 2
-            let th2 = (middleY + bottomY) / 2
+            let target: FloatingPanelPosition
+            let forwardYDirection: Bool
+
+            switch state {
+            case .full:
+                target = .half
+                forwardYDirection = true
+            case .half:
+                if (currentY < middleY) {
+                    target = .full
+                    forwardYDirection = false
+                } else {
+                    target = .tip
+                    forwardYDirection = true
+                }
+            case .tip:
+                target = .half
+                forwardYDirection = false
+            }
+
+            let redirectionalProgress = max(min(behavior.redirectionalProgress(viewcontroller, from: state, to: target), 1.0), 0.0)
+
+            let th1: CGFloat
+            let th2: CGFloat
+
+            if forwardYDirection {
+                th1 = topY + (middleY - topY) * redirectionalProgress
+                th2 = middleY + (bottomY - middleY) * redirectionalProgress
+            } else {
+                th1 = middleY - (middleY - topY) * redirectionalProgress
+                th2 = bottomY - (bottomY - middleY) * redirectionalProgress
+            }
 
             switch currentY {
             case ..<th1:
@@ -584,7 +614,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         let topY = layoutAdapter.positionY(for: top)
         let bottomY = layoutAdapter.positionY(for: bottom)
 
-        let th = (topY + bottomY) / 2
+        let target = top == state ? bottom : top
+        let redirectionalProgress = max(min(behavior.redirectionalProgress(viewcontroller, from: state, to: target), 1.0), 0.0)
+
+        let th = topY + (bottomY - topY) * redirectionalProgress
 
         switch currentY {
         case ..<th:
