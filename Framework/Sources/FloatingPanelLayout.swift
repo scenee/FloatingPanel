@@ -96,6 +96,7 @@ public class FloatingPanelDefaultLandscapeLayout: FloatingPanelLayout {
 
 
 class FloatingPanelLayoutAdapter {
+    private weak var parent: UIViewController!
     private weak var surfaceView: FloatingPanelSurfaceView!
     private weak var backdropVIew: FloatingPanelBackdropView!
 
@@ -177,7 +178,7 @@ class FloatingPanelLayoutAdapter {
     }
 
     func prepareLayout(toParent parent: UIViewController) {
-        parentHeight = parent.view.frame.height
+        self.parent = parent
 
         surfaceView.translatesAutoresizingMaskIntoConstraints = false
         backdropVIew.translatesAutoresizingMaskIntoConstraints = false
@@ -226,7 +227,7 @@ class FloatingPanelLayoutAdapter {
         }
 
         NSLayoutConstraint.deactivate(heightConstraints)
-        let height = parentHeight - (safeAreaInsets.top + fullInset)
+        let height = self.parent.view.bounds.height - (safeAreaInsets.top + fullInset)
         heightConstraints = [
             surfaceView.heightAnchor.constraint(equalToConstant: height)
         ]
