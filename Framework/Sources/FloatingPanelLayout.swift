@@ -85,13 +85,6 @@ public class FloatingPanelDefaultLandscapeLayout: FloatingPanelLayout {
         default: return nil
         }
     }
-
-    public func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
-        return [
-            surfaceView.leftAnchor.constraint(equalTo: view.sideLayoutGuide.leftAnchor, constant: 0.0),
-            surfaceView.rightAnchor.constraint(equalTo: view.sideLayoutGuide.rightAnchor, constant: 0.0),
-        ]
-    }
 }
 
 
