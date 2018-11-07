@@ -642,6 +642,13 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         }
     }
 
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        if state != .full {
+            initialScrollOffset = scrollView.contentOffset
+        }
+        userScrollViewDelegate?.scrollViewDidEndScrollingAnimation?(scrollView)
+    }
+
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         if stopScrollDeceleration {
             targetContentOffset.pointee = scrollView.contentOffset
