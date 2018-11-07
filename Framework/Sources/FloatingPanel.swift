@@ -338,11 +338,12 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         let posY = layoutAdapter.positionY(for: state)
         let currentY = getCurrentY(from: initialFrame, with: translation)
         let safeAreaBottomY = layoutAdapter.safeAreaBottomY
-        let vth = behavior.removalVelocityThreshold
+        let vth = behavior.removalVelocity
+        let pth = max(min(behavior.removalProgress, 1.0), 0.0)
         let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: max(min(velocity.y/distance, vth), 0.0)) : .zero
 
-        guard (currentY - posY) != 0 else { return false }
-        guard (safeAreaBottomY - posY) / (currentY - posY) >= 0.5 || velocityVector.dy == vth else { return false }
+        guard (safeAreaBottomY - posY) != 0 else { return false }
+        guard (currentY - posY) / (safeAreaBottomY - posY) >= pth || velocityVector.dy == vth else { return false }
 
         viewcontroller.delegate?.floatingPanelDidEndDraggingToRemove(viewcontroller, withVelocity: velocity)
         let animator = self.behavior.removalInteractionAnimator(self.viewcontroller, with: velocityVector)
