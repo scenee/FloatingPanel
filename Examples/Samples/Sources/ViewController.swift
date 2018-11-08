@@ -56,7 +56,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         tableView.delegate = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
 
-        let contentVC = DebugTableViewController(style: .plain)
+        let contentVC = DebugTableViewController()
         addMainPanel(with: contentVC)
     }
 
@@ -111,7 +111,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let menu = Menu.allCases[indexPath.row]
         let contentVC: UIViewController = {
-            guard let storyboardID = menu.storyboardID else { return DebugTableViewController(style: .plain) }
+            guard let storyboardID = menu.storyboardID else { return DebugTableViewController() }
             guard let vc = self.storyboard?.instantiateViewController(withIdentifier: storyboardID) else { fatalError() }
             return vc
         }()
@@ -217,14 +217,45 @@ class DebugTextViewController: UIViewController, UITextViewDelegate {
     }
 }
 
-class DebugTableViewController: UITableViewController {
+class DebugTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    weak var tableView: UITableView!
     var items: [String] = []
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        let tableView = UITableView(frame: .zero,
+                                    style: .plain)
+        view.addSubview(tableView)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            tableView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            ])
+        tableView.dataSource = self
+        tableView.delegate = self
+        self.tableView = tableView
+
+        let button = UIButton()
+        button.setTitle("Animate Scroll", for: .normal)
+        button.setTitleColor(view.tintColor, for: .normal)
+        button.addTarget(self, action: #selector(doScrollAnimate), for: .touchUpInside)
+        view.addSubview(button)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            button.topAnchor.constraint(equalTo: view.topAnchor, constant: 22.0),
+            button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -22.0),
+            ])
+
         for i in 0...100 {
             items.append("Items \(i)")
         }
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+    }
+
+    @objc func doScrollAnimate() {
+        tableView.scrollToRow(at: IndexPath(row: 50, section: 0), at: .top, animated: true)
     }
 
     @objc func close(sender: UIButton) {
@@ -276,15 +307,15 @@ class DebugTableViewController: UITableViewController {
         print("Content View: willTransition(to: \(newCollection), with: \(coordinator))")
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
 
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 66.0
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         cell.textLabel?.text = items[indexPath.row]
         return cell
