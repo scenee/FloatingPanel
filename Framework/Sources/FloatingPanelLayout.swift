@@ -94,12 +94,15 @@ class FloatingPanelLayoutAdapter {
     private weak var backdropView: FloatingPanelBackdropView!
 
     var layout: FloatingPanelLayout {
-        didSet { checkConsistance(of: layout) }
+        didSet {
+            checkLayoutConsistance()
+        }
     }
 
     var safeAreaInsets: UIEdgeInsets = .zero {
         didSet {
             updateHeight()
+            checkLayoutConsistance()
         }
     }
 
@@ -268,7 +271,7 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
-    private func checkConsistance(of layout: FloatingPanelLayout) {
+    func checkLayoutConsistance() {
         // Verify layout configurations
         let supportedPositions = layout.supportedPositions
 
