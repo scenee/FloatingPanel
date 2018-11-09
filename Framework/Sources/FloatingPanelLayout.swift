@@ -85,27 +85,24 @@ public class FloatingPanelDefaultLandscapeLayout: FloatingPanelLayout {
         default: return nil
         }
     }
-
-    public func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
-        return [
-            surfaceView.leftAnchor.constraint(equalTo: view.sideLayoutGuide.leftAnchor, constant: 0.0),
-            surfaceView.rightAnchor.constraint(equalTo: view.sideLayoutGuide.rightAnchor, constant: 0.0),
-        ]
-    }
 }
 
 
 class FloatingPanelLayoutAdapter {
+    private weak var parent: UIViewController!
     private weak var surfaceView: FloatingPanelSurfaceView!
-    private weak var backdropVIew: FloatingPanelBackdropView!
+    private weak var backdropView: FloatingPanelBackdropView!
 
     var layout: FloatingPanelLayout {
-        didSet { checkConsistance(of: layout) }
+        didSet {
+            checkLayoutConsistance()
+        }
     }
 
     var safeAreaInsets: UIEdgeInsets = .zero {
         didSet {
             updateHeight()
+            checkLayoutConsistance()
         }
     }
 
@@ -173,27 +170,27 @@ class FloatingPanelLayoutAdapter {
     init(surfaceView: FloatingPanelSurfaceView, backdropView: FloatingPanelBackdropView, layout: FloatingPanelLayout) {
         self.layout = layout
         self.surfaceView = surfaceView
-        self.backdropVIew = backdropView
+        self.backdropView = backdropView
     }
 
     func prepareLayout(toParent parent: UIViewController) {
-        parentHeight = parent.view.frame.height
+        self.parent = parent
 
         surfaceView.translatesAutoresizingMaskIntoConstraints = false
-        backdropVIew.translatesAutoresizingMaskIntoConstraints = false
+        backdropView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.deactivate(fixedConstraints + fullConstraints + halfConstraints + tipConstraints + offConstraints)
 
         // Fixed constraints of surface and backdrop views
         let surfaceConstraints = layout.prepareLayout(surfaceView: surfaceView, in: parent.view!)
         let backdroptConstraints = [
-            backdropVIew.topAnchor.constraint(equalTo: parent.view.topAnchor,
+            backdropView.topAnchor.constraint(equalTo: parent.view.topAnchor,
                                               constant: 0.0),
-            backdropVIew.leftAnchor.constraint(equalTo: parent.view.leftAnchor,
+            backdropView.leftAnchor.constraint(equalTo: parent.view.leftAnchor,
                                                constant: 0.0),
-            backdropVIew.rightAnchor.constraint(equalTo: parent.view.rightAnchor,
+            backdropView.rightAnchor.constraint(equalTo: parent.view.rightAnchor,
                                                 constant: 0.0),
-            backdropVIew.bottomAnchor.constraint(equalTo: parent.view.bottomAnchor,
+            backdropView.bottomAnchor.constraint(equalTo: parent.view.bottomAnchor,
                                                  constant: 0.0),
             ]
         fixedConstraints = surfaceConstraints + backdroptConstraints
@@ -226,7 +223,7 @@ class FloatingPanelLayoutAdapter {
         }
 
         NSLayoutConstraint.deactivate(heightConstraints)
-        let height = parentHeight - (safeAreaInsets.top + fullInset)
+        let height = self.parent.view.bounds.height - (safeAreaInsets.top + fullInset)
         heightConstraints = [
             surfaceView.heightAnchor.constraint(equalToConstant: height)
         ]
@@ -238,6 +235,7 @@ class FloatingPanelLayoutAdapter {
         defer {
             surfaceView.superview!.layoutIfNeeded()
         }
+        setBackdropAlpha(of: state)
 
         NSLayoutConstraint.activate(fixedConstraints)
 
@@ -265,7 +263,15 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
-    private func checkConsistance(of layout: FloatingPanelLayout) {
+    func setBackdropAlpha(of target: FloatingPanelPosition?) {
+        if let target = target {
+            self.backdropView.alpha = layout.backdropAlphaFor(position: target)
+        } else {
+            self.backdropView.alpha = 0.0
+        }
+    }
+
+    func checkLayoutConsistance() {
         // Verify layout configurations
         let supportedPositions = layout.supportedPositions
 
