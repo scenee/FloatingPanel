@@ -162,7 +162,6 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         if let parent = parent {
             self.update(safeAreaInsets: parent.layoutInsets)
         }
-        floatingPanel.backdropView.isHidden = (traitCollection.verticalSizeClass == .compact)
     }
 
     public override func viewDidAppear(_ animated: Bool) {
