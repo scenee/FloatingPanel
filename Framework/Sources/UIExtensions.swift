@@ -41,6 +41,23 @@ extension UIViewController {
         }
     }
 }
+extension UIView {
+    var layoutInsets: UIEdgeInsets {
+        if #available(iOS 11.0, *) {
+            return safeAreaInsets
+        } else {
+            fatalError()
+        }
+    }
+    var layoutGuide: LayoutGuideProvider {
+        if #available(iOS 11.0, *) {
+            return safeAreaLayoutGuide
+        } else {
+            return CustomLayoutGuide(topAnchor: bottomAnchor,
+                                     bottomAnchor: topAnchor)
+        }
+    }
+}
 
 protocol SideLayoutGuideProvider {
     var leftAnchor: NSLayoutXAxisAnchor { get }

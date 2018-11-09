@@ -152,6 +152,60 @@
             </objects>
             <point key="canvasLocation" x="-380" y="1576"/>
         </scene>
+        <!--Subview Controller-->
+        <scene sceneID="pmZ-Fb-BUw">
+            <objects>
+                <viewController storyboardIdentifier="SubviewController" id="ctE-GA-hO5" customClass="SubviewController" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5jP-X6-bZd">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="y2L-HE-R4g">
+                                <rect key="frame" x="0.0" y="20" width="375" height="603"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fje-gl-jo0">
+                                        <rect key="frame" x="8" y="48" width="39" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" title="Close"/>
+                                        <connections>
+                                            <action selector="closeWithSender:" destination="ctE-GA-hO5" eventType="touchUpInside" id="FGn-jp-Oca"/>
+                                            <action selector="closeWithSender:" destination="lto-Zc-Vtp" eventType="touchUpInside" id="Fwh-EW-0Sf"/>
+                                            <action selector="closeWithSender:" destination="bYI-y3-Rzb" eventType="touchUpInside" id="fwm-bM-Zhx"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JE5-Xz-FIm">
+                                <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                                <items>
+                                    <barButtonItem title="Item" id="OeU-VX-T01"/>
+                                    <barButtonItem title="Item" id="XFa-G1-2oV"/>
+                                    <barButtonItem title="Item" id="8Eu-CK-5Ax"/>
+                                    <barButtonItem title="Item" id="z8W-oe-1zS"/>
+                                </items>
+                            </toolbar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="y2L-HE-R4g" firstAttribute="trailing" secondItem="5jP-X6-bZd" secondAttribute="trailing" id="6uy-SG-Na3"/>
+                            <constraint firstItem="U5N-lv-s3Z" firstAttribute="bottom" secondItem="JE5-Xz-FIm" secondAttribute="bottom" id="NNc-xL-j0U"/>
+                            <constraint firstItem="JE5-Xz-FIm" firstAttribute="top" secondItem="y2L-HE-R4g" secondAttribute="bottom" id="PQJ-Te-Zob"/>
+                            <constraint firstItem="JE5-Xz-FIm" firstAttribute="leading" secondItem="5jP-X6-bZd" secondAttribute="leading" id="d3a-hE-lAR"/>
+                            <constraint firstItem="JE5-Xz-FIm" firstAttribute="trailing" secondItem="5jP-X6-bZd" secondAttribute="trailing" id="hWQ-bR-fnv"/>
+                            <constraint firstItem="y2L-HE-R4g" firstAttribute="top" secondItem="U5N-lv-s3Z" secondAttribute="top" id="ifu-ML-dIJ"/>
+                            <constraint firstItem="y2L-HE-R4g" firstAttribute="leading" secondItem="5jP-X6-bZd" secondAttribute="leading" id="kKl-5v-J7j"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="U5N-lv-s3Z"/>
+                    </view>
+                    <connections>
+                        <outlet property="containerView" destination="y2L-HE-R4g" id="z6V-b3-rcV"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Q5C-KO-rHE" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-380" y="2264.617691154423"/>
+        </scene>
         <!--Tab Bar View Controller-->
         <scene sceneID="nQ5-PV-qFw">
             <objects>

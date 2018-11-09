@@ -20,6 +20,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case showTabBar
         case showNestedScrollView
         case showRemovablePanel
+        case showFromSubview
 
         var name: String {
             switch self {
@@ -30,6 +31,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             case .showTabBar: return "Show Tab Bar"
             case .showNestedScrollView: return "Show Nested ScrollView"
             case .showRemovablePanel: return "Show Removable Panel"
+            case .showFromSubview: return "Show from subview"
             }
         }
 
@@ -42,6 +44,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             case .showTabBar: return "TabBarViewController"
             case .showNestedScrollView: return "NestedScrollViewController"
             case .showRemovablePanel: return "DetailViewController"
+            case .showFromSubview: return "SubviewController"
             }
         }
     }
@@ -134,7 +137,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
 
             //  Add FloatingPanel to self.view
             detailPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
-        case .showModal, .showTabBar:
+        case .showModal, .showTabBar, .showFromSubview:
             let modalVC = contentVC
             present(modalVC, animated: true, completion: nil)
         default:
@@ -467,6 +470,46 @@ class TabBarContentViewController: UIViewController, FloatingPanelControllerDele
     }
 }
 
+class SubviewController: UIViewController, FloatingPanelControllerDelegate {
+    var fpc: FloatingPanelController!
+    var consoleVC: DebugTextViewController!
+    @IBOutlet var containerView: UIView!
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Initialize FloatingPanelController
+        fpc = FloatingPanelController()
+        fpc.delegate = self
+        
+        // Initialize FloatingPanelController and add the view
+        fpc.surfaceView.cornerRadius = 6.0
+        fpc.surfaceView.shadowHidden = false
+        
+        // Set a content view controller and track the scroll view
+        let consoleVC = storyboard?.instantiateViewController(withIdentifier: "ConsoleViewController") as! DebugTextViewController
+        fpc.set(contentViewController: consoleVC)
+        fpc.track(scrollView: consoleVC.textView)
+        self.consoleVC = consoleVC
+        
+        //  Add FloatingPanel to self.view
+        fpc.addPanel(toParent: self, containerView: containerView)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        //  Remove FloatingPanel from a view
+        fpc.removePanelFromParent(animated: false)
+    }
+    
+    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
+        return OneTabBarPanelLayout()
+    }
+    
+    @IBAction func close(sender: UIButton) {
+        dismiss(animated: true, completion: nil)
+    }
+}
+
 extension FloatingPanelLayout {
     func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
         if #available(iOS 11.0, *) {
@@ -519,3 +562,4 @@ class TwoTabBarPanel2Layout: FloatingPanelLayout {
         }
     }
 }
+
