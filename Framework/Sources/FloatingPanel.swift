@@ -78,7 +78,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         panGesture.delegate = self
     }
 
-    func layoutViews(in vc: UIViewController) {
+    func setUpViews(in vc: UIViewController) {
         unowned let view = vc.view!
 
         view.insertSubview(backdropView, belowSubview: surfaceView)
