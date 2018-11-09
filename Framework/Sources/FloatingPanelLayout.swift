@@ -113,7 +113,7 @@ class FloatingPanelLayoutAdapter {
     private var halfConstraints: [NSLayoutConstraint] = []
     private var tipConstraints: [NSLayoutConstraint] = []
     private var offConstraints: [NSLayoutConstraint] = []
-    private var heightConstraints: [NSLayoutConstraint] = []
+    private var heightConstraint: NSLayoutConstraint? = nil
 
     private var fullInset: CGFloat {
         return layout.insetFor(position: .full) ?? 0.0
@@ -183,8 +183,8 @@ class FloatingPanelLayoutAdapter {
 
         // Fixed constraints of surface and backdrop views
         let surfaceConstraints = layout.prepareLayout(surfaceView: surfaceView, in: parent.view!)
-        let backdroptConstraints = [
             backdropView.topAnchor.constraint(equalTo: parent.view.topAnchor,
+        let backdropConstraints = [
                                               constant: 0.0),
             backdropView.leftAnchor.constraint(equalTo: parent.view.leftAnchor,
                                                constant: 0.0),
@@ -193,7 +193,7 @@ class FloatingPanelLayoutAdapter {
             backdropView.bottomAnchor.constraint(equalTo: parent.view.bottomAnchor,
                                                  constant: 0.0),
             ]
-        fixedConstraints = surfaceConstraints + backdroptConstraints
+        fixedConstraints = surfaceConstraints + backdropConstraints
 
         // Flexible surface constarints for full, half, tip and off
         fullConstraints = [
@@ -222,13 +222,18 @@ class FloatingPanelLayoutAdapter {
             }
         }
 
-        NSLayoutConstraint.deactivate(heightConstraints)
         let height = self.parent.view.bounds.height - (safeAreaInsets.top + fullInset)
         heightConstraints = [
             surfaceView.heightAnchor.constraint(equalToConstant: height)
         ]
-        NSLayoutConstraint.activate(heightConstraints)
         surfaceView.set(bottomOverflow: heightBuffer)
+        if let constraint = self.heightConstraint {
+            NSLayoutConstraint.deactivate([constraint])
+        }
+        let constraint = surfaceView.heightAnchor.constraint(equalToConstant: height)
+
+        NSLayoutConstraint.activate([constraint])
+        heightConstraint = constraint
     }
 
     func activateLayout(of state: FloatingPanelPosition?) {
