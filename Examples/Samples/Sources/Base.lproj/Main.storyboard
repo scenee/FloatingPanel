@@ -190,7 +190,7 @@
                                 </connections>
                             </button>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="44" translatesAutoresizingMaskIntoConstraints="NO" id="9p4-06-y2T">
-                                <rect key="frame" x="145" y="108" width="85" height="178"/>
+                                <rect key="frame" x="139.5" y="108" width="96" height="252"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i9x-x5-n1q">
                                         <rect key="frame" x="0.0" y="0.0" width="80" height="30"/>
@@ -211,6 +211,13 @@
                                         <state key="normal" title="Move to tip"/>
                                         <connections>
                                             <action selector="moveToTipWithSender:" destination="bYI-y3-Rzb" eventType="touchUpInside" id="BmL-91-9ai"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="szf-HE-QTk">
+                                        <rect key="frame" x="0.0" y="222" width="96" height="30"/>
+                                        <state key="normal" title="Update layout"/>
+                                        <connections>
+                                            <action selector="updateLayout:" destination="bYI-y3-Rzb" eventType="touchUpInside" id="Woz-a7-YMJ"/>
                                         </connections>
                                     </button>
                                 </subviews>
