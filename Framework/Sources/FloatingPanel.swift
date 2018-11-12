@@ -65,6 +65,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                                                         layout: layout)
         self.behavior = behavior
 
+        state = layoutAdapter.layout.initialPosition
+
         panGesture = FloatingPanelPanGestureRecognizer()
 
         if #available(iOS 11.0, *) {
