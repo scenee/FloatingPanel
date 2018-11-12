@@ -374,14 +374,19 @@ class DetailViewController: UIViewController {
     }
 }
 
-class ModalViewController: UIViewController {
+class ModalViewController: UIViewController, FloatingPanelControllerDelegate {
     var fpc: FloatingPanelController!
     var consoleVC: DebugTextViewController!
+
     @IBOutlet weak var safeAreaView: UIView!
+
+    var isNewlayout: Bool = false
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         // Initialize FloatingPanelController
         fpc = FloatingPanelController()
+        fpc.delegate = self
 
         // Initialize FloatingPanelController and add the view
         fpc.surfaceView.cornerRadius = 6.0
@@ -416,6 +421,31 @@ class ModalViewController: UIViewController {
     }
     @IBAction func moveToTip(sender: UIButton) {
         fpc.move(to: .tip, animated: true)
+    }
+
+    @IBAction func updateLayout(_ sender: Any) {
+        isNewlayout = !isNewlayout
+        UIView.animate(withDuration: 0.5) {
+            self.fpc.updateLayout()
+        }
+    }
+
+    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
+        return (isNewlayout) ? ModalSecondLayout() : nil
+    }
+}
+
+class ModalSecondLayout: FloatingPanelLayout {
+    var initialPosition: FloatingPanelPosition {
+        return .half
+    }
+
+    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        switch position {
+        case .full: return 18.0
+        case .half: return 262.0
+        case .tip: return 44.0
+        }
     }
 }
 
