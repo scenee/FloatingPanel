@@ -243,9 +243,12 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
         layoutInsetsObservations.removeAll()
 
-        // Must track safeAreaInsets/{top,bottom}LayoutGuide of the `parent.view` to update floatingPanel.safeAreaInsets`.
-        // Because the parent VC does not call viewSafeAreaInsetsDidChange() expectedly on the bottom inset's update.
-        // So I needs to observe them. It ensures that the `adjustedContentInsets` has a correct value.
+        // Must track safeAreaInsets/{top,bottom}LayoutGuide of the `parent.view`
+        // to update floatingPanel.safeAreaInsets`. There are 2 reasons.
+        // 1. The parent VC doesn't call viewSafeAreaInsetsDidChange() on the bottom
+        // inset's update expectedly.
+        // 2. The safe area top inset can be variable on the large title navigation bar.
+        // That's why it needs the observation to keep `adjustedContentInsets` correct.
         if #available(iOS 11.0, *) {
             let observaion = parent.observe(\.view.safeAreaInsets) { [weak self] (vc, chaneg) in
                 guard let self = self else { return }
@@ -253,7 +256,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             }
             layoutInsetsObservations.append(observaion)
         } else {
-            // KVOs for topLayoutGuide & bottomLayoutGuide are not effective. Instead, safeAreaInsets will be updated in viewDidAppear()
+            // KVOs for topLayoutGuide & bottomLayoutGuide are not effective.
+            // Instead, safeAreaInsets will be updated in viewDidAppear()
         }
 
         parent.addChild(self)
