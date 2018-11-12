@@ -236,6 +236,16 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                     // Fix the scroll offset in moving the panel from half and tip.
                     scrollView.contentOffset.y = initialScrollOffset.y
                 }
+
+                // Always hide a scroll indicator at the non-top.
+                if interactionInProgress {
+                    lockScrollView()
+                }
+            } else {
+                // Always show a scroll indicator at the top.
+                if interactionInProgress {
+                    unlockScrollView()
+                }
             }
         case panGesture:
             let translation = panGesture.translation(in: panGesture.view!.superview)
@@ -369,25 +379,27 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     private func startInteraction(with translation: CGPoint) {
+        /* Don't lock a scroll view to show a scroll indicator after hitting the top */
         log.debug("startInteraction")
         initialFrame = surfaceView.frame
         if let scrollView = scrollView {
             initialScrollOffset = scrollView.contentOffset
         }
         transOffsetY = translation.y
-        viewcontroller.delegate?.floatingPanelWillBeginDragging(viewcontroller)
 
-        lockScrollView()
+        viewcontroller.delegate?.floatingPanelWillBeginDragging(viewcontroller)
 
         interactionInProgress = true
     }
 
     private func endInteraction(for targetPosition: FloatingPanelPosition) {
         log.debug("endInteraction for \(targetPosition)")
+        interactionInProgress = false
+
+        // Prevent to keep a scoll view indicator visible at the half/tip position
         if targetPosition != .full {
             lockScrollView()
         }
-        interactionInProgress = false
     }
 
     private func getCurrentY(from rect: CGRect, with translation: CGPoint) -> CGFloat {
@@ -645,15 +657,21 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     // MARK: - ScrollView handling
 
-    func lockScrollView() {
-        guard let scrollView = scrollView else { return }
+    private func lockScrollView() {
+        guard let scrollView = scrollView,
+            scrollView.isDirectionalLockEnabled == false,
+            scrollView.showsVerticalScrollIndicator == true
+        else { return }
 
         scrollView.isDirectionalLockEnabled = true
         scrollView.showsVerticalScrollIndicator = false
     }
 
-    func unlockScrollView() {
-        guard let scrollView = scrollView else { return }
+    private func unlockScrollView() {
+        guard let scrollView = scrollView,
+            scrollView.isDirectionalLockEnabled == true,
+            scrollView.showsVerticalScrollIndicator != scrollIndictorVisible
+        else { return }
 
         scrollView.isDirectionalLockEnabled = false
         scrollView.showsVerticalScrollIndicator = scrollIndictorVisible
