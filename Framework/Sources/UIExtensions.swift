@@ -50,6 +50,8 @@ protocol SideLayoutGuideProvider {
 extension UIView: SideLayoutGuideProvider {}
 extension UILayoutGuide: SideLayoutGuideProvider {}
 
+// The reason why UIView has no extensions of safe area insets and top/bottom guides
+// is for iOS10 compat.
 extension UIView {
     var sideLayoutGuide: SideLayoutGuideProvider {
         if #available(iOS 11.0, *) {
