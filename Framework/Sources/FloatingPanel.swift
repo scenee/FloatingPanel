@@ -173,7 +173,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                                   shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         guard gestureRecognizer == panGesture else { return false }
 
-        log.debug("shouldRecognizeSimultaneouslyWith", otherGestureRecognizer)
+        /* log.debug("shouldRecognizeSimultaneouslyWith", otherGestureRecognizer) */
 
         return otherGestureRecognizer == scrollView?.panGestureRecognizer
     }
@@ -181,7 +181,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         guard gestureRecognizer == panGesture else { return false }
 
-        // Do not begin any gestures excluding the tracking scrollView's pan gesture until the pan gesture fails
+        /* log.debug("shouldBeRequiredToFailBy", otherGestureRecognizer) */
+
+        // Do not begin any gestures excluding the tracking scrollView's pan gesture
+        // until the pan gesture fails
         if otherGestureRecognizer == scrollView?.panGestureRecognizer {
             return false
         } else {
@@ -192,10 +195,21 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         guard gestureRecognizer == panGesture else { return false }
 
-        // Do not begin the pan gesture until any other gestures fail except fo the tracking scrollView's pan gesture.
+        /* log.debug("shouldRequireFailureOf", otherGestureRecognizer) */
+
+        // Do not begin the pan gesture until any other gestures fail except for
+        // the tracking scrollView's pan gesture and other gestures.
+        if let scrollView = scrollView {
+            if scrollView.panGestureRecognizer == otherGestureRecognizer {
+                return false
+            }
+            // For short scroll contents
+            if scrollView.gestureRecognizers?.contains(otherGestureRecognizer) ?? false {
+                return false
+            }
+        }
+
         switch otherGestureRecognizer {
-        case scrollView?.panGestureRecognizer:
-            return false
         case is UIPanGestureRecognizer,
              is UISwipeGestureRecognizer,
              is UIRotationGestureRecognizer,
