@@ -20,6 +20,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         didSet {
             guard let scrollView = scrollView else { return }
             scrollView.panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
+            scrollBouncable = scrollView.bounces
             scrollIndictorVisible = scrollView.showsVerticalScrollIndicator
         }
     }
@@ -49,6 +50,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     // Scroll handling
     private var stopScrollDeceleration: Bool = false
+    private var scrollBouncable = false
     private var scrollIndictorVisible = false
 
     // MARK: - Interface
@@ -206,19 +208,21 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     // MARK: - Gesture handling
-
+    private let offsetThreshold: CGFloat = 5.0 // Optimal value from testing
     @objc func handle(panGesture: UIPanGestureRecognizer) {
         log.debug("Gesture >>>>", panGesture)
+        let velocity = panGesture.velocity(in: panGesture.view)
 
         switch panGesture {
         case scrollView?.panGestureRecognizer:
             guard let scrollView = scrollView else { return }
 
-            log.debug("SrollPanGesture ScrollView.contentOffset >>>", scrollView.contentOffset.y)
+            log.debug("SrollPanGesture ScrollView.contentOffset >>>", scrollView.contentOffset.y, scrollView.contentSize, scrollView.bounds.size)
 
-            // Prevent scoll slip by the top bounce
-            if scrollView.isDecelerating == false {
-                scrollView.bounces = (scrollView.contentOffset.y > 10.0)
+            // Prevent scoll slip by the top bounce.
+            // Must the content height less than the scroll view height
+            if scrollView.isDecelerating == false, scrollView.contentSize.height > scrollView.bounds.height {
+                scrollView.bounces = (scrollView.contentOffset.y > offsetThreshold)
             }
 
             if surfaceView.frame.minY > layoutAdapter.topY {
@@ -249,7 +253,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             }
         case panGesture:
             let translation = panGesture.translation(in: panGesture.view!.superview)
-            let velocity = panGesture.velocity(in: panGesture.view)
             let location = panGesture.location(in: panGesture.view)
 
             log.debug(panGesture.state, ">>>", "translation: \(translation.y), velocity: \(velocity.y)")
@@ -294,7 +297,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         log.debug("ScrollView.contentOffset >>>", scrollView.contentOffset.y)
 
-        if scrollView.contentOffset.y - scrollView.contentOffsetZero.y != 0 {
+        let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
+        if  abs(offset) > offsetThreshold {
             return true
         }
         if scrollView.isDecelerating {
@@ -455,7 +459,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         stopScrollDeceleration = false
         // Don't unlock scroll view in animating view when presentation layer != model layer
-        unlockScrollView()
+        if targetPosition == .full {
+            unlockScrollView()
+        }
     }
 
     private func distance(to targetPosition: FloatingPanelPosition, with translation: CGPoint) -> CGFloat {
@@ -664,6 +670,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         else { return }
 
         scrollView.isDirectionalLockEnabled = true
+        scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
     }
 
@@ -674,6 +681,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         else { return }
 
         scrollView.isDirectionalLockEnabled = false
+        scrollView.bounces = scrollBouncable
         scrollView.showsVerticalScrollIndicator = scrollIndictorVisible
     }
 
