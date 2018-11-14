@@ -233,8 +233,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
             log.debug("SrollPanGesture ScrollView.contentOffset >>>", scrollView.contentOffset.y, scrollView.contentSize, scrollView.bounds.size)
 
-            // Prevent scoll slip by the top bounce.
-            // Must the content height less than the scroll view height
+            // Prevent scoll slip by the top bounce when the scroll view's height is
+            // less than the content's height
             if scrollView.isDecelerating == false, scrollView.contentSize.height > scrollView.bounds.height {
                 scrollView.bounces = (scrollView.contentOffset.y > offsetThreshold)
             }
