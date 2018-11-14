@@ -205,8 +205,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         }
     }
 
-    private func updateLayout(for: UITraitCollection) {
-        floatingPanel.layoutAdapter.layout = fetchLayout(for: view.traitCollection)
+    private func updateLayout(for traitCollection: UITraitCollection) {
+        floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
 
         guard let parent = parent else { return }
 
