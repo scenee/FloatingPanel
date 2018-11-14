@@ -9,12 +9,11 @@
 import UIKit
 import FloatingPanel
 
-class SampleListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, FloatingPanelControllerDelegate {
+class SampleListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, FloatingPanelControllerDelegate, FloatingPanelLayout {
     @IBOutlet weak var tableView: UITableView!
 
     enum Menu: Int, CaseIterable {
         case trackingTableView
-        case trackingShortTableView
         case trackingTextView
         case showDetail
         case showModal
@@ -24,9 +23,8 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
 
         var name: String {
             switch self {
-            case .trackingTableView: return "Scroll Tracking TableView"
-            case .trackingShortTableView: return "Scroll Tracking TableView(short)"
-            case .trackingTextView: return "Scroll Tracking TextView"
+            case .trackingTableView: return "Scroll tracking(TableView)"
+            case .trackingTextView: return "Scroll tracking(TextView)"
             case .showDetail: return "Show Detail Panel"
             case .showModal: return "Show Modal"
             case .showTabBar: return "Show Tab Bar"
@@ -38,7 +36,6 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         var storyboardID: String? {
             switch self {
             case .trackingTableView: return nil
-            case .trackingShortTableView: return nil
             case .trackingTextView: return "ConsoleViewController"
             case .showDetail: return "DetailViewController"
             case .showModal: return "ModalViewController"
@@ -63,6 +60,10 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         addMainPanel(with: contentVC)
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+
     func addMainPanel(with contentVC: UIViewController) {
         // Initialize FloatingPanelController
         mainPanelVC = FloatingPanelController()
@@ -82,8 +83,6 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             mainPanelVC.track(scrollView: consoleVC.textView)
 
         case let contentVC as DebugTableViewController:
-            mainPanelVC.track(scrollView: contentVC.tableView)
-        case let contentVC as DebugShortTableViewController:
             mainPanelVC.track(scrollView: contentVC.tableView)
         case let contentVC as NestedScrollViewController:
             mainPanelVC.track(scrollView: contentVC.scrollView)
@@ -116,12 +115,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let menu = Menu.allCases[indexPath.row]
         let contentVC: UIViewController = {
-            switch menu {
-            case .trackingTableView: return DebugTableViewController()
-            case .trackingShortTableView: return DebugShortTableViewController()
-            default: break
-            }
-            guard let storyboardID = menu.storyboardID else { fatalError() }
+            guard let storyboardID = menu.storyboardID else { return DebugTableViewController() }
             guard let vc = self.storyboard?.instantiateViewController(withIdentifier: storyboardID) else { fatalError() }
             return vc
         }()
@@ -159,7 +153,19 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         if currentMenu == .showRemovablePanel {
             return newCollection.verticalSizeClass == .compact ? RemovablePanelLandscapeLayout() :  RemovablePanelLayout()
         } else {
-            return nil
+            return self
+        }
+    }
+
+    var initialPosition: FloatingPanelPosition {
+        return .half
+    }
+
+    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        switch position {
+        case .full: return UIScreen.main.bounds.height == 667.0 ? 18.0 : 16.0
+        case .half: return 262.0
+        case .tip: return 69.0
         }
     }
 }
@@ -252,6 +258,7 @@ class DebugTextViewController: UIViewController, UITextViewDelegate {
 class DebugTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     weak var tableView: UITableView!
     var items: [String] = []
+    var itemHeight: CGFloat = 66.0
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -269,16 +276,29 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
         tableView.delegate = self
         self.tableView = tableView
 
+        let stackView = UIStackView()
+        view.addSubview(stackView)
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.alignment = .trailing
+        stackView.spacing = 10.0
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 22.0),
+            stackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -22.0),
+            ])
+
         let button = UIButton()
         button.setTitle("Animate Scroll", for: .normal)
         button.setTitleColor(view.tintColor, for: .normal)
-        button.addTarget(self, action: #selector(doScrollAnimate), for: .touchUpInside)
-        view.addSubview(button)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            button.topAnchor.constraint(equalTo: view.topAnchor, constant: 22.0),
-            button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -22.0),
-            ])
+        button.addTarget(self, action: #selector(animateScroll), for: .touchUpInside)
+        stackView.addArrangedSubview(button)
+
+        let button2 = UIButton()
+        button2.setTitle("Change content size", for: .normal)
+        button2.setTitleColor(view.tintColor, for: .normal)
+        button2.addTarget(self, action: #selector(changeContentSize), for: .touchUpInside)
+        stackView.addArrangedSubview(button2)
 
         for i in 0...100 {
             items.append("Items \(i)")
@@ -286,8 +306,45 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
     }
 
-    @objc func doScrollAnimate() {
-        tableView.scrollToRow(at: IndexPath(row: 50, section: 0), at: .top, animated: true)
+    @objc func animateScroll() {
+        tableView.scrollToRow(at: IndexPath(row: lround(Double(items.count) / 2.0),
+                                            section: 0),
+                              at: .top, animated: true)
+    }
+
+    @objc func changeContentSize() {
+        let actionSheet = UIAlertController(title: "Change content size", message: "", preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Large", style: .default, handler: { (_) in
+            self.itemHeight = 66.0
+            self.changeItems(100)
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Match", style: .default, handler: { (_) in
+            switch self.tableView.bounds.height {
+            case 585: // iPhone 6,7,8
+                self.itemHeight = self.tableView.bounds.height / 13.0
+                self.changeItems(13)
+            case 656: // iPhone {6,7,8} Plus
+                self.itemHeight = self.tableView.bounds.height / 16.0
+                self.changeItems(16)
+            default: // iPhone X family
+                self.itemHeight = self.tableView.bounds.height / 12.0
+                self.changeItems(12)
+            }
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Short", style: .default, handler: { (_) in
+            self.itemHeight = 66.0
+            self.changeItems(3)
+        }))
+
+        self.present(actionSheet, animated: true, completion: nil)
+    }
+
+    func changeItems(_ count: Int) {
+        items.removeAll()
+        for i in 0..<count {
+            items.append("Items \(i)")
+        }
+        tableView.reloadData()
     }
 
     @objc func close(sender: UIButton) {
@@ -344,79 +401,7 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 66.0
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        cell.textLabel?.text = items[indexPath.row]
-        return cell
-    }
-}
-
-class DebugShortTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    weak var tableView: UITableView!
-    var items: [String] = []
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        let tableView = UITableView(frame: .zero,
-                                    style: .plain)
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            tableView.rightAnchor.constraint(equalTo: view.rightAnchor)
-            ])
-        tableView.dataSource = self
-        tableView.delegate = self
-        self.tableView = tableView
-
-        let button = UIButton()
-        button.setTitle("Change item count", for: .normal)
-        button.setTitleColor(view.tintColor, for: .normal)
-        button.addTarget(self, action: #selector(changeItemCount), for: .touchUpInside)
-        view.addSubview(button)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            button.topAnchor.constraint(equalTo: view.topAnchor, constant: 22.0),
-            button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -22.0),
-            ])
-
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
-
-        changeItemCount()
-    }
-
-    @objc func changeItemCount() {
-        let max: Int
-        switch items.count {
-        case 13:
-            max = 3
-        case 3:
-            max = 13
-        default:
-            max = 3
-        }
-        items.removeAll()
-        for i in 0..<max {
-            items.append("Items \(i)")
-        }
-        tableView.reloadData()
-    }
-
-    @objc func close(sender: UIButton) {
-        //  Remove FloatingPanel from a view
-        (self.parent as! FloatingPanelController).removePanelFromParent(animated: true, completion: nil)
-    }
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 45.0
+        return itemHeight
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
