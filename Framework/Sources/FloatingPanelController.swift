@@ -13,6 +13,7 @@ public protocol FloatingPanelControllerDelegate: class {
     func floatingPanel(_ vc: FloatingPanelController, behaviorFor newCollection: UITraitCollection) -> FloatingPanelBehavior?
 
     func floatingPanelDidMove(_ vc: FloatingPanelController) // any offset changes
+    func floatingPanelDidMoveTo(_ targetPosition: FloatingPanelPosition) // final pos 
 
     // called on start of dragging (may require some time and or distance to move)
     func floatingPanelWillBeginDragging(_ vc: FloatingPanelController)
@@ -35,6 +36,7 @@ public extension FloatingPanelControllerDelegate {
         return nil
     }
     func floatingPanelDidMove(_ vc: FloatingPanelController) {}
+    func floatingPanelDidMoveTo(_ targetPosition: FloatingPanelPosition) {}
     func floatingPanelWillBeginDragging(_ vc: FloatingPanelController) {}
     func floatingPanelDidEndDragging(_ vc: FloatingPanelController, withVelocity velocity: CGPoint, targetPosition: FloatingPanelPosition) {}
     func floatingPanelWillBeginDecelerating(_ vc: FloatingPanelController) {}

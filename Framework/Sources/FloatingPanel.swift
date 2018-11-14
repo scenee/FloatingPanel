@@ -90,7 +90,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     func move(to: FloatingPanelPosition, animated: Bool, completion: (() -> Void)? = nil) {
-        move(from: state, to: to, animated: animated, completion: completion)
+        move(from: state, to: to, animated: animated) {
+            self.viewcontroller.delegate?.floatingPanelDidMoveTo(to)
+            completion?()
+        }
     }
 
     func present(animated: Bool, completion: (() -> Void)? = nil) {
@@ -456,6 +459,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         stopScrollDeceleration = false
         // Don't unlock scroll view in animating view when presentation layer != model layer
         unlockScrollView()
+        
+        self.viewcontroller.delegate?.floatingPanelDidMoveTo(targetPosition)
     }
 
     private func distance(to targetPosition: FloatingPanelPosition, with translation: CGPoint) -> CGFloat {
