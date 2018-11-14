@@ -678,10 +678,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     // MARK: - ScrollView handling
 
     private func lockScrollView() {
-        guard let scrollView = scrollView,
-            scrollView.isDirectionalLockEnabled == false,
-            scrollView.showsVerticalScrollIndicator == true
-        else { return }
+        guard let scrollView = scrollView else { return }
 
         scrollView.isDirectionalLockEnabled = true
         scrollView.bounces = false
@@ -689,10 +686,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     private func unlockScrollView() {
-        guard let scrollView = scrollView,
-            scrollView.isDirectionalLockEnabled == true,
-            scrollView.showsVerticalScrollIndicator != scrollIndictorVisible
-        else { return }
+        guard let scrollView = scrollView else { return }
 
         scrollView.isDirectionalLockEnabled = false
         scrollView.bounces = scrollBouncable
