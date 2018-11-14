@@ -208,8 +208,6 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     private func updateLayout(for: UITraitCollection) {
         floatingPanel.layoutAdapter.layout = fetchLayout(for: view.traitCollection)
 
-        assert(floatingPanel.layoutAdapter.layout.supportedPositions.contains(floatingPanel.state))
-
         guard let parent = parent else { return }
 
         floatingPanel.layoutAdapter.prepareLayout(toParent: parent)
