@@ -56,7 +56,7 @@ public class FloatingPanelSurfaceView: UIView {
     /// The color of the surface border.
     public var borderWidth: CGFloat = 0.0  { didSet { setNeedsLayout() } }
 
-    private var shadowLayer: CAShapeLayer!  { didSet { setNeedsLayout() } }
+    private var backgroundLayer: CAShapeLayer!  { didSet { setNeedsLayout() } }
 
     private struct Default {
         public static let grabberTopPadding: CGFloat = 6.0
@@ -76,9 +76,9 @@ public class FloatingPanelSurfaceView: UIView {
         super.backgroundColor = .clear
         self.clipsToBounds = false
 
-        let shadowLayer = CAShapeLayer()
-        layer.insertSublayer(shadowLayer, at: 0)
-        self.shadowLayer = shadowLayer
+        let backgroundLayer = CAShapeLayer()
+        layer.insertSublayer(backgroundLayer, at: 0)
+        self.backgroundLayer = backgroundLayer
 
         let contentView = FloatingPanelSurfaceContentView()
         addSubview(contentView)
@@ -108,7 +108,7 @@ public class FloatingPanelSurfaceView: UIView {
     public override func layoutSubviews() {
         super.layoutSubviews()
 
-        updateShadowLayer()
+        updateLayers()
         updateContentViewMask()
 
         contentView.layer.borderColor = borderColor?.cgColor
@@ -116,7 +116,7 @@ public class FloatingPanelSurfaceView: UIView {
         contentView.backgroundColor = color
     }
 
-    private func updateShadowLayer() {
+    private func updateLayers() {
         log.debug("SurfaceView bounds", bounds)
         
         var rect = bounds
@@ -124,14 +124,14 @@ public class FloatingPanelSurfaceView: UIView {
         let path = UIBezierPath(roundedRect: rect,
                                 byRoundingCorners: [.topLeft, .topRight],
                                 cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
-        shadowLayer.path = path.cgPath
-        shadowLayer.fillColor = color?.cgColor
+        backgroundLayer.path = path.cgPath
+        backgroundLayer.fillColor = color?.cgColor
+		
         if shadowHidden == false {
-            shadowLayer.shadowPath = shadowLayer.path
-            shadowLayer.shadowColor = shadowColor.cgColor
-            shadowLayer.shadowOffset = shadowOffset
-            shadowLayer.shadowOpacity = shadowOpacity
-            shadowLayer.shadowRadius = shadowRadius
+            layer.shadowColor = shadowColor.cgColor
+            layer.shadowOffset = shadowOffset
+            layer.shadowOpacity = shadowOpacity
+            layer.shadowRadius = shadowRadius
         }
     }
 
@@ -156,7 +156,7 @@ public class FloatingPanelSurfaceView: UIView {
 
     func set(bottomOverflow: CGFloat) {
         self.bottomOverflow = bottomOverflow
-        updateShadowLayer()
+        updateLayers()
         updateContentViewMask()
     }
 
