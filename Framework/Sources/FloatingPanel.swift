@@ -20,6 +20,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         didSet {
             guard let scrollView = scrollView else { return }
             scrollView.panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
+            scrollBouncable = scrollView.bounces
             scrollIndictorVisible = scrollView.showsVerticalScrollIndicator
         }
     }
@@ -49,6 +50,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     // Scroll handling
     private var stopScrollDeceleration: Bool = false
+    private var scrollBouncable = false
     private var scrollIndictorVisible = false
 
     // MARK: - Interface
@@ -171,7 +173,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                                   shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         guard gestureRecognizer == panGesture else { return false }
 
-        log.debug("shouldRecognizeSimultaneouslyWith", otherGestureRecognizer)
+        /* log.debug("shouldRecognizeSimultaneouslyWith", otherGestureRecognizer) */
 
         return otherGestureRecognizer == scrollView?.panGestureRecognizer
     }
@@ -179,7 +181,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         guard gestureRecognizer == panGesture else { return false }
 
-        // Do not begin any gestures excluding the tracking scrollView's pan gesture until the pan gesture fails
+        /* log.debug("shouldBeRequiredToFailBy", otherGestureRecognizer) */
+
+        // Do not begin any gestures excluding the tracking scrollView's pan gesture
+        // until the pan gesture fails
         if otherGestureRecognizer == scrollView?.panGestureRecognizer {
             return false
         } else {
@@ -190,10 +195,21 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         guard gestureRecognizer == panGesture else { return false }
 
-        // Do not begin the pan gesture until any other gestures fail except fo the tracking scrollView's pan gesture.
+        /* log.debug("shouldRequireFailureOf", otherGestureRecognizer) */
+
+        // Do not begin the pan gesture until any other gestures fail except for
+        // the tracking scrollView's pan gesture and other gestures.
+        if let scrollView = scrollView {
+            if scrollView.panGestureRecognizer == otherGestureRecognizer {
+                return false
+            }
+            // For short scroll contents
+            if scrollView.gestureRecognizers?.contains(otherGestureRecognizer) ?? false {
+                return false
+            }
+        }
+
         switch otherGestureRecognizer {
-        case scrollView?.panGestureRecognizer:
-            return false
         case is UIPanGestureRecognizer,
              is UISwipeGestureRecognizer,
              is UIRotationGestureRecognizer,
@@ -206,19 +222,21 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     // MARK: - Gesture handling
-
+    private let offsetThreshold: CGFloat = 5.0 // Optimal value from testing
     @objc func handle(panGesture: UIPanGestureRecognizer) {
         log.debug("Gesture >>>>", panGesture)
+        let velocity = panGesture.velocity(in: panGesture.view)
 
         switch panGesture {
         case scrollView?.panGestureRecognizer:
             guard let scrollView = scrollView else { return }
 
-            log.debug("SrollPanGesture ScrollView.contentOffset >>>", scrollView.contentOffset.y)
+            log.debug("SrollPanGesture ScrollView.contentOffset >>>", scrollView.contentOffset.y, scrollView.contentSize, scrollView.bounds.size)
 
-            // Prevent scoll slip by the top bounce
-            if scrollView.isDecelerating == false {
-                scrollView.bounces = (scrollView.contentOffset.y > 10.0)
+            // Prevent scoll slip by the top bounce when the scroll view's height is
+            // less than the content's height
+            if scrollView.isDecelerating == false, scrollView.contentSize.height > scrollView.bounds.height {
+                scrollView.bounces = (scrollView.contentOffset.y > offsetThreshold)
             }
 
             if surfaceView.frame.minY > layoutAdapter.topY {
@@ -249,7 +267,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             }
         case panGesture:
             let translation = panGesture.translation(in: panGesture.view!.superview)
-            let velocity = panGesture.velocity(in: panGesture.view)
             let location = panGesture.location(in: panGesture.view)
 
             log.debug(panGesture.state, ">>>", "translation: \(translation.y), velocity: \(velocity.y)")
@@ -294,7 +311,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         log.debug("ScrollView.contentOffset >>>", scrollView.contentOffset.y)
 
-        if scrollView.contentOffset.y - scrollView.contentOffsetZero.y != 0 {
+        let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
+        if  abs(offset) > offsetThreshold {
             return true
         }
         if scrollView.isDecelerating {
@@ -455,7 +473,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         stopScrollDeceleration = false
         // Don't unlock scroll view in animating view when presentation layer != model layer
-        unlockScrollView()
+        if targetPosition == .full {
+            unlockScrollView()
+        }
     }
 
     private func distance(to targetPosition: FloatingPanelPosition, with translation: CGPoint) -> CGFloat {
@@ -658,22 +678,18 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     // MARK: - ScrollView handling
 
     private func lockScrollView() {
-        guard let scrollView = scrollView,
-            scrollView.isDirectionalLockEnabled == false,
-            scrollView.showsVerticalScrollIndicator == true
-        else { return }
+        guard let scrollView = scrollView else { return }
 
         scrollView.isDirectionalLockEnabled = true
+        scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
     }
 
     private func unlockScrollView() {
-        guard let scrollView = scrollView,
-            scrollView.isDirectionalLockEnabled == true,
-            scrollView.showsVerticalScrollIndicator != scrollIndictorVisible
-        else { return }
+        guard let scrollView = scrollView else { return }
 
         scrollView.isDirectionalLockEnabled = false
+        scrollView.bounces = scrollBouncable
         scrollView.showsVerticalScrollIndicator = scrollIndictorVisible
     }
 
