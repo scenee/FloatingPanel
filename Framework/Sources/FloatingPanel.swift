@@ -326,8 +326,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         // For _UISwipeActionPanGestureRecognizer
         if let scrollGestureRecognizers = scrollView.gestureRecognizers {
             for gesture in scrollGestureRecognizers {
-                if gesture !=  scrollView.panGestureRecognizer,
-                    gesture.state == .began || gesture.state == .changed {
+                guard gesture.state == .began || gesture.state == .changed
+                else { continue }
+
+                if gesture !=  scrollView.panGestureRecognizer {
                     return true
                 }
             }
