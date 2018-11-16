@@ -344,8 +344,10 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     ///
     public func track(scrollView: UIScrollView) {
         floatingPanel.scrollView = scrollView
-        floatingPanel.userScrollViewDelegate = scrollView.delegate
-        scrollView.delegate = floatingPanel
+        if scrollView.delegate !== floatingPanel {
+            floatingPanel.userScrollViewDelegate = scrollView.delegate
+            scrollView.delegate = floatingPanel
+        }
         switch contentInsetAdjustmentBehavior {
         case .always:
             if #available(iOS 11.0, *) {
