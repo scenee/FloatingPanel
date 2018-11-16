@@ -409,6 +409,15 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
         cell.textLabel?.text = items[indexPath.row]
         return cell
     }
+
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        return [
+            UITableViewRowAction(style: .destructive, title: "Delete", handler: { (action, path) in
+                self.items.remove(at: path.row)
+                tableView.deleteRows(at: [path], with: .automatic)
+            }),
+        ]
+    }
 }
 
 class DetailViewController: UIViewController {
