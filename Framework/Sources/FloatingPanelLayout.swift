@@ -304,13 +304,13 @@ class FloatingPanelLayoutAdapter {
             assert(layout.insetFor(position: pos) != nil,
                    "Undefined an inset for a pos(\(pos))")
         }
-
+        guard !(layout is FloatingPanelIntrinsicLayout) else { return }
         if halfInset > 0 {
-//            assert(halfInset > tipInset, "Invalid half and tip insets")
+            assert(halfInset > tipInset, "Invalid half and tip insets")
         }
         if fullInset > 0 {
-//            assert(middleY > topY, "Invalid insets")
-//            assert(bottomY > topY, "Invalid insets")
+            assert(middleY > topY, "Invalid insets")
+            assert(bottomY > topY, "Invalid insets")
         }
     }
 }
