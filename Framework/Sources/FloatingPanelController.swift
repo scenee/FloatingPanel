@@ -182,6 +182,9 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         if let parent = parent {
             self.update(safeAreaInsets: parent.layoutInsets)
         }
+        if layout is FloatingPanelIntrinsicLayout {
+            updateLayout()
+        }
     }
 
     private func fetchLayout(for traitCollection: UITraitCollection) -> FloatingPanelLayout {
