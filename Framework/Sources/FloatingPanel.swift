@@ -175,7 +175,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         /* log.debug("shouldRecognizeSimultaneouslyWith", otherGestureRecognizer) */
 
-        return otherGestureRecognizer == scrollView?.panGestureRecognizer
+        // all gestures of the tracking scroll view should be recognized in parallel
+        // and handle them in self.handle(panGesture:)
+        return scrollView?.gestureRecognizers?.contains(otherGestureRecognizer) ?? false
     }
 
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -183,28 +185,45 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         /* log.debug("shouldBeRequiredToFailBy", otherGestureRecognizer) */
 
-        // Do not begin any gestures excluding the tracking scrollView's pan gesture
-        // until the pan gesture fails
-        if otherGestureRecognizer == scrollView?.panGestureRecognizer {
+        // The tracking scroll view's gestures should begin without waiting for the pan gesture failure.
+        // `scrollView.gestureRecognizers` can contains the following gestures
+        // * UIScrollViewDelayedTouchesBeganGestureRecognizer
+        // * UIScrollViewPanGestureRecognizer (scrollView.panGestureRecognizer)
+        // * _UIDragAutoScrollGestureRecognizer
+        // * _UISwipeActionPanGestureRecognizer
+        // * UISwipeDismissalGestureRecognizer
+        if let scrollView = scrollView,
+            let scrollGestureRecognizers = scrollView.gestureRecognizers,
+            scrollGestureRecognizers.contains(otherGestureRecognizer) {
             return false
-        } else {
-            return true
         }
+
+        // Long press gesture should begin without waiting for the pan gesture failure.
+        if otherGestureRecognizer is UILongPressGestureRecognizer {
+            return false
+        }
+
+        // Do not begin any other gestures until the pan gesture fails.
+        return true
     }
 
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         guard gestureRecognizer == panGesture else { return false }
 
-        /* log.debug("shouldRequireFailureOf", otherGestureRecognizer) */
+        log.debug("shouldRequireFailureOf", otherGestureRecognizer)
 
-        // Do not begin the pan gesture until any other gestures fail except for
-        // the tracking scrollView's pan gesture and other gestures.
+        // Should begin the pan gesture without waiting for the tracking scroll view's gestures.
+        // `scrollView.gestureRecognizers` can contains the following gestures
+        // * UIScrollViewDelayedTouchesBeganGestureRecognizer
+        // * UIScrollViewPanGestureRecognizer (scrollView.panGestureRecognizer)
+        // * _UIDragAutoScrollGestureRecognizer
+        // * _UISwipeActionPanGestureRecognizer
+        // * UISwipeDismissalGestureRecognizer
         if let scrollView = scrollView {
-            if scrollView.panGestureRecognizer == otherGestureRecognizer {
-                return false
-            }
-            // For short scroll contents
-            if scrollView.gestureRecognizers?.contains(otherGestureRecognizer) ?? false {
+            // On short contents scroll, `_UISwipeActionPanGestureRecognizer` blocks
+            // the panel's pan gesture if not returns false
+            if let scrollGestureRecognizers = scrollView.gestureRecognizers,
+                scrollGestureRecognizers.contains(otherGestureRecognizer) {
                 return false
             }
         }
@@ -215,8 +234,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
              is UIRotationGestureRecognizer,
              is UIScreenEdgePanGestureRecognizer,
              is UIPinchGestureRecognizer:
+            // Do not begin the pan gesture until these gestures fail
             return true
         default:
+            // Should begin the pan gesture witout waiting tap/long press gestures fail
             return false
         }
     }
@@ -299,8 +320,20 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                                      width: surfaceView.bounds.width,
                                      height: FloatingPanelSurfaceView.topGrabberBarHeight * 2)
 
+        // When no scrollView, nothing to handle.
+        guard let scrollView = scrollView else { return false }
+
+        // For _UISwipeActionPanGestureRecognizer
+        if let scrollGestureRecognizers = scrollView.gestureRecognizers {
+            for gesture in scrollGestureRecognizers {
+                if gesture !=  scrollView.panGestureRecognizer,
+                    gesture.state == .began || gesture.state == .changed {
+                    return true
+                }
+            }
+        }
+
         guard
-            let scrollView = scrollView,      // When no scrollView, nothing to handle.
             state == .full,                   // When not .full, don't scroll.
             interactionInProgress == false,   // When interaction already in progress, don't scroll.
             scrollView.frame.contains(point), // When point not in scrollView, don't scroll.
