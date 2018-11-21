@@ -68,7 +68,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     /// Returns the surface view managed by the controller object. It's the same as `self.view`.
     public var surfaceView: FloatingPanelSurfaceView! {
-        return view as? FloatingPanelSurfaceView
+        return floatingPanel.surfaceView
     }
 
     /// Returns the backdrop view managed by the controller object.
@@ -101,7 +101,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         return floatingPanel.behavior
     }
 
-    /// The content insets of the tracking scroll view derived from the safe area of the parent view
+    /// The content insets of the tracking scroll view derived from this safe area
     public var adjustedContentInsets: UIEdgeInsets {
         return floatingPanel.layoutAdapter.adjustedContentInsets
     }
@@ -129,31 +129,38 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-
-        floatingPanel = FloatingPanel(self,
-                                      layout: fetchLayout(for: self.traitCollection),
-                                      behavior: fetchBehavior(for: self.traitCollection))
         setUp()
     }
 
     /// Initialize a newly created floating panel controller.
     public init() {
         super.init(nibName: nil, bundle: nil)
+        setUp()
+    }
+
+    private func setUp() {
+        _ = FloatingPanelController.dismissSwizzling
+
+        modalPresentationStyle = .overCurrentContext
 
         floatingPanel = FloatingPanel(self,
                                       layout: fetchLayout(for: self.traitCollection),
                                       behavior: fetchBehavior(for: self.traitCollection))
-        setUp()
     }
 
     /// Creates the view that the controller manages.
     override public func loadView() {
         assert(self.storyboard == nil, "Storyboard isn't supported")
 
-        let view = FloatingPanelSurfaceView()
-        view.backgroundColor = .white
+        let view = FloatingPanelPassThroughView()
+        view.backgroundColor = .clear
 
         self.view = view as UIView
+    }
+
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        floatingPanel.setUpViews(in: self)
     }
 
     public override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -169,20 +176,16 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         super.traitCollectionDidChange(previousTraitCollection)
         guard previousTraitCollection != traitCollection else { return }
 
-        if let parent = parent {
-            self.update(safeAreaInsets: parent.layoutInsets)
-        }
+        self.update(safeAreaInsets: layoutInsets)
     }
 
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         // Need to update safeAreaInsets here to ensure that the `adjustedContentInsets` has a correct value.
-        // Because the parent VC does not call viewSafeAreaInsetsDidChange() expectedly and
+        // Because the `viewSafeAreaInsetsDidChange()` isn't called expectedly and
         // `view.safeAreaInsets` has a correct value of the bottom inset here.
-        if let parent = parent {
-            self.update(safeAreaInsets: parent.layoutInsets)
-        }
+        self.update(safeAreaInsets: layoutInsets)
         if layout is FloatingPanelIntrinsicLayout {
             updateLayout()
         }
@@ -221,14 +224,45 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     private func updateLayout(for traitCollection: UITraitCollection) {
         floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
         floatingPanel.layoutAdapter.checkLayoutConsistance()
-
-        guard let parent = parent else { return }
-
-        floatingPanel.layoutAdapter.prepareLayout(toParent: parent)
+        floatingPanel.layoutAdapter.prepareLayout(in: self)
         floatingPanel.layoutAdapter.activateLayout(of: floatingPanel.state)
     }
 
     // MARK: - Container view controller interface
+
+    public func show(animated: Bool = false, completion: (() -> Void)? = nil) {
+        layoutInsetsObservations.removeAll()
+
+        // Must track safeAreaInsets/{top,bottom}LayoutGuide of the `self.view`
+        // to update floatingPanel.safeAreaInsets`. There are 2 reasons.
+        // 1. This or the parent VC doesn't call viewSafeAreaInsetsDidChange() on the bottom
+        // inset's update expectedly.
+        // 2. The safe area top inset can be variable on the large title navigation bar.
+        // That's why it needs the observation to keep `adjustedContentInsets` correct.
+        if #available(iOS 11.0, *) {
+            let observaion = self.observe(\.view.safeAreaInsets) { [weak self] (vc, chaneg) in
+                guard let self = self else { return }
+                self.update(safeAreaInsets: vc.layoutInsets)
+            }
+            layoutInsetsObservations.append(observaion)
+        } else {
+            // KVOs for topLayoutGuide & bottomLayoutGuide are not effective.
+            // Instead, safeAreaInsets will be updated in viewDidAppear()
+        }
+
+        // Must set a layout again here because `self.traitCollection` is applied correctly once it's added to a parent VC
+        floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
+        floatingPanel.layoutAdapter.prepareLayout(in: self)
+
+        floatingPanel.behavior = fetchBehavior(for: traitCollection)
+
+        floatingPanel.present(animated: animated, completion: completion)
+    }
+
+    public func hide(animated: Bool = false, completion: (() -> Void)? = nil) {
+        layoutInsetsObservations.removeAll()
+        floatingPanel.dismiss(animated: animated, completion: completion)
+    }
 
     /// Adds the view managed by the controller as a child of the specified view controller.
     /// - Parameters:
@@ -252,35 +286,17 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         } else {
             parent.view.addSubview(self.view)
         }
-
-        layoutInsetsObservations.removeAll()
-
-        // Must track safeAreaInsets/{top,bottom}LayoutGuide of the `parent.view`
-        // to update floatingPanel.safeAreaInsets`. There are 2 reasons.
-        // 1. The parent VC doesn't call viewSafeAreaInsetsDidChange() on the bottom
-        // inset's update expectedly.
-        // 2. The safe area top inset can be variable on the large title navigation bar.
-        // That's why it needs the observation to keep `adjustedContentInsets` correct.
-        if #available(iOS 11.0, *) {
-            let observaion = parent.observe(\.view.safeAreaInsets) { [weak self] (vc, chaneg) in
-                guard let self = self else { return }
-                self.update(safeAreaInsets: vc.layoutInsets)
-            }
-            layoutInsetsObservations.append(observaion)
-        } else {
-            // KVOs for topLayoutGuide & bottomLayoutGuide are not effective.
-            // Instead, safeAreaInsets will be updated in viewDidAppear()
-        }
+        self.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            self.view.topAnchor.constraint(equalTo: parent.view.topAnchor, constant: 0.0),
+            self.view.leftAnchor.constraint(equalTo: parent.view.leftAnchor, constant: 0.0),
+            self.view.rightAnchor.constraint(equalTo: parent.view.rightAnchor, constant: 0.0),
+            self.view.bottomAnchor.constraint(equalTo: parent.view.bottomAnchor, constant: 0.0),
+            ])
 
         parent.addChild(self)
 
-        // Must set a layout again here because `self.traitCollection` is applied correctly once it's added to a parent VC
-        floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
-        floatingPanel.behavior = fetchBehavior(for: traitCollection)
-
-        floatingPanel.setUpViews(in: parent)
-
-        floatingPanel.present(animated: animated) { [weak self] in
+        self.show(animated: animated) { [weak self] in
             guard let self = self else { return }
             self.didMove(toParent: parent)
         }
@@ -296,14 +312,11 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             return
         }
 
-        layoutInsetsObservations.removeAll()
-
-        floatingPanel.dismiss(animated: animated) { [weak self] in
+        hide(animated: animated) { [weak self] in
             guard let self = self else { return }
 
             self.willMove(toParent: nil)
             self.view.removeFromSuperview()
-	      	self.backdropView.removeFromSuperview()
             self.removeFromParent()
             completion?()
         }
@@ -327,7 +340,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         }
 
         if let vc = contentViewController {
-            let surfaceView = self.view as! FloatingPanelSurfaceView
+            let surfaceView = floatingPanel.surfaceView
             surfaceView.add(childView: vc.view)
             addChild(vc)
             vc.didMove(toParent: self)
@@ -383,7 +396,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     /// by the controller immediately.
     ///
     /// This method updates the `FloatingPanelLayout` object from the delegate and
-    /// then it calls `layoutIfNeeded()` of the parent's root view to force the view
+    /// then it calls `layoutIfNeeded()` of the root view to force the view
     /// to update the floating panel's layout immediately. It can be called in an
     /// animation block.
     public func updateLayout() {
@@ -418,10 +431,6 @@ extension FloatingPanelController {
         }
         return nil
     }()
-
-    private func setUp() {
-        _ = FloatingPanelController.dismissSwizzling
-    }
 }
 
 public extension UIViewController {

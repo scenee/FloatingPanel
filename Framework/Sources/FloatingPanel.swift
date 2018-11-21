@@ -60,7 +60,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     init(_ vc: FloatingPanelController, layout: FloatingPanelLayout, behavior: FloatingPanelBehavior) {
         viewcontroller = vc
-        surfaceView = vc.view as! FloatingPanelSurfaceView
+
+        surfaceView = FloatingPanelSurfaceView()
+        surfaceView.backgroundColor = .white
+
         backdropView = FloatingPanelBackdropView()
         backdropView.backgroundColor = .black
         backdropView.alpha = 0.0
@@ -88,10 +91,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     func setUpViews(in vc: UIViewController) {
         unowned let view = vc.view!
 
+        view.addSubview(surfaceView)
         view.insertSubview(backdropView, belowSubview: surfaceView)
         backdropView.frame = view.bounds
-
-        layoutAdapter.prepareLayout(toParent: vc)
     }
 
     func move(to: FloatingPanelPosition, animated: Bool, completion: (() -> Void)? = nil) {
