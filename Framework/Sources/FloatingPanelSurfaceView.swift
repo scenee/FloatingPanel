@@ -33,31 +33,31 @@ public class FloatingPanelSurfaceView: UIView {
     ///
     /// `self.contentView` is masked with the top rounded corners automatically on iOS 11 and later.
     /// On iOS 10, they are not automatically masked because of a UIVisualEffectView issue. See https://forums.developer.apple.com/thread/50854
-    public var cornerRadius: CGFloat = 0.0 { didSet { setNeedsLayout() } }
-
+    public var panelCornerRadius: CGFloat = 0.0 { didSet { setNeedsLayout() } }
+    
     /// A Boolean indicating whether the surface shadow is displayed.
-    public var shadowHidden: Bool = false  { didSet { setNeedsLayout() } }
-
+    public var shadowHidden: Bool = false { didSet { setNeedsLayout() } }
+    
     /// The color of the surface shadow.
-    public var shadowColor: UIColor = .black  { didSet { setNeedsLayout() } }
-
+    public var panelShadowColor: UIColor = .black { didSet { setNeedsLayout() } }
+    
     /// The offset (in points) of the surface shadow.
-    public var shadowOffset: CGSize = CGSize(width: 0.0, height: 1.0)  { didSet { setNeedsLayout() } }
-
+    public var panelShadowOffset: CGSize = CGSize(width: 0.0, height: 1.0) { didSet { setNeedsLayout() } }
+    
     /// The opacity of the surface shadow.
-    public var shadowOpacity: Float = 0.2 { didSet { setNeedsLayout() } }
-
+    public var panelShadowOpacity: Float = 0.2 { didSet { setNeedsLayout() } }
+    
     /// The blur radius (in points) used to render the surface shadow.
-    public var shadowRadius: CGFloat = 3  { didSet { setNeedsLayout() } }
-
+    public var panelShadowRadius: CGFloat = 3 { didSet { setNeedsLayout() } }
+    
     /// The width of the surface border.
-    public var borderColor: UIColor?  { didSet { setNeedsLayout() } }
-
+    public var panelBorderColor: UIColor? { didSet { setNeedsLayout() } }
+    
     /// The color of the surface border.
-    public var borderWidth: CGFloat = 0.0  { didSet { setNeedsLayout() } }
-
-    private var backgroundLayer: CAShapeLayer!  { didSet { setNeedsLayout() } }
-
+    public var panelBorderWidth: CGFloat = 0.0 { didSet { setNeedsLayout() } }
+    
+    private var backgroundLayer: CAShapeLayer! { didSet { setNeedsLayout() } }
+    
     private struct Default {
         public static let grabberTopPadding: CGFloat = 6.0
     }
@@ -110,28 +110,26 @@ public class FloatingPanelSurfaceView: UIView {
 
         updateLayers()
         updateContentViewMask()
-
-        contentView.layer.borderColor = borderColor?.cgColor
-        contentView.layer.borderWidth = borderWidth
+        
+        contentView.layer.borderColor = panelBorderColor?.cgColor
+        contentView.layer.borderWidth = panelBorderWidth
         contentView.backgroundColor = color
     }
 
     private func updateLayers() {
-        log.debug("SurfaceView bounds", bounds)
-        
         var rect = bounds
         rect.size.height += bottomOverflow // Expand the height for overflow buffer
         let path = UIBezierPath(roundedRect: rect,
                                 byRoundingCorners: [.topLeft, .topRight],
-                                cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
+                                cornerRadii: CGSize(width: panelCornerRadius, height: panelCornerRadius))
         backgroundLayer.path = path.cgPath
         backgroundLayer.fillColor = color?.cgColor
-		
+        
         if shadowHidden == false {
-            layer.shadowColor = shadowColor.cgColor
-            layer.shadowOffset = shadowOffset
-            layer.shadowOpacity = shadowOpacity
-            layer.shadowRadius = shadowRadius
+            layer.shadowColor = panelShadowColor.cgColor
+            layer.shadowOffset = panelShadowOffset
+            layer.shadowOpacity = panelShadowOpacity
+            layer.shadowRadius = panelShadowRadius
         }
     }
 
@@ -143,8 +141,7 @@ public class FloatingPanelSurfaceView: UIView {
 
             contentView.layer.masksToBounds = true
             contentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-            contentView.layer.cornerRadius = cornerRadius
-            
+            contentView.layer.cornerRadius = panelCornerRadius
         } else {
             // Don't use `contentView.layer.mask` because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
             // Instead, a user can mask the content view manually in an application.

@@ -122,6 +122,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     }
     private var _contentViewController: UIViewController?
 
+    private var _containerView: UIView?
+    
     private var floatingPanel: FloatingPanel!
     private var layoutInsetsObservations: [NSKeyValueObservation] = []
 
@@ -221,7 +223,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     ///     - parent: A parent view controller object that displays FloatingPanelController's view. A container view controller object isn't applicable.
     ///     - belowView: Insert the surface view managed by the controller below the specified view. By default, the surface view will be added to the end of the parent list of subviews.
     ///     - animated: Pass true to animate the presentation; otherwise, pass false.
-    public func addPanel(toParent parent: UIViewController, belowView: UIView? = nil, animated: Bool = false) {
+    public func addPanel(toParent parent: UIViewController, inView: UIView? = nil, animated: Bool = false) {
         guard self.parent == nil else {
             log.warning("Already added to a parent(\(parent))")
             return
@@ -233,8 +235,9 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         precondition((parent is UICollectionViewController) == false, "UICollectionViewController should not be the parent because the view is a collection view so that a floating panel doens't work well")
 
         view.frame = parent.view.bounds
-        if let belowView = belowView {
-            parent.view.insertSubview(self.view, belowSubview: belowView)
+        if let inView = inView {
+            inView.addSubview(self.view)
+            _containerView = inView
         } else {
             parent.view.addSubview(self.view)
         }
@@ -264,8 +267,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
         floatingPanel.behavior = fetchBehavior(for: traitCollection)
 
-        floatingPanel.setUpViews(in: parent)
 
+        floatingPanel.setUpViews(in: parent, containerView: _containerView)
         floatingPanel.present(animated: animated) { [weak self] in
             guard let self = self else { return }
             self.didMove(toParent: parent)
