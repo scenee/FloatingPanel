@@ -14,7 +14,10 @@ public protocol FloatingPanelControllerDelegate: class {
 
     func floatingPanelDidChangePosition(_ vc: FloatingPanelController) // changed the settled position in the model layer
 
-    func floatingPanelDidMove(_ vc: FloatingPanelController) // any offset changes
+    /// Asks the delegate if dragging should begin by the pan gesture recognizer.
+    func floatingPanelShouldBeginDragging(_ vc: FloatingPanelController) -> Bool
+
+    func floatingPanelDidMove(_ vc: FloatingPanelController) // any surface frame changes in dragging
 
     // called on start of dragging (may require some time and or distance to move)
     func floatingPanelWillBeginDragging(_ vc: FloatingPanelController)
@@ -28,7 +31,10 @@ public protocol FloatingPanelControllerDelegate: class {
     // called when its views are removed from a parent view controller
     func floatingPanelDidEndRemove(_ vc: FloatingPanelController)
 
-    func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith gestureRecognizer: UIGestureRecognizer) -> Bool
+    /// Asks the delegate if the other gesture recognizer should be allowed to recognize the gesture in parallel.
+    ///
+    /// By default, any tap and long gesture recognizers are allowed to recognize gestures simultaneously.
+    func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool
 }
 
 public extension FloatingPanelControllerDelegate {
@@ -39,6 +45,9 @@ public extension FloatingPanelControllerDelegate {
         return nil
     }
     func floatingPanelDidChangePosition(_ vc: FloatingPanelController) {}
+    func floatingPanelShouldBeginDragging(_ vc: FloatingPanelController) -> Bool {
+        return true
+    }
     func floatingPanelDidMove(_ vc: FloatingPanelController) {}
     func floatingPanelWillBeginDragging(_ vc: FloatingPanelController) {}
     func floatingPanelDidEndDragging(_ vc: FloatingPanelController, withVelocity velocity: CGPoint, targetPosition: FloatingPanelPosition) {}
@@ -48,7 +57,9 @@ public extension FloatingPanelControllerDelegate {
     func floatingPanelDidEndDraggingToRemove(_ vc: FloatingPanelController, withVelocity velocity: CGPoint) {}
     func floatingPanelDidEndRemove(_ vc: FloatingPanelController) {}
 
-    func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith gestureRecognizer: UIGestureRecognizer) -> Bool { return false }
+    func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return false
+    }
 }
 
 

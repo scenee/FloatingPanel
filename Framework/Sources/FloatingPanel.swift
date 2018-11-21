@@ -299,6 +299,11 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 self.animator = nil
             }
 
+            if interactionInProgress == false,
+                viewcontroller.delegate?.floatingPanelShouldBeginDragging(viewcontroller) == false {
+                return
+            }
+
             switch panGesture.state {
             case .began:
                 panningBegan()
