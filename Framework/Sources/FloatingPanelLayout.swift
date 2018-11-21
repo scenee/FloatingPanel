@@ -106,7 +106,7 @@ public class FloatingPanelDefaultLandscapeLayout: FloatingPanelLayout {
 
 
 class FloatingPanelLayoutAdapter {
-    private weak var parent: UIViewController!
+    private weak var vc: UIViewController!
     private weak var surfaceView: FloatingPanelSurfaceView!
     private weak var backdropView: FloatingPanelBackdropView!
 
@@ -119,7 +119,6 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
-    private var parentHeight: CGFloat = 0.0
     private var heightBuffer: CGFloat = 88.0 // For bounce
     private var fixedConstraints: [NSLayoutConstraint] = []
     private var fullConstraints: [NSLayoutConstraint] = []
@@ -186,8 +185,8 @@ class FloatingPanelLayoutAdapter {
         self.backdropView = backdropView
     }
 
-    func prepareLayout(toParent parent: UIViewController) {
-        self.parent = parent
+    func prepareLayout(in vc: UIViewController) {
+        self.vc = vc
 
         surfaceView.translatesAutoresizingMaskIntoConstraints = false
         backdropView.translatesAutoresizingMaskIntoConstraints = false
@@ -195,34 +194,34 @@ class FloatingPanelLayoutAdapter {
         NSLayoutConstraint.deactivate(fixedConstraints + fullConstraints + halfConstraints + tipConstraints + offConstraints)
 
         // Fixed constraints of surface and backdrop views
-        let surfaceConstraints = layout.prepareLayout(surfaceView: surfaceView, in: parent.view!)
+        let surfaceConstraints = layout.prepareLayout(surfaceView: surfaceView, in: vc.view!)
         let backdropConstraints = [
-            backdropView.topAnchor.constraint(equalTo: parent.view.topAnchor,
+            backdropView.topAnchor.constraint(equalTo: vc.view.topAnchor,
                                               constant: 0.0),
-            backdropView.leftAnchor.constraint(equalTo: parent.view.leftAnchor,
+            backdropView.leftAnchor.constraint(equalTo: vc.view.leftAnchor,
                                                constant: 0.0),
-            backdropView.rightAnchor.constraint(equalTo: parent.view.rightAnchor,
+            backdropView.rightAnchor.constraint(equalTo: vc.view.rightAnchor,
                                                 constant: 0.0),
-            backdropView.bottomAnchor.constraint(equalTo: parent.view.bottomAnchor,
+            backdropView.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor,
                                                  constant: 0.0),
             ]
         fixedConstraints = surfaceConstraints + backdropConstraints
 
         // Flexible surface constarints for full, half, tip and off
         fullConstraints = [
-            surfaceView.topAnchor.constraint(equalTo: parent.layoutGuide.topAnchor,
+            surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.topAnchor,
                                              constant: fullInset),
         ]
         halfConstraints = [
-            surfaceView.topAnchor.constraint(equalTo: parent.layoutGuide.bottomAnchor,
+            surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.bottomAnchor,
                                              constant: -halfInset),
         ]
         tipConstraints = [
-            surfaceView.topAnchor.constraint(equalTo: parent.layoutGuide.bottomAnchor,
+            surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.bottomAnchor,
                                              constant: -tipInset),
         ]
         offConstraints = [
-            surfaceView.topAnchor.constraint(equalTo: parent.view.bottomAnchor, constant: 0.0),
+            surfaceView.topAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: 0.0),
         ]
     }
 
@@ -236,11 +235,11 @@ class FloatingPanelLayoutAdapter {
         }
 
         NSLayoutConstraint.deactivate(heightConstraints)
-        // Must use the parent height, not the screen height because safe area insets
-        // of the parent are relative values. For example, a view controller in
+        // Must use the`vc` height, not the screen height because safe area insets
+        // of `vc` are relative values. For example, a view controller in
         // Navigation controller's safe area insets and frame can be changed whether
         // the navigation bar is translucent or not.
-        let height = self.parent.view.bounds.height - (safeAreaInsets.top + fullInset)
+        let height = self.vc.view.bounds.height - (safeAreaInsets.top + fullInset)
         heightConstraints = [
             surfaceView.heightAnchor.constraint(equalToConstant: height)
         ]
@@ -305,8 +304,8 @@ class FloatingPanelLayoutAdapter {
             assert(halfInset > tipInset, "Invalid half and tip insets")
         }
         if fullInset > 0 {
-            assert(middleY > topY, "Invalid insets")
-            assert(bottomY > topY, "Invalid insets")
+            assert(middleY > topY, "Invalid insets { topY: \(topY), middleY: \(middleY) }")
+            assert(bottomY > topY, "Invalid insets { topY: \(topY), bottomY: \(bottomY) }")
         }
     }
 }
