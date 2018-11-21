@@ -71,7 +71,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         mainPanelVC.isRemovalInteractionEnabled = (currentMenu == .showRemovablePanel)
 
         // Initialize FloatingPanelController and add the view
-        mainPanelVC.surfaceView.cornerRadius = 6.0
+        mainPanelVC.surfaceView.panelCornerRadius = 6.0
         mainPanelVC.surfaceView.shadowHidden = false
 
         // Set a content view controller
@@ -90,7 +90,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             break
         }
         //  Add FloatingPanel to self.view
-        mainPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
+        mainPanelVC.addPanel(toParent: self, animated: true)
     }
 
     @objc func dismissDetailPanelVC()  {
@@ -130,14 +130,14 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             detailPanelVC = FloatingPanelController()
 
             // Initialize FloatingPanelController and add the view
-            detailPanelVC.surfaceView.cornerRadius = 6.0
+            detailPanelVC.surfaceView.panelCornerRadius = 6.0
             detailPanelVC.surfaceView.shadowHidden = false
 
             // Set a content view controller
             detailPanelVC.set(contentViewController: contentVC)
 
             //  Add FloatingPanel to self.view
-            detailPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
+            detailPanelVC.addPanel(toParent: self, animated: true)
         case .showModal, .showTabBar:
             let modalVC = contentVC
             present(modalVC, animated: true, completion: nil)
@@ -465,7 +465,7 @@ class ModalViewController: UIViewController, FloatingPanelControllerDelegate {
         fpc.delegate = self
 
         // Initialize FloatingPanelController and add the view
-        fpc.surfaceView.cornerRadius = 6.0
+        fpc.surfaceView.panelCornerRadius = 6.0
         fpc.surfaceView.shadowHidden = false
 
         // Set a content view controller and track the scroll view
@@ -476,7 +476,7 @@ class ModalViewController: UIViewController, FloatingPanelControllerDelegate {
         self.consoleVC = consoleVC
 
         //  Add FloatingPanel to self.view
-        fpc.addPanel(toParent: self, belowView: safeAreaView)
+//        fpc.addPanel(toParent: self, belowView: safeAreaView)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -538,7 +538,7 @@ class TabBarContentViewController: UIViewController, FloatingPanelControllerDele
         fpc.delegate = self
 
         // Initialize FloatingPanelController and add the view
-        fpc.surfaceView.cornerRadius = 6.0
+        fpc.surfaceView.panelCornerRadius = 6.0
         fpc.surfaceView.shadowHidden = false
 
         // Set a content view controller and track the scroll view
