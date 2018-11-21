@@ -140,14 +140,11 @@ public class FloatingPanelSurfaceView: UIView {
             // Don't use `contentView.clipToBounds` because it prevents content view from expanding the height of a subview of it
             // for the bottom overflow like Auto Layout settings of UIVisualEffectView in Main.storyborad of Example/Maps.
             // Because the bottom of contentView must be fit to the bottom of a screen to work the `safeLayoutGuide` of a content VC.
-            let maskLayer = CAShapeLayer()
-            var rect = bounds
-            rect.size.height += bottomOverflow
-            let path = UIBezierPath(roundedRect: rect,
-                                    byRoundingCorners: [.topLeft, .topRight],
-                                    cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
-            maskLayer.path = path.cgPath
-            contentView.layer.mask = maskLayer
+
+            contentView.layer.masksToBounds = true
+            contentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            contentView.layer.cornerRadius = cornerRadius
+            
         } else {
             // Don't use `contentView.layer.mask` because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
             // Instead, a user can mask the content view manually in an application.
