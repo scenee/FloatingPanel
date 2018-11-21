@@ -343,11 +343,18 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     ///     The specified scroll view must be already assigned to the delegate property because the controller intermediates between the various delegate methods.
     ///
     public func track(scrollView: UIScrollView) {
-        floatingPanel.scrollView = scrollView
-        if scrollView.delegate !== floatingPanel {
-            floatingPanel.userScrollViewDelegate = scrollView.delegate
-            scrollView.delegate = floatingPanel
+
+        if let previousScrollView = floatingPanel.scrollView {
+            previousScrollView.delegate = floatingPanel.userScrollViewDelegate
         }
+        
+        assert(!floatingPanel.isEqual(scrollView.delegate))
+        
+        floatingPanel.scrollView = scrollView
+        floatingPanel.userScrollViewDelegate = scrollView.delegate
+        scrollView.delegate = floatingPanel
+        
+        
         switch contentInsetAdjustmentBehavior {
         case .always:
             if #available(iOS 11.0, *) {
