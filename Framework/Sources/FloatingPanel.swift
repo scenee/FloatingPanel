@@ -101,7 +101,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     func present(animated: Bool, completion: (() -> Void)? = nil) {
-        self.layoutAdapter.activateLayout(of: nil)
+        if animated {
+            self.layoutAdapter.activateLayout(of: nil)
+        }
         move(from: nil, to: layoutAdapter.layout.initialPosition, animated: animated, completion: completion)
     }
 
@@ -413,7 +415,17 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         endInteraction(for: targetPosition)
 
         if isRemovalInteractionEnabled, isBottomState {
-            if startRemovalAnimation(with: translation, velocity: velocity, distance: distance) {
+            let velocityVector = (distance != 0) ? CGVector(dx: 0,
+                                                            dy: max(min(velocity.y/distance, behavior.removalVelocity), 0.0)) : .zero
+
+            if shouldStartRemovalAnimation(with: translation, velocityVector: velocityVector) {
+
+                viewcontroller.delegate?.floatingPanelDidEndDraggingToRemove(viewcontroller, withVelocity: velocity)
+                self.startRemovalAnimation(with: velocityVector) { [weak self] in
+                    guard let self = self else { return }
+                    self.viewcontroller.dismiss(animated: false)
+                    self.viewcontroller.delegate?.floatingPanelDidEndRemove(self.viewcontroller)
+                }
                 return
             }
         }
@@ -424,30 +436,29 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         startAnimation(to: targetPosition, at: distance, with: velocity)
     }
 
-    private func startRemovalAnimation(with translation: CGPoint, velocity: CGPoint, distance: CGFloat) -> Bool {
+    private func shouldStartRemovalAnimation(with translation: CGPoint, velocityVector: CGVector) -> Bool {
         let posY = layoutAdapter.positionY(for: state)
         let currentY = getCurrentY(from: initialFrame, with: translation)
         let safeAreaBottomY = layoutAdapter.safeAreaBottomY
         let vth = behavior.removalVelocity
         let pth = max(min(behavior.removalProgress, 1.0), 0.0)
-        let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: max(min(velocity.y/distance, vth), 0.0)) : .zero
 
         guard (safeAreaBottomY - posY) != 0 else { return false }
         guard (currentY - posY) / (safeAreaBottomY - posY) >= pth || velocityVector.dy == vth else { return false }
 
-        viewcontroller.delegate?.floatingPanelDidEndDraggingToRemove(viewcontroller, withVelocity: velocity)
+        return true
+    }
+
+    private func startRemovalAnimation(with velocityVector: CGVector, completion: (() -> Void)?) {
         let animator = self.behavior.removalInteractionAnimator(self.viewcontroller, with: velocityVector)
+
         animator.addAnimations { [weak self] in
-            guard let self = self else { return }
-            self.updateLayout(to: nil)
+            self?.updateLayout(to: nil)
         }
-        animator.addCompletion({ [weak self] (_) in
-            guard let self = self else { return }
-            self.viewcontroller.removePanelFromParent(animated: false)
-            self.viewcontroller.delegate?.floatingPanelDidEndRemove(self.viewcontroller)
+        animator.addCompletion({ _ in
+            completion?()
         })
         animator.startAnimation()
-        return true
     }
 
     private func startInteraction(with translation: CGPoint) {

@@ -126,6 +126,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     private var floatingPanel: FloatingPanel!
     private var layoutInsetsObservations: [NSKeyValueObservation] = []
+    private let modalTransition = FloatingPanelModalTransition()
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -141,7 +142,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     private func setUp() {
         _ = FloatingPanelController.dismissSwizzling
 
-        modalPresentationStyle = .overCurrentContext
+        modalPresentationStyle = .custom
+        transitioningDelegate = modalTransition
 
         floatingPanel = FloatingPanel(self,
                                       layout: fetchLayout(for: self.traitCollection),
