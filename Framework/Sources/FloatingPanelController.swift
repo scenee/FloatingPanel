@@ -292,6 +292,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
             self.willMove(toParent: nil)
             self.view.removeFromSuperview()
+	      	self.backdropView.removeFromSuperview()
             self.removeFromParent()
             completion?()
         }
