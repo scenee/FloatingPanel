@@ -33,7 +33,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     unowned let viewcontroller: FloatingPanelController
 
-    private(set) var state: FloatingPanelPosition = .tip
+    private(set) var state: FloatingPanelPosition = .tip {
+        didSet { viewcontroller.delegate?.floatingPanelDidChangePosition(viewcontroller) }
+    }
+
     private var isBottomState: Bool {
         let remains = layoutAdapter.layout.supportedPositions.filter { $0.rawValue > state.rawValue }
         return remains.count == 0
@@ -326,8 +329,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         // For _UISwipeActionPanGestureRecognizer
         if let scrollGestureRecognizers = scrollView.gestureRecognizers {
             for gesture in scrollGestureRecognizers {
-                if gesture !=  scrollView.panGestureRecognizer,
-                    gesture.state == .began || gesture.state == .changed {
+                guard gesture.state == .began || gesture.state == .changed
+                else { continue }
+
+                if gesture !=  scrollView.panGestureRecognizer {
                     return true
                 }
             }
