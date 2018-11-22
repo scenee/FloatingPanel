@@ -299,6 +299,11 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 return
             }
 
+            if let animator = self.animator {
+                animator.stopAnimation(true)
+                self.animator = nil
+            }
+
             switch panGesture.state {
             case .began:
                 panningBegan()
@@ -480,7 +485,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         let targetY = layoutAdapter.positionY(for: targetPosition)
         let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: max(min(velocity.y/distance, 30.0), -30.0)) : .zero
         let animator = behavior.interactionAnimator(self.viewcontroller, to: targetPosition, with: velocityVector)
-        animator.isInterruptible = false // To prevent a backdrop color's punk
         animator.addAnimations { [weak self] in
             guard let self = self else { return }
             if self.state == targetPosition {
