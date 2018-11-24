@@ -196,14 +196,10 @@ class FloatingPanelLayoutAdapter {
         // Fixed constraints of surface and backdrop views
         let surfaceConstraints = layout.prepareLayout(surfaceView: surfaceView, in: vc.view!)
         let backdropConstraints = [
-            backdropView.topAnchor.constraint(equalTo: vc.view.topAnchor,
-                                              constant: 0.0),
-            backdropView.leftAnchor.constraint(equalTo: vc.view.leftAnchor,
-                                               constant: 0.0),
-            backdropView.rightAnchor.constraint(equalTo: vc.view.rightAnchor,
-                                                constant: 0.0),
-            backdropView.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor,
-                                                 constant: 0.0),
+            backdropView.topAnchor.constraint(equalTo: vc.view.topAnchor, constant: 0.0),
+            backdropView.leftAnchor.constraint(equalTo: vc.view.leftAnchor,constant: 0.0),
+            backdropView.rightAnchor.constraint(equalTo: vc.view.rightAnchor, constant: 0.0),
+            backdropView.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: 0.0),
             ]
         fixedConstraints = surfaceConstraints + backdropConstraints
 
