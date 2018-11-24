@@ -172,7 +172,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case .showRemovablePanel:
             return newCollection.verticalSizeClass == .compact ? RemovablePanelLandscapeLayout() :  RemovablePanelLayout()
         case .showIntrinsicView:
-            return IntrinsicPanelLayout(mainPanelVC.contentViewController)
+            return IntrinsicPanelLayout()
         case .showFloatingPanelModal:
             if vc != mainPanelVC && vc != detailPanelVC {
                 return ModalPanelLayout()
@@ -197,64 +197,37 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
     }
 }
 
-class IntrinsicPanelLayout: FloatingPanelIntrinsicLayout {
-    
-    weak var contentViewController: UIViewController?
-    
-    init(_ contentViewController: UIViewController?) {
-        self.contentViewController = contentViewController
-    }
-    
-    var initialPosition: FloatingPanelPosition {
-        return .half
-    }
-    
+class IntrinsicPanelLayout: FloatingPanelIntrinsicLayout { }
+
+class RemovablePanelLayout: FloatingPanelIntrinsicLayout {
     var supportedPositions: Set<FloatingPanelPosition> {
-        return [.half]
+        return [.full, .half]
     }
-    
+    var topInteractionBuffer: CGFloat {
+        return 200.0
+    }
+    var bottomInteractionBuffer: CGFloat {
+        return 261.0 - 22.0
+    }
+
     func insetFor(position: FloatingPanelPosition) -> CGFloat? {
         switch position {
-        case .half: return intrinsicHeight
+        case .half: return 130.0
         default: return nil
         }
     }
+    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
+        return 0.3
+    }
 }
 
-class RemovablePanelLayout: FloatingPanelLayout {
-    var initialPosition: FloatingPanelPosition {
-        return .half
-    }
+class RemovablePanelLandscapeLayout: FloatingPanelIntrinsicLayout {
     var supportedPositions: Set<FloatingPanelPosition> {
         return [.full, .half]
     }
     var bottomInteractionBuffer: CGFloat {
         return 261.0 - 22.0
     }
-
-    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        switch position {
-        case .full: return 16.0
-        case .half: return 261.0
-        default: return nil
-        }
-    }
-    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
-        return 0.3
-    }
-}
-
-class RemovablePanelLandscapeLayout: FloatingPanelLayout {
-    var initialPosition: FloatingPanelPosition {
-        return .half
-    }
-    var supportedPositions: Set<FloatingPanelPosition> {
-        return [.half]
-    }
-    var bottomInteractionBuffer: CGFloat {
-        return 261.0 - 22.0
-    }
-
     func insetFor(position: FloatingPanelPosition) -> CGFloat? {
         switch position {
         case .half: return 261.0
@@ -266,23 +239,7 @@ class RemovablePanelLandscapeLayout: FloatingPanelLayout {
     }
 }
 
-class ModalPanelLayout: FloatingPanelLayout {
-    var initialPosition: FloatingPanelPosition {
-        return .half
-    }
-    var supportedPositions: Set<FloatingPanelPosition> {
-        return [.half]
-    }
-    var bottomInteractionBuffer: CGFloat {
-        return 261.0 - 22.0
-    }
-
-    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        switch position {
-        case .half: return 261.0
-        default: return nil
-        }
-    }
+class ModalPanelLayout: FloatingPanelIntrinsicLayout {
     func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
         return 0.3
     }
