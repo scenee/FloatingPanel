@@ -91,8 +91,25 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     func setUpViews(in vc: UIViewController) {
         unowned let view = vc.view!
 
-        view.addSubview(surfaceView)
-        view.insertSubview(backdropView, belowSubview: surfaceView)
+        // FloatingPanelSurfaceWrapperView is needed to update the surface's height
+        // without animation and prevent the backdrop's cut-off on orientation change.
+        let surfaceWrapperView = FloatingPanelSurfaceWrapperView()
+        surfaceWrapperView.frame = view.bounds
+        surfaceWrapperView.backgroundColor = .clear
+
+        view.addSubview(surfaceWrapperView)
+
+        surfaceWrapperView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            surfaceWrapperView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0.0),
+            surfaceWrapperView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0.0),
+            surfaceWrapperView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0.0),
+            surfaceWrapperView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0.0),
+            ])
+
+        surfaceWrapperView.addSubview(surfaceView)
+
+        view.insertSubview(backdropView, belowSubview: surfaceWrapperView)
         backdropView.frame = view.bounds
     }
 
