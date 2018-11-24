@@ -110,11 +110,7 @@ class FloatingPanelLayoutAdapter {
     private weak var surfaceView: FloatingPanelSurfaceView!
     private weak var backdropView: FloatingPanelBackdropView!
 
-    var layout: FloatingPanelLayout {
-        didSet {
-            checkLayoutConsistance()
-        }
-    }
+    var layout: FloatingPanelLayout
 
     var safeAreaInsets: UIEdgeInsets = .zero {
         didSet {
@@ -304,7 +300,7 @@ class FloatingPanelLayoutAdapter {
             assert(layout.insetFor(position: pos) != nil,
                    "Undefined an inset for a pos(\(pos))")
         }
-        guard !(layout is FloatingPanelIntrinsicLayout) else { return }
+
         if halfInset > 0 {
             assert(halfInset > tipInset, "Invalid half and tip insets")
         }
