@@ -5,16 +5,25 @@
 
 import UIKit
 
-public protocol FloatingPanelIntrinsicLayout: FloatingPanelLayout {
-    /// Return the viewController that is being displaying the content
-    var contentViewController: UIViewController? { get set }
-}
+/// FloatingPanelIntrinsicLayout
+///
+/// - Attention:
+///     `insetFor(position:)` must return `nil` for full position because the inset is determined automatically.
+///     You can customize insets only for half, tip and hidden positions
+///     on FloatingPanelIntrinsicLayout.
+public protocol FloatingPanelIntrinsicLayout: FloatingPanelLayout { }
 
 public extension FloatingPanelIntrinsicLayout {
-    var intrinsicHeight: CGFloat {
-        assert(contentViewController != nil, "Cannot use this if this...")
-        let fittingSize = UIView.layoutFittingCompressedSize
-        return contentViewController!.view.systemLayoutSizeFitting(fittingSize).height
+    var initialPosition: FloatingPanelPosition {
+        return .full
+    }
+
+    var supportedPositions: Set<FloatingPanelPosition> {
+        return [.full]
+    }
+
+    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        return nil
     }
 }
 
@@ -137,7 +146,11 @@ class FloatingPanelLayoutAdapter {
     private var heightConstraints: [NSLayoutConstraint] = []
 
     private var fullInset: CGFloat {
-        return layout.insetFor(position: .full) ?? 0.0
+        if layout is FloatingPanelIntrinsicLayout {
+            return intrinsicHeight
+        } else {
+            return layout.insetFor(position: .full) ?? 0.0
+        }
     }
     private var halfInset: CGFloat {
         return layout.insetFor(position: .half) ?? 0.0
@@ -157,7 +170,11 @@ class FloatingPanelLayoutAdapter {
 
     var topY: CGFloat {
         if supportedPositions.contains(.full) {
-            return (safeAreaInsets.top + fullInset)
+            if layout is FloatingPanelIntrinsicLayout {
+                return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + fullInset)
+            } else {
+                return (safeAreaInsets.top + fullInset)
+            }
         } else {
             return middleY
         }
@@ -203,10 +220,17 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
+    var intrinsicHeight: CGFloat = 0.0
+
     init(surfaceView: FloatingPanelSurfaceView, backdropView: FloatingPanelBackdropView, layout: FloatingPanelLayout) {
         self.layout = layout
         self.surfaceView = surfaceView
         self.backdropView = backdropView
+    }
+
+    func updateIntrinsicHeight() {
+        let fittingSize = UIView.layoutFittingCompressedSize
+        intrinsicHeight = surfaceView.contentView.systemLayoutSizeFitting(fittingSize).height
     }
 
     func prepareLayout(in vc: UIViewController) {
@@ -225,13 +249,22 @@ class FloatingPanelLayoutAdapter {
             backdropView.rightAnchor.constraint(equalTo: vc.view.rightAnchor, constant: 0.0),
             backdropView.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: 0.0),
             ]
+
         fixedConstraints = surfaceConstraints + backdropConstraints
 
         // Flexible surface constarints for full, half, tip and off
-        fullConstraints = [
-            surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.topAnchor,
-                                             constant: fullInset),
-        ]
+        if layout is FloatingPanelIntrinsicLayout {
+            updateIntrinsicHeight()
+            fullConstraints = [
+                surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.bottomAnchor,
+                                                 constant: -fullInset),
+            ]
+        } else {
+            fullConstraints = [
+                surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.topAnchor,
+                                                 constant: fullInset),
+            ]
+        }
         halfConstraints = [
             surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.bottomAnchor,
                                              constant: -halfInset),
@@ -257,16 +290,33 @@ class FloatingPanelLayoutAdapter {
         }
 
         NSLayoutConstraint.deactivate(heightConstraints)
-        // Must use the`vc` height, not the screen height because safe area insets
-        // of `vc` are relative values. For example, a view controller in
-        // Navigation controller's safe area insets and frame can be changed whether
-        // the navigation bar is translucent or not.
-        let height = vc.view.bounds.height - (safeAreaInsets.top + fullInset)
+
+        let height: CGFloat
+        if layout is FloatingPanelIntrinsicLayout {
+            updateIntrinsicHeight()
+            height = intrinsicHeight + safeAreaInsets.bottom
+        } else {
+            // Must use the`vc` height, not the screen height because safe area insets
+            // of `vc` are relative values. For example, a view controller in
+            // Navigation controller's safe area insets and frame can be changed whether
+            // the navigation bar is translucent or not.
+            height = vc.view.bounds.height - (safeAreaInsets.top + fullInset)
+        }
+
         heightConstraints = [
             surfaceView.heightAnchor.constraint(equalToConstant: height)
         ]
         NSLayoutConstraint.activate(heightConstraints)
-        surfaceView.set(bottomOverflow: heightBuffer)
+        surfaceView.set(bottomOverflow: heightBuffer + layout.topInteractionBuffer)
+
+        if layout is FloatingPanelIntrinsicLayout {
+            NSLayoutConstraint.deactivate(fullConstraints)
+            fullConstraints = [
+                surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.bottomAnchor,
+                                                 constant: -fullInset),
+            ]
+            NSLayoutConstraint.activate(fullConstraints)
+        }
     }
 
     func activateLayout(of state: FloatingPanelPosition) {
@@ -314,6 +364,10 @@ class FloatingPanelLayoutAdapter {
         assert(supportedPositions.count > 0)
         assert(supportedPositions.contains(layout.initialPosition),
                "Does not include an initial potision(\(layout.initialPosition)) in supportedPositions(\(supportedPositions))")
+
+        if layout is FloatingPanelIntrinsicLayout {
+            assert(layout.insetFor(position: .full) == nil, "Return `nil` for full position on FloatingPanelIntrinsicLayout")
+        }
 
         if halfInset > 0 {
             assert(halfInset > tipInset, "Invalid half and tip insets")
