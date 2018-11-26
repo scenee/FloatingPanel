@@ -81,6 +81,7 @@ public class FloatingPanelDefaultLayout: FloatingPanelLayout {
         case .full: return 18.0
         case .half: return 262.0
         case .tip: return 69.0
+        case .hidden: return nil
         }
     }
 }
@@ -136,6 +137,9 @@ class FloatingPanelLayoutAdapter {
     private var tipInset: CGFloat {
         return layout.insetFor(position: .tip) ?? 0.0
     }
+    private var hiddenInset: CGFloat {
+        return layout.insetFor(position: .hidden) ?? -safeAreaInsets.bottom
+    }
 
     var topY: CGFloat {
         if layout.supportedPositions.contains(.full) {
@@ -157,8 +161,12 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
+    var hiddenY: CGFloat {
+        return surfaceView.superview!.bounds.height
+    }
+
     var safeAreaBottomY: CGFloat {
-        return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom)
+        return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + hiddenInset)
     }
 
     var adjustedContentInsets: UIEdgeInsets {
@@ -176,6 +184,8 @@ class FloatingPanelLayoutAdapter {
             return middleY
         case .tip:
             return bottomY
+        case .hidden:
+            return hiddenY
         }
     }
 
@@ -217,7 +227,8 @@ class FloatingPanelLayoutAdapter {
                                              constant: -tipInset),
         ]
         offConstraints = [
-            surfaceView.topAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: 0.0),
+            surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.bottomAnchor,
+                                             constant: -hiddenInset),
         ]
     }
 
@@ -244,21 +255,19 @@ class FloatingPanelLayoutAdapter {
         surfaceView.set(bottomOverflow: heightBuffer)
     }
 
-    func activateLayout(of state: FloatingPanelPosition?) {
+    func activateLayout(of state: FloatingPanelPosition) {
         defer {
             surfaceView.superview!.layoutIfNeeded()
         }
+
+        var state = state
+
         setBackdropAlpha(of: state)
 
         NSLayoutConstraint.activate(fixedConstraints)
 
-        guard var state = state else {
-            NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints)
-            NSLayoutConstraint.activate(offConstraints)
-            return
-        }
-
-        if layout.supportedPositions.contains(state) == false {
+        let supportedPositions = layout.supportedPositions.union([.hidden])
+        if supportedPositions.contains(state) == false {
             state = layout.initialPosition
         }
 
@@ -273,14 +282,17 @@ class FloatingPanelLayoutAdapter {
         case .tip:
             NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + offConstraints)
             NSLayoutConstraint.activate(tipConstraints)
+        case .hidden:
+            NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints)
+            NSLayoutConstraint.activate(offConstraints)
         }
     }
 
-    func setBackdropAlpha(of target: FloatingPanelPosition?) {
-        if let target = target {
-            self.backdropView.alpha = layout.backdropAlphaFor(position: target)
-        } else {
+    func setBackdropAlpha(of target: FloatingPanelPosition) {
+        if target == .hidden {
             self.backdropView.alpha = 0.0
+        } else {
+            self.backdropView.alpha = layout.backdropAlphaFor(position: target)
         }
     }
 
@@ -291,11 +303,6 @@ class FloatingPanelLayoutAdapter {
         assert(supportedPositions.count > 0)
         assert(supportedPositions.contains(layout.initialPosition),
                "Does not include an initial potision(\(layout.initialPosition)) in supportedPositions(\(supportedPositions))")
-
-        supportedPositions.forEach { pos in
-            assert(layout.insetFor(position: pos) != nil,
-                   "Undefined an inset for a pos(\(pos))")
-        }
 
         if halfInset > 0 {
             assert(halfInset > tipInset, "Invalid half and tip insets")
