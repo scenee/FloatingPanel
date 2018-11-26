@@ -51,6 +51,7 @@ public enum FloatingPanelPosition: Int, CaseIterable {
     case full
     case half
     case tip
+    case hidden
 }
 
 ///
@@ -414,6 +415,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             return floatingPanel.layoutAdapter.middleY
         case .tip:
             return floatingPanel.layoutAdapter.bottomY
+        case .hidden:
+            return floatingPanel.layoutAdapter.hiddenY
         }
     }
 }
