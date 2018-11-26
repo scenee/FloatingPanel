@@ -192,6 +192,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case .full: return UIScreen.main.bounds.height == 667.0 ? 18.0 : 16.0
         case .half: return 262.0
         case .tip: return 69.0
+        case .hidden: return nil
         }
     }
 }
@@ -591,6 +592,7 @@ class ModalSecondLayout: FloatingPanelLayout {
         case .full: return 18.0
         case .half: return 262.0
         case .tip: return 44.0
+        case .hidden: return nil
         }
     }
 }
