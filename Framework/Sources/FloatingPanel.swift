@@ -38,7 +38,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     private var isBottomState: Bool {
-        let remains = layoutAdapter.layout.supportedPositions.filter { $0.rawValue > state.rawValue }
+        let remains = layoutAdapter.supportedPositions.filter { $0.rawValue > state.rawValue }
         return remains.count == 0
     }
 
@@ -113,17 +113,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     func move(to: FloatingPanelPosition, animated: Bool, completion: (() -> Void)? = nil) {
         move(from: state, to: to, animated: animated, completion: completion)
-    }
-
-    func present(animated: Bool, completion: (() -> Void)? = nil) {
-        if animated {
-            self.layoutAdapter.activateLayout(of: .hidden)
-        }
-        move(from: .hidden, to: layoutAdapter.layout.initialPosition, animated: animated, completion: completion)
-    }
-
-    func dismiss(animated: Bool, completion: (() -> Void)? = nil) {
-        move(from: state, to: .hidden, animated: animated, completion: completion)
     }
 
     private func move(from: FloatingPanelPosition, to: FloatingPanelPosition, animated: Bool, completion: (() -> Void)? = nil) {
@@ -574,7 +563,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private func directionalPosition(with translation: CGPoint) -> FloatingPanelPosition {
         let currentY = getCurrentY(from: initialFrame, with: translation)
 
-        let supportedPositions: Set = layoutAdapter.layout.supportedPositions
+        let supportedPositions = layoutAdapter.supportedPositions
 
         if supportedPositions.count == 1 {
             return state
@@ -609,7 +598,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private func redirectionalPosition(with translation: CGPoint) -> FloatingPanelPosition {
         let currentY = getCurrentY(from: initialFrame, with: translation)
 
-        let supportedPositions: Set = layoutAdapter.layout.supportedPositions
+        let supportedPositions = layoutAdapter.supportedPositions
 
         if supportedPositions.count == 1 {
             return state
@@ -644,7 +633,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private func targetPosition(with translation: CGPoint, velocity: CGPoint) -> (FloatingPanelPosition) {
         let currentY = getCurrentY(from: initialFrame, with: translation)
-        let supportedPositions: Set = layoutAdapter.layout.supportedPositions
+        let supportedPositions = layoutAdapter.supportedPositions
 
         if supportedPositions.count == 1 {
             return state

@@ -22,7 +22,11 @@ public protocol FloatingPanelLayout: class {
     /// Returns the initial position of a floating panel.
     var initialPosition: FloatingPanelPosition { get }
 
-    /// Returns a set of FloatingPanelPosition objects to tell the applicable positions of the floating panel controller. Default is all of them.
+    /// Returns a set of FloatingPanelPosition objects to tell the applicable
+    /// positions of the floating panel controller.
+    ///
+    /// By default, it returns all position exepct for `hidden` position. Because
+    /// it's always supported by `FloatingPanelController` so you don't need to return it.
     var supportedPositions: Set<FloatingPanelPosition> { get }
 
     /// Return the interaction buffer to the top from the top position. Default is 6.0.
@@ -31,10 +35,13 @@ public protocol FloatingPanelLayout: class {
     /// Return the interaction buffer to the bottom from the bottom position. Default is 6.0.
     var bottomInteractionBuffer: CGFloat { get }
 
-    /// Returns a CGFloat value to determine a floating panel height for each position(full, half and tip).
-    /// A value for full position indicates a top inset from a safe area.
-    /// On the other hand, values for half and tip positions indicate bottom insets from a safe area.
-    /// If a position doesn't contain the supported positions, return nil.
+    /// Returns a CGFloat value to determine a Y coordinate of a floating panel for each position(full, half, tip and hidden).
+    ///
+    /// Its returning value indicates a different inset for each positiion.
+    /// For full position, a top inset from a safe area in `FloatingPanelController.view`.
+    /// For half or tip position, a bottom inset from the safe area.
+    /// For hidden position, a bottom inset from `FloatingPanelController.view`.
+    /// If a position isn't supported or the default value is used, return nil.
     func insetFor(position: FloatingPanelPosition) -> CGFloat?
 
     /// Returns X-axis and width layout constraints of the surface view of a floating panel.
@@ -54,7 +61,7 @@ public extension FloatingPanelLayout {
     var bottomInteractionBuffer: CGFloat { return 6.0 }
 
     var supportedPositions: Set<FloatingPanelPosition> {
-        return Set(FloatingPanelPosition.allCases)
+        return Set([.full, .half, .tip])
     }
     
     func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
@@ -107,7 +114,7 @@ public class FloatingPanelDefaultLandscapeLayout: FloatingPanelLayout {
 
 
 class FloatingPanelLayoutAdapter {
-    private weak var vc: UIViewController!
+    weak var vc: UIViewController!
     private weak var surfaceView: FloatingPanelSurfaceView!
     private weak var backdropView: FloatingPanelBackdropView!
 
@@ -115,8 +122,9 @@ class FloatingPanelLayoutAdapter {
 
     var safeAreaInsets: UIEdgeInsets = .zero {
         didSet {
-            updateHeight()
-            checkLayoutConsistance()
+            if oldValue != safeAreaInsets {
+                updateHeight()
+            }
         }
     }
 
@@ -138,11 +146,17 @@ class FloatingPanelLayoutAdapter {
         return layout.insetFor(position: .tip) ?? 0.0
     }
     private var hiddenInset: CGFloat {
-        return layout.insetFor(position: .hidden) ?? -safeAreaInsets.bottom
+        return layout.insetFor(position: .hidden) ?? 0.0
+    }
+
+    var supportedPositions: Set<FloatingPanelPosition> {
+        var supportedPositions = layout.supportedPositions
+        supportedPositions.remove(.hidden)
+        return supportedPositions
     }
 
     var topY: CGFloat {
-        if layout.supportedPositions.contains(.full) {
+        if supportedPositions.contains(.full) {
             return (safeAreaInsets.top + fullInset)
         } else {
             return middleY
@@ -154,7 +168,7 @@ class FloatingPanelLayoutAdapter {
     }
 
     var bottomY: CGFloat {
-        if layout.supportedPositions.contains(.tip) {
+        if supportedPositions.contains(.tip) {
             return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + tipInset)
         } else {
             return middleY
@@ -227,7 +241,7 @@ class FloatingPanelLayoutAdapter {
                                              constant: -tipInset),
         ]
         offConstraints = [
-            surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.bottomAnchor,
+            surfaceView.topAnchor.constraint(equalTo: vc.view.bottomAnchor,
                                              constant: -hiddenInset),
         ]
     }
@@ -266,8 +280,7 @@ class FloatingPanelLayoutAdapter {
 
         NSLayoutConstraint.activate(fixedConstraints)
 
-        let supportedPositions = layout.supportedPositions.union([.hidden])
-        if supportedPositions.contains(state) == false {
+        if supportedPositions.union([.hidden]).contains(state) == false {
             state = layout.initialPosition
         }
 
@@ -298,8 +311,6 @@ class FloatingPanelLayoutAdapter {
 
     func checkLayoutConsistance() {
         // Verify layout configurations
-        let supportedPositions = layout.supportedPositions
-
         assert(supportedPositions.count > 0)
         assert(supportedPositions.contains(layout.initialPosition),
                "Does not include an initial potision(\(layout.initialPosition)) in supportedPositions(\(supportedPositions))")

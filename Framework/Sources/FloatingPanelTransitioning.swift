@@ -43,7 +43,14 @@ class FloatingPanelPresentationController: UIPresentationController {
     override func presentationTransitionDidEnd(_ completed: Bool) {
         if let fpc = presentedViewController as? FloatingPanelController{
             // For non-animated presentation
-            fpc.show(animated: false)
+            fpc.show(animated: false, completion: nil)
+        }
+    }
+
+    override func dismissalTransitionDidEnd(_ completed: Bool) {
+        if let fpc = presentedViewController as? FloatingPanelController{
+            // For non-animated presentation
+            fpc.hide(animated: false, completion: nil)
         }
     }
 }
