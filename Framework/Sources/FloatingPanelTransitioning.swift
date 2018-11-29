@@ -43,6 +43,9 @@ class FloatingPanelPresentationController: UIPresentationController {
             let fpView = fpc.view
             else { fatalError() }
 
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
+        fpc.backdropView.addGestureRecognizer(tapGesture)
+
         containerView.addSubview(fpView)
         fpView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -51,6 +54,10 @@ class FloatingPanelPresentationController: UIPresentationController {
             fpView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0.0),
             fpView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0.0),
             ])
+    }
+
+    @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
+        presentedViewController.dismiss(animated: true, completion: nil)
     }
 }
 
