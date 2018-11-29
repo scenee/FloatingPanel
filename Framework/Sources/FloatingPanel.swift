@@ -443,8 +443,11 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         let vth = behavior.removalVelocity
         let pth = max(min(behavior.removalProgress, 1.0), 0.0)
 
-        guard (safeAreaBottomY - posY) != 0 else { return false }
-        guard (currentY - posY) / (safeAreaBottomY - posY) >= pth || velocityVector.dy == vth else { return false }
+        let num = (currentY - posY)
+        let den = (safeAreaBottomY - posY)
+
+        guard num >= 0, den != 0, (num / den >= pth || velocityVector.dy == vth)
+        else { return false }
 
         return true
     }
