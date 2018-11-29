@@ -22,55 +22,54 @@ class FloatingPanelModalTransition: NSObject, UIViewControllerTransitioningDeleg
 }
 
 class FloatingPanelPresentationController: UIPresentationController {
-    override func presentationTransitionWillBegin() {
-        guard
-            let containerView = self.containerView,
-            let fpc = presentedViewController as? FloatingPanelController,
-            let toView = fpc.view
-        else { fatalError() }
-
-        fpc.view.frame = containerView.bounds
-
-        containerView.addSubview(toView)
-        toView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            toView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 0.0),
-            toView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 0.0),
-            toView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0.0),
-            toView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0.0),
-            ])
-    }
     override func presentationTransitionDidEnd(_ completed: Bool) {
-        if let fpc = presentedViewController as? FloatingPanelController{
-            // For non-animated presentation
+        // For non-animated presentation
+        if let fpc = presentedViewController as? FloatingPanelController, fpc.position == .hidden {
             fpc.show(animated: false, completion: nil)
         }
     }
 
     override func dismissalTransitionDidEnd(_ completed: Bool) {
-        if let fpc = presentedViewController as? FloatingPanelController{
-            // For non-animated presentation
+        // For non-animated dismissal
+        if let fpc = presentedViewController as? FloatingPanelController, fpc.position != .hidden {
             fpc.hide(animated: false, completion: nil)
         }
+    }
+
+    override func containerViewWillLayoutSubviews() {
+        guard
+            let containerView = self.containerView,
+            let fpc = presentedViewController as? FloatingPanelController,
+            let fpView = fpc.view
+            else { fatalError() }
+
+        containerView.addSubview(fpView)
+        fpView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            fpView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 0.0),
+            fpView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 0.0),
+            fpView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0.0),
+            fpView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0.0),
+            ])
     }
 }
 
 class FloatingPanelModalPresentTransition: NSObject, UIViewControllerAnimatedTransitioning {
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         guard
-            let toVC = transitionContext?.viewController(forKey: .to) as? FloatingPanelController
+            let fpc = transitionContext?.viewController(forKey: .to) as? FloatingPanelController
         else { fatalError()}
 
-        let animator = toVC.behavior.addAnimator(toVC, to: toVC.layout.initialPosition)
+        let animator = fpc.behavior.addAnimator(fpc, to: fpc.layout.initialPosition)
         return TimeInterval(animator.duration)
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         guard
-            let toVC = transitionContext.viewController(forKey: .to) as? FloatingPanelController
+            let fpc = transitionContext.viewController(forKey: .to) as? FloatingPanelController
         else { fatalError() }
 
-        toVC.show(animated: true) {
+        fpc.show(animated: true) {
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
     }
@@ -79,19 +78,19 @@ class FloatingPanelModalPresentTransition: NSObject, UIViewControllerAnimatedTra
 class FloatingPanelModalDismissTransition: NSObject, UIViewControllerAnimatedTransitioning {
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         guard
-            let fromVC = transitionContext?.viewController(forKey: .from) as? FloatingPanelController
+            let fpc = transitionContext?.viewController(forKey: .from) as? FloatingPanelController
         else { fatalError()}
 
-        let animator = fromVC.behavior.removeAnimator(fromVC, from: fromVC.position)
+        let animator = fpc.behavior.removeAnimator(fpc, from: fpc.position)
         return TimeInterval(animator.duration)
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         guard
-            let fromVC = transitionContext.viewController(forKey: .from) as? FloatingPanelController
+            let fpc = transitionContext.viewController(forKey: .from) as? FloatingPanelController
         else { fatalError() }
 
-        fromVC.hide(animated: true) {
+        fpc.hide(animated: true) {
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
     }
