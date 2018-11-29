@@ -24,14 +24,16 @@ The new interface displays the related contents and utilities in parallel as a u
   - [Carthage](#carthage)
 - [Getting Started](#getting-started)
 - [Usage](#usage)
-  - [Customize the layout of a floating panel with  `FloatingPanelLayout` protocol](#customize-the-layout-of-a-floating-panel-with--floatingpanellayout-protocol)
+  - [Customize the layout with `FloatingPanelLayout` protocol](#customize-the-layout-with-floatingpanellayout-protocol)
     - [Change the initial position and height](#change-the-initial-position-and-height)
     - [Support your landscape layout](#support-your-landscape-layout)
   - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
     - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
+  - [Use a custom grabber handle](#use-a-custom-grabber-handle)
+  - [Add tap gestures to the surface or backdrop views](#add-tap-gestures-to-the-surface-or-backdrop-views)
   - [Create an additional floating panel for a detail](#create-an-additional-floating-panel-for-a-detail)
   - [Move a position with an animation](#move-a-position-with-an-animation)
-  - [Make your contents correspond with a floating panel behavior](#make-your-contents-correspond-with-a-floating-panel-behavior)
+  - [Work your contents together with a floating panel behavior](#work-your-contents-together-with-a-floating-panel-behavior)
 - [Notes](#notes)
   - ['Show' or 'Show Detail' Segues from `FloatingPanelController`'s content view controller](#show-or-show-detail-segues-from-floatingpanelcontrollers-content-view-controller)
   - [FloatingPanelSurfaceView's issue on iOS 10](#floatingpanelsurfaceviews-issue-on-ios-10)
@@ -119,7 +121,7 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
 
 ## Usage
 
-### Customize the layout of a floating panel with  `FloatingPanelLayout` protocol
+### Customize the layout with `FloatingPanelLayout` protocol
 
 #### Change the initial position and height
 
@@ -211,6 +213,45 @@ class FloatingPanelStocksBehavior: FloatingPanelBehavior {
 }
 ```
 
+### Use a custom grabber handle
+
+```swift
+class ViewController: UIViewController {
+    ...
+    override func viewDidLoad() {
+        ...
+        let myGrabberHandleView = MyGrabberHandleView()
+        fpc.surfaceView.grabberHandle.isHidden = true
+        fpc.surfaceView.addSubview(myGrabberHandleView)
+    }
+    ...
+}
+```
+
+### Add tap gestures to the surface or backdrop views
+
+```swift
+class ViewController: UIViewController, FloatingPanelControllerDelegate {
+    ...
+    override func viewDidLoad() {
+        ...
+        surfaceTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleSurface(tapGesture:)))
+        fpc.surfaceView.addGestureRecognizer(surfaceTapGesture)
+
+        backdropTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
+        fpc.backdropView.addGestureRecognizer(backdropTapGesture)
+
+        surfaceTapGesture.isEnabled = (fpc.position == .tip)
+        ...
+    }
+    ...
+    // Enable `surfaceTapGesture` only at `tip` position
+    func floatingPanelDidChangePosition(_ vc: FloatingPanelController) {
+        surfaceTapGesture.isEnabled = (vc.position == .tip)
+    }
+}
+```
+
 ### Create an additional floating panel for a detail
 
 ```swift
@@ -257,7 +298,7 @@ In the following example, I move a floating panel to full or half position while
     }
 ```
 
-### Make your contents correspond with a floating panel behavior
+### Work your contents together with a floating panel behavior
 
 ```swift
 class ViewController: UIViewController, FloatingPanelControllerDelegate {
@@ -311,9 +352,9 @@ class ViewController: UIViewController {
 
 A `FloatingPanelController` object proxies an action for `show(_:sender)` to the master VC. That's why the master VC can handle a destination view controller of a 'Show' or 'Show Detail' segue and you can hook `show(_:sender)` to show a secondally floating panel set the destination view controller to the content.
 
-It's a greate way to decouple between a floating panel and the content VC.
+It's a great way to decouple between a floating panel and the content VC.
 
-###  FloatingPanelSurfaceView's issue on iOS 10
+### FloatingPanelSurfaceView's issue on iOS 10
 
 * On iOS 10,   `FloatingPanelSurfaceView.cornerRadius` isn't not automatically masked with the top rounded corners  because of UIVisualEffectView issue. See https://forums.developer.apple.com/thread/50854. 
 So you need to draw top rounding corners of your content.  Here is an example in Examples/Maps.
