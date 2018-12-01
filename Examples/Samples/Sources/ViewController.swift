@@ -58,6 +58,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
     var detailPanelVC: FloatingPanelController!
     var settingsPanelVC: FloatingPanelController!
 
+    var mainPanelObserves: [NSKeyValueObservation] = []
     var settingsObserves: [NSKeyValueObservation] = []
 
     override func viewDidLoad() {
@@ -88,6 +89,8 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
     }
 
     func addMainPanel(with contentVC: UIViewController) {
+        mainPanelObserves.removeAll()
+
         // Initialize FloatingPanelController
         mainPanelVC = FloatingPanelController()
         mainPanelVC.delegate = self
@@ -116,6 +119,10 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             mainPanelVC.track(scrollView: consoleVC.textView)
 
         case let contentVC as DebugTableViewController:
+            let ob = contentVC.tableView.observe(\.isEditing) { (tableView, _) in
+                self.mainPanelVC.panGestureRecognizer.isEnabled = !tableView.isEditing
+            }
+            mainPanelObserves.append(ob)
             mainPanelVC.track(scrollView: contentVC.tableView)
         case let contentVC as NestedScrollViewController:
             mainPanelVC.track(scrollView: contentVC.scrollView)
@@ -388,6 +395,14 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
     weak var tableView: UITableView!
     var items: [String] = []
     var itemHeight: CGFloat = 66.0
+
+    enum Menu: String, CaseIterable {
+        case animateScroll = "Animate Scroll"
+        case changeContentSize = "Change content size"
+        case reorder = "Reorder"
+    }
+
+    var reorderButton: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -417,17 +432,21 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
             stackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -22.0),
             ])
 
-        let button = UIButton()
-        button.setTitle("Animate Scroll", for: .normal)
-        button.setTitleColor(view.tintColor, for: .normal)
-        button.addTarget(self, action: #selector(animateScroll), for: .touchUpInside)
-        stackView.addArrangedSubview(button)
-
-        let button2 = UIButton()
-        button2.setTitle("Change content size", for: .normal)
-        button2.setTitleColor(view.tintColor, for: .normal)
-        button2.addTarget(self, action: #selector(changeContentSize), for: .touchUpInside)
-        stackView.addArrangedSubview(button2)
+        for menu in Menu.allCases {
+            let button = UIButton()
+            button.setTitle(menu.rawValue, for: .normal)
+            button.setTitleColor(view.tintColor, for: .normal)
+            switch menu {
+            case .animateScroll:
+                button.addTarget(self, action: #selector(animateScroll), for: .touchUpInside)
+            case .changeContentSize:
+                button.addTarget(self, action: #selector(changeContentSize), for: .touchUpInside)
+            case .reorder:
+                button.addTarget(self, action: #selector(reorderItems), for: .touchUpInside)
+                reorderButton = button
+            }
+            stackView.addArrangedSubview(button)
+        }
 
         for i in 0...100 {
             items.append("Items \(i)")
@@ -466,6 +485,16 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
         }))
 
         self.present(actionSheet, animated: true, completion: nil)
+    }
+
+    @objc func reorderItems() {
+        if reorderButton.titleLabel?.text == Menu.reorder.rawValue {
+            tableView.isEditing = true
+            reorderButton.setTitle("Cancel", for: .normal)
+        } else {
+            tableView.isEditing = false
+            reorderButton.setTitle(Menu.reorder.rawValue, for: .normal)
+        }
     }
 
     func changeItems(_ count: Int) {
@@ -546,6 +575,14 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
                 tableView.deleteRows(at: [path], with: .automatic)
             }),
         ]
+    }
+
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        items.insert(items.remove(at: sourceIndexPath.row), at: destinationIndexPath.row)
     }
 }
 
