@@ -47,13 +47,7 @@ class FloatingPanelPresentationController: UIPresentationController {
         fpc.backdropView.addGestureRecognizer(tapGesture)
 
         containerView.addSubview(fpView)
-        fpView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            fpView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 0.0),
-            fpView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 0.0),
-            fpView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0.0),
-            fpView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0.0),
-            ])
+        fpView.frame = containerView.bounds //MUST
     }
 
     @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
