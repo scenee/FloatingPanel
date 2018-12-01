@@ -282,19 +282,13 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         precondition((parent is UITableViewController) == false, "UITableViewController should not be the parent because the view is a table view so that a floating panel doens't work well")
         precondition((parent is UICollectionViewController) == false, "UICollectionViewController should not be the parent because the view is a collection view so that a floating panel doens't work well")
 
-        view.frame = parent.view.bounds
         if let belowView = belowView {
             parent.view.insertSubview(self.view, belowSubview: belowView)
         } else {
             parent.view.addSubview(self.view)
         }
-        self.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            self.view.topAnchor.constraint(equalTo: parent.view.topAnchor, constant: 0.0),
-            self.view.leftAnchor.constraint(equalTo: parent.view.leftAnchor, constant: 0.0),
-            self.view.rightAnchor.constraint(equalTo: parent.view.rightAnchor, constant: 0.0),
-            self.view.bottomAnchor.constraint(equalTo: parent.view.bottomAnchor, constant: 0.0),
-            ])
+
+        view.frame = parent.view.bounds // MUST
 
         parent.addChild(self)
 
