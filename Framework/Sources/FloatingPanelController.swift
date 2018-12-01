@@ -198,7 +198,13 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     }
 
     private func update(safeAreaInsets: UIEdgeInsets) {
+        // preserve the current content offset
+        let contentOffset = scrollView?.contentOffset
+
         floatingPanel.safeAreaInsets = safeAreaInsets
+
+        scrollView?.contentOffset = contentOffset ?? .zero
+
         switch contentInsetAdjustmentBehavior {
         case .always:
             scrollView?.contentInset = adjustedContentInsets
