@@ -245,6 +245,14 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         }
     }
 
+    var grabberAreaFrame: CGRect {
+        let grabberAreaFrame = CGRect(x: surfaceView.bounds.origin.x,
+                                     y: surfaceView.bounds.origin.y,
+                                     width: surfaceView.bounds.width,
+                                     height: FloatingPanelSurfaceView.topGrabberBarHeight * 2)
+        return grabberAreaFrame
+    }
+
     // MARK: - Gesture handling
     private let offsetThreshold: CGFloat = 5.0 // Optimal value from testing
     @objc func handle(panGesture: UIPanGestureRecognizer) {
@@ -266,8 +274,14 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             if surfaceView.frame.minY > layoutAdapter.topY {
                 switch state {
                 case .full:
-                    // Prevent over scrolling from scroll top in moving the panel from full.
-                    scrollView.contentOffset.y = scrollView.contentOffsetZero.y
+                    let point = panGesture.location(in: surfaceView)
+                    if grabberAreaFrame.contains(point) {
+                        // Preserve the current content offset in moving from full.
+                        scrollView.contentOffset.y = initialScrollOffset.y
+                    } else {
+                        // Prevent over scrolling in moving from full.
+                        scrollView.contentOffset.y = scrollView.contentOffsetZero.y
+                    }
                 case .half, .tip:
                     guard scrollView.isDecelerating == false else {
                         // Don't fix the scroll offset in animating the panel to half and tip.
@@ -323,11 +337,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     private func shouldScrollViewHandleTouch(_ scrollView: UIScrollView?, point: CGPoint, velocity: CGPoint) -> Bool {
-        let grabberBarFrame = CGRect(x: surfaceView.bounds.origin.x,
-                                     y: surfaceView.bounds.origin.y,
-                                     width: surfaceView.bounds.width,
-                                     height: FloatingPanelSurfaceView.topGrabberBarHeight * 2)
-
         // When no scrollView, nothing to handle.
         guard let scrollView = scrollView else { return false }
 
@@ -347,7 +356,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             state == .full,                   // When not .full, don't scroll.
             interactionInProgress == false,   // When interaction already in progress, don't scroll.
             scrollView.frame.contains(point), // When point not in scrollView, don't scroll.
-            !grabberBarFrame.contains(point)  // When point within grabber area, don't scroll.
+            !grabberAreaFrame.contains(point) // When point within grabber area, don't scroll.
         else {
             return false
         }
