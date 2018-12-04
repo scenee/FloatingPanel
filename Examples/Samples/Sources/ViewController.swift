@@ -20,6 +20,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case showTabBar
         case showNestedScrollView
         case showRemovablePanel
+        case showIntrinsicView
 
         var name: String {
             switch self {
@@ -30,6 +31,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             case .showTabBar: return "Show Tab Bar"
             case .showNestedScrollView: return "Show Nested ScrollView"
             case .showRemovablePanel: return "Show Removable Panel"
+            case .showIntrinsicView: return "Show Intrinsic View"
             }
         }
 
@@ -42,6 +44,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             case .showTabBar: return "TabBarViewController"
             case .showNestedScrollView: return "NestedScrollViewController"
             case .showRemovablePanel: return "DetailViewController"
+            case .showIntrinsicView: return "IntrinsicViewController"
             }
         }
     }
@@ -152,6 +155,8 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
         if currentMenu == .showRemovablePanel {
             return newCollection.verticalSizeClass == .compact ? RemovablePanelLandscapeLayout() :  RemovablePanelLayout()
+        } else if case .showIntrinsicView = currentMenu {
+            return IntrinsicPanelLayout(mainPanelVC.contentViewController)
         } else {
             return self
         }
@@ -166,6 +171,30 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case .full: return UIScreen.main.bounds.height == 667.0 ? 18.0 : 16.0
         case .half: return 262.0
         case .tip: return 69.0
+        }
+    }
+}
+
+class IntrinsicPanelLayout: FloatingPanelIntrinsicLayout {
+    
+    weak var contentViewController: UIViewController?
+    
+    init(_ contentViewController: UIViewController?) {
+        self.contentViewController = contentViewController
+    }
+    
+    var initialPosition: FloatingPanelPosition {
+        return .half
+    }
+    
+    var supportedPositions: Set<FloatingPanelPosition> {
+        return [.half]
+    }
+    
+    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        switch position {
+        case .half: return intrinsicHeight
+        default: return nil
         }
     }
 }

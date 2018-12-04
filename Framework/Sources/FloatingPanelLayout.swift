@@ -5,6 +5,19 @@
 
 import UIKit
 
+public protocol FloatingPanelIntrinsicLayout: FloatingPanelLayout {
+    /// Return the viewController that is being displaying the content
+    var contentViewController: UIViewController? { get set }
+}
+
+public extension FloatingPanelIntrinsicLayout {
+    var intrinsicHeight: CGFloat {
+        assert(contentViewController != nil, "Cannot use this if this...")
+        let fittingSize = UIView.layoutFittingCompressedSize
+        return contentViewController!.view.systemLayoutSizeFitting(fittingSize).height
+    }
+}
+
 public protocol FloatingPanelLayout: class {
     /// Returns the initial position of a floating panel.
     var initialPosition: FloatingPanelPosition { get }
@@ -57,6 +70,8 @@ public extension FloatingPanelLayout {
 }
 
 public class FloatingPanelDefaultLayout: FloatingPanelLayout {
+    public var contentViewController: UIViewController?
+    
     public var initialPosition: FloatingPanelPosition {
         return .half
     }
@@ -71,6 +86,8 @@ public class FloatingPanelDefaultLayout: FloatingPanelLayout {
 }
 
 public class FloatingPanelDefaultLandscapeLayout: FloatingPanelLayout {
+    public var contentViewController: UIViewController?
+    
     public var initialPosition: FloatingPanelPosition {
         return .tip
     }
@@ -93,11 +110,7 @@ class FloatingPanelLayoutAdapter {
     private weak var surfaceView: FloatingPanelSurfaceView!
     private weak var backdropView: FloatingPanelBackdropView!
 
-    var layout: FloatingPanelLayout {
-        didSet {
-            checkLayoutConsistance()
-        }
-    }
+    var layout: FloatingPanelLayout
 
     var safeAreaInsets: UIEdgeInsets = .zero {
         didSet {
