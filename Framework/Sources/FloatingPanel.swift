@@ -131,8 +131,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private func getBackdropAlpha(with translation: CGPoint) -> CGFloat {
         let currentY = getCurrentY(from: initialFrame, with: translation)
 
-        let next = directionalPosition(with: translation)
-        let pre = redirectionalPosition(with: translation)
+        let next = directionalPosition(at: currentY, with: translation)
+        let pre = redirectionalPosition(at: currentY, with: translation)
         let nextY = layoutAdapter.positionY(for: next)
         let preY = layoutAdapter.positionY(for: pre)
 
@@ -585,66 +585,33 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         }
     }
 
-    private func directionalPosition(with translation: CGPoint) -> FloatingPanelPosition {
-        let currentY = getCurrentY(from: initialFrame, with: translation)
-
-        let supportedPositions = layoutAdapter.supportedPositions
-
-        if supportedPositions.count == 1 {
-            return state
-        }
-
-        switch supportedPositions {
-        case [.full, .half]: return translation.y >= 0 ? .half : .full
-        case [.half, .tip]: return translation.y >= 0 ? .tip : .half
-        case [.full, .tip]: return translation.y >= 0 ? .tip : .full
-        default:
-            let middleY = layoutAdapter.middleY
-
-            switch state {
-            case .full:
-                if translation.y <= 0 {
-                    return .full
-                }
-                return currentY > middleY ? .tip : .half
-            case .half:
-                return currentY > middleY ? .tip : .full
-            case .tip:
-                if translation.y >= 0 {
-                    return .tip
-                }
-                return currentY > middleY ? .half : .full
-            case .hidden:
-                fatalError("A floating panel hidden must not be used by a user")
-            }
-        }
+    private func directionalPosition(at currentY: CGFloat, with translation: CGPoint) -> FloatingPanelPosition {
+        return getPosition(at: currentY, with: translation, directional: true)
     }
 
-    private func redirectionalPosition(with translation: CGPoint) -> FloatingPanelPosition {
-        let currentY = getCurrentY(from: initialFrame, with: translation)
+    private func redirectionalPosition(at currentY: CGFloat, with translation: CGPoint) -> FloatingPanelPosition {
+        return getPosition(at: currentY, with: translation, directional: false)
+    }
 
-        let supportedPositions = layoutAdapter.supportedPositions
-
+    private func getPosition(at currentY: CGFloat, with translation: CGPoint, directional: Bool) -> FloatingPanelPosition {
+        let supportedPositions: Set = layoutAdapter.supportedPositions
         if supportedPositions.count == 1 {
             return state
         }
-
+        let isForwardYAxis = (translation.y >= 0)
         switch supportedPositions {
-        case [.full, .half]: return translation.y >= 0 ? .full : .half
-        case [.half, .tip]: return translation.y >= 0 ? .half : .tip
-        case [.full, .tip]: return translation.y >= 0 ? .full : .tip
+        case [.full, .half]:
+            return (isForwardYAxis == directional) ? .half : .full
+        case [.half, .tip]:
+            return (isForwardYAxis == directional) ? .tip : .half
+        case [.full, .tip]:
+            return (isForwardYAxis == directional) ? .tip : .full
         default:
             let middleY = layoutAdapter.middleY
-
-            switch state {
-            case .full:
-                return currentY > middleY ? .half : .full
-            case .half:
-                return .half
-            case .tip:
-                return currentY > middleY ? .tip : .half
-            case .hidden:
-                fatalError("A floating panel hidden must not be used by a user")
+            if currentY > middleY {
+                return (isForwardYAxis == directional) ? .tip : .half
+            } else {
+                return (isForwardYAxis == directional) ? .half : .full
             }
         }
     }
