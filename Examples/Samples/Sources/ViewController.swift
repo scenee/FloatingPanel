@@ -130,8 +130,8 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
 
         switch menu {
         case .showDetail:
-            detailPanelVC?.removeFromParent()
-
+            detailPanelVC?.removePanelFromParent(animated: false)
+            
             // Initialize FloatingPanelController
             detailPanelVC = FloatingPanelController()
 
