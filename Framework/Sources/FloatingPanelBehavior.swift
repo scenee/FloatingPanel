@@ -85,7 +85,9 @@ public extension FloatingPanelBehavior {
 class FloatingPanelDefaultBehavior: FloatingPanelBehavior {
     func interactionAnimator(_ fpc: FloatingPanelController, to targetPosition: FloatingPanelPosition, with velocity: CGVector) -> UIViewPropertyAnimator {
         let timing = timeingCurve(with: velocity)
-        return UIViewPropertyAnimator(duration: 0, timingParameters: timing)
+        let animator = UIViewPropertyAnimator(duration: 0, timingParameters: timing)
+        animator.isInterruptible = false
+        return animator
     }
 
     private func timeingCurve(with velocity: CGVector) -> UITimingCurveProvider {
