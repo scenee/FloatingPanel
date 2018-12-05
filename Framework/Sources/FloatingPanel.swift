@@ -266,7 +266,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                     // Fix the scroll offset in moving the panel from half and tip.
                     scrollView.contentOffset.y = initialScrollOffset.y + (initialScrollInset.top - scrollView.contentInset.top)
                 case .hidden:
-                    fatalError("A floating panel hidden must not be used by a user")
+                    fatalError("Now .hidden must not be used for a user interaction")
                 }
 
                 // Always hide a scroll indicator at the non-top.
@@ -581,7 +581,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         case .tip:
             return CGFloat(fabs(Double(currentY - bottomY)))
         case .hidden:
-            fatalError("A floating panel hidden must not be used by a user")
+            fatalError("Now .hidden must not be used for a user interaction")
         }
     }
 
@@ -646,29 +646,27 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             let middleY = layoutAdapter.middleY
             let bottomY = layoutAdapter.bottomY
 
-            let target: FloatingPanelPosition
+            let nextState: FloatingPanelPosition
             let forwardYDirection: Bool
 
+            /*
+             full <-> half <-> tip
+             */
             switch state {
             case .full:
-                target = .half
+                nextState = .half
                 forwardYDirection = true
             case .half:
-                if (currentY < middleY) {
-                    target = .full
-                    forwardYDirection = false
-                } else {
-                    target = .tip
-                    forwardYDirection = true
-                }
+                nextState = (currentY > middleY) ? .tip : .full
+                forwardYDirection = (currentY > middleY)
             case .tip:
-                target = .half
+                nextState = .half
                 forwardYDirection = false
             case .hidden:
-                fatalError("A floating panel hidden must not be used by a user")
+                fatalError("Now .hidden must not be used for a user interaction")
             }
 
-            let redirectionalProgress = max(min(behavior.redirectionalProgress(viewcontroller, from: state, to: target), 1.0), 0.0)
+            let redirectionalProgress = max(min(behavior.redirectionalProgress(viewcontroller, from: state, to: nextState), 1.0), 0.0)
 
             let th1: CGFloat
             let th2: CGFloat
