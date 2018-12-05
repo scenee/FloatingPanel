@@ -568,7 +568,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 }
                 return currentY > middleY ? .tip : .half
             case .half:
-                return translation.y >= 0 ? .tip : .full
+                return currentY > middleY ? .tip : .full
             case .tip:
                 if translation.y >= 0 {
                     return .tip
