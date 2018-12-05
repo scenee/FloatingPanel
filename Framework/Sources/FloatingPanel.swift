@@ -313,7 +313,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 return
             }
 
-            if let animator = self.animator {
+            if let animator = self.animator, animator.isInterruptible {
                 animator.stopAnimation(true)
                 self.animator = nil
             }
@@ -491,6 +491,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     private func startAnimation(to targetPosition: FloatingPanelPosition, at distance: CGFloat, with velocity: CGPoint) {
+        log.debug("startAnimation", targetPosition, distance, velocity)
         let targetY = layoutAdapter.positionY(for: targetPosition)
         let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: max(min(velocity.y/distance, 30.0), -30.0)) : .zero
         let animator = behavior.interactionAnimator(self.viewcontroller, to: targetPosition, with: velocityVector)
