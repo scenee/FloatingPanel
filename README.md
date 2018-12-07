@@ -138,7 +138,7 @@ fpc.isRemovalInteractionEnabled = true // Optional: Let it removable by a swipe-
 self.present(fpc, animated: true, completion: nil)
 ```
 
-You can show a floating panel over UINavigationController from the containnee view controllers like a Modal of `.overCurrentContext` style.
+You can show a floating panel over UINavigationController from the containnee view controllers as a modality of `.overCurrentContext` style.
 
 NOTE: FloatingPanelController has the custom presentation controller. If you would like to customize the presentation/dismissal, please see [FloatingPanelTransitioning](https://github.com/SCENEE/FloatingPanel/blob/feat-modality/Framework/Sources/FloatingPanelTransitioning.swift).
 
@@ -239,23 +239,28 @@ class FloatingPanelLandscapeLayout: FloatingPanelLayout {
 
 #### Use Intrinsic height layout
 
-1. Lay out your content View with the intrinsic height size. For example, see "Detail View Controller scene" of [Main.storyboard](https://github.com/SCENEE/FloatingPanel/blob/master/Examples/Samples/Sources/Base.lproj/Main.storyboard). The 'Stack View.bottom' constraint determines the intrinsic height.
-2. Use `FloatingPanelIntrinsicLayout`.
+1. Lay out your content View with the intrinsic height size. For example, see "Detail View Controller scene"/"Intrinsic View Controller scene" of [Main.storyboard](https://github.com/SCENEE/FloatingPanel/blob/master/Examples/Samples/Sources/Base.lproj/Main.storyboard). The 'Stack View.bottom' constraint determines the intrinsic height.
+2. Create a layout that adopts and conforms to `FloatingPanelIntrinsicLayout` and use it.
 
 ```swift
 class ViewController: UIViewController, FloatingPanelControllerDelegate {
     ...
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
-        return ModalPanelLayout()
+        return RemovablePanelLayout()
     }
 }
-class ModalPanelLayout: FloatingPanelIntrinsicLayout {
-    var topInteractionBuffer: CGFloat {
-        return 200.0
+
+class RemovablePanelLayout: FloatingPanelIntrinsicLayout {
+    var supportedPositions: Set<FloatingPanelPosition> {
+        return [.full, .half]
     }
-    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
-        return 0.3
+    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        switch position {
+        case .half: return 130.0
+        default: return nil  // Must return nil for .full
+        }
     }
+    ...
 }
 ```
 
