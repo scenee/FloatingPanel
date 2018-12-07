@@ -53,6 +53,9 @@ jobs:
   - script: xcodebuild -scheme Samples -sdk iphonesimulator clean build
     osx_image: xcode11
     name: "Samples"
+  - script: xcodebuild -scheme SamplesObjC -sdk iphonesimulator clean build
+    osx_image: xcode11
+    name: "SamplesObjC"
 
   - stage: Carthage
     osx_image: xcode11
