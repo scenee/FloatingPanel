@@ -62,6 +62,17 @@ extension UIView {
     }
 }
 
+extension UIView {
+    func disableAutoLayout() {
+        let frame = self.frame
+        translatesAutoresizingMaskIntoConstraints = true
+        self.frame = frame
+    }
+    func enableAutoLayout() {
+        translatesAutoresizingMaskIntoConstraints = false
+    }
+}
+
 extension UIGestureRecognizer.State: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
