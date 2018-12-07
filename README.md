@@ -30,6 +30,7 @@ The new interface displays the related contents and utilities in parallel as a u
   - [Customize the layout with `FloatingPanelLayout` protocol](#customize-the-layout-with-floatingpanellayout-protocol)
     - [Change the initial position and height](#change-the-initial-position-and-height)
     - [Support your landscape layout](#support-your-landscape-layout)
+    - [Use Intrinsic height layout](#use-intrinsic-height-layout)
   - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
     - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
   - [Use a custom grabber handle](#use-a-custom-grabber-handle)
@@ -137,9 +138,9 @@ fpc.isRemovalInteractionEnabled = true // Optional: Let it removable by a swipe-
 self.present(fpc, animated: true, completion: nil)
 ```
 
-You can show a floating panel over UINavigationController from the containnee view controllers like a Modal of overCurrentContext style.
+You can show a floating panel over UINavigationController from the containnee view controllers like a Modal of `.overCurrentContext` style.
 
-NOTE: FloatingPanelController has the custom presentation controller. If you would like to cutomize the presentation/dimissal, please see [FloatingPanelTransitioning](https://github.com/SCENEE/FloatingPanel/blob/feat-modality/Framework/Sources/FloatingPanelTransitioning.swift).
+NOTE: FloatingPanelController has the custom presentation controller. If you would like to customize the presentation/dismissal, please see [FloatingPanelTransitioning](https://github.com/SCENEE/FloatingPanel/blob/feat-modality/Framework/Sources/FloatingPanelTransitioning.swift).
 
 ## Usage
 
@@ -232,6 +233,28 @@ class FloatingPanelLandscapeLayout: FloatingPanelLayout {
             surfaceView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuid.leftAnchor, constant: 8.0),
             surfaceView.widthAnchor.constraint(equalToConstant: 291),
         ]
+    }
+}
+```
+
+#### Use Intrinsic height layout
+
+1. Lay out your content View with the intrinsic height size. For example, see "Detail View Controller scene" of [Main.storyboard](https://github.com/SCENEE/FloatingPanel/blob/master/Examples/Samples/Sources/Base.lproj/Main.storyboard). The 'Stack View.bottom' constraint determines the intrinsic height.
+2. Use `FloatingPanelIntrinsicLayout`.
+
+```swift
+class ViewController: UIViewController, FloatingPanelControllerDelegate {
+    ...
+    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
+        return ModalPanelLayout()
+    }
+}
+class ModalPanelLayout: FloatingPanelIntrinsicLayout {
+    var topInteractionBuffer: CGFloat {
+        return 200.0
+    }
+    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
+        return 0.3
     }
 }
 ```
@@ -393,7 +416,7 @@ override func viewDidLayoutSubviews() {
     }
 }
 ```
-* If you sets clear color to `FloatingPanelSurfaceView.backgroundColor`, please note the bottom overflow of your content on bouncing at full position. To prevent it, you need to expand your content. For example, See Example/Maps App's Auto Layout settings of `UIVisualEffectView` in Main.storyborad.
+* If you sets clear color to `FloatingPanelSurfaceView.backgroundColor`, please note the bottom overflow of your content on bouncing at full position. To prevent it, you need to expand your content. For example, See Example/Maps App's Auto Layout settings of `UIVisualEffectView` in Main.storyboard.
 
 ## Author
 
