@@ -2,6 +2,7 @@ language: swift
 branches:
   only:
     - master
+    - next
 cache:
   directories:
   - build

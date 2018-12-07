@@ -17,6 +17,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case trackingTextView
         case showDetail
         case showModal
+        case showFloatingPanelModal
         case showTabBar
         case showNestedScrollView
         case showRemovablePanel
@@ -28,6 +29,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             case .trackingTextView: return "Scroll tracking(TextView)"
             case .showDetail: return "Show Detail Panel"
             case .showModal: return "Show Modal"
+            case .showFloatingPanelModal: return "Show Floating Panel Modal"
             case .showTabBar: return "Show Tab Bar"
             case .showNestedScrollView: return "Show Nested ScrollView"
             case .showRemovablePanel: return "Show Removable Panel"
@@ -41,6 +43,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             case .trackingTextView: return "ConsoleViewController"
             case .showDetail: return "DetailViewController"
             case .showModal: return "ModalViewController"
+            case .showFloatingPanelModal: return nil
             case .showTabBar: return "TabBarViewController"
             case .showNestedScrollView: return "NestedScrollViewController"
             case .showRemovablePanel: return "DetailViewController"
@@ -127,8 +130,8 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
 
         switch menu {
         case .showDetail:
-            detailPanelVC?.removeFromParent()
-
+            detailPanelVC?.removePanelFromParent(animated: false)
+            
             // Initialize FloatingPanelController
             detailPanelVC = FloatingPanelController()
 
@@ -144,6 +147,18 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case .showModal, .showTabBar:
             let modalVC = contentVC
             present(modalVC, animated: true, completion: nil)
+        case .showFloatingPanelModal:
+            let fpc = FloatingPanelController()
+            let contentVC = self.storyboard!.instantiateViewController(withIdentifier: "DetailViewController")
+            fpc.set(contentViewController: contentVC)
+            fpc.delegate = self
+
+            fpc.surfaceView.cornerRadius = 38.5
+            fpc.surfaceView.shadowHidden = false
+
+            fpc.isRemovalInteractionEnabled = true
+
+            self.present(fpc, animated: true, completion: nil)
         default:
             detailPanelVC?.removePanelFromParent(animated: true, completion: nil)
             mainPanelVC?.removePanelFromParent(animated: true) {
@@ -153,12 +168,18 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
     }
 
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
-        if currentMenu == .showRemovablePanel {
+        switch currentMenu {
+        case .showRemovablePanel:
             return newCollection.verticalSizeClass == .compact ? RemovablePanelLandscapeLayout() :  RemovablePanelLayout()
-        } else if case .showIntrinsicView = currentMenu {
+        case .showIntrinsicView:
             return IntrinsicPanelLayout(mainPanelVC.contentViewController)
-        } else {
-            return self
+        case .showFloatingPanelModal:
+            if vc != mainPanelVC && vc != detailPanelVC {
+                return ModalPanelLayout()
+            }
+            fallthrough
+        default:
+            return (newCollection.verticalSizeClass == .compact) ? nil  : self
         }
     }
 
@@ -171,6 +192,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case .full: return UIScreen.main.bounds.height == 667.0 ? 18.0 : 16.0
         case .half: return 262.0
         case .tip: return 69.0
+        case .hidden: return nil
         }
     }
 }
@@ -244,6 +266,28 @@ class RemovablePanelLandscapeLayout: FloatingPanelLayout {
     }
 }
 
+class ModalPanelLayout: FloatingPanelLayout {
+    var initialPosition: FloatingPanelPosition {
+        return .half
+    }
+    var supportedPositions: Set<FloatingPanelPosition> {
+        return [.half]
+    }
+    var bottomInteractionBuffer: CGFloat {
+        return 261.0 - 22.0
+    }
+
+    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        switch position {
+        case .half: return 261.0
+        default: return nil
+        }
+    }
+    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
+        return 0.3
+    }
+}
+
 class NestedScrollViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
 
@@ -278,9 +322,8 @@ class DebugTextViewController: UIViewController, UITextViewDelegate {
     }
 
     @IBAction func close(sender: UIButton) {
-        // Now impossible
-        // dismiss(animated: true, completion: nil)
-        (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
+        // (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
 }
 
@@ -452,9 +495,8 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
 class DetailViewController: UIViewController {
     @IBOutlet weak var closeButton: UIButton!
     @IBAction func close(sender: UIButton) {
-        // Now impossible
-        // dismiss(animated: true, completion: nil)
-        (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
+        // (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
 
     @IBAction func buttonPressed(_ sender: UIButton) {
@@ -550,6 +592,7 @@ class ModalSecondLayout: FloatingPanelLayout {
         case .full: return 18.0
         case .half: return 262.0
         case .tip: return 44.0
+        case .hidden: return nil
         }
     }
 }
