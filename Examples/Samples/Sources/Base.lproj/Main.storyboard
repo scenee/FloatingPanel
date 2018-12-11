@@ -152,10 +152,10 @@
             </objects>
             <point key="canvasLocation" x="-380" y="1576"/>
         </scene>
-        <!--View Controller-->
+        <!--Intrinsic View Controller-->
         <scene sceneID="wtJ-qZ-aCl">
             <objects>
-                <viewController storyboardIdentifier="IntrinsicViewController" id="aK0-kv-mTu" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="IntrinsicViewController" title="Intrinsic View Controller" id="aK0-kv-mTu" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="eLM-xc-d9e">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -179,7 +179,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DfE-fL-zy5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-669" y="2566"/>
+            <point key="canvasLocation" x="-940" y="805"/>
         </scene>
         <!--Tab Bar View Controller-->
         <scene sceneID="nQ5-PV-qFw">

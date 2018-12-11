@@ -74,7 +74,6 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         // Initialize FloatingPanelController
         mainPanelVC = FloatingPanelController()
         mainPanelVC.delegate = self
-        mainPanelVC.isRemovalInteractionEnabled = (currentMenu == .showRemovablePanel)
 
         // Initialize FloatingPanelController and add the view
         mainPanelVC.surfaceView.cornerRadius = 6.0
@@ -82,6 +81,17 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
 
         // Set a content view controller
         mainPanelVC.set(contentViewController: contentVC)
+
+        // Enable tap-to-hide and removal interaction
+        switch currentMenu {
+        case .showRemovablePanel, .showIntrinsicView:
+            mainPanelVC.isRemovalInteractionEnabled = true
+
+            let backdropTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
+            mainPanelVC.backdropView.addGestureRecognizer(backdropTapGesture)
+        default:
+            break
+        }
 
         // Track a scroll view
         switch contentVC {
@@ -95,12 +105,17 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         default:
             break
         }
+
         //  Add FloatingPanel to self.view
         mainPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
     }
 
     @objc func dismissDetailPanelVC()  {
         detailPanelVC.removePanelFromParent(animated: true, completion: nil)
+    }
+
+    @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
+        mainPanelVC.hide(animated: true, completion: nil)
     }
 
     // MARK:- TableViewDatasource
