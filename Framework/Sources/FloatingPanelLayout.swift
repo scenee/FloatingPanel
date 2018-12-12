@@ -200,6 +200,9 @@ class FloatingPanelLayoutAdapter {
         return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + hiddenInset)
     }
 
+    var topMaxY: CGFloat { return -safeAreaInsets.top }
+    var bottomMaxY: CGFloat { return safeAreaBottomY }
+
     var adjustedContentInsets: UIEdgeInsets {
         return UIEdgeInsets(top: 0.0,
                             left: 0.0,
