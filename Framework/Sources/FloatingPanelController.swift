@@ -170,7 +170,11 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+
         view.frame.size = size
+        view.layoutIfNeeded()
+
+        floatingPanel.layoutAdapter.checkLayoutConsistance()
     }
 
     public override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -178,7 +182,6 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
         // Change layout for a new trait collection
         updateLayout(for: newCollection)
-        floatingPanel.layoutAdapter.checkLayoutConsistance()
 
         floatingPanel.behavior = fetchBehavior(for: newCollection)
     }
