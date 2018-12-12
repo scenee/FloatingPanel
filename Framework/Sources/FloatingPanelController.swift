@@ -168,6 +168,11 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         floatingPanel.setUpViews(in: self)
     }
 
+    public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        view.frame.size = size
+    }
+
     public override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
         super.willTransition(to: newCollection, with: coordinator)
 
