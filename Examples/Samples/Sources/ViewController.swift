@@ -255,6 +255,9 @@ class RemovablePanelLandscapeLayout: FloatingPanelIntrinsicLayout {
 }
 
 class ModalPanelLayout: FloatingPanelIntrinsicLayout {
+    var topInteractionBuffer: CGFloat {
+        return 100.0
+    }
     func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
         return 0.3
     }

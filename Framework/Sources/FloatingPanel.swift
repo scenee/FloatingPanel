@@ -529,7 +529,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 return max(topY, min(bottomY, y))
             }
         }
-        return max(topY - topBuffer, min(bottomY + bottomBuffer, y))
+        let topMax = layoutAdapter.topMaxY
+        let bottomMax = layoutAdapter.bottomMaxY
+        return max(max(topY - topBuffer, topMax), min(min(bottomY + bottomBuffer, bottomMax), y))
     }
 
     private func startAnimation(to targetPosition: FloatingPanelPosition, at distance: CGFloat, with velocity: CGPoint) {
