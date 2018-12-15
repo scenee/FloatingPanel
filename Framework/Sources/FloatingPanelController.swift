@@ -164,12 +164,13 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         let view = FloatingPanelPassThroughView()
         view.backgroundColor = .clear
 
-        self.view = view as UIView
-    }
+        backdropView.frame = view.bounds
+        view.addSubview(backdropView)
 
-    public override func viewDidLoad() {
-        super.viewDidLoad()
-        floatingPanel.setUpViews(in: self)
+        surfaceView.frame = view.bounds
+        view.addSubview(surfaceView)
+
+        self.view = view as UIView
     }
 
     public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -179,49 +180,35 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             view.frame.size = size
             view.layoutIfNeeded()
         }
-
-        floatingPanel.layoutAdapter.checkLayoutConsistance()
     }
 
     public override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
         super.willTransition(to: newCollection, with: coordinator)
 
         // Change layout for a new trait collection
-        updateLayout(for: newCollection)
+        floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
 
         floatingPanel.behavior = fetchBehavior(for: newCollection)
     }
 
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
+
+        // Must pass through even if `previousTraitCollection` is nil
+        // for intrinsic height calculation
         guard previousTraitCollection != traitCollection else { return }
 
+        // `view.frame.height` has an appropriate value on changed trait collection.
         self.update(safeAreaInsets: layoutInsets)
     }
 
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        // Must track safeAreaInsets/{top,bottom}LayoutGuide of the `self.view`
-        // to update floatingPanel.safeAreaInsets`. There are 2 reasons.
-        // 1. This or the parent VC doesn't call viewSafeAreaInsetsDidChange() on the bottom
-        // inset's update expectedly.
-        // 2. The safe area top inset can be variable on the large title navigation bar(iOS11+).
-        // That's why it needs the observation to keep `adjustedContentInsets` correct.
-        if #available(iOS 11.0, *) {
-            safeAreaInsetsObservation = self.observe(\.view.safeAreaInsets) { [weak self] (vc, chaneg) in
-                guard let self = self else { return }
-                self.update(safeAreaInsets: vc.layoutInsets)
-            }
-        } else {
-            // KVOs for topLayoutGuide & bottomLayoutGuide are not effective.
-            // Instead, safeAreaInsets is updated here
+
+        if #available(iOS 11.0, *) {}
+        else {
             self.update(safeAreaInsets: layoutInsets)
         }
-    }
-
-    public override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        safeAreaInsetsObservation = nil
     }
 
     // MARK:- Privates
@@ -240,10 +227,22 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     }
 
     private func update(safeAreaInsets: UIEdgeInsets) {
+        // * Intrinsic height can be change even if `safeAreaInsets` is same as before
+        // * Don't re-layout the surface on SafeArea.Bottom enabled/disabled in interaction progress
+        guard
+            self.floatingPanel.interactionInProgress == false
+        else { return }
+
+        log.debug("Update safeAreaInsets", safeAreaInsets)
+        
         // preserve the current content offset
         let contentOffset = scrollView?.contentOffset
 
-        floatingPanel.safeAreaInsets = safeAreaInsets
+        floatingPanel.layoutAdapter.safeAreaInsets = safeAreaInsets
+
+        if floatingPanel.layoutAdapter.updateHeight() {
+            floatingPanel.layoutAdapter.activateLayout(of: floatingPanel.state)
+        }
 
         scrollView?.contentOffset = contentOffset ?? .zero
 
@@ -259,6 +258,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     private func updateLayout(for traitCollection: UITraitCollection) {
         floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
         floatingPanel.layoutAdapter.prepareLayout(in: self)
+        floatingPanel.layoutAdapter.updateHeight()
         floatingPanel.layoutAdapter.activateLayout(of: floatingPanel.state)
     }
 
@@ -268,6 +268,23 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     public func show(animated: Bool = false, completion: (() -> Void)? = nil) {
         // Must apply the current layout here
         updateLayout(for: traitCollection)
+
+        if #available(iOS 11.0, *) {
+            // Must track the safeAreaInsets of `self.view` to update the layout.
+            // There are 2 reasons.
+            // 1. This or the parent VC doesn't call viewSafeAreaInsetsDidChange() on the bottom
+            // inset's update expectedly.
+            // 2. The safe area top inset can be variable on the large title navigation bar(iOS11+).
+            // That's why it needs the observation to keep `adjustedContentInsets` correct.
+            safeAreaInsetsObservation = self.observe(\.view.safeAreaInsets) { [weak self] (vc, chaneg) in
+                guard let self = self else { return }
+                self.update(safeAreaInsets: vc.layoutInsets)
+            }
+        } else {
+            // KVOs for topLayoutGuide & bottomLayoutGuide are not effective.
+            // Instead, safeAreaInsets is updated at `self.viewDidAppear()`
+        }
+
         move(to: floatingPanel.layoutAdapter.layout.initialPosition,
              animated: animated,
              completion: completion)
@@ -275,6 +292,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     /// Hides the surface view to the hidden position
     public func hide(animated: Bool = false, completion: (() -> Void)? = nil) {
+        safeAreaInsetsObservation = nil
         move(to: .hidden,
              animated: animated,
              completion: completion)
@@ -302,11 +320,18 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             parent.view.addSubview(self.view)
         }
 
-        view.frame = parent.view.bounds // MUST
-
         parent.addChild(self)
 
-        show(animated: true) { [weak self] in
+        view.frame = parent.view.bounds // Needed for a correct safe area configuration
+        view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            self.view.topAnchor.constraint(equalTo: parent.view.topAnchor, constant: 0.0),
+            self.view.leftAnchor.constraint(equalTo: parent.view.leftAnchor, constant: 0.0),
+            self.view.rightAnchor.constraint(equalTo: parent.view.rightAnchor, constant: 0.0),
+            self.view.bottomAnchor.constraint(equalTo: parent.view.bottomAnchor, constant: 0.0),
+            ])
+
+        show(animated: animated) { [weak self] in
             guard let self = self else { return }
             self.didMove(toParent: parent)
         }
@@ -350,9 +375,9 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         }
 
         if let vc = contentViewController {
-            let surfaceView = floatingPanel.surfaceView
-            surfaceView.add(childView: vc.view)
             addChild(vc)
+            let surfaceView = floatingPanel.surfaceView
+            surfaceView.add(contentView: vc.view)
             vc.didMove(toParent: self)
         }
 
@@ -411,7 +436,6 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     /// animation block.
     public func updateLayout() {
         updateLayout(for: view.traitCollection)
-        floatingPanel.layoutAdapter.checkLayoutConsistance()
     }
 
     /// Returns the y-coordinate of the point at the origin of the surface view

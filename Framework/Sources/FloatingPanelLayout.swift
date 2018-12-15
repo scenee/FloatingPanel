@@ -86,8 +86,6 @@ public extension FloatingPanelLayout {
 }
 
 public class FloatingPanelDefaultLayout: FloatingPanelLayout {
-    public var contentViewController: UIViewController?
-    
     public var initialPosition: FloatingPanelPosition {
         return .half
     }
@@ -103,8 +101,6 @@ public class FloatingPanelDefaultLayout: FloatingPanelLayout {
 }
 
 public class FloatingPanelDefaultLandscapeLayout: FloatingPanelLayout {
-    public var contentViewController: UIViewController?
-    
     public var initialPosition: FloatingPanelPosition {
         return .tip
     }
@@ -127,15 +123,13 @@ class FloatingPanelLayoutAdapter {
     private weak var surfaceView: FloatingPanelSurfaceView!
     private weak var backdropView: FloatingPanelBackdropView!
 
-    var layout: FloatingPanelLayout
-
-    var safeAreaInsets: UIEdgeInsets = .zero {
+    var layout: FloatingPanelLayout {
         didSet {
-            if oldValue != safeAreaInsets {
-                updateHeight()
-            }
+            checkLayoutConsistance()
         }
     }
+
+    var safeAreaInsets: UIEdgeInsets = .zero
 
     private var heightBuffer: CGFloat = 88.0 // For bounce
     private var fixedConstraints: [NSLayoutConstraint] = []
@@ -147,7 +141,7 @@ class FloatingPanelLayoutAdapter {
 
     private var fullInset: CGFloat {
         if layout is FloatingPanelIntrinsicLayout {
-            return intrinsicHeight
+            return min(intrinsicHeight, surfaceView.superview!.bounds.height - safeAreaInsets.bottom)
         } else {
             return layout.insetFor(position: .full) ?? 0.0
         }
@@ -233,16 +227,17 @@ class FloatingPanelLayoutAdapter {
 
     func updateIntrinsicHeight() {
         let fittingSize = UIView.layoutFittingCompressedSize
-        intrinsicHeight = surfaceView.contentView.systemLayoutSizeFitting(fittingSize).height
+        intrinsicHeight = surfaceView.contentView?.systemLayoutSizeFitting(fittingSize).height ?? 0.0
+        log.debug("Update intrinsic height", intrinsicHeight, surfaceView.frame, surfaceView.contentView.frame)
     }
 
     func prepareLayout(in vc: UIViewController) {
         self.vc = vc
 
+        NSLayoutConstraint.deactivate(fixedConstraints + fullConstraints + halfConstraints + tipConstraints + offConstraints)
+
         surfaceView.translatesAutoresizingMaskIntoConstraints = false
         backdropView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.deactivate(fixedConstraints + fullConstraints + halfConstraints + tipConstraints + offConstraints)
 
         // Fixed constraints of surface and backdrop views
         let surfaceConstraints = layout.prepareLayout(surfaceView: surfaceView, in: vc.view!)
@@ -284,20 +279,14 @@ class FloatingPanelLayoutAdapter {
 
     // The method is separated from prepareLayout(to:) for the rotation support
     // It must be called in FloatingPanelController.traitCollectionDidChange(_:)
-    func updateHeight() {
-        guard let vc = vc else { return }
-        defer {
-            UIView.performWithoutAnimation {
-                surfaceView.superview!.layoutIfNeeded()
-            }
-        }
-
-        NSLayoutConstraint.deactivate(heightConstraints)
+    @discardableResult
+    func updateHeight() -> Bool {
+        guard let vc = vc else { return false }
 
         let height: CGFloat
         if layout is FloatingPanelIntrinsicLayout {
             updateIntrinsicHeight()
-            height = intrinsicHeight + safeAreaInsets.bottom
+            height = min(intrinsicHeight + safeAreaInsets.bottom, vc.view.bounds.height)
         } else {
             // Must use the`vc` height, not the screen height because safe area insets
             // of `vc` are relative values. For example, a view controller in
@@ -306,11 +295,16 @@ class FloatingPanelLayoutAdapter {
             height = vc.view.bounds.height - (safeAreaInsets.top + fullInset)
         }
 
+        guard heightConstraints.first?.constant != height else { return false }
+
+        log.debug("Update height", height)
+
+        NSLayoutConstraint.deactivate(heightConstraints)
         heightConstraints = [
             surfaceView.heightAnchor.constraint(equalToConstant: height)
         ]
         NSLayoutConstraint.activate(heightConstraints)
-        surfaceView.set(bottomOverflow: heightBuffer + layout.topInteractionBuffer)
+        surfaceView.bottomOverflow = heightBuffer + layout.topInteractionBuffer
 
         if layout is FloatingPanelIntrinsicLayout {
             NSLayoutConstraint.deactivate(fullConstraints)
@@ -318,8 +312,9 @@ class FloatingPanelLayoutAdapter {
                 surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.bottomAnchor,
                                                  constant: -fullInset),
             ]
-            NSLayoutConstraint.activate(fullConstraints)
         }
+
+        return true
     }
 
     func activateLayout(of state: FloatingPanelPosition) {
@@ -340,16 +335,12 @@ class FloatingPanelLayoutAdapter {
         NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
         switch state {
         case .full:
-            NSLayoutConstraint.deactivate(halfConstraints + tipConstraints + offConstraints)
             NSLayoutConstraint.activate(fullConstraints)
         case .half:
-            NSLayoutConstraint.deactivate(fullConstraints + tipConstraints + offConstraints)
             NSLayoutConstraint.activate(halfConstraints)
         case .tip:
-            NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + offConstraints)
             NSLayoutConstraint.activate(tipConstraints)
         case .hidden:
-            NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints)
             NSLayoutConstraint.activate(offConstraints)
         }
     }
@@ -362,7 +353,7 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
-    func checkLayoutConsistance() {
+    private func checkLayoutConsistance() {
         // Verify layout configurations
         assert(supportedPositions.count > 0)
         assert(supportedPositions.contains(layout.initialPosition),
@@ -375,9 +366,13 @@ class FloatingPanelLayoutAdapter {
         if halfInset > 0 {
             assert(halfInset > tipInset, "Invalid half and tip insets")
         }
-        if fullInset > 0 {
+        // The verification isn't working on orientation change(portrait -> landscape)
+        // of a floating panel in tab bar. Because the `safeAreaInsets.bottom` is
+        // updated in delay so that it can be 83.0(not 53.0) even after the surface
+        // and the super view's frame is fit to landscape already.
+        /*if fullInset > 0 {
             assert(middleY > topY, "Invalid insets { topY: \(topY), middleY: \(middleY) }")
             assert(bottomY > topY, "Invalid insets { topY: \(topY), bottomY: \(bottomY) }")
-        }
+         }*/
     }
 }
