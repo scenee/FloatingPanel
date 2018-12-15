@@ -26,11 +26,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
     weak var userScrollViewDelegate: UIScrollViewDelegate?
 
-    var safeAreaInsets: UIEdgeInsets! {
-        get { return layoutAdapter.safeAreaInsets }
-        set { layoutAdapter.safeAreaInsets = newValue }
-    }
-
     unowned let viewcontroller: FloatingPanelController
 
     private(set) var state: FloatingPanelPosition = .hidden {
@@ -49,7 +44,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private var initialFrame: CGRect = .zero
     private var initialScrollOffset: CGPoint = .zero
     private var transOffsetY: CGFloat = 0
-    private var interactionInProgress: Bool = false
+
+    var interactionInProgress: Bool = false
 
     // Scroll handling
     private var stopScrollDeceleration: Bool = false
@@ -84,31 +80,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         surfaceView.addGestureRecognizer(panGesture)
         panGesture.addTarget(self, action: #selector(handle(panGesture:)))
         panGesture.delegate = self
-    }
-
-    func setUpViews(in vc: UIViewController) {
-        unowned let view = vc.view!
-
-        // FloatingPanelSurfaceWrapperView is needed to update the surface's height
-        // without animation and prevent the backdrop's cut-off on orientation change.
-        let surfaceWrapperView = FloatingPanelSurfaceWrapperView()
-        surfaceWrapperView.frame = view.bounds
-        surfaceWrapperView.backgroundColor = .clear
-
-        view.addSubview(surfaceWrapperView)
-
-        surfaceWrapperView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            surfaceWrapperView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0.0),
-            surfaceWrapperView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0.0),
-            surfaceWrapperView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0.0),
-            surfaceWrapperView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0.0),
-            ])
-
-        surfaceWrapperView.addSubview(surfaceView)
-
-        view.insertSubview(backdropView, belowSubview: surfaceWrapperView)
-        backdropView.frame = view.bounds
     }
 
     func move(to: FloatingPanelPosition, animated: Bool, completion: (() -> Void)? = nil) {
@@ -400,8 +371,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         let targetPosition = self.targetPosition(with: translation, velocity: velocity)
         let distance = self.distance(to: targetPosition, with: translation)
 
-        endInteraction(for: targetPosition)
-
         if isRemovalInteractionEnabled, isBottomState {
             let velocityVector = (distance != 0) ? CGVector(dx: 0,
                                                             dy: max(min(velocity.y/distance, behavior.removalVelocity), 0.0)) : .zero
@@ -419,6 +388,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 return
             }
         }
+
+        // Must not call it when removal animation is executied
+        endInteraction(for: targetPosition)
 
         viewcontroller.delegate?.floatingPanelDidEndDragging(viewcontroller, withVelocity: velocity, targetPosition: targetPosition)
         viewcontroller.delegate?.floatingPanelWillBeginDecelerating(viewcontroller)

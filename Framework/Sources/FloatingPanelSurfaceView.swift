@@ -21,11 +21,11 @@ public class FloatingPanelSurfaceView: UIView {
         return Default.grabberTopPadding * 2 + GrabberHandleView.Default.height // 17.0
     }
 
-    /// A UIView object that can have the surface view added to it.
-    public var contentView: UIView!
+    /// A root view of a content view controller
+    public weak var contentView: UIView!
 
     private var color: UIColor? = .white { didSet { setNeedsLayout() } }
-    private var bottomOverflow: CGFloat = 0.0 // Must not call setNeedsLayout()
+    var bottomOverflow: CGFloat = 0.0 // Must not call setNeedsLayout()
 
     public override var backgroundColor: UIColor? {
         get { return color }
@@ -83,18 +83,6 @@ public class FloatingPanelSurfaceView: UIView {
         layer.insertSublayer(backgroundLayer, at: 0)
         self.backgroundLayer = backgroundLayer
 
-        let contentView = FloatingPanelSurfaceContentView()
-        addSubview(contentView)
-        self.contentView = contentView as UIView
-        contentView.backgroundColor = color
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(equalTo: topAnchor, constant: 0.0),
-            contentView.leftAnchor.constraint(equalTo: leftAnchor, constant: 0.0),
-            contentView.rightAnchor.constraint(equalTo: rightAnchor, constant: 0.0),
-            contentView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0.0),
-            ])
-
         let grabberHandle = GrabberHandleView()
         addSubview(grabberHandle)
         self.grabberHandle = grabberHandle
@@ -110,13 +98,14 @@ public class FloatingPanelSurfaceView: UIView {
 
     public override func layoutSubviews() {
         super.layoutSubviews()
+        log.debug("SurfaceView frame", frame)
 
         updateLayers()
         updateContentViewMask()
 
         contentView.layer.borderColor = borderColor?.cgColor
         contentView.layer.borderWidth = borderWidth
-        contentView.backgroundColor = color
+        contentView.frame = bounds
     }
 
     private func updateLayers() {
@@ -157,22 +146,16 @@ public class FloatingPanelSurfaceView: UIView {
         }
     }
 
-    func set(bottomOverflow: CGFloat) {
-        self.bottomOverflow = bottomOverflow
-        updateLayers()
-        updateContentViewMask()
-    }
-
-
-    func add(childView: UIView) {
-        contentView.addSubview(childView)
-        childView.frame = contentView.bounds
-        childView.translatesAutoresizingMaskIntoConstraints = false
+    func add(contentView: UIView) {
+        insertSubview(contentView, belowSubview: grabberHandle)
+        self.contentView = contentView
+        /* contentView.frame = bounds */ // MUST NOT: Because the top safe area inset of a content VC will be incorrect.
+        contentView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            childView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0.0),
-            childView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 0.0),
-            childView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 0.0),
-            childView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0.0),
+            contentView.topAnchor.constraint(equalTo: topAnchor, constant: 0.0),
+            contentView.leftAnchor.constraint(equalTo: leftAnchor, constant: 0.0),
+            contentView.rightAnchor.constraint(equalTo: rightAnchor, constant: 0.0),
+            contentView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0.0),
             ])
     }
 }
