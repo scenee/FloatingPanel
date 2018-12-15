@@ -10,7 +10,10 @@ class FloatingPanelSurfaceContentView: UIView {}
 /// A view that presents a surface interface in a floating panel.
 public class FloatingPanelSurfaceView: UIView {
 
-    /// A GrabberHandleView object displayed at the top of the surface view
+    /// A GrabberHandleView object displayed at the top of the surface view.
+    ///
+    /// To use a custom grabber handle, hide this and then add the custom one
+    /// to the surface view at appropirate coordinates.
     public var grabberHandle: GrabberHandleView!
 
     /// The height of the grabber bar area

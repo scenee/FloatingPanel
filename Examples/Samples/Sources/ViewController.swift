@@ -17,9 +17,11 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case trackingTextView
         case showDetail
         case showModal
+        case showFloatingPanelModal
         case showTabBar
         case showNestedScrollView
         case showRemovablePanel
+        case showIntrinsicView
 
         var name: String {
             switch self {
@@ -27,9 +29,11 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             case .trackingTextView: return "Scroll tracking(TextView)"
             case .showDetail: return "Show Detail Panel"
             case .showModal: return "Show Modal"
+            case .showFloatingPanelModal: return "Show Floating Panel Modal"
             case .showTabBar: return "Show Tab Bar"
             case .showNestedScrollView: return "Show Nested ScrollView"
             case .showRemovablePanel: return "Show Removable Panel"
+            case .showIntrinsicView: return "Show Intrinsic View"
             }
         }
 
@@ -39,9 +43,11 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             case .trackingTextView: return "ConsoleViewController"
             case .showDetail: return "DetailViewController"
             case .showModal: return "ModalViewController"
+            case .showFloatingPanelModal: return nil
             case .showTabBar: return "TabBarViewController"
             case .showNestedScrollView: return "NestedScrollViewController"
             case .showRemovablePanel: return "DetailViewController"
+            case .showIntrinsicView: return "IntrinsicViewController"
             }
         }
     }
@@ -68,7 +74,6 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         // Initialize FloatingPanelController
         mainPanelVC = FloatingPanelController()
         mainPanelVC.delegate = self
-        mainPanelVC.isRemovalInteractionEnabled = (currentMenu == .showRemovablePanel)
 
         // Initialize FloatingPanelController and add the view
         mainPanelVC.surfaceView.cornerRadius = 6.0
@@ -76,6 +81,17 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
 
         // Set a content view controller
         mainPanelVC.set(contentViewController: contentVC)
+
+        // Enable tap-to-hide and removal interaction
+        switch currentMenu {
+        case .showRemovablePanel, .showIntrinsicView:
+            mainPanelVC.isRemovalInteractionEnabled = true
+
+            let backdropTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
+            mainPanelVC.backdropView.addGestureRecognizer(backdropTapGesture)
+        default:
+            break
+        }
 
         // Track a scroll view
         switch contentVC {
@@ -89,12 +105,17 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         default:
             break
         }
+
         //  Add FloatingPanel to self.view
         mainPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
     }
 
     @objc func dismissDetailPanelVC()  {
         detailPanelVC.removePanelFromParent(animated: true, completion: nil)
+    }
+
+    @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
+        mainPanelVC.hide(animated: true, completion: nil)
     }
 
     // MARK:- TableViewDatasource
@@ -124,8 +145,8 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
 
         switch menu {
         case .showDetail:
-            detailPanelVC?.removeFromParent()
-
+            detailPanelVC?.removePanelFromParent(animated: false)
+            
             // Initialize FloatingPanelController
             detailPanelVC = FloatingPanelController()
 
@@ -141,6 +162,18 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case .showModal, .showTabBar:
             let modalVC = contentVC
             present(modalVC, animated: true, completion: nil)
+        case .showFloatingPanelModal:
+            let fpc = FloatingPanelController()
+            let contentVC = self.storyboard!.instantiateViewController(withIdentifier: "DetailViewController")
+            fpc.set(contentViewController: contentVC)
+            fpc.delegate = self
+
+            fpc.surfaceView.cornerRadius = 38.5
+            fpc.surfaceView.shadowHidden = false
+
+            fpc.isRemovalInteractionEnabled = true
+
+            self.present(fpc, animated: true, completion: nil)
         default:
             detailPanelVC?.removePanelFromParent(animated: true, completion: nil)
             mainPanelVC?.removePanelFromParent(animated: true) {
@@ -150,10 +183,18 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
     }
 
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
-        if currentMenu == .showRemovablePanel {
+        switch currentMenu {
+        case .showRemovablePanel:
             return newCollection.verticalSizeClass == .compact ? RemovablePanelLandscapeLayout() :  RemovablePanelLayout()
-        } else {
-            return self
+        case .showIntrinsicView:
+            return IntrinsicPanelLayout()
+        case .showFloatingPanelModal:
+            if vc != mainPanelVC && vc != detailPanelVC {
+                return ModalPanelLayout()
+            }
+            fallthrough
+        default:
+            return (newCollection.verticalSizeClass == .compact) ? nil  : self
         }
     }
 
@@ -166,16 +207,19 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case .full: return UIScreen.main.bounds.height == 667.0 ? 18.0 : 16.0
         case .half: return 262.0
         case .tip: return 69.0
+        case .hidden: return nil
         }
     }
 }
 
-class RemovablePanelLayout: FloatingPanelLayout {
-    var initialPosition: FloatingPanelPosition {
-        return .half
-    }
+class IntrinsicPanelLayout: FloatingPanelIntrinsicLayout { }
+
+class RemovablePanelLayout: FloatingPanelIntrinsicLayout {
     var supportedPositions: Set<FloatingPanelPosition> {
         return [.full, .half]
+    }
+    var topInteractionBuffer: CGFloat {
+        return 200.0
     }
     var bottomInteractionBuffer: CGFloat {
         return 261.0 - 22.0
@@ -183,7 +227,24 @@ class RemovablePanelLayout: FloatingPanelLayout {
 
     func insetFor(position: FloatingPanelPosition) -> CGFloat? {
         switch position {
-        case .full: return 16.0
+        case .half: return 130.0
+        default: return nil
+        }
+    }
+    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
+        return 0.3
+    }
+}
+
+class RemovablePanelLandscapeLayout: FloatingPanelIntrinsicLayout {
+    var supportedPositions: Set<FloatingPanelPosition> {
+        return [.full, .half]
+    }
+    var bottomInteractionBuffer: CGFloat {
+        return 261.0 - 22.0
+    }
+    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        switch position {
         case .half: return 261.0
         default: return nil
         }
@@ -193,22 +254,9 @@ class RemovablePanelLayout: FloatingPanelLayout {
     }
 }
 
-class RemovablePanelLandscapeLayout: FloatingPanelLayout {
-    var initialPosition: FloatingPanelPosition {
-        return .half
-    }
-    var supportedPositions: Set<FloatingPanelPosition> {
-        return [.half]
-    }
-    var bottomInteractionBuffer: CGFloat {
-        return 261.0 - 22.0
-    }
-
-    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        switch position {
-        case .half: return 261.0
-        default: return nil
-        }
+class ModalPanelLayout: FloatingPanelIntrinsicLayout {
+    var topInteractionBuffer: CGFloat {
+        return 100.0
     }
     func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
         return 0.3
@@ -249,9 +297,8 @@ class DebugTextViewController: UIViewController, UITextViewDelegate {
     }
 
     @IBAction func close(sender: UIButton) {
-        // Now impossible
-        // dismiss(animated: true, completion: nil)
-        (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
+        // (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
 }
 
@@ -423,9 +470,8 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
 class DetailViewController: UIViewController {
     @IBOutlet weak var closeButton: UIButton!
     @IBAction func close(sender: UIButton) {
-        // Now impossible
-        // dismiss(animated: true, completion: nil)
-        (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
+        // (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
 
     @IBAction func buttonPressed(_ sender: UIButton) {
@@ -521,6 +567,7 @@ class ModalSecondLayout: FloatingPanelLayout {
         case .full: return 18.0
         case .half: return 262.0
         case .tip: return 44.0
+        case .hidden: return nil
         }
     }
 }
