@@ -175,8 +175,10 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
-        view.frame.size = size
-        view.layoutIfNeeded()
+        if view.translatesAutoresizingMaskIntoConstraints {
+            view.frame.size = size
+            view.layoutIfNeeded()
+        }
 
         floatingPanel.layoutAdapter.checkLayoutConsistance()
     }
