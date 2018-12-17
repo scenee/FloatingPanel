@@ -451,10 +451,26 @@ public extension UIViewController {
         // Implementation will be replaced by IMP of self.dismiss(animated:completion:)
     }
     @objc public func fp_dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        if let fpc = parent as? FloatingPanelController, fpc.parent != nil {
-            fpc.removePanelFromParent(animated: flag, completion: completion)
-        } else {
-            self.fp_original_dismiss(animated: flag, completion: completion)
+        // Call dismiss(animated:completion:) to a content view controller
+        if let fpc = parent as? FloatingPanelController {
+            if fpc.presentingViewController != nil {
+                self.fp_original_dismiss(animated: flag, completion: completion)
+            } else {
+                fpc.removePanelFromParent(animated: flag, completion: completion)
+            }
+            return
         }
+        // Call dismiss(animated:completion:) to FloatingPanelController directly
+        if let fpc = self as? FloatingPanelController {
+            if fpc.presentingViewController != nil {
+                self.fp_original_dismiss(animated: flag, completion: completion)
+            } else {
+                fpc.removePanelFromParent(animated: flag, completion: completion)
+            }
+            return
+        }
+
+        // For other view controllers
+        self.fp_original_dismiss(animated: flag, completion: completion)
     }
 }
