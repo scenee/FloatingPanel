@@ -411,8 +411,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 viewcontroller.delegate?.floatingPanelDidEndDraggingToRemove(viewcontroller, withVelocity: velocity)
                 self.startRemovalAnimation(with: velocityVector) { [weak self] in
                     guard let self = self else { return }
-                    self.viewcontroller.dismiss(animated: false)
-                    self.viewcontroller.delegate?.floatingPanelDidEndRemove(self.viewcontroller)
+                    self.viewcontroller.dismiss(animated: false, completion: { [weak self] in
+                        guard let self = self else { return }
+                        self.viewcontroller.delegate?.floatingPanelDidEndRemove(self.viewcontroller)
+                    })
                 }
                 return
             }
