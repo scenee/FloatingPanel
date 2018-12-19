@@ -67,6 +67,15 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         tableView.delegate = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
 
+        let searchController = UISearchController(searchResultsController: nil)
+        if #available(iOS 11.0, *) {
+            navigationItem.searchController = searchController
+            navigationItem.hidesSearchBarWhenScrolling = false
+            navigationItem.largeTitleDisplayMode = .automatic
+        } else {
+            // Fallback on earlier versions
+        }
+
         let contentVC = DebugTableViewController()
         addMainPanel(with: contentVC)
     }
@@ -310,6 +319,9 @@ class RemovablePanelLayout: FloatingPanelIntrinsicLayout {
     var supportedPositions: Set<FloatingPanelPosition> {
         return [.full, .half]
     }
+    var initialPosition: FloatingPanelPosition {
+        return .half
+    }
     var topInteractionBuffer: CGFloat {
         return 200.0
     }
@@ -376,6 +388,25 @@ class DebugTextViewController: UIViewController, UITextViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         textView.delegate = self
+        print("viewDidLoad: TextView --- ", textView.contentOffset, textView.contentInset)
+
+        if #available(iOS 11.0, *) {
+            textView.contentInsetAdjustmentBehavior = .never
+        }
+    }
+
+    override func viewWillLayoutSubviews() {
+        print("viewWillLayoutSubviews: TextView --- ", textView.contentOffset, textView.contentInset, textView.frame)
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        print("viewDidLayoutSubviews: TextView --- ", textView.contentOffset, textView.contentInset, textView.frame)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        print("TextView --- ", textView.contentOffset, textView.contentInset, textView.frame)
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -391,7 +422,52 @@ class DebugTextViewController: UIViewController, UITextViewDelegate {
     }
 }
 
-class DebugTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class InspectableViewController: UIViewController {
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        print(">>> Content View: viewWillLayoutSubviews", layoutInsets)
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        print(">>> Content View: viewDidLayoutSubviews", layoutInsets)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print(">>> Content View: viewWillAppear", layoutInsets)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        print(">>> Content View: viewDidAppear", view.bounds, layoutInsets)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        print(">>> Content View: viewWillDisappear")
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        print(">>> Content View: viewDidDisappear")
+    }
+
+    override func willMove(toParent parent: UIViewController?) {
+        super.willMove(toParent: parent)
+        print(">>> Content View: willMove(toParent: \(String(describing: parent))")
+    }
+
+    override func didMove(toParent parent: UIViewController?) {
+        super.didMove(toParent: parent)
+        print(">>> Content View: didMove(toParent: \(String(describing: parent))")
+    }
+    public override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+        print(">>> Content View: willTransition(to: \(newCollection), with: \(coordinator))", layoutInsets)
+    }
+}
+
+class DebugTableViewController: InspectableViewController, UITableViewDataSource, UITableViewDelegate {
     weak var tableView: UITableView!
     var items: [String] = []
     var itemHeight: CGFloat = 66.0
@@ -510,50 +586,6 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
         (self.parent as! FloatingPanelController).removePanelFromParent(animated: true, completion: nil)
     }
 
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        //print("Content View: viewWillLayoutSubviews")
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        //print("Content View: viewDidLayoutSubviews")
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        print("Content View: viewWillAppear")
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        print("Content View: viewDidAppear", view.bounds)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        print("Content View: viewWillDisappear")
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        print("Content View: viewDidDisappear")
-    }
-
-    override func willMove(toParent parent: UIViewController?) {
-        super.willMove(toParent: parent)
-        print("Content View: willMove(toParent: \(String(describing: parent))")
-    }
-
-    override func didMove(toParent parent: UIViewController?) {
-        super.didMove(toParent: parent)
-        print("Content View: didMove(toParent: \(String(describing: parent))")
-    }
-
-    public override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
-        print("Content View: willTransition(to: \(newCollection), with: \(coordinator))")
-    }
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
@@ -586,7 +618,7 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
     }
 }
 
-class DetailViewController: UIViewController {
+class DetailViewController: InspectableViewController {
     @IBOutlet weak var closeButton: UIButton!
     @IBAction func close(sender: UIButton) {
         // (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
@@ -792,10 +824,15 @@ class TwoTabBarPanel2Layout: FloatingPanelLayout {
     }
 }
 
-class SettingsViewController: UIViewController {
+class SettingsViewController: InspectableViewController {
     @IBOutlet weak var largeTitlesSwicth: UISwitch!
     @IBOutlet weak var translucentSwicth: UISwitch!
+    @IBOutlet weak var versionLabel: UILabel!
 
+    override func viewDidLoad() {
+        versionLabel.text = "Version: \(Bundle.main.infoDictionary?["CFBundleVersion"] ?? "--")"
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if #available(iOS 11.0, *) {
