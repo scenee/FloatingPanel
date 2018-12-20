@@ -372,6 +372,7 @@
                     </view>
                     <size key="freeformSize" width="375" height="667"/>
                     <connections>
+                        <outlet property="nestedScrollView" destination="xba-kG-VQ2" id="ddV-kf-37A"/>
                         <outlet property="scrollView" destination="sBe-tN-uMi" id="h4S-Zl-cLO"/>
                     </connections>
                 </viewController>
