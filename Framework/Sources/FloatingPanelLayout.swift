@@ -165,7 +165,7 @@ class FloatingPanelLayoutAdapter {
     var topY: CGFloat {
         if supportedPositions.contains(.full) {
             if layout is FloatingPanelIntrinsicLayout {
-                return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + fullInset)
+                return surfaceView.superview!.bounds.height - surfaceView.bounds.height
             } else {
                 return (safeAreaInsets.top + fullInset)
             }

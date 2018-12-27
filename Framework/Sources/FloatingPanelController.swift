@@ -173,6 +173,15 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         self.view = view as UIView
     }
 
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if #available(iOS 11.0, *) {}
+        else {
+            // Because {top,bottom}LayoutGuide is managed as a view
+            self.update(safeAreaInsets: layoutInsets)
+        }
+    }
+
     public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
@@ -186,7 +195,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         super.willTransition(to: newCollection, with: coordinator)
 
         // Change layout for a new trait collection
-        floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
+        updateLayout(for: newCollection)
 
         floatingPanel.behavior = fetchBehavior(for: newCollection)
     }
@@ -200,15 +209,6 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
         // `view.frame.height` has an appropriate value on changed trait collection.
         self.update(safeAreaInsets: layoutInsets)
-    }
-
-    public override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        if #available(iOS 11.0, *) {}
-        else {
-            self.update(safeAreaInsets: layoutInsets)
-        }
     }
 
     // MARK:- Privates
@@ -227,9 +227,9 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     }
 
     private func update(safeAreaInsets: UIEdgeInsets) {
-        // * Intrinsic height can be change even if `safeAreaInsets` is same as before
-        // * Don't re-layout the surface on SafeArea.Bottom enabled/disabled in interaction progress
+        // Don't re-layout the surface on SafeArea.Bottom enabled/disabled in interaction progress
         guard
+            floatingPanel.layoutAdapter.safeAreaInsets != safeAreaInsets,
             self.floatingPanel.interactionInProgress == false
         else { return }
 
@@ -281,7 +281,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             }
         } else {
             // KVOs for topLayoutGuide & bottomLayoutGuide are not effective.
-            // Instead, safeAreaInsets is updated at `self.viewDidAppear()`
+            // Instead, update(safeAreaInsets:) is called at `viewDidLayoutSubviews()`
         }
 
         move(to: floatingPanel.layoutAdapter.layout.initialPosition,
