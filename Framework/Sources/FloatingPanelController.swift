@@ -240,9 +240,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
         floatingPanel.layoutAdapter.safeAreaInsets = safeAreaInsets
 
-        if floatingPanel.layoutAdapter.updateHeight() {
-            floatingPanel.layoutAdapter.activateLayout(of: floatingPanel.state)
-        }
+        floatingPanel.layoutAdapter.updateHeight()
+        floatingPanel.layoutAdapter.activateLayout(of: floatingPanel.state)
 
         scrollView?.contentOffset = contentOffset ?? .zero
 
