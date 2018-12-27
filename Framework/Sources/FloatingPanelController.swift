@@ -200,17 +200,6 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         floatingPanel.behavior = fetchBehavior(for: newCollection)
     }
 
-    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        // Must pass through even if `previousTraitCollection` is nil
-        // for intrinsic height calculation
-        guard previousTraitCollection != traitCollection else { return }
-
-        // `view.frame.height` has an appropriate value on changed trait collection.
-        self.update(safeAreaInsets: layoutInsets)
-    }
-
     // MARK:- Privates
 
     private func fetchLayout(for traitCollection: UITraitCollection) -> FloatingPanelLayout {
