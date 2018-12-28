@@ -8,9 +8,6 @@ import UIKit
 /// FloatingPanel presentation model
 ///
 class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate {
-    /* Cause 'terminating with uncaught exception of type NSException' error on Swift Playground
-     unowned let view: UIView
-     */
     // MUST be a weak reference to prevent UI freeze on the presentaion modally
     weak var viewcontroller: FloatingPanelController!
 
