@@ -5,6 +5,8 @@
 
 import UIKit
 
+public protocol FloatingPanelFullScreenLayout: FloatingPanelLayout { }
+
 /// FloatingPanelIntrinsicLayout
 ///
 /// - Attention:
@@ -164,9 +166,12 @@ class FloatingPanelLayoutAdapter {
 
     var topY: CGFloat {
         if supportedPositions.contains(.full) {
-            if layout is FloatingPanelIntrinsicLayout {
+            switch layout {
+            case is FloatingPanelIntrinsicLayout:
                 return surfaceView.superview!.bounds.height - surfaceView.bounds.height
-            } else {
+            case is FloatingPanelFullScreenLayout:
+                return fullInset
+            default:
                 return (safeAreaInsets.top + fullInset)
             }
         } else {
@@ -194,11 +199,14 @@ class FloatingPanelLayoutAdapter {
         return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + hiddenInset)
     }
 
-    var topMaxY: CGFloat { return -safeAreaInsets.top }
+    var topMaxY: CGFloat {
+        return layout is FloatingPanelFullScreenLayout ? 0.0 : -safeAreaInsets.top
+    }
     var bottomMaxY: CGFloat { return safeAreaBottomY }
 
+    private var adjustedContentInsetTop: CGFloat = 0.0
     var adjustedContentInsets: UIEdgeInsets {
-        return UIEdgeInsets(top: 0.0,
+        return UIEdgeInsets(top: adjustedContentInsetTop,
                             left: 0.0,
                             bottom: safeAreaInsets.bottom,
                             right: 0.0)
@@ -263,14 +271,22 @@ class FloatingPanelLayoutAdapter {
         fixedConstraints = surfaceConstraints + backdropConstraints
 
         // Flexible surface constarints for full, half, tip and off
-        if layout is FloatingPanelIntrinsicLayout {
+        switch layout {
+        case is FloatingPanelIntrinsicLayout:
             // Set up on updateHeight()
-        } else {
+            break
+        case is FloatingPanelFullScreenLayout:
+            fullConstraints = [
+                surfaceView.topAnchor.constraint(equalTo: vc.view.topAnchor,
+                                                 constant: fullInset),
+            ]
+        default:
             fullConstraints = [
                 surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.topAnchor,
                                                  constant: fullInset),
             ]
         }
+
         halfConstraints = [
             surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.bottomAnchor,
                                              constant: -halfInset),
@@ -292,17 +308,24 @@ class FloatingPanelLayoutAdapter {
 
         NSLayoutConstraint.deactivate(heightConstraints)
 
-        if layout is FloatingPanelIntrinsicLayout {
+        switch layout {
+        case is FloatingPanelIntrinsicLayout:
             updateIntrinsicHeight()
             heightConstraints = [
                 surfaceView.heightAnchor.constraint(equalToConstant: intrinsicHeight + safeAreaInsets.bottom),
             ]
-        } else {
+        case is FloatingPanelFullScreenLayout:
+            heightConstraints = [
+                surfaceView.heightAnchor.constraint(equalTo: vc.view.heightAnchor,
+                                                    constant: -fullInset),
+            ]
+        default:
             heightConstraints = [
                 surfaceView.heightAnchor.constraint(equalTo: vc.view.heightAnchor,
                                                     constant: -(safeAreaInsets.top + fullInset)),
             ]
         }
+
         NSLayoutConstraint.activate(heightConstraints)
 
         surfaceView.bottomOverflow = heightBuffer + layout.topInteractionBuffer
@@ -350,6 +373,10 @@ class FloatingPanelLayoutAdapter {
         } else {
             self.backdropView.alpha = layout.backdropAlphaFor(position: target)
         }
+    }
+
+    func updateAdjustedContentInsets(for position: FloatingPanelPosition, with safeAreaInsets: UIEdgeInsets) {
+        adjustedContentInsetTop = (position == .full) ? safeAreaInsets.top : 0.0
     }
 
     private func checkLayoutConsistance() {

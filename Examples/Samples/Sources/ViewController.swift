@@ -760,7 +760,9 @@ class TabBarContentViewController: UIViewController, FloatingPanelControllerDele
         case 0:
             return OneTabBarPanelLayout()
         case 1:
-            return TwoTabBarPanel2Layout()
+            return TwoTabBarPanelLayout()
+        case 2:
+            return ThreeTabBarPanelLayout()
         default:
             return nil
         }
@@ -804,7 +806,7 @@ class OneTabBarPanelLayout: FloatingPanelLayout {
     }
 }
 
-class TwoTabBarPanel2Layout: FloatingPanelLayout {
+class TwoTabBarPanelLayout: FloatingPanelLayout {
     var initialPosition: FloatingPanelPosition {
         return .half
     }
@@ -821,6 +823,25 @@ class TwoTabBarPanel2Layout: FloatingPanelLayout {
         case .half: return 261.0
         default: return nil
         }
+    }
+}
+
+class ThreeTabBarPanelLayout: FloatingPanelFullScreenLayout {
+    var initialPosition: FloatingPanelPosition {
+        return .half
+    }
+    var supportedPositions: Set<FloatingPanelPosition> {
+        return [.full, .half]
+    }
+    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        switch position {
+        case .full: return 0.0
+        case .half: return 261.0
+        default: return nil
+        }
+    }
+    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
+        return 0.3
     }
 }
 
