@@ -11,6 +11,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     /* Cause 'terminating with uncaught exception of type NSException' error on Swift Playground
      unowned let view: UIView
      */
+    // MUST be a weak reference to prevent UI freeze on the presentaion modally
+    weak var viewcontroller: FloatingPanelController!
+
     let surfaceView: FloatingPanelSurfaceView
     let backdropView: FloatingPanelBackdropView
     var layoutAdapter: FloatingPanelLayoutAdapter
@@ -25,8 +28,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         }
     }
     weak var userScrollViewDelegate: UIScrollViewDelegate?
-
-    unowned let viewcontroller: FloatingPanelController
 
     private(set) var state: FloatingPanelPosition = .hidden {
         didSet { viewcontroller.delegate?.floatingPanelDidChangePosition(viewcontroller) }
