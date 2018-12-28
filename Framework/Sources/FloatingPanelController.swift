@@ -195,7 +195,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         super.willTransition(to: newCollection, with: coordinator)
 
         // Change layout for a new trait collection
-        updateLayout(for: newCollection)
+        reloadLayout(for: newCollection)
+        setUpLayout()
 
         floatingPanel.behavior = fetchBehavior(for: newCollection)
     }
@@ -224,15 +225,9 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
         log.debug("Update safeAreaInsets", safeAreaInsets)
         
-        // preserve the current content offset
-        let contentOffset = scrollView?.contentOffset
-
         floatingPanel.layoutAdapter.safeAreaInsets = safeAreaInsets
 
-        floatingPanel.layoutAdapter.updateHeight()
-        floatingPanel.layoutAdapter.activateLayout(of: floatingPanel.state)
-
-        scrollView?.contentOffset = contentOffset ?? .zero
+        setUpLayout()
 
         switch contentInsetAdjustmentBehavior {
         case .always:
@@ -243,11 +238,19 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         }
     }
 
-    private func updateLayout(for traitCollection: UITraitCollection) {
+    private func reloadLayout(for traitCollection: UITraitCollection) {
         floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
         floatingPanel.layoutAdapter.prepareLayout(in: self)
+    }
+
+    private func setUpLayout() {
+        // preserve the current content offset
+        let contentOffset = scrollView?.contentOffset
+
         floatingPanel.layoutAdapter.updateHeight()
         floatingPanel.layoutAdapter.activateLayout(of: floatingPanel.state)
+
+        scrollView?.contentOffset = contentOffset ?? .zero
     }
 
     // MARK: - Container view controller interface
@@ -255,7 +258,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     /// Shows the surface view at the initial position defined by the current layout
     public func show(animated: Bool = false, completion: (() -> Void)? = nil) {
         // Must apply the current layout here
-        updateLayout(for: traitCollection)
+        reloadLayout(for: traitCollection)
+        setUpLayout()
 
         if #available(iOS 11.0, *) {
             // Must track the safeAreaInsets of `self.view` to update the layout.
@@ -423,7 +427,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     /// to update the floating panel's layout immediately. It can be called in an
     /// animation block.
     public func updateLayout() {
-        updateLayout(for: view.traitCollection)
+        reloadLayout(for: traitCollection)
+        setUpLayout()
     }
 
     /// Returns the y-coordinate of the point at the origin of the surface view
