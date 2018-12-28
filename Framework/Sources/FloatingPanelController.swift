@@ -27,6 +27,8 @@ public protocol FloatingPanelControllerDelegate: class {
     func floatingPanelDidEndDraggingToRemove(_ vc: FloatingPanelController, withVelocity velocity: CGPoint)
     // called when its views are removed from a parent view controller
     func floatingPanelDidEndRemove(_ vc: FloatingPanelController)
+
+    func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith gestureRecognizer: UIGestureRecognizer) -> Bool
 }
 
 public extension FloatingPanelControllerDelegate {
@@ -45,6 +47,8 @@ public extension FloatingPanelControllerDelegate {
 
     func floatingPanelDidEndDraggingToRemove(_ vc: FloatingPanelController, withVelocity velocity: CGPoint) {}
     func floatingPanelDidEndRemove(_ vc: FloatingPanelController) {}
+
+    func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith gestureRecognizer: UIGestureRecognizer) -> Bool { return false }
 }
 
 public enum FloatingPanelPosition: Int, CaseIterable {

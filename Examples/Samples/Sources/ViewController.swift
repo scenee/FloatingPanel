@@ -198,6 +198,15 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         }
     }
 
+    func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith gestureRecognizer: UIGestureRecognizer) -> Bool {
+        switch currentMenu {
+        case .showNestedScrollView:
+            return (vc.contentViewController as? NestedScrollViewController)?.nestedScrollView.gestureRecognizers?.contains(gestureRecognizer) ?? false
+        default:
+            return false
+        }
+    }
+
     var initialPosition: FloatingPanelPosition {
         return .half
     }
@@ -265,6 +274,7 @@ class ModalPanelLayout: FloatingPanelIntrinsicLayout {
 
 class NestedScrollViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var nestedScrollView: UIScrollView!
 
     @IBAction func longPressed(_ sender: Any) {
         print("LongPressed!")
