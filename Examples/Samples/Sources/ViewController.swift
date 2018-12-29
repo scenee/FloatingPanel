@@ -52,9 +52,14 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         }
     }
 
+    var currentMenu: Menu = .trackingTableView
+
     var mainPanelVC: FloatingPanelController!
     var detailPanelVC: FloatingPanelController!
-    var currentMenu: Menu = .trackingTableView
+    var settingsPanelVC: FloatingPanelController!
+
+    var mainPanelObserves: [NSKeyValueObservation] = []
+    var settingsObserves: [NSKeyValueObservation] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,15 +67,39 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         tableView.delegate = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
 
+        let searchController = UISearchController(searchResultsController: nil)
+        if #available(iOS 11.0, *) {
+            navigationItem.searchController = searchController
+            navigationItem.hidesSearchBarWhenScrolling = false
+            navigationItem.largeTitleDisplayMode = .automatic
+        } else {
+            // Fallback on earlier versions
+        }
+
         let contentVC = DebugTableViewController()
         addMainPanel(with: contentVC)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        if #available(iOS 11.0, *) {
+            if let observation = navigationController?.navigationBar.observe(\.prefersLargeTitles, changeHandler: { (bar, _) in
+                self.tableView.reloadData()
+            }) {
+                settingsObserves.append(observation)
+            }
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        settingsObserves.removeAll()
     }
 
     func addMainPanel(with contentVC: UIViewController) {
+        mainPanelObserves.removeAll()
+
         // Initialize FloatingPanelController
         mainPanelVC = FloatingPanelController()
         mainPanelVC.delegate = self
@@ -99,6 +128,10 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             mainPanelVC.track(scrollView: consoleVC.textView)
 
         case let contentVC as DebugTableViewController:
+            let ob = contentVC.tableView.observe(\.isEditing) { (tableView, _) in
+                self.mainPanelVC.panGestureRecognizer.isEnabled = !tableView.isEditing
+            }
+            mainPanelObserves.append(ob)
             mainPanelVC.track(scrollView: contentVC.tableView)
         case let contentVC as NestedScrollViewController:
             mainPanelVC.track(scrollView: contentVC.scrollView)
@@ -115,25 +148,71 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
     }
 
     @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
-        mainPanelVC.hide(animated: true, completion: nil)
+        switch tapGesture.view {
+        case mainPanelVC.backdropView:
+            mainPanelVC.hide(animated: true, completion: nil)
+        case settingsPanelVC.backdropView:
+            settingsPanelVC.removePanelFromParent(animated: true)
+            settingsPanelVC = nil
+        default:
+            break
+        }
     }
 
     // MARK:- TableViewDatasource
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Menu.allCases.count
+        if #available(iOS 11.0, *) {
+            if navigationController?.navigationBar.prefersLargeTitles == true {
+                return Menu.allCases.count + 30
+            } else {
+                return Menu.allCases.count
+            }
+        } else {
+            return Menu.allCases.count
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        let menu = Menu.allCases[indexPath.row]
-        cell.textLabel?.text = menu.name
+        if Menu.allCases.count > indexPath.row {
+            let menu = Menu.allCases[indexPath.row]
+            cell.textLabel?.text = menu.name
+        } else {
+            cell.textLabel?.text = "\(indexPath.row) row"
+        }
         return cell
+    }
+
+    // MARK:- Actions
+    @IBAction func showDebugMenu(_ sender: UIBarButtonItem) {
+        guard settingsPanelVC == nil else { return }
+        // Initialize FloatingPanelController
+        settingsPanelVC = FloatingPanelController()
+
+        // Initialize FloatingPanelController and add the view
+        settingsPanelVC.surfaceView.cornerRadius = 6.0
+        settingsPanelVC.surfaceView.shadowHidden = false
+        settingsPanelVC.isRemovalInteractionEnabled = true
+
+        let backdropTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
+        settingsPanelVC.backdropView.addGestureRecognizer(backdropTapGesture)
+
+        settingsPanelVC.delegate = self
+
+        let contentVC = storyboard?.instantiateViewController(withIdentifier: "SettingsViewController")
+
+        // Set a content view controller
+        settingsPanelVC.set(contentViewController: contentVC)
+
+        //  Add FloatingPanel to self.view
+        settingsPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
     }
 
     // MARK:- TableViewDelegate
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard Menu.allCases.count > indexPath.row else { return }
         let menu = Menu.allCases[indexPath.row]
         let contentVC: UIViewController = {
             guard let storyboardID = menu.storyboardID else { return DebugTableViewController() }
@@ -146,7 +225,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         switch menu {
         case .showDetail:
             detailPanelVC?.removePanelFromParent(animated: false)
-            
+
             // Initialize FloatingPanelController
             detailPanelVC = FloatingPanelController()
 
@@ -183,6 +262,10 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
     }
 
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
+        if vc == settingsPanelVC {
+            return IntrinsicPanelLayout()
+        }
+
         switch currentMenu {
         case .showRemovablePanel:
             return newCollection.verticalSizeClass == .compact ? RemovablePanelLandscapeLayout() :  RemovablePanelLayout()
@@ -207,6 +290,15 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         }
     }
 
+    func floatingPanelDidEndRemove(_ vc: FloatingPanelController) {
+        switch vc {
+        case settingsPanelVC:
+            settingsPanelVC = nil
+        default:
+            break
+        }
+    }
+
     var initialPosition: FloatingPanelPosition {
         return .half
     }
@@ -226,6 +318,9 @@ class IntrinsicPanelLayout: FloatingPanelIntrinsicLayout { }
 class RemovablePanelLayout: FloatingPanelIntrinsicLayout {
     var supportedPositions: Set<FloatingPanelPosition> {
         return [.full, .half]
+    }
+    var initialPosition: FloatingPanelPosition {
+        return .half
     }
     var topInteractionBuffer: CGFloat {
         return 200.0
@@ -293,10 +388,25 @@ class DebugTextViewController: UIViewController, UITextViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         textView.delegate = self
+        print("viewDidLoad: TextView --- ", textView.contentOffset, textView.contentInset)
 
         if #available(iOS 11.0, *) {
             textView.contentInsetAdjustmentBehavior = .never
         }
+    }
+
+    override func viewWillLayoutSubviews() {
+        print("viewWillLayoutSubviews: TextView --- ", textView.contentOffset, textView.contentInset, textView.frame)
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        print("viewDidLayoutSubviews: TextView --- ", textView.contentOffset, textView.contentInset, textView.frame)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        print("TextView --- ", textView.contentOffset, textView.contentInset, textView.frame)
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -312,10 +422,63 @@ class DebugTextViewController: UIViewController, UITextViewDelegate {
     }
 }
 
-class DebugTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class InspectableViewController: UIViewController {
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        print(">>> Content View: viewWillLayoutSubviews", layoutInsets)
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        print(">>> Content View: viewDidLayoutSubviews", layoutInsets)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print(">>> Content View: viewWillAppear", layoutInsets)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        print(">>> Content View: viewDidAppear", view.bounds, layoutInsets)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        print(">>> Content View: viewWillDisappear")
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        print(">>> Content View: viewDidDisappear")
+    }
+
+    override func willMove(toParent parent: UIViewController?) {
+        super.willMove(toParent: parent)
+        print(">>> Content View: willMove(toParent: \(String(describing: parent))")
+    }
+
+    override func didMove(toParent parent: UIViewController?) {
+        super.didMove(toParent: parent)
+        print(">>> Content View: didMove(toParent: \(String(describing: parent))")
+    }
+    public override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+        print(">>> Content View: willTransition(to: \(newCollection), with: \(coordinator))", layoutInsets)
+    }
+}
+
+class DebugTableViewController: InspectableViewController, UITableViewDataSource, UITableViewDelegate {
     weak var tableView: UITableView!
     var items: [String] = []
     var itemHeight: CGFloat = 66.0
+
+    enum Menu: String, CaseIterable {
+        case animateScroll = "Animate Scroll"
+        case changeContentSize = "Change content size"
+        case reorder = "Reorder"
+    }
+
+    var reorderButton: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -345,17 +508,21 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
             stackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -22.0),
             ])
 
-        let button = UIButton()
-        button.setTitle("Animate Scroll", for: .normal)
-        button.setTitleColor(view.tintColor, for: .normal)
-        button.addTarget(self, action: #selector(animateScroll), for: .touchUpInside)
-        stackView.addArrangedSubview(button)
-
-        let button2 = UIButton()
-        button2.setTitle("Change content size", for: .normal)
-        button2.setTitleColor(view.tintColor, for: .normal)
-        button2.addTarget(self, action: #selector(changeContentSize), for: .touchUpInside)
-        stackView.addArrangedSubview(button2)
+        for menu in Menu.allCases {
+            let button = UIButton()
+            button.setTitle(menu.rawValue, for: .normal)
+            button.setTitleColor(view.tintColor, for: .normal)
+            switch menu {
+            case .animateScroll:
+                button.addTarget(self, action: #selector(animateScroll), for: .touchUpInside)
+            case .changeContentSize:
+                button.addTarget(self, action: #selector(changeContentSize), for: .touchUpInside)
+            case .reorder:
+                button.addTarget(self, action: #selector(reorderItems), for: .touchUpInside)
+                reorderButton = button
+            }
+            stackView.addArrangedSubview(button)
+        }
 
         for i in 0...100 {
             items.append("Items \(i)")
@@ -396,6 +563,16 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
         self.present(actionSheet, animated: true, completion: nil)
     }
 
+    @objc func reorderItems() {
+        if reorderButton.titleLabel?.text == Menu.reorder.rawValue {
+            tableView.isEditing = true
+            reorderButton.setTitle("Cancel", for: .normal)
+        } else {
+            tableView.isEditing = false
+            reorderButton.setTitle(Menu.reorder.rawValue, for: .normal)
+        }
+    }
+
     func changeItems(_ count: Int) {
         items.removeAll()
         for i in 0..<count {
@@ -407,50 +584,6 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
     @objc func close(sender: UIButton) {
         //  Remove FloatingPanel from a view
         (self.parent as! FloatingPanelController).removePanelFromParent(animated: true, completion: nil)
-    }
-
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        //print("Content View: viewWillLayoutSubviews")
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        //print("Content View: viewDidLayoutSubviews")
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        print("Content View: viewWillAppear")
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        print("Content View: viewDidAppear", view.bounds)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        print("Content View: viewWillDisappear")
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        print("Content View: viewDidDisappear")
-    }
-
-    override func willMove(toParent parent: UIViewController?) {
-        super.willMove(toParent: parent)
-        print("Content View: willMove(toParent: \(String(describing: parent))")
-    }
-
-    override func didMove(toParent parent: UIViewController?) {
-        super.didMove(toParent: parent)
-        print("Content View: didMove(toParent: \(String(describing: parent))")
-    }
-
-    public override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
-        print("Content View: willTransition(to: \(newCollection), with: \(coordinator))")
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -475,9 +608,17 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
             }),
         ]
     }
+
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        items.insert(items.remove(at: sourceIndexPath.row), at: destinationIndexPath.row)
+    }
 }
 
-class DetailViewController: UIViewController {
+class DetailViewController: InspectableViewController {
     @IBOutlet weak var closeButton: UIButton!
     @IBAction func close(sender: UIButton) {
         // (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
@@ -680,5 +821,36 @@ class TwoTabBarPanel2Layout: FloatingPanelLayout {
         case .half: return 261.0
         default: return nil
         }
+    }
+}
+
+class SettingsViewController: InspectableViewController {
+    @IBOutlet weak var largeTitlesSwicth: UISwitch!
+    @IBOutlet weak var translucentSwicth: UISwitch!
+    @IBOutlet weak var versionLabel: UILabel!
+
+    override func viewDidLoad() {
+        versionLabel.text = "Version: \(Bundle.main.infoDictionary?["CFBundleVersion"] ?? "--")"
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if #available(iOS 11.0, *) {
+            let prefersLargeTitles = navigationController!.navigationBar.prefersLargeTitles
+            largeTitlesSwicth.setOn(prefersLargeTitles, animated: false)
+        } else {
+            largeTitlesSwicth.isEnabled = false
+        }
+        let isTranslucent = navigationController!.navigationBar.isTranslucent
+        translucentSwicth.setOn(isTranslucent, animated: false)
+    }
+
+    @IBAction func toggleLargeTitle(_ sender: UISwitch) {
+        if #available(iOS 11.0, *) {
+            navigationController?.navigationBar.prefersLargeTitles = sender.isOn
+        }
+    }
+    @IBAction func toggleTranslucent(_ sender: UISwitch) {
+        navigationController?.navigationBar.isTranslucent = sender.isOn
     }
 }
