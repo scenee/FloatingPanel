@@ -22,6 +22,8 @@ class FloatingPanelModalTransition: NSObject, UIViewControllerTransitioningDeleg
 }
 
 class FloatingPanelPresentationController: UIPresentationController {
+    override func presentationTransitionWillBegin() { }
+
     override func presentationTransitionDidEnd(_ completed: Bool) {
         // For non-animated presentation
         if let fpc = presentedViewController as? FloatingPanelController, fpc.position == .hidden {
@@ -30,10 +32,14 @@ class FloatingPanelPresentationController: UIPresentationController {
     }
 
     override func dismissalTransitionDidEnd(_ completed: Bool) {
-        // For non-animated dismissal
-        if let fpc = presentedViewController as? FloatingPanelController, fpc.position != .hidden {
-            fpc.hide(animated: false, completion: nil)
+        if let fpc = presentedViewController as? FloatingPanelController {
+            // For non-animated dismissal
+            if fpc.position != .hidden {
+                fpc.hide(animated: false, completion: nil)
+            }
+            fpc.view.removeFromSuperview()
         }
+
     }
 
     override func containerViewWillLayoutSubviews() {
@@ -43,11 +49,18 @@ class FloatingPanelPresentationController: UIPresentationController {
             let fpView = fpc.view
             else { fatalError() }
 
+        containerView.addSubview(fpView)
+        fpView.frame = containerView.bounds
+        fpView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            fpView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 0.0),
+            fpView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 0.0),
+            fpView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0.0),
+            fpView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0.0),
+            ])
+
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
         fpc.backdropView.addGestureRecognizer(tapGesture)
-
-        containerView.addSubview(fpView)
-        fpView.frame = containerView.bounds //MUST
     }
 
     @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
