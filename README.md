@@ -25,6 +25,7 @@ The new interface displays the related contents and utilities in parallel as a u
 - [Getting Started](#getting-started)
   - [Add a floating panel as a child view controller](#add-a-floating-panel-as-a-child-view-controller)
   - [Present a floating panel as a modality](#present-a-floating-panel-as-a-modality)
+- [View hierarchy](#view-hierarchy)
 - [Usage](#usage)
   - [Show/Hide a floating panel in a view with your view hierarchy](#showhide-a-floating-panel-in-a-view-with-your-view-hierarchy)
   - [Customize the layout with `FloatingPanelLayout` protocol](#customize-the-layout-with-floatingpanellayout-protocol)
@@ -86,7 +87,6 @@ For [Carthage](https://github.com/Carthage/Carthage), add the following to your 
 github "scenee/FloatingPanel"
 ```
 
-
 ## Getting Started
 
 ### Add a floating panel as a child view controller
@@ -141,6 +141,18 @@ self.present(fpc, animated: true, completion: nil)
 You can show a floating panel over UINavigationController from the containnee view controllers as a modality of `.overCurrentContext` style.
 
 NOTE: FloatingPanelController has the custom presentation controller. If you would like to customize the presentation/dismissal, please see [FloatingPanelTransitioning](https://github.com/SCENEE/FloatingPanel/blob/feat-modality/Framework/Sources/FloatingPanelTransitioning.swift).
+
+## View hierarchy
+
+`FloatingPanelController` manages the views as the following view hierarchy.
+
+```
+FloatingPanelController.view (FloatingPanelPassThroughView)
+ ├─ .backdropView (FloatingPanelBackdropView)
+ └─ .surfaceView (FloatingPanelSurfaceView)
+          ├─ .contentView  == FloatingPanelController.contentViewController.view
+          └─ .grabberHandle (GrabberHandleView)
+```
 
 ## Usage
 
