@@ -5,10 +5,10 @@ branches:
     - next
 cache:
   directories:
-  - build
-  - vendor
   - /usr/local/Homebrew
   - $HOME/Library/Caches/Homebrew
+before_cache:
+  - brew cleanup
 env:
   global:
   - LANG=en_US.UTF-8
@@ -16,7 +16,17 @@ env:
 skip_cleanup: true
 jobs:
   include:
-  - stage: carthage
+  - stage: Build framework(swift 4.1)
+    osx_image: xcode9.4
+    script:
+    - xcodebuild -scheme FloatingPanel clean build
+
+  - stage: Build framework(swift 4.2)
+    osx_image: xcode10
+    script:
+    - xcodebuild -scheme FloatingPanel clean build
+
+  - stage: Carthage
     osx_image: xcode10
     before_install:
     - brew update
@@ -24,22 +34,22 @@ jobs:
     script:
     - carthage build --no-skip-current
 
-  - stage: podspec
+  - stage: Podspec
     osx_image: xcode10
     script:
     - pod spec lint
 
-  - stage: check Maps example
+  - stage: Build maps example
     osx_image: xcode10
     script:
     - xcodebuild -scheme Maps -sdk iphonesimulator clean build
 
-  - stage: check Stocks example
+  - stage: Build stocks example
     osx_image: xcode10
     script:
     - xcodebuild -scheme Stocks -sdk iphonesimulator clean build
 
-  - stage: check Samples example
+  - stage: Build samples example
     osx_image: xcode10
     script:
     - xcodebuild -scheme Samples -sdk iphonesimulator clean build
