@@ -12,7 +12,7 @@ public class GrabberHandleView: UIView {
         public static let barColor = UIColor(displayP3Red: 0.76, green: 0.77, blue: 0.76, alpha: 1.0)
     }
 
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         render()
     }

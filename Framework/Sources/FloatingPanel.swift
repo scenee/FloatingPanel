@@ -101,7 +101,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             }
 
             animator.addAnimations { [weak self] in
-                guard let self = self else { return }
+                guard let `self` = self else { return }
 
                 self.updateLayout(to: to)
                 self.state = to
@@ -381,9 +381,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
                 viewcontroller.delegate?.floatingPanelDidEndDraggingToRemove(viewcontroller, withVelocity: velocity)
                 self.startRemovalAnimation(with: velocityVector) { [weak self] in
-                    guard let self = self else { return }
+                    guard let `self` = self else { return }
                     self.viewcontroller.dismiss(animated: false, completion: { [weak self] in
-                        guard let self = self else { return }
+                        guard let `self` = self else { return }
                         self.viewcontroller.delegate?.floatingPanelDidEndRemove(self.viewcontroller)
                     })
                 }
@@ -497,7 +497,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: max(min(velocity.y/distance, 30.0), -30.0)) : .zero
         let animator = behavior.interactionAnimator(self.viewcontroller, to: targetPosition, with: velocityVector)
         animator.addAnimations { [weak self] in
-            guard let self = self else { return }
+            guard let `self` = self else { return }
             if self.state == targetPosition {
                 self.surfaceView.frame.origin.y = targetY
                 self.layoutAdapter.setBackdropAlpha(of: targetPosition)
@@ -507,7 +507,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             self.state = targetPosition
         }
         animator.addCompletion { [weak self] pos in
-            guard let self = self else { return }
+            guard let `self` = self else { return }
             guard
                 self.interactionInProgress == false,
                 animator == self.animator,
@@ -616,7 +616,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     // Distance travelled after decelerating to zero velocity at a constant rate.
     // Refer to the slides p176 of [Designing Fluid Interfaces](https://developer.apple.com/videos/play/wwdc2018/803/)
     private func project(initialVelocity: CGFloat) -> CGFloat {
-        let decelerationRate = UIScrollView.DecelerationRate.normal.rawValue
+        let decelerationRate = UIScrollViewDecelerationRateNormal
         return (initialVelocity / 1000.0) * decelerationRate / (1.0 - decelerationRate)
     }
 

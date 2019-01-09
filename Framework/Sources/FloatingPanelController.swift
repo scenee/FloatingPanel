@@ -51,7 +51,8 @@ public extension FloatingPanelControllerDelegate {
     func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith gestureRecognizer: UIGestureRecognizer) -> Bool { return false }
 }
 
-public enum FloatingPanelPosition: Int, CaseIterable {
+
+public enum FloatingPanelPosition: Int {
     case full
     case half
     case tip
@@ -133,7 +134,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     private var safeAreaInsetsObservation: NSKeyValueObservation?
     private let modalTransition = FloatingPanelModalTransition()
 
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setUp()
     }
@@ -269,7 +270,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             // 2. The safe area top inset can be variable on the large title navigation bar(iOS11+).
             // That's why it needs the observation to keep `adjustedContentInsets` correct.
             safeAreaInsetsObservation = self.observe(\.view.safeAreaInsets) { [weak self] (vc, chaneg) in
-                guard let self = self else { return }
+                guard let `self` = self else { return }
                 self.update(safeAreaInsets: vc.layoutInsets)
             }
         } else {
@@ -312,7 +313,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             parent.view.addSubview(self.view)
         }
 
-        parent.addChild(self)
+        parent.addChildViewController(self)
+
 
         view.frame = parent.view.bounds // Needed for a correct safe area configuration
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -324,8 +326,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             ])
 
         show(animated: animated) { [weak self] in
-            guard let self = self else { return }
-            self.didMove(toParent: parent)
+            guard let `self` = self else { return }
+            self.didMove(toParentViewController: self)
         }
     }
 
@@ -340,10 +342,10 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         }
 
         hide(animated: animated) { [weak self] in
-            guard let self = self else { return }
-            self.willMove(toParent: nil)
+            guard let `self` = self else { return }
+            self.willMove(toParentViewController: nil)
             self.view.removeFromSuperview()
-            self.removeFromParent()
+            self.removeFromParentViewController()
             completion?()
         }
     }
@@ -361,16 +363,16 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     /// Sets the view controller responsible for the content portion of the floating panel..
     public func set(contentViewController: UIViewController?) {
         if let vc = _contentViewController {
-            vc.willMove(toParent: nil)
+            vc.willMove(toParentViewController: nil)
             vc.view.removeFromSuperview()
-            vc.removeFromParent()
+            vc.removeFromParentViewController()
         }
 
         if let vc = contentViewController {
-            addChild(vc)
+            addChildViewController(vc)
             let surfaceView = floatingPanel.surfaceView
             surfaceView.add(contentView: vc.view)
-            vc.didMove(toParent: self)
+            vc.didMove(toParentViewController: self)
         }
 
         _contentViewController = contentViewController
@@ -408,7 +410,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             if #available(iOS 11.0, *) {
                 scrollView.contentInsetAdjustmentBehavior = .never
             } else {
-                children.forEach { (vc) in
+                childViewControllers.forEach { (vc) in
                     vc.automaticallyAdjustsScrollViewInsets = false
                 }
             }
