@@ -59,6 +59,8 @@ class FloatingPanelPresentationController: UIPresentationController {
             fpView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0.0),
             ])
 
+        (fpView as? FloatingPanelPassThroughView)?.eventForwardingView = presentingViewController.view
+
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
         fpc.backdropView.addGestureRecognizer(tapGesture)
     }
