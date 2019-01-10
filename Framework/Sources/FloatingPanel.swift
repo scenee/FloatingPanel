@@ -360,6 +360,12 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private func panningEnd(with translation: CGPoint, velocity: CGPoint) {
         log.debug("panningEnd")
+
+        guard state != .hidden else {
+            log.debug("Already hidden")
+            return
+        }
+
         if interactionInProgress == false {
             initialFrame = surfaceView.frame
         }
