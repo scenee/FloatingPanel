@@ -204,9 +204,8 @@ class FloatingPanelLayoutAdapter {
     }
     var bottomMaxY: CGFloat { return safeAreaBottomY }
 
-    private var adjustedContentInsetTop: CGFloat = 0.0
     var adjustedContentInsets: UIEdgeInsets {
-        return UIEdgeInsets(top: adjustedContentInsetTop,
+        return UIEdgeInsets(top: 0.0,
                             left: 0.0,
                             bottom: safeAreaInsets.bottom,
                             right: 0.0)
@@ -373,10 +372,6 @@ class FloatingPanelLayoutAdapter {
         } else {
             self.backdropView.alpha = layout.backdropAlphaFor(position: target)
         }
-    }
-
-    func updateAdjustedContentInsets(for position: FloatingPanelPosition, with safeAreaInsets: UIEdgeInsets) {
-        adjustedContentInsetTop = (position == .full) ? safeAreaInsets.top : 0.0
     }
 
     private func checkLayoutConsistance() {
