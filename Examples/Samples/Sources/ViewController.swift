@@ -384,6 +384,7 @@ class NestedScrollViewController: UIViewController {
 
 class DebugTextViewController: UIViewController, UITextViewDelegate {
     @IBOutlet weak var textView: UITextView!
+    @IBOutlet weak var textViewTopConstraint: NSLayoutConstraint!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -766,6 +767,52 @@ class TabBarContentViewController: UIViewController, FloatingPanelControllerDele
         default:
             return nil
         }
+    }
+
+    func floatingPanelDidMove(_ vc: FloatingPanelController) {
+        guard self.tabBarItem.tag == 2 else { return }
+
+        /* Solution 1: Manipulate scoll content inset */
+        /*
+        guard let scrollView = consoleVC.textView else { return }
+        var insets = vc.adjustedContentInsets
+        if vc.surfaceView.frame.minY < vc.layoutInsets.top {
+            insets.top = vc.layoutInsets.top - vc.surfaceView.frame.minY
+        } else {
+            insets.top = 0.0
+        }
+        scrollView.contentInset = insets
+         */
+
+        // Solution 2: Manipulate top constraint
+        assert(consoleVC.textViewTopConstraint != nil)
+        if vc.surfaceView.frame.minY + 17.0 < vc.layoutInsets.top {
+            consoleVC.textViewTopConstraint?.constant = vc.layoutInsets.top - vc.surfaceView.frame.minY
+        } else {
+            consoleVC.textViewTopConstraint?.constant = 17.0
+        }
+        consoleVC.view.layoutIfNeeded()
+    }
+
+    func floatingPanelDidChangePosition(_ vc: FloatingPanelController) {
+        guard self.tabBarItem.tag == 2 else { return }
+
+        /* Solution 1: Manipulate scoll content inset */
+        /*
+        guard let scrollView = consoleVC.textView else { return }
+        var insets = vc.adjustedContentInsets
+        insets.top = (vc.position == .full) ? vc.layoutInsets.top : 0.0
+        scrollView.contentInset = insets
+        if scrollView.contentOffset.y - scrollView.contentInset.top < 0.0  {
+            scrollView.contentOffset = CGPoint(x: 0.0,
+                                               y: 0.0 - scrollView.contentInset.top)
+        }
+         */
+
+        // Solution 2: Manipulate top constraint
+        assert(consoleVC.textViewTopConstraint != nil)
+        consoleVC.textViewTopConstraint?.constant = (vc.position == .full) ? vc.layoutInsets.top : 17.0
+        consoleVC.view.layoutIfNeeded()
     }
 
     @IBAction func close(sender: UIButton) {
