@@ -672,6 +672,8 @@ Section 1.10.33 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC
                     <size key="freeformSize" width="375" height="778"/>
                     <connections>
                         <outlet property="textView" destination="rN1-HL-YHv" id="gmr-Uf-jd8"/>
+                        <outlet property="textViewTopConstraint" destination="fiO-LL-nSC" id="Rum-TN-c2e"/>
+                        <outlet property="view" destination="9YG-0j-Zzg" id="jhb-eT-nEn"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x1h-y1-h8q" userLabel="First Responder" sceneMemberID="firstResponder"/>
