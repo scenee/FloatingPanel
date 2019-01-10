@@ -27,19 +27,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     weak var userScrollViewDelegate: UIScrollViewDelegate?
 
     private(set) var state: FloatingPanelPosition = .hidden {
-        didSet {
-            viewcontroller.delegate?.floatingPanelDidChangePosition(viewcontroller)
-            if let scrollView = scrollView,
-                layoutAdapter.layout is FloatingPanelFullScreenLayout,
-                viewcontroller.contentInsetAdjustmentBehavior == .always {
-                layoutAdapter.updateAdjustedContentInsets(for: state, with: viewcontroller.layoutInsets)
-                scrollView.contentInset = layoutAdapter.adjustedContentInsets
-                if scrollView.contentOffset.y - scrollView.contentInset.top < 0.0  {
-                    scrollView.contentOffset = CGPoint(x: 0.0,
-                                                       y: 0.0 - scrollView.contentInset.top)
-                }
-            }
-        }
+        didSet { viewcontroller.delegate?.floatingPanelDidChangePosition(viewcontroller) }
     }
 
     private var isBottomState: Bool {
