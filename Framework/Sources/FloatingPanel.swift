@@ -436,16 +436,20 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         viewcontroller.delegate?.floatingPanelWillBeginDragging(viewcontroller)
 
-        viewcontroller.contentViewController?.view?.constraints.forEach({ (const) in
-            switch viewcontroller.contentViewController?.layoutGuide.bottomAnchor {
-            case const.firstAnchor:
-                (const.secondItem as? UIView)?.disableAutoLayout()
-            case const.secondAnchor:
-                (const.firstItem as? UIView)?.disableAutoLayout()
-            default:
-                break
-            }
-        })
+        if state == .full {
+            viewcontroller.contentViewController?.view?.constraints.forEach({ (const) in
+                switch viewcontroller.contentViewController?.layoutGuide.bottomAnchor {
+                case const.firstAnchor:
+                    (const.secondItem as? UIView)?.disableAutoLayout()
+                    const.isActive = false
+                case const.secondAnchor:
+                    (const.firstItem as? UIView)?.disableAutoLayout()
+                    const.isActive = false
+                default:
+                    break
+                }
+            })
+        }
 
         interactionInProgress = true
     }
@@ -459,16 +463,20 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             lockScrollView()
         }
 
-        viewcontroller.contentViewController?.view?.constraints.forEach({ (const) in
-            switch viewcontroller.contentViewController?.layoutGuide.bottomAnchor {
-            case const.firstAnchor:
-                (const.secondItem as? UIView)?.enableAutoLayout()
-            case const.secondAnchor:
-                (const.firstItem as? UIView)?.enableAutoLayout()
-            default:
-                break
-            }
-        })
+        if state == .full {
+            viewcontroller.contentViewController?.view?.constraints.forEach({ (const) in
+                switch viewcontroller.contentViewController?.layoutGuide.bottomAnchor {
+                case const.firstAnchor:
+                    (const.secondItem as? UIView)?.enableAutoLayout()
+                    const.isActive = true
+                case const.secondAnchor:
+                    (const.firstItem as? UIView)?.enableAutoLayout()
+                    const.isActive = true
+                default:
+                    break
+                }
+            })
+        }
     }
 
     private func getCurrentY(from rect: CGRect, with translation: CGPoint) -> CGFloat {
