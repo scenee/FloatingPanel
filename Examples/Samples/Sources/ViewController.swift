@@ -726,9 +726,23 @@ class ModalSecondLayout: FloatingPanelLayout {
 
 class TabBarViewController: UITabBarController {}
 
-class TabBarContentViewController: UIViewController, FloatingPanelControllerDelegate {
+class TabBarContentViewController: UIViewController {
+    enum Tab3Mode {
+        case changeOffset
+        case changeAutoLayout
+        var label: String {
+            switch self {
+            case .changeAutoLayout: return "Use AutoLayout(OK)"
+            case .changeOffset: return "Use ContentOffset(NG)"
+            }
+        }
+    }
     var fpc: FloatingPanelController!
     var consoleVC: DebugTextViewController!
+
+    var threeLayout: ThreeTabBarPanelLayout!
+    var tab3Mode: Tab3Mode = .changeAutoLayout
+    var switcherLabel: UILabel!
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -743,11 +757,47 @@ class TabBarContentViewController: UIViewController, FloatingPanelControllerDele
         // Set a content view controller and track the scroll view
         let consoleVC = storyboard?.instantiateViewController(withIdentifier: "ConsoleViewController") as! DebugTextViewController
         fpc.set(contentViewController: consoleVC)
+        consoleVC.textView.delegate = self
         fpc.track(scrollView: consoleVC.textView)
         self.consoleVC = consoleVC
 
         //  Add FloatingPanel to self.view
         fpc.addPanel(toParent: self)
+
+
+        if tabBarItem.tag == 2 {
+            let switcher = UISwitch()
+            fpc.view.addSubview(switcher)
+            switcher.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                switcher.bottomAnchor.constraint(equalTo: fpc.surfaceView.topAnchor, constant: -16.0),
+                switcher.rightAnchor.constraint(equalTo: fpc.surfaceView.rightAnchor, constant: -16.0),
+                ])
+            switcher.isOn = true
+            switcher.tintColor = .white
+            switcher.backgroundColor = .white
+            switcher.layer.cornerRadius = 16.0
+            switcher.addTarget(self,
+                               action: #selector(changeTab3Mode(_:)),
+                               for: .valueChanged)
+            let label = UILabel()
+            label.text = tab3Mode.label
+            fpc.view.addSubview(label)
+            switcherLabel = label
+            label.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                label.centerYAnchor.constraint(equalTo: switcher.centerYAnchor, constant: 0.0),
+                label.rightAnchor.constraint(equalTo: switcher.leftAnchor, constant: -16.0),
+                ])
+
+            // Turn off the mask instead of content inset change
+            consoleVC.textView.clipsToBounds = false
+        }
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        fpc.updateLayout()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -756,6 +806,43 @@ class TabBarContentViewController: UIViewController, FloatingPanelControllerDele
         fpc.removePanelFromParent(animated: false)
     }
 
+    // MARK: - Action
+
+    @IBAction func close(sender: UIButton) {
+        dismiss(animated: true, completion: nil)
+    }
+
+    // MAKR: - Private
+
+    @objc
+    private func changeTab3Mode(_ sender: UISwitch) {
+        if sender.isOn {
+            tab3Mode = .changeAutoLayout
+        } else {
+            tab3Mode = .changeOffset
+        }
+        switcherLabel.text = tab3Mode.label
+    }
+}
+
+extension TabBarContentViewController: UITextViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard self.tabBarItem.tag == 2 else { return }
+
+        // Reset an invalid content offset after `consoleVC.textView` is relayouted.
+        // NOTE:
+        // FloatingPanel can implicity reset it with KVO of `scrollView.contentOffset`
+        // but it causes a crash because it leads to an infinit loop when a user
+        // resets a content offset as below.
+        if fpc.position != .full, fpc.surfaceView.frame.minY > fpc.originYOfSurface(for: .full)  {
+            scrollView.contentOffset = .zero
+        }
+    }
+}
+
+extension TabBarContentViewController: FloatingPanelControllerDelegate {
+    // MARK: - FloatingPanel
+
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
         switch self.tabBarItem.tag {
         case 0:
@@ -763,7 +850,8 @@ class TabBarContentViewController: UIViewController, FloatingPanelControllerDele
         case 1:
             return TwoTabBarPanelLayout()
         case 2:
-            return ThreeTabBarPanelLayout()
+            threeLayout = ThreeTabBarPanelLayout(parent: self)
+            return threeLayout
         default:
             return nil
         }
@@ -772,51 +860,73 @@ class TabBarContentViewController: UIViewController, FloatingPanelControllerDele
     func floatingPanelDidMove(_ vc: FloatingPanelController) {
         guard self.tabBarItem.tag == 2 else { return }
 
-        /* Solution 1: Manipulate scoll content inset */
-        /*
-        guard let scrollView = consoleVC.textView else { return }
-        var insets = vc.adjustedContentInsets
-        if vc.surfaceView.frame.minY < vc.layoutInsets.top {
-            insets.top = vc.layoutInsets.top - vc.surfaceView.frame.minY
-        } else {
-            insets.top = 0.0
-        }
-        scrollView.contentInset = insets
-         */
+        switch tab3Mode {
+        case .changeAutoLayout:
+            /* Good solution: Manipulate top constraint */
+            assert(consoleVC.textViewTopConstraint != nil)
+            if vc.surfaceView.frame.minY + threeLayout.topPadding < vc.layoutInsets.top {
+                consoleVC.textViewTopConstraint?.constant = vc.layoutInsets.top - vc.surfaceView.frame.minY
+            } else {
+                consoleVC.textViewTopConstraint?.constant = threeLayout.topPadding
+            }
+        case .changeOffset:
+            /* Bad solution: Manipulate scoll content inset */
+            guard let scrollView = consoleVC.textView else { return }
+            var insets = vc.adjustedContentInsets
+            if vc.surfaceView.frame.minY < vc.layoutInsets.top {
+                insets.top = vc.layoutInsets.top - vc.surfaceView.frame.minY
+            } else {
+                insets.top = 0.0
+            }
+            scrollView.contentInset = insets
 
-        // Solution 2: Manipulate top constraint
-        assert(consoleVC.textViewTopConstraint != nil)
-        if vc.surfaceView.frame.minY + 17.0 < vc.layoutInsets.top {
-            consoleVC.textViewTopConstraint?.constant = vc.layoutInsets.top - vc.surfaceView.frame.minY
-        } else {
-            consoleVC.textViewTopConstraint?.constant = 17.0
+            if vc.surfaceView.frame.minY > 0 {
+                scrollView.contentOffset = CGPoint(x: 0.0,
+                                                   y: 0.0 - scrollView.contentInset.top)
+            }
         }
-        consoleVC.view.layoutIfNeeded()
+
+        if vc.surfaceView.frame.minY > vc.originYOfSurface(for: .half) {
+            let progress = (vc.surfaceView.frame.minY - vc.originYOfSurface(for: .half)) / (vc.originYOfSurface(for: .tip) - vc.originYOfSurface(for: .half))
+            threeLayout.leftConstraint.constant = max(min(progress, 1.0), 0.0) * threeLayout.sideMargin
+            threeLayout.rightConstraint.constant = -max(min(progress, 1.0), 0.0) * threeLayout.sideMargin
+        } else {
+            threeLayout.leftConstraint.constant = 0.0
+            threeLayout.rightConstraint.constant = 0.0
+        }
+
+        vc.view.layoutIfNeeded() // MUST
     }
 
     func floatingPanelDidChangePosition(_ vc: FloatingPanelController) {
         guard self.tabBarItem.tag == 2 else { return }
 
-        /* Solution 1: Manipulate scoll content inset */
-        /*
-        guard let scrollView = consoleVC.textView else { return }
-        var insets = vc.adjustedContentInsets
-        insets.top = (vc.position == .full) ? vc.layoutInsets.top : 0.0
-        scrollView.contentInset = insets
-        if scrollView.contentOffset.y - scrollView.contentInset.top < 0.0  {
-            scrollView.contentOffset = CGPoint(x: 0.0,
-                                               y: 0.0 - scrollView.contentInset.top)
+        switch tab3Mode {
+        case .changeAutoLayout:
+            /* Good Solution: Manipulate top constraint */
+            assert(consoleVC.textViewTopConstraint != nil)
+            consoleVC.textViewTopConstraint?.constant = (vc.position == .full) ? vc.layoutInsets.top : 17.0
+
+        case .changeOffset:
+            /* Bad Solution: Manipulate scoll content inset */
+            guard let scrollView = consoleVC.textView else { return }
+            var insets = vc.adjustedContentInsets
+            insets.top = (vc.position == .full) ? vc.layoutInsets.top : 0.0
+            scrollView.contentInset = insets
+            if scrollView.contentOffset.y - scrollView.contentInset.top < 0.0  {
+                scrollView.contentOffset = CGPoint(x: 0.0,
+                                                   y: 0.0 - scrollView.contentInset.top)
+            }
         }
-         */
 
-        // Solution 2: Manipulate top constraint
-        assert(consoleVC.textViewTopConstraint != nil)
-        consoleVC.textViewTopConstraint?.constant = (vc.position == .full) ? vc.layoutInsets.top : 17.0
-        consoleVC.view.layoutIfNeeded()
-    }
-
-    @IBAction func close(sender: UIButton) {
-        dismiss(animated: true, completion: nil)
+        if vc.position == .tip {
+            threeLayout.leftConstraint.constant = threeLayout.sideMargin
+            threeLayout.rightConstraint.constant = -threeLayout.sideMargin
+        } else {
+            threeLayout.leftConstraint.constant = 0.0
+            threeLayout.rightConstraint.constant = 0.0
+        }
+        vc.view.layoutIfNeeded() // Can call it but it's not necessary
     }
 }
 
@@ -874,21 +984,46 @@ class TwoTabBarPanelLayout: FloatingPanelLayout {
 }
 
 class ThreeTabBarPanelLayout: FloatingPanelFullScreenLayout {
+    weak var parentVC: UIViewController!
+
+    var leftConstraint: NSLayoutConstraint!
+    var rightConstraint: NSLayoutConstraint!
+
+    let topPadding: CGFloat = 17.0
+    let sideMargin: CGFloat = 16.0
+
+    init(parent: UIViewController) {
+        parentVC = parent
+    }
+
+    var bottomInteractionBuffer: CGFloat = 44.0
+
     var initialPosition: FloatingPanelPosition {
         return .half
     }
     var supportedPositions: Set<FloatingPanelPosition> {
-        return [.full, .half]
+        return [.full, .half, .tip]
     }
     func insetFor(position: FloatingPanelPosition) -> CGFloat? {
         switch position {
         case .full: return 0.0
-        case .half: return 261.0
+        case .half: return 261.0 + parentVC.layoutInsets.bottom
+        case .tip: return 88.0 + parentVC.layoutInsets.bottom
         default: return nil
         }
     }
     func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
         return 0.3
+    }
+    func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
+        if #available(iOS 11.0, *) {
+            leftConstraint = surfaceView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 0.0)
+            rightConstraint = surfaceView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: 0.0)
+        } else {
+            leftConstraint = surfaceView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0.0)
+            rightConstraint = surfaceView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0.0)
+        }
+        return [ leftConstraint, rightConstraint ]
     }
 }
 
