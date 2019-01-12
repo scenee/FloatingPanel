@@ -140,8 +140,9 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     }
 
     /// Initialize a newly created floating panel controller.
-    public init() {
+    public init(_ delegate: FloatingPanelControllerDelegate? = nil) {
         super.init(nibName: nil, bundle: nil)
+        self.delegate = delegate
         setUp()
     }
 
