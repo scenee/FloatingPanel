@@ -70,7 +70,11 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     }
 
     /// The delegate of the floating panel controller object.
-    public weak var delegate: FloatingPanelControllerDelegate?
+    public weak var delegate: FloatingPanelControllerDelegate?{
+        didSet{
+            didUpdateDelegate()
+        }
+    }
 
     /// Returns the surface view managed by the controller object. It's the same as `self.view`.
     public var surfaceView: FloatingPanelSurfaceView! {
@@ -140,8 +144,9 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     }
 
     /// Initialize a newly created floating panel controller.
-    public init() {
+    public init(delegate: FloatingPanelControllerDelegate? = nil) {
         super.init(nibName: nil, bundle: nil)
+        self.delegate = delegate
         setUp()
     }
 
@@ -156,6 +161,11 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
                                       behavior: fetchBehavior(for: self.traitCollection))
     }
 
+    private func didUpdateDelegate(){
+        floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
+        floatingPanel.behavior = fetchBehavior(for: self.traitCollection)
+    }
+    
     // MARK:- Overrides
 
     /// Creates the view that the controller manages.
