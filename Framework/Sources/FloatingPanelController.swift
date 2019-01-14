@@ -72,7 +72,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     /// The delegate of the floating panel controller object.
     public weak var delegate: FloatingPanelControllerDelegate?{
         didSet{
-            updateDelegate()
+            didUpdateDelegate()
         }
     }
 
@@ -161,10 +161,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
                                       behavior: fetchBehavior(for: self.traitCollection))
     }
 
-    private func updateDelegate(){
-        reloadLayout(for: self.traitCollection)
-        setUpLayout()
-        
+    private func didUpdateDelegate(){
+        floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
         floatingPanel.behavior = fetchBehavior(for: self.traitCollection)
     }
     
