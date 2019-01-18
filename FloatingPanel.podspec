@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name                = "FloatingPanel"
-  s.version             = "1.3.1"
+  s.version             = "1.3.2"
   s.summary             = "FloatingPanel is a clean and easy-to-use UI component of a floating panel interface."
   s.description         = <<-DESC
 FloatingPanel is a clean and easy-to-use UI component for a new interface introduced in Apple Maps, Shortcuts and Stocks app.
@@ -13,7 +13,7 @@ The new interface displays the related contents and utilities in parallel as a u
   s.platform            = :ios, "10.0"
   s.source              = { :git => "https://github.com/SCENEE/FloatingPanel.git", :tag => "v#{s.version}" }
   s.source_files        = "Framework/Sources/*.swift"
-  s.swift_version       = "4.2"
+  s.swift_version       = "4.0"
   s.pod_target_xcconfig = { 'SWIFT_WHOLE_MODULE_OPTIMIZATION' => 'YES', 'APPLICATION_EXTENSION_API_ONLY' => 'YES' }
 
   s.framework           = "UIKit"
