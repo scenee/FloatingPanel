@@ -41,6 +41,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private var animator: UIViewPropertyAnimator?
     private var initialFrame: CGRect = .zero
     private var initialScrollOffset: CGPoint = .zero
+    private var initialScrollInset: UIEdgeInsets = .zero
     private var transOffsetY: CGFloat = 0
 
     var interactionInProgress: Bool = false
@@ -249,7 +250,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                         return
                     }
                     // Fix the scroll offset in moving the panel from half and tip.
-                    scrollView.contentOffset.y = initialScrollOffset.y
+                    scrollView.contentOffset.y = initialScrollOffset.y + (initialScrollInset.top - scrollView.contentInset.top)
                 case .hidden:
                     fatalError("A floating panel hidden must not be used by a user")
                 }
@@ -437,6 +438,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         initialFrame = surfaceView.frame
         if let scrollView = scrollView {
             initialScrollOffset = scrollView.contentOffset
+            initialScrollInset = scrollView.contentInset
         }
         transOffsetY = translation.y
 

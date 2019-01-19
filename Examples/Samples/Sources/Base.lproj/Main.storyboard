@@ -162,7 +162,7 @@
             </objects>
             <point key="canvasLocation" x="708" y="-200"/>
         </scene>
-        <!--Item 2-->
+        <!--Layout 2-->
         <scene sceneID="lRc-OZ-sL4">
             <objects>
                 <viewController id="RpE-lI-27a" customClass="TabBarContentViewController" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
@@ -170,12 +170,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Item 2" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AiP-dx-mFn">
-                                <rect key="frame" x="163.66666666666666" y="395.66666666666669" width="48" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IvG-yp-yzI">
                                 <rect key="frame" x="20" y="44" width="39" height="30"/>
                                 <state key="normal" title="Close"/>
@@ -188,19 +182,49 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="IvG-yp-yzI" firstAttribute="top" secondItem="954-Dk-zvc" secondAttribute="top" id="18k-sV-PgT"/>
-                            <constraint firstItem="AiP-dx-mFn" firstAttribute="centerY" secondItem="JER-jz-KSq" secondAttribute="centerY" id="NUc-tM-0dN"/>
-                            <constraint firstItem="AiP-dx-mFn" firstAttribute="centerX" secondItem="954-Dk-zvc" secondAttribute="centerX" id="hwP-mu-Vmz"/>
+                            <constraint firstItem="954-Dk-zvc" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="IvG-yp-yzI" secondAttribute="trailing" id="mpr-u5-MZu"/>
                             <constraint firstItem="IvG-yp-yzI" firstAttribute="leading" secondItem="954-Dk-zvc" secondAttribute="leading" constant="20" id="pYt-jE-CTF"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="954-Dk-zvc"/>
                     </view>
-                    <tabBarItem key="tabBarItem" tag="1" title="Item 2" id="qb3-RB-B28"/>
+                    <tabBarItem key="tabBarItem" tag="1" title="Layout 2" id="qb3-RB-B28"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NhZ-u5-Beh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-308" y="1546"/>
         </scene>
-        <!--Item 1-->
+        <!--Layout 3-->
+        <scene sceneID="r9h-Ql-gIv">
+            <objects>
+                <viewController id="pOk-Zm-vD9" customClass="TabBarContentViewController" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="85d-ub-G8k">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NbG-e8-HdI">
+                                <rect key="frame" x="20" y="44" width="39" height="30"/>
+                                <state key="normal" title="Close"/>
+                                <connections>
+                                    <action selector="closeWithSender:" destination="pOk-Zm-vD9" eventType="touchUpInside" id="111-PD-Pop"/>
+                                    <action selector="closeWithSender:" destination="bYI-y3-Rzb" eventType="touchUpInside" id="1Rg-YG-TtU"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="0ao-SI-QZW" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="NbG-e8-HdI" secondAttribute="trailing" id="K9F-6x-KWn"/>
+                            <constraint firstItem="NbG-e8-HdI" firstAttribute="top" secondItem="0ao-SI-QZW" secondAttribute="top" id="nsE-so-rTl"/>
+                            <constraint firstItem="NbG-e8-HdI" firstAttribute="leading" secondItem="0ao-SI-QZW" secondAttribute="leading" constant="20" id="sF4-Dm-aoY"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="0ao-SI-QZW"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" tag="2" title="Layout 3" id="RJD-TF-Sdh"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Oe3-FT-q1C" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="332" y="1546"/>
+        </scene>
+        <!--Layout 1-->
         <scene sceneID="m6X-j6-yBM">
             <objects>
                 <viewController id="lto-Zc-Vtp" customClass="TabBarContentViewController" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
@@ -208,12 +232,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Item 1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uoW-c8-9wx">
-                                <rect key="frame" x="164.66666666666666" y="395.66666666666669" width="46" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eFN-tN-4Ct">
                                 <rect key="frame" x="20" y="44" width="39" height="30"/>
                                 <state key="normal" title="Close"/>
@@ -226,13 +244,12 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="eFN-tN-4Ct" firstAttribute="leading" secondItem="5Ns-4l-Ufg" secondAttribute="leading" constant="20" id="5BT-yZ-EKe"/>
-                            <constraint firstItem="uoW-c8-9wx" firstAttribute="centerY" secondItem="ji9-Ez-N7i" secondAttribute="centerY" id="Nyw-Wt-78z"/>
+                            <constraint firstItem="5Ns-4l-Ufg" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="eFN-tN-4Ct" secondAttribute="trailing" id="OzZ-Dz-RNF"/>
                             <constraint firstItem="eFN-tN-4Ct" firstAttribute="top" secondItem="5Ns-4l-Ufg" secondAttribute="top" id="hUV-3a-XkY"/>
-                            <constraint firstItem="uoW-c8-9wx" firstAttribute="centerX" secondItem="5Ns-4l-Ufg" secondAttribute="centerX" id="wDv-OH-7PX"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="5Ns-4l-Ufg"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item 1" id="HEV-kf-jxH"/>
+                    <tabBarItem key="tabBarItem" title="Layout 1" id="HEV-kf-jxH"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bkL-bc-hZC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -280,6 +297,7 @@
                     <connections>
                         <segue destination="lto-Zc-Vtp" kind="relationship" relationship="viewControllers" id="6hP-AH-YiH"/>
                         <segue destination="RpE-lI-27a" kind="relationship" relationship="viewControllers" id="g6X-Sq-uSW"/>
+                        <segue destination="pOk-Zm-vD9" kind="relationship" relationship="viewControllers" id="OPp-iO-iDK"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Z9x-EI-p2b" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -654,6 +672,8 @@ Section 1.10.33 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC
                     <size key="freeformSize" width="375" height="778"/>
                     <connections>
                         <outlet property="textView" destination="rN1-HL-YHv" id="gmr-Uf-jd8"/>
+                        <outlet property="textViewTopConstraint" destination="fiO-LL-nSC" id="Rum-TN-c2e"/>
+                        <outlet property="view" destination="9YG-0j-Zzg" id="jhb-eT-nEn"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x1h-y1-h8q" userLabel="First Responder" sceneMemberID="firstResponder"/>
