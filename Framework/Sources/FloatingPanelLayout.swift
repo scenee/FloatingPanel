@@ -43,7 +43,7 @@ public protocol FloatingPanelLayout: class {
     /// Returns a set of FloatingPanelPosition objects to tell the applicable
     /// positions of the floating panel controller.
     ///
-    /// By default, it returns all position exepct for `hidden` position. Because
+    /// By default, it returns all position except for `hidden` position. Because
     /// it's always supported by `FloatingPanelController` so you don't need to return it.
     var supportedPositions: Set<FloatingPanelPosition> { get }
 
@@ -55,7 +55,7 @@ public protocol FloatingPanelLayout: class {
 
     /// Returns a CGFloat value to determine a Y coordinate of a floating panel for each position(full, half, tip and hidden).
     ///
-    /// Its returning value indicates a different inset for each positiion.
+    /// Its returning value indicates a different inset for each position.
     /// For full position, a top inset from a safe area in `FloatingPanelController.view`.
     /// For half or tip position, a bottom inset from the safe area.
     /// For hidden position, a bottom inset from `FloatingPanelController.view`.
@@ -81,7 +81,7 @@ public extension FloatingPanelLayout {
     var supportedPositions: Set<FloatingPanelPosition> {
         return Set([.full, .half, .tip])
     }
-    
+
     func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
         return [
             surfaceView.leftAnchor.constraint(equalTo: view.sideLayoutGuide.leftAnchor, constant: 0.0),

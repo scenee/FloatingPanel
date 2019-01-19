@@ -224,7 +224,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         else { return }
 
         log.debug("Update safeAreaInsets", safeAreaInsets)
-        
+
         floatingPanel.layoutAdapter.safeAreaInsets = safeAreaInsets
 
         setUpLayout()
@@ -375,7 +375,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
         _contentViewController = contentViewController
     }
-    
+
     @available(*, unavailable, renamed: "set(contentViewController:)")
     public override func show(_ vc: UIViewController, sender: Any?) {
         if let target = self.parent?.targetViewController(forAction: #selector(UIViewController.show(_:sender:)), sender: sender) {
