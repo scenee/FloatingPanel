@@ -5,14 +5,21 @@
 
 import UIKit
 
+/// FloatingPanelFullScreenLayout
+///
+/// Use the layout protocol if you want to configure a full inset from Superview.Top, not SafeArea.Top.
+/// It can't be used with FloatingPanelIntrinsicLayout.
 public protocol FloatingPanelFullScreenLayout: FloatingPanelLayout { }
 
 /// FloatingPanelIntrinsicLayout
 ///
+/// Use the layout protocol if you want to layout a panel using the intrinsic height.
+/// It can't be used with FloatingPanelFullScreenLayout.
+///
 /// - Attention:
-///     `insetFor(position:)` must return `nil` for full position because the inset is determined automatically.
-///     You can customize insets only for half, tip and hidden positions
-///     on FloatingPanelIntrinsicLayout.
+///     `insetFor(position:)` must return `nil` for the full position. Because
+///     the inset is determined automatically by the intrinsic height.
+///     You can customize insets only for the half, tip and hidden positions.
 public protocol FloatingPanelIntrinsicLayout: FloatingPanelLayout { }
 
 public extension FloatingPanelIntrinsicLayout {
