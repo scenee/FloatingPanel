@@ -67,7 +67,7 @@ Examples are here.
 
 ## Requirements
 
-FloatingPanel is written in Swift 4.2. Compatible with iOS 10.0+
+FloatingPanel is written in Swift. It can be built by Xcode 9.4.1 or later. Compatible with iOS 10.0+.
 
 ## Installation
 
