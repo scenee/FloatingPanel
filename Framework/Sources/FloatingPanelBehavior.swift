@@ -57,6 +57,12 @@ public protocol FloatingPanelBehavior {
     ///
     /// Default is a spring animator with 1.0 damping ratio. This method is called when FloatingPanelController.isRemovalInteractionEnabled is true.
     func removalInteractionAnimator(_ fpc: FloatingPanelController, with velocity: CGVector) -> UIViewPropertyAnimator
+
+
+    /// Asks whether a floating panel allows rubberbanding in moving over a given edge.
+    ///
+    /// By default, this method returns false. If it returns true for a edge, a behavior allows the rubberbanding effect to the edge buffer of the surface view.
+    func allowsRubberBanding(for edge: UIRectEdge) -> Bool
 }
 
 public extension FloatingPanelBehavior {
@@ -113,6 +119,10 @@ public extension FloatingPanelBehavior {
                                         frequencyResponse: 0.3,
                                         initialVelocity: velocity)
         return UIViewPropertyAnimator(duration: 0, timingParameters: timing)
+    }
+
+    func allowsRubberBanding(for edge: UIRectEdge) -> Bool {
+        return false
     }
 }
 

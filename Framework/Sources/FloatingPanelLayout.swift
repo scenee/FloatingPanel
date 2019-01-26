@@ -412,7 +412,7 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
-    func updateInteractiveTopConstraint(diff: CGFloat, allowsTopBuffer: Bool) {
+    func updateInteractiveTopConstraint(diff: CGFloat, allowsTopBuffer: Bool, with behavior: FloatingPanelBehavior) {
         defer {
             surfaceView.superview!.layoutIfNeeded() // MUST call here to update `surfaceView.frame`
         }
@@ -441,9 +441,33 @@ class FloatingPanelLayoutAdapter {
             ret += layout.bottomInteractionBuffer
             return min(ret, bottomMaxY)
         }()
-        let const = initialConst + diff
+        var const = initialConst + diff
+
+        // Rubberbanding top buffer
+        if behavior.allowsRubberBanding(for: .top),
+            const < (minY + layout.topInteractionBuffer) {
+            var buffer = (minY + layout.topInteractionBuffer) - const
+            buffer = rubberbandingEffect(for: buffer, base: UIScreen.main.bounds.height)
+            const = (minY + layout.topInteractionBuffer) - buffer
+        }
+
+        // Rubberbanding bottom buffer
+        if behavior.allowsRubberBanding(for: .bottom),
+            const > (maxY - layout.bottomInteractionBuffer) {
+            var buffer = const - (maxY - layout.bottomInteractionBuffer)
+            buffer = rubberbandingEffect(for: buffer, base: UIScreen.main.bounds.height)
+            const = (maxY - layout.bottomInteractionBuffer) + buffer
+        }
 
         interactiveTopConstraint?.constant = max(minY, min(maxY, const))
+    }
+
+    // According to @chpwn's tweet: https://twitter.com/chpwn/status/285540192096497664
+    // x = distance from the edge
+    // c = constant value, UIScrollView uses 0.55
+    // d = dimension, either width or height
+    private func rubberbandingEffect(for buffer: CGFloat, base: CGFloat) -> CGFloat {
+        return (1.0 - (1.0 / ((buffer * 0.55 / base) + 1.0))) * base
     }
 
     func activateLayout(of state: FloatingPanelPosition) {
