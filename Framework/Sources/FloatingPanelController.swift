@@ -376,6 +376,12 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             vc.willMove(toParentViewController: nil)
             vc.view.removeFromSuperview()
             vc.removeFromParentViewController()
+            
+            if let scrollView = floatingPanel.scrollView,
+                let delegate = floatingPanel.userScrollViewDelegate,
+                vc.view.subviews.contains(scrollView) {
+                scrollView.delegate = delegate
+            }
         }
 
         if let vc = contentViewController {
