@@ -392,7 +392,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             vc.willMove(toParentViewController: nil)
             vc.view.removeFromSuperview()
             vc.removeFromParentViewController()
-            
+
             if let scrollView = floatingPanel.scrollView,
                 let delegate = floatingPanel.userScrollViewDelegate,
                 vc.view.subviews.contains(scrollView) {
@@ -428,10 +428,22 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     /// Tracks the specified scroll view to correspond with the scroll.
     ///
+    /// - Parameters:
+    ///     - scrollView: Specify a scroll view to continuously and seamlessly work in concert with interactions of the surface view or nil to cancel it.
     /// - Attention:
     ///     The specified scroll view must be already assigned to the delegate property because the controller intermediates between the various delegate methods.
-    ///
-    public func track(scrollView: UIScrollView) {
+    public func track(scrollView: UIScrollView?) {
+        if let trackingScrollView = floatingPanel.scrollView,
+            let delegate = floatingPanel.userScrollViewDelegate {
+            trackingScrollView.delegate = delegate // restore delegate
+            floatingPanel.userScrollViewDelegate = nil
+        }
+
+        guard let scrollView = scrollView else {
+            floatingPanel.scrollView = nil
+            return
+        }
+
         floatingPanel.scrollView = scrollView
         if scrollView.delegate !== floatingPanel {
             floatingPanel.userScrollViewDelegate = scrollView.delegate
