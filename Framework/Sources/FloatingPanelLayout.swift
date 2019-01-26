@@ -95,6 +95,8 @@ public extension FloatingPanelLayout {
 }
 
 public class FloatingPanelDefaultLayout: FloatingPanelLayout {
+    public init() { }
+
     public var initialPosition: FloatingPanelPosition {
         return .half
     }
@@ -110,6 +112,8 @@ public class FloatingPanelDefaultLayout: FloatingPanelLayout {
 }
 
 public class FloatingPanelDefaultLandscapeLayout: FloatingPanelLayout {
+    public init() { }
+
     public var initialPosition: FloatingPanelPosition {
         return .tip
     }
