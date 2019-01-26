@@ -428,7 +428,7 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
-    func setBackdropAlpha(of target: FloatingPanelPosition) {
+    private func setBackdropAlpha(of target: FloatingPanelPosition) {
         if target == .hidden {
             self.backdropView.alpha = 0.0
         } else {
