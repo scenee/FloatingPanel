@@ -3,6 +3,7 @@
 //
 
 import UIKit
+import UIKit.UIGestureRecognizerSubclass // For Xcode 9.4.1
 
 ///
 /// FloatingPanel presentation model
@@ -38,7 +39,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     let panGestureRecognizer: FloatingPanelPanGestureRecognizer
     var isRemovalInteractionEnabled: Bool = false
 
-    private var animator: UIViewPropertyAnimator?
+    fileprivate var animator: UIViewPropertyAnimator?
     private var initialFrame: CGRect = .zero
     private var initialScrollOffset: CGPoint = .zero
     private var initialScrollInset: UIEdgeInsets = .zero
@@ -76,6 +77,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         }
 
         super.init()
+
+        panGestureRecognizer.floatingPanel = self
 
         surfaceView.addGestureRecognizer(panGestureRecognizer)
         panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
@@ -289,7 +292,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 return
             }
 
-            if let animator = self.animator, animator.isInterruptible {
+            if let animator = self.animator {
+                if animator.isInterruptible == false {
+                    return
+                }
                 animator.stopAnimation(true)
                 self.animator = nil
             }
@@ -394,7 +400,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         if isRemovalInteractionEnabled, isBottomState {
             let velocityVector = (distance != 0) ? CGVector(dx: 0,
-                                                            dy: max(min(velocity.y/distance, behavior.removalVelocity), 0.0)) : .zero
+                                                            dy: min(fabs(velocity.y)/distance, behavior.removalVelocity)) : .zero
 
 
 
@@ -529,7 +535,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         isDecelerating = true
 
-        let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: max(min(velocity.y/distance, 30.0), -30.0)) : .zero
+        let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: min(fabs(velocity.y)/distance, 30.0)) : .zero
         let animator = behavior.interactionAnimator(self.viewcontroller, to: targetPosition, with: velocityVector)
         animator.addAnimations { [weak self] in
             guard let `self` = self else { return }
@@ -575,11 +581,11 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         switch targetPosition {
         case .full:
-            return CGFloat(fabs(Double(currentY - topY)))
+            return CGFloat(fabs(currentY - topY))
         case .half:
-            return CGFloat(fabs(Double(currentY - middleY)))
+            return CGFloat(fabs(currentY - middleY))
         case .tip:
-            return CGFloat(fabs(Double(currentY - bottomY)))
+            return CGFloat(fabs(currentY - bottomY))
         case .hidden:
             fatalError("Now .hidden must not be used for a user interaction")
         }
@@ -793,6 +799,13 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 }
 
 class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
+    fileprivate var floatingPanel: FloatingPanel?
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
+        super.touchesBegan(touches, with: event)
+        if floatingPanel?.animator != nil {
+            self.state = .began
+        }
+    }
     override weak var delegate: UIGestureRecognizerDelegate? {
         get {
             return super.delegate
