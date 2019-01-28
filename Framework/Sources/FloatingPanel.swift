@@ -154,9 +154,19 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             return true
         }
 
-        // all gestures of the tracking scroll view should be recognized in parallel
-        // and handle them in self.handle(panGesture:)
-        return scrollView?.gestureRecognizers?.contains(otherGestureRecognizer) ?? false
+        switch otherGestureRecognizer {
+        case is UIPanGestureRecognizer,
+             is UISwipeGestureRecognizer,
+             is UIRotationGestureRecognizer,
+             is UIScreenEdgePanGestureRecognizer,
+             is UIPinchGestureRecognizer:
+            // all gestures of the tracking scroll view should be recognized in parallel
+            // and handle them in self.handle(panGesture:)
+            return scrollView?.gestureRecognizers?.contains(otherGestureRecognizer) ?? false
+        default:
+            // Should always recognize tap/long press gestures in parallel
+            return true
+        }
     }
 
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
