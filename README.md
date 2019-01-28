@@ -122,7 +122,7 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
         super.viewWillDisappear(animated)
 
         // Remove the views managed by the `FloatingPanelController` object from self.view.
-        fpc.removePanelFromParent()
+        fpc.removePanelFromParent(animated: animated)
     }
 }
 ```
