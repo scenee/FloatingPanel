@@ -212,6 +212,11 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         floatingPanel.behavior = fetchBehavior(for: newCollection)
     }
 
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        safeAreaInsetsObservation = nil
+    }
+
     // MARK:- Privates
 
     private func fetchLayout(for traitCollection: UITraitCollection) -> FloatingPanelLayout {
@@ -324,7 +329,6 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         }
 
         parent.addChildViewController(self)
-
 
         view.frame = parent.view.bounds // Needed for a correct safe area configuration
         view.translatesAutoresizingMaskIntoConstraints = false
