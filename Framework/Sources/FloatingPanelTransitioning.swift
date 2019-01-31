@@ -95,9 +95,6 @@ class FloatingPanelModalPresentTransition: NSObject, UIViewControllerAnimatedTra
             let fpc = transitionContext.viewController(forKey: .to) as? FloatingPanelController
         else { fatalError() }
 
-        // Must set the container's bounds to the floating panel view
-        fpc.view?.frame = transitionContext.containerView.bounds
-
         fpc.show(animated: true) {
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
