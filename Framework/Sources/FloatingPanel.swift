@@ -623,8 +623,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     // Distance travelled after decelerating to zero velocity at a constant rate.
     // Refer to the slides p176 of [Designing Fluid Interfaces](https://developer.apple.com/videos/play/wwdc2018/803/)
-    private func project(initialVelocity: CGFloat) -> CGFloat {
-        let decelerationRate = UIScrollViewDecelerationRateNormal
+    private func project(initialVelocity: CGFloat, decelerationRate: CGFloat = UIScrollViewDecelerationRateNormal) -> CGFloat {
         return (initialVelocity / 1000.0) * decelerationRate / (1.0 - decelerationRate)
     }
 
@@ -684,30 +683,53 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 th2 = bottomY - (bottomY - middleY) * redirectionalProgress
             }
 
+            let decelerationRate = behavior.momentumProjectionRate(viewcontroller)
+            let pY = project(initialVelocity: velocity.y, decelerationRate: decelerationRate) + currentY
+
             switch currentY {
             case ..<th1:
-                if project(initialVelocity: velocity.y) >= (middleY - currentY) {
+                switch pY {
+                case bottomY...:
+                    return behavior.shouldProjectMomentum(viewcontroller, for: .tip) ? .tip : .half
+                case middleY...:
                     return .half
-                } else {
+                case topY...:
+                    return .full
+                default:
                     return .full
                 }
             case ...middleY:
-                if project(initialVelocity: velocity.y) <= (topY - currentY) {
-                    return .full
-                } else {
+                switch pY {
+                case bottomY...:
+                    return behavior.shouldProjectMomentum(viewcontroller, for: .tip) ? .tip : .half
+                case middleY...:
                     return .half
+                case topY...:
+                    return .half
+                default:
+                    return .full
                 }
             case ..<th2:
-                if project(initialVelocity: velocity.y) >= (bottomY - currentY) {
+                switch pY {
+                case bottomY...:
                     return .tip
-                } else {
+                case middleY...:
                     return .half
+                case topY...:
+                    return .half
+                default:
+                    return behavior.shouldProjectMomentum(viewcontroller, for: .full) ? .full : .half
                 }
             default:
-                if project(initialVelocity: velocity.y) <= (middleY - currentY) {
-                    return .half
-                } else {
+                switch pY {
+                case bottomY...:
                     return .tip
+                case middleY...:
+                    return .tip
+                case topY...:
+                    return .half
+                default:
+                    return behavior.shouldProjectMomentum(viewcontroller, for: .full) ? .full : .half
                 }
             }
         }
@@ -727,15 +749,18 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         let th = topY + (bottomY - topY) * redirectionalProgress
 
+        let decelerationRate = behavior.momentumProjectionRate(viewcontroller)
+        let pY = project(initialVelocity: velocity.y, decelerationRate: decelerationRate) + currentY
+
         switch currentY {
         case ..<th:
-            if project(initialVelocity: velocity.y) >= (bottomY - currentY) {
+            if pY >= bottomY {
                 return bottom
             } else {
                 return top
             }
         default:
-            if project(initialVelocity: velocity.y) <= (topY - currentY) {
+            if pY <= topY {
                 return top
             } else {
                 return bottom
