@@ -132,7 +132,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     private func getBackdropAlpha(with translation: CGPoint) -> CGFloat {
-        let currentY = getCurrentY(from: initialFrame, with: translation)
+        let currentY = surfaceView.frame.minY
 
         let next = directionalPosition(at: currentY, with: translation)
         let pre = redirectionalPosition(at: currentY, with: translation)
@@ -313,6 +313,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 }
                 panningChange(with: translation)
             case .ended, .cancelled, .failed:
+                // Uppdate the surface frame with the last translation
+                panningChange(with: translation)
                 panningEnd(with: translation, velocity: velocity)
             case .possible:
                 break
@@ -388,14 +390,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             return
         }
 
-        if interactionInProgress == false {
-            initialFrame = surfaceView.frame
-        }
-
         stopScrollDeceleration = (surfaceView.frame.minY > layoutAdapter.topY) // Projecting the dragging to the scroll dragging or not
 
-        let targetPosition = self.targetPosition(with: translation, velocity: velocity)
-        let distance = self.distance(to: targetPosition, with: translation)
+        let targetPosition = self.targetPosition(with: velocity)
+        let distance = self.distance(to: targetPosition)
 
         endInteraction(for: targetPosition)
 
@@ -403,7 +401,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             let velocityVector = (distance != 0) ? CGVector(dx: 0,
                                                             dy: min(fabs(velocity.y)/distance, behavior.removalVelocity)) : .zero
 
-            if shouldStartRemovalAnimation(with: translation, velocityVector: velocityVector) {
+            if shouldStartRemovalAnimation(with: velocityVector) {
 
                 viewcontroller.delegate?.floatingPanelDidEndDraggingToRemove(viewcontroller, withVelocity: velocity)
                 self.startRemovalAnimation(with: velocityVector) { [weak self] in
@@ -423,9 +421,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         startAnimation(to: targetPosition, at: distance, with: velocity)
     }
 
-    private func shouldStartRemovalAnimation(with translation: CGPoint, velocityVector: CGVector) -> Bool {
+    private func shouldStartRemovalAnimation(with velocityVector: CGVector) -> Bool {
         let posY = layoutAdapter.positionY(for: state)
-        let currentY = getCurrentY(from: initialFrame, with: translation)
+        let currentY = surfaceView.frame.minY
         let safeAreaBottomY = layoutAdapter.safeAreaBottomY
         let vth = behavior.removalVelocity
         let pth = max(min(behavior.removalProgress, 1.0), 0.0)
@@ -514,26 +512,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         }
     }
 
-    private func getCurrentY(from rect: CGRect, with translation: CGPoint) -> CGFloat {
-        let dy = translation.y - initialTranslationY
-        let y = rect.offsetBy(dx: 0.0, dy: dy).origin.y
-
-        let topY = layoutAdapter.topY
-        let topBuffer = layoutAdapter.layout.topInteractionBuffer
-        let bottomY = layoutAdapter.bottomY
-        let bottomBuffer = layoutAdapter.layout.bottomInteractionBuffer
-        let topMax = layoutAdapter.topMaxY
-        let bottomMax = layoutAdapter.bottomMaxY
-        
-        if let scrollView = scrollView, scrollView.panGestureRecognizer.state == .changed {
-            let preY = surfaceView.frame.origin.y
-            if preY > 0 && preY > y {
-                return max(max(topY, topMax), min(min(bottomY + bottomBuffer, bottomMax), y))
-            }
-        }
-        return max(max(topY - topBuffer, topMax), min(min(bottomY + bottomBuffer, bottomMax), y))
-    }
-
     private func startAnimation(to targetPosition: FloatingPanelPosition, at distance: CGFloat, with velocity: CGPoint) {
         log.debug("startAnimation", targetPosition, distance, velocity)
 
@@ -572,11 +550,11 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         }
     }
 
-    private func distance(to targetPosition: FloatingPanelPosition, with translation: CGPoint) -> CGFloat {
+    private func distance(to targetPosition: FloatingPanelPosition) -> CGFloat {
         let topY = layoutAdapter.topY
         let middleY = layoutAdapter.middleY
         let bottomY = layoutAdapter.bottomY
-        let currentY = getCurrentY(from: initialFrame, with: translation)
+        let currentY = surfaceView.frame.minY
 
         switch targetPosition {
         case .full:
@@ -627,8 +605,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         return (initialVelocity / 1000.0) * decelerationRate / (1.0 - decelerationRate)
     }
 
-    private func targetPosition(with translation: CGPoint, velocity: CGPoint) -> (FloatingPanelPosition) {
-        let currentY = getCurrentY(from: initialFrame, with: translation)
+    private func targetPosition(with velocity: CGPoint) -> (FloatingPanelPosition) {
+        let currentY = surfaceView.frame.minY
         let supportedPositions = layoutAdapter.supportedPositions
 
         if supportedPositions.count == 1 {
