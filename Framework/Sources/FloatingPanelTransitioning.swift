@@ -22,7 +22,11 @@ class FloatingPanelModalTransition: NSObject, UIViewControllerTransitioningDeleg
 }
 
 class FloatingPanelPresentationController: UIPresentationController {
-    override func presentationTransitionWillBegin() { }
+    override func presentationTransitionWillBegin() {
+        // Must call here even if duplicating on in containerViewWillLayoutSubviews()
+        // Because it let the floating panel present correclty with the presentation animation
+        addFloatingPanel()
+    }
 
     override func presentationTransitionDidEnd(_ completed: Bool) {
         // For non-animated presentation
@@ -39,32 +43,21 @@ class FloatingPanelPresentationController: UIPresentationController {
             }
             fpc.view.removeFromSuperview()
         }
-
     }
 
     override func containerViewWillLayoutSubviews() {
         guard
-            let containerView = self.containerView,
-            let fpc = presentedViewController as? FloatingPanelController,
-            let fpView = fpc.view
+            let fpc = presentedViewController as? FloatingPanelController
             else { fatalError() }
 
         /*
          * Layout the views managed by `FloatingPanelController` here for the
          * sake of the presentation and disimissal modally from the controller.
          */
-        containerView.addSubview(fpView)
-        fpView.frame = containerView.bounds
-        fpView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            fpView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 0.0),
-            fpView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 0.0),
-            fpView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0.0),
-            fpView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0.0),
-            ])
+        addFloatingPanel()
 
         // Forward touch events to the presenting view controller
-        (fpView as? FloatingPanelPassThroughView)?.eventForwardingView = presentingViewController.view
+        (fpc.view as? FloatingPanelPassThroughView)?.eventForwardingView = presentingViewController.view
 
         // Set tap-to-dimiss in the backdrop view
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
@@ -73,6 +66,17 @@ class FloatingPanelPresentationController: UIPresentationController {
 
     @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
         presentedViewController.dismiss(animated: true, completion: nil)
+    }
+
+    private func addFloatingPanel() {
+        guard
+            let containerView = self.containerView,
+            let fpc = presentedViewController as? FloatingPanelController
+            else { fatalError() }
+
+        containerView.addSubview(fpc.view)
+        fpc.view.frame = containerView.bounds
+        fpc.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     }
 }
 
@@ -90,9 +94,6 @@ class FloatingPanelModalPresentTransition: NSObject, UIViewControllerAnimatedTra
         guard
             let fpc = transitionContext.viewController(forKey: .to) as? FloatingPanelController
         else { fatalError() }
-
-        // Must set the container's bounds to the floating panel view
-        fpc.view?.frame = transitionContext.containerView.bounds
 
         fpc.show(animated: true) {
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
