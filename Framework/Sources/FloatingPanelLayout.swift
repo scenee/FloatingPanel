@@ -11,15 +11,24 @@ import UIKit
 /// It can't be used with FloatingPanelIntrinsicLayout.
 public protocol FloatingPanelFullScreenLayout: FloatingPanelLayout { }
 
+extension FloatingPanelFullScreenLayout {
+    var positionReference: FloatingPanelLayoutReference {
+        return .fromSuperview
+    }
+}
+
 /// FloatingPanelIntrinsicLayout
 ///
 /// Use the layout protocol if you want to layout a panel using the intrinsic height.
-/// It can't be used with FloatingPanelFullScreenLayout.
+/// It can't be used with `FloatingPanelFullScreenLayout`.
 ///
 /// - Attention:
 ///     `insetFor(position:)` must return `nil` for the full position. Because
 ///     the inset is determined automatically by the intrinsic height.
 ///     You can customize insets only for the half, tip and hidden positions.
+///
+/// - Note:
+///     By default, the `positionReference` is set to `.fromSafeArea`.
 public protocol FloatingPanelIntrinsicLayout: FloatingPanelLayout { }
 
 public extension FloatingPanelIntrinsicLayout {
@@ -34,6 +43,15 @@ public extension FloatingPanelIntrinsicLayout {
     func insetFor(position: FloatingPanelPosition) -> CGFloat? {
         return nil
     }
+
+    var positionReference: FloatingPanelLayoutReference {
+        return .fromSafeArea
+    }
+}
+
+public enum FloatingPanelLayoutReference: Int {
+    case fromSafeArea = 0
+    case fromSuperview = 1
 }
 
 public protocol FloatingPanelLayout: class {
@@ -74,6 +92,8 @@ public protocol FloatingPanelLayout: class {
     ///
     /// Default is 0.3 at full position, otherwise 0.0.
     func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat
+
+    var positionReference: FloatingPanelLayoutReference { get }
 }
 
 public extension FloatingPanelLayout {
@@ -93,6 +113,10 @@ public extension FloatingPanelLayout {
 
     func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
         return position == .full ? 0.3 : 0.0
+    }
+
+    var positionReference: FloatingPanelLayoutReference {
+        return .fromSafeArea
     }
 }
 
@@ -218,27 +242,28 @@ class FloatingPanelLayoutAdapter {
     func positionY(for pos: FloatingPanelPosition) -> CGFloat {
         switch pos {
         case .full:
-            switch layout {
-            case is FloatingPanelIntrinsicLayout:
+            if layout is FloatingPanelIntrinsicLayout {
                 return surfaceView.superview!.bounds.height - surfaceView.bounds.height
-            case is FloatingPanelFullScreenLayout:
-                return fullInset
-            default:
+            }
+            switch layout.positionReference {
+            case .fromSafeArea:
                 return (safeAreaInsets.top + fullInset)
+            case .fromSuperview:
+                return fullInset
             }
         case .half:
-            switch layout {
-            case is FloatingPanelFullScreenLayout:
-                return surfaceView.superview!.bounds.height - halfInset
-            default:
+            switch layout.positionReference {
+            case .fromSafeArea:
                 return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + halfInset)
+            case .fromSuperview:
+                return surfaceView.superview!.bounds.height - halfInset
             }
         case .tip:
-            switch layout {
-            case is FloatingPanelFullScreenLayout:
-                return surfaceView.superview!.bounds.height - tipInset
-            default:
+            switch layout.positionReference {
+            case .fromSafeArea:
                 return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + tipInset)
+            case .fromSuperview:
+                return surfaceView.superview!.bounds.height - tipInset
             }
         case .hidden:
             return surfaceView.superview!.bounds.height - hiddenInset
@@ -296,7 +321,7 @@ class FloatingPanelLayoutAdapter {
 
         // Flexible surface constraints for full, half, tip and off
         let topAnchor: NSLayoutYAxisAnchor = {
-            if layout is FloatingPanelFullScreenLayout {
+            if layout.positionReference == .fromSuperview {
                 return vc.view.topAnchor
             } else {
                 return vc.layoutGuide.topAnchor
@@ -315,7 +340,7 @@ class FloatingPanelLayoutAdapter {
         }
 
         let bottomAnchor: NSLayoutYAxisAnchor = {
-            if layout is FloatingPanelFullScreenLayout {
+            if layout.positionReference == .fromSuperview {
                 return vc.view.bottomAnchor
             } else {
                 return vc.layoutGuide.bottomAnchor
@@ -342,15 +367,14 @@ class FloatingPanelLayoutAdapter {
         NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
 
         let interactiveTopConstraint: NSLayoutConstraint
-        switch layout {
-        case is FloatingPanelIntrinsicLayout,
-             is FloatingPanelFullScreenLayout:
-            initialConst = surfaceView.frame.minY + offset.y
-            interactiveTopConstraint = surfaceView.topAnchor.constraint(equalTo: vc.view.topAnchor,
-                                                                        constant: initialConst)
-        default:
+        switch layout.positionReference {
+        case .fromSafeArea:
             initialConst = surfaceView.frame.minY - safeAreaInsets.top + offset.y
             interactiveTopConstraint = surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.topAnchor,
+                                                                        constant: initialConst)
+        case .fromSuperview:
+            initialConst = surfaceView.frame.minY + offset.y
+            interactiveTopConstraint = surfaceView.topAnchor.constraint(equalTo: vc.view.topAnchor,
                                                                         constant: initialConst)
         }
         NSLayoutConstraint.activate([interactiveTopConstraint])
@@ -404,22 +428,22 @@ class FloatingPanelLayoutAdapter {
 
         let topMostConst: CGFloat = {
             var ret: CGFloat = 0.0
-            switch layout {
-            case is FloatingPanelIntrinsicLayout, is FloatingPanelFullScreenLayout:
-                ret = topY
-            default:
+            switch layout.positionReference {
+            case .fromSafeArea:
                 ret = topY - safeAreaInsets.top
+            case .fromSuperview:
+                ret = topY
             }
             return max(ret, 0.0) // The top boundary is equal to the related topAnchor.
         }()
         let bottomMostConst: CGFloat = {
             var ret: CGFloat = 0.0
             let _bottomY = vc.isRemovalInteractionEnabled ? positionY(for: .hidden) : bottomY
-            switch layout {
-            case is FloatingPanelIntrinsicLayout, is FloatingPanelFullScreenLayout:
-                ret = _bottomY
-            default:
+            switch layout.positionReference {
+            case .fromSafeArea:
                 ret = _bottomY - safeAreaInsets.top
+            case .fromSuperview:
+                ret = _bottomY
             }
             return min(ret, surfaceView.superview!.bounds.height)
         }()
