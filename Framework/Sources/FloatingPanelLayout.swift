@@ -140,7 +140,6 @@ class FloatingPanelLayoutAdapter {
 
     var safeAreaInsets: UIEdgeInsets = .zero
 
-    private var heightBuffer: CGFloat = 88.0 // For bounce
     private var fixedConstraints: [NSLayoutConstraint] = []
     private var fullConstraints: [NSLayoutConstraint] = []
     private var halfConstraints: [NSLayoutConstraint] = []
@@ -334,7 +333,7 @@ class FloatingPanelLayoutAdapter {
 
         NSLayoutConstraint.activate(heightConstraints)
 
-        surfaceView.bottomOverflow = heightBuffer + layout.topInteractionBuffer
+        surfaceView.bottomOverflow = vc.view.bounds.height + layout.topInteractionBuffer
 
         if layout is FloatingPanelIntrinsicLayout {
             NSLayoutConstraint.deactivate(fullConstraints)
