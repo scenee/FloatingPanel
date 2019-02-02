@@ -1,4 +1,4 @@
-> Please fill out this template when filing an issue.
+> Please fill out this template appropriately when filing a bug report.
 >
 > Please remove this line and everything above it before submitting.
 
