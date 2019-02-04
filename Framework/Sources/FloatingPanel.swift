@@ -807,7 +807,12 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             targetContentOffset.pointee = scrollView.contentOffset
             stopScrollDeceleration = false
         } else {
+            let targetOffset = targetContentOffset.pointee
             userScrollViewDelegate?.scrollViewWillEndDragging?(scrollView, withVelocity: velocity, targetContentOffset: targetContentOffset)
+            // Stop scrolling on tip and half
+            if state != .full, targetOffset == targetContentOffset.pointee {
+                targetContentOffset.pointee.y = scrollView.contentOffset.y
+            }
         }
     }
 }
