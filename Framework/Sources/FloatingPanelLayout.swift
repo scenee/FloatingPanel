@@ -7,7 +7,7 @@ import UIKit
 
 /// FloatingPanelFullScreenLayout
 ///
-/// Use the layout protocol if you want to configure a full inset from Superview.Top, not SafeArea.Top.
+/// Use the layout protocol if you configure full, half and tip insets from the superview, not the safe area.
 /// It can't be used with FloatingPanelIntrinsicLayout.
 public protocol FloatingPanelFullScreenLayout: FloatingPanelLayout { }
 
@@ -194,12 +194,20 @@ class FloatingPanelLayoutAdapter {
     }
 
     var middleY: CGFloat {
-        return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + halfInset)
+        if layout is FloatingPanelFullScreenLayout {
+            return surfaceView.superview!.bounds.height - halfInset
+        } else{
+            return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + halfInset)
+        }
     }
 
     var bottomY: CGFloat {
         if supportedPositions.contains(.tip) {
-            return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + tipInset)
+            if layout is FloatingPanelFullScreenLayout {
+                return surfaceView.superview!.bounds.height - tipInset
+            } else{
+                return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + tipInset)
+            }
         } else {
             return middleY
         }
@@ -209,14 +217,17 @@ class FloatingPanelLayoutAdapter {
         return surfaceView.superview!.bounds.height
     }
 
-    var safeAreaBottomY: CGFloat {
-        return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + hiddenInset)
-    }
-
     var topMaxY: CGFloat {
         return layout is FloatingPanelFullScreenLayout ? 0.0 : safeAreaInsets.top
     }
-    var bottomMaxY: CGFloat { return safeAreaBottomY }
+
+    var bottomMaxY: CGFloat {
+        if layout is FloatingPanelFullScreenLayout{
+            return surfaceView.superview!.bounds.height - hiddenInset
+        } else {
+            return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + hiddenInset)
+        }
+    }
 
     var adjustedContentInsets: UIEdgeInsets {
         return UIEdgeInsets(top: 0.0,
@@ -284,32 +295,44 @@ class FloatingPanelLayoutAdapter {
         fixedConstraints = surfaceConstraints + backdropConstraints
 
         // Flexible surface constarints for full, half, tip and off
+        let topAnchor: NSLayoutYAxisAnchor = {
+            if layout is FloatingPanelFullScreenLayout {
+                return vc.view.topAnchor
+            } else {
+                return vc.layoutGuide.topAnchor
+            }
+        }()
+
         switch layout {
         case is FloatingPanelIntrinsicLayout:
             // Set up on updateHeight()
             break
-        case is FloatingPanelFullScreenLayout:
-            fullConstraints = [
-                surfaceView.topAnchor.constraint(equalTo: vc.view.topAnchor,
-                                                 constant: fullInset),
-            ]
         default:
             fullConstraints = [
-                surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.topAnchor,
+                surfaceView.topAnchor.constraint(equalTo: topAnchor,
                                                  constant: fullInset),
             ]
         }
 
+        let bottomAnchor: NSLayoutYAxisAnchor = {
+            if layout is FloatingPanelFullScreenLayout {
+                return vc.view.bottomAnchor
+            } else {
+                return vc.layoutGuide.bottomAnchor
+            }
+        }()
+
         halfConstraints = [
-            surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.bottomAnchor,
+            surfaceView.topAnchor.constraint(equalTo: bottomAnchor,
                                              constant: -halfInset),
         ]
         tipConstraints = [
-            surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.bottomAnchor,
+            surfaceView.topAnchor.constraint(equalTo: bottomAnchor,
                                              constant: -tipInset),
         ]
+
         offConstraints = [
-            surfaceView.topAnchor.constraint(equalTo: vc.view.bottomAnchor,
+            surfaceView.topAnchor.constraint(equalTo:vc.view.bottomAnchor,
                                              constant: -hiddenInset),
         ]
     }
