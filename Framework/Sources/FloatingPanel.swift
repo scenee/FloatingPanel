@@ -35,7 +35,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         return remains.count == 0
     }
 
-    let panGesture: FloatingPanelPanGestureRecognizer
+    let panGestureRecognizer: FloatingPanelPanGestureRecognizer
     var isRemovalInteractionEnabled: Bool = false
 
     private var animator: UIViewPropertyAnimator?
@@ -68,17 +68,17 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                                                         layout: layout)
         self.behavior = behavior
 
-        panGesture = FloatingPanelPanGestureRecognizer()
+        panGestureRecognizer = FloatingPanelPanGestureRecognizer()
 
         if #available(iOS 11.0, *) {
-            panGesture.name = "FloatingPanelSurface"
+            panGestureRecognizer.name = "FloatingPanelSurface"
         }
 
         super.init()
 
-        surfaceView.addGestureRecognizer(panGesture)
-        panGesture.addTarget(self, action: #selector(handle(panGesture:)))
-        panGesture.delegate = self
+        surfaceView.addGestureRecognizer(panGestureRecognizer)
+        panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
+        panGestureRecognizer.delegate = self
     }
 
     func move(to: FloatingPanelPosition, animated: Bool, completion: (() -> Void)? = nil) {
@@ -146,7 +146,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                                   shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        guard gestureRecognizer == panGesture else { return false }
+        guard gestureRecognizer == panGestureRecognizer else { return false }
 
         /* log.debug("shouldRecognizeSimultaneouslyWith", otherGestureRecognizer) */
 
@@ -160,13 +160,13 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        guard gestureRecognizer == panGesture else { return false }
+        guard gestureRecognizer == panGestureRecognizer else { return false }
         /* log.debug("shouldBeRequiredToFailBy", otherGestureRecognizer) */
         return false
     }
 
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        guard gestureRecognizer == panGesture else { return false }
+        guard gestureRecognizer == panGestureRecognizer else { return false }
 
         /* log.debug("shouldRequireFailureOf", otherGestureRecognizer) */
 
@@ -265,7 +265,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                     unlockScrollView()
                 }
             }
-        case panGesture:
+        case panGestureRecognizer:
             let translation = panGesture.translation(in: panGesture.view!.superview)
             let location = panGesture.location(in: panGesture.view)
 
