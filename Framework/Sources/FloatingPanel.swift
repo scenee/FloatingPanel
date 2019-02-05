@@ -424,12 +424,12 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private func shouldStartRemovalAnimation(with velocityVector: CGVector) -> Bool {
         let posY = layoutAdapter.positionY(for: state)
         let currentY = surfaceView.frame.minY
-        let safeAreaBottomY = layoutAdapter.safeAreaBottomY
+        let bottomMaxY = layoutAdapter.bottomMaxY
         let vth = behavior.removalVelocity
         let pth = max(min(behavior.removalProgress, 1.0), 0.0)
 
         let num = (currentY - posY)
-        let den = (safeAreaBottomY - posY)
+        let den = (bottomMaxY - posY)
 
         guard num >= 0, den != 0, (num / den >= pth || velocityVector.dy == vth)
         else { return false }
