@@ -108,9 +108,12 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 self.updateLayout(to: to)
                 self.state = to
             }
-            animator.addCompletion { _ in
+            animator.addCompletion { [weak self] _ in
+                guard let `self` = self else { return }
+                self.animator = nil
                 completion?()
             }
+            self.animator = animator
             animator.startAnimation()
         } else {
             self.updateLayout(to: to)
@@ -438,8 +441,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             self?.updateLayout(to: .hidden)
         }
         animator.addCompletion({ _ in
+            self.animator = nil
             completion?()
         })
+        self.animator = animator
         animator.startAnimation()
     }
 
@@ -544,15 +549,15 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 animator == self.animator,
                 pos == .end
                 else { return }
+            self.animator = nil
             self.finishAnimation(at: targetPosition)
         }
-        animator.startAnimation()
         self.animator = animator
+        animator.startAnimation()
     }
 
     private func finishAnimation(at targetPosition: FloatingPanelPosition) {
         log.debug("finishAnimation \(targetPosition)")
-        self.animator = nil
         self.viewcontroller.delegate?.floatingPanelDidEndDecelerating(self.viewcontroller)
 
         stopScrollDeceleration = false
