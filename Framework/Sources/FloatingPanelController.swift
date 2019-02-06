@@ -93,7 +93,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     // The underlying gesture recognizer for pan gestures
     public var panGestureRecognizer: UIPanGestureRecognizer {
-        return floatingPanel.panGesture
+        return floatingPanel.panGestureRecognizer
     }
 
     /// The current position of the floating panel controller's contents.
