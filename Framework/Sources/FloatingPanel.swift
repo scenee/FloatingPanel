@@ -42,7 +42,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     fileprivate var animator: UIViewPropertyAnimator?
     private var initialFrame: CGRect = .zero
     private var initialScrollOffset: CGPoint = .zero
-    private var initialScrollInset: UIEdgeInsets = .zero
     private var initialTranslationY: CGFloat = 0
 
     var interactionInProgress: Bool = false
@@ -249,6 +248,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             }
 
             if surfaceView.frame.minY > layoutAdapter.topY {
+                // Scroll offset pinning
                 switch state {
                 case .full:
                     let point = panGesture.location(in: surfaceView)
@@ -267,7 +267,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                         return
                     }
                     // Fix the scroll offset in moving the panel from half and tip.
-                    scrollView.contentOffset.y = initialScrollOffset.y + (initialScrollInset.top - scrollView.contentInset.top)
+                    scrollView.contentOffset.y = initialScrollOffset.y
                 case .hidden:
                     fatalError("Now .hidden must not be used for a user interaction")
                 }
@@ -366,8 +366,11 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private func panningBegan() {
         // A user interaction does not always start from Began state of the pan gesture
         // because it can be recognized in scrolling a content in a content view controller.
-        // So do nothing here.
+        // So here just preserve the current state if needed.
         log.debug("panningBegan")
+        if state != .full, let scrollView = scrollView {
+            initialScrollOffset = scrollView.contentOffset
+        }
     }
 
     private func panningChange(with translation: CGPoint) {
@@ -509,9 +512,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         log.debug("startInteraction")
 
         initialFrame = surfaceView.frame
-        if let scrollView = scrollView {
+        if state == .full, let scrollView = scrollView {
             initialScrollOffset = scrollView.contentOffset
-            initialScrollInset = scrollView.contentInset
         }
 
         initialTranslationY = translation.y
@@ -802,13 +804,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         } else {
             return super.forwardingTarget(for: aSelector)
         }
-    }
-
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        if state != .full {
-            initialScrollOffset = scrollView.contentOffset
-        }
-        userScrollViewDelegate?.scrollViewDidEndScrollingAnimation?(scrollView)
     }
 
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
