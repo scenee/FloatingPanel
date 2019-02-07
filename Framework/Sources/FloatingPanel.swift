@@ -378,8 +378,49 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         let dy = translation.y - initialTranslationY
         layoutAdapter.updateInteractiveTopConstraint(diff: dy)
         backdropView.alpha = getBackdropAlpha(with: translation)
+        preserveContentVCLayoutIfNeeded()
 
         viewcontroller.delegate?.floatingPanelDidMove(viewcontroller)
+    }
+
+    private var disabledBottomAutoLayout = false
+    // Prevent streching a view having a constraint to SafeArea.bottom in an overflow
+    // from the full position because SafeArea is global in a screen.
+    private func preserveContentVCLayoutIfNeeded() {
+        // Must include topY
+        if (surfaceView.frame.minY <= layoutAdapter.topY) {
+            if !disabledBottomAutoLayout {
+                viewcontroller.contentViewController?.view?.constraints.forEach({ (const) in
+                    switch viewcontroller.contentViewController?.layoutGuide.bottomAnchor {
+                    case const.firstAnchor:
+                        (const.secondItem as? UIView)?.disableAutoLayout()
+                        const.isActive = false
+                    case const.secondAnchor:
+                        (const.firstItem as? UIView)?.disableAutoLayout()
+                        const.isActive = false
+                    default:
+                        break
+                    }
+                })
+            }
+            disabledBottomAutoLayout = true
+        } else {
+            if disabledBottomAutoLayout {
+                viewcontroller.contentViewController?.view?.constraints.forEach({ (const) in
+                    switch viewcontroller.contentViewController?.layoutGuide.bottomAnchor {
+                    case const.firstAnchor:
+                        (const.secondItem as? UIView)?.enableAutoLayout()
+                        const.isActive = true
+                    case const.secondAnchor:
+                        (const.firstItem as? UIView)?.enableAutoLayout()
+                        const.isActive = true
+                    default:
+                        break
+                    }
+                })
+            }
+            disabledBottomAutoLayout = false
+        }
     }
 
     private func panningEnd(with translation: CGPoint, velocity: CGPoint) {
@@ -467,21 +508,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         layoutAdapter.startInteraction(at: state)
 
-        if state == .full {
-            viewcontroller.contentViewController?.view?.constraints.forEach({ (const) in
-                switch viewcontroller.contentViewController?.layoutGuide.bottomAnchor {
-                case const.firstAnchor:
-                    (const.secondItem as? UIView)?.disableAutoLayout()
-                    const.isActive = false
-                case const.secondAnchor:
-                    (const.firstItem as? UIView)?.disableAutoLayout()
-                    const.isActive = false
-                default:
-                    break
-                }
-            })
-        }
-
         interactionInProgress = true
     }
 
@@ -495,21 +521,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         }
 
         layoutAdapter.endInteraction(at: targetPosition)
-
-        if state == .full {
-            viewcontroller.contentViewController?.view?.constraints.forEach({ (const) in
-                switch viewcontroller.contentViewController?.layoutGuide.bottomAnchor {
-                case const.firstAnchor:
-                    (const.secondItem as? UIView)?.enableAutoLayout()
-                    const.isActive = true
-                case const.secondAnchor:
-                    (const.firstItem as? UIView)?.enableAutoLayout()
-                    const.isActive = true
-                default:
-                    break
-                }
-            })
-        }
     }
 
     private func startAnimation(to targetPosition: FloatingPanelPosition, at distance: CGFloat, with velocity: CGPoint) {
