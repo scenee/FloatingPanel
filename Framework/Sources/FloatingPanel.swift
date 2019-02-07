@@ -673,7 +673,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             }
 
             let decelerationRate = behavior.momentumProjectionRate(viewcontroller)
-            let pY = project(initialVelocity: velocity.y, decelerationRate: decelerationRate) + currentY
+
+            let baseY = abs(bottomY - topY)
+            let vecY = velocity.y / baseY
+            let pY = project(initialVelocity: vecY, decelerationRate: decelerationRate) * baseY + currentY
 
             switch currentY {
             case ..<th1:
