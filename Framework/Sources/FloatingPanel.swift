@@ -495,15 +495,15 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         let topBuffer = layoutAdapter.layout.topInteractionBuffer
         let bottomY = layoutAdapter.bottomY
         let bottomBuffer = layoutAdapter.layout.bottomInteractionBuffer
-
+        let topMax = layoutAdapter.topMaxY
+        let bottomMax = layoutAdapter.bottomMaxY
+        
         if let scrollView = scrollView, scrollView.panGestureRecognizer.state == .changed {
             let preY = surfaceView.frame.origin.y
             if preY > 0 && preY > y {
-                return max(topY, min(bottomY, y))
+                return max(topY, min(min(bottomY + bottomBuffer, bottomMax), y))
             }
         }
-        let topMax = layoutAdapter.topMaxY
-        let bottomMax = layoutAdapter.bottomMaxY
         return max(max(topY - topBuffer, topMax), min(min(bottomY + bottomBuffer, bottomMax), y))
     }
 
