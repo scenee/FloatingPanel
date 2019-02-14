@@ -139,7 +139,7 @@ fpc.isRemovalInteractionEnabled = true // Optional: Let it removable by a swipe-
 self.present(fpc, animated: true, completion: nil)
 ```
 
-You can show a floating panel over UINavigationController from the containnee view controllers as a modality of `.overCurrentContext` style.
+You can show a floating panel over UINavigationController from the container view controllers as a modality of `.overCurrentContext` style.
 
 NOTE: FloatingPanelController has the custom presentation controller. If you would like to customize the presentation/dismissal, please see [FloatingPanelTransitioning](https://github.com/SCENEE/FloatingPanel/blob/master/Framework/Sources/FloatingPanelTransitioning.swift).
 
