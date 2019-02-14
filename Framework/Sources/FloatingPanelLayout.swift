@@ -342,7 +342,8 @@ class FloatingPanelLayoutAdapter {
 
         let interactiveTopConstraint: NSLayoutConstraint
         switch layout {
-        case is FloatingPanelIntrinsicLayout, is FloatingPanelFullScreenLayout:
+        case is FloatingPanelIntrinsicLayout,
+             is FloatingPanelFullScreenLayout:
             initialConst = surfaceView.frame.minY
             interactiveTopConstraint = surfaceView.topAnchor.constraint(equalTo: vc.view.topAnchor,
                                                                         constant: initialConst)
@@ -397,25 +398,34 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
-    func updateInteractiveTopConstraint(diff: CGFloat) {
+    func updateInteractiveTopConstraint(diff: CGFloat, allowsTopBuffer: Bool) {
         defer {
-            surfaceView.superview!.layoutIfNeeded()
+            surfaceView.superview!.layoutIfNeeded() // MUST call here to update `surfaceView.frame`
         }
+
         let minY: CGFloat = {
+            var ret: CGFloat = 0.0
             switch layout {
             case is FloatingPanelIntrinsicLayout:
-                return topY - layout.topInteractionBuffer
+                ret = topY
             default:
-                return fullInset - layout.topInteractionBuffer
+                ret = fullInset
             }
+            if allowsTopBuffer {
+                ret -= layout.topInteractionBuffer
+            }
+            return max(ret, 0.0) // The top boundary is equal to the related topAnchor.
         }()
         let maxY: CGFloat = {
+            var ret: CGFloat = 0.0
             switch layout {
             case is FloatingPanelIntrinsicLayout, is FloatingPanelFullScreenLayout:
-                return bottomY + layout.bottomInteractionBuffer
+                ret = bottomY
             default:
-                return bottomY - safeAreaInsets.top + layout.bottomInteractionBuffer
+                ret = bottomY - safeAreaInsets.top
             }
+            ret += layout.bottomInteractionBuffer
+            return min(ret, bottomMaxY)
         }()
         let const = initialConst + diff
 
