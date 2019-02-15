@@ -107,8 +107,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             animator.addAnimations { [weak self] in
                 guard let `self` = self else { return }
 
-                self.updateLayout(to: to)
                 self.state = to
+                self.updateLayout(to: to)
             }
             animator.addCompletion { [weak self] _ in
                 guard let `self` = self else { return }
@@ -118,8 +118,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             self.animator = animator
             animator.startAnimation()
         } else {
-            self.updateLayout(to: to)
             self.state = to
+            self.updateLayout(to: to)
             completion?()
         }
     }
@@ -546,8 +546,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         let animator = behavior.interactionAnimator(self.viewcontroller, to: targetPosition, with: velocityVector)
         animator.addAnimations { [weak self] in
             guard let `self` = self else { return }
-            self.updateLayout(to: targetPosition)
             self.state = targetPosition
+            self.updateLayout(to: targetPosition)
         }
         animator.addCompletion { [weak self] pos in
             guard let `self` = self else { return }
