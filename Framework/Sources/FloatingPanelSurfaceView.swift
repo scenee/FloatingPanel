@@ -59,7 +59,8 @@ public class FloatingPanelSurfaceView: UIView {
     /// The color of the surface border.
     public var borderWidth: CGFloat = 0.0  { didSet { setNeedsLayout() } }
 
-    private var backgroundLayer: CAShapeLayer!  { didSet { setNeedsLayout() } }
+    private var backgroundView: UIView!
+    private var backgroundHeightConstraint: NSLayoutConstraint!
 
     private struct Default {
         public static let grabberTopPadding: CGFloat = 6.0
@@ -79,9 +80,19 @@ public class FloatingPanelSurfaceView: UIView {
         super.backgroundColor = .clear
         self.clipsToBounds = false
 
-        let backgroundLayer = CAShapeLayer()
-        layer.insertSublayer(backgroundLayer, at: 0)
-        self.backgroundLayer = backgroundLayer
+        let backgroundView = UIView()
+        addSubview(backgroundView)
+        self.backgroundView = backgroundView
+
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
+        backgroundHeightConstraint = backgroundView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0)
+        NSLayoutConstraint.activate([
+            backgroundView.topAnchor.constraint(equalTo: topAnchor, constant: 0.0),
+            backgroundView.leftAnchor.constraint(equalTo: leftAnchor, constant: 0.0),
+            backgroundView.rightAnchor.constraint(equalTo: rightAnchor, constant: 0.0),
+            backgroundHeightConstraint,
+            ])
+
 
         let grabberHandle = GrabberHandleView()
         addSubview(grabberHandle)
@@ -94,6 +105,11 @@ public class FloatingPanelSurfaceView: UIView {
             grabberHandle.heightAnchor.constraint(equalToConstant: grabberHandle.frame.height),
             grabberHandle.centerXAnchor.constraint(equalTo: centerXAnchor),
             ])
+    }
+
+    public override func updateConstraints() {
+        super.updateConstraints()
+        backgroundHeightConstraint.constant = bottomOverflow
     }
 
     public override func layoutSubviews() {
@@ -110,15 +126,11 @@ public class FloatingPanelSurfaceView: UIView {
 
     private func updateLayers() {
         log.debug("SurfaceView bounds", bounds)
-        
-        var rect = bounds
-        rect.size.height += bottomOverflow // Expand the height for overflow buffer
-        let path = UIBezierPath(roundedRect: rect,
-                                byRoundingCorners: [.topLeft, .topRight],
-                                cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
-        backgroundLayer.path = path.cgPath
-        backgroundLayer.fillColor = color?.cgColor
-		
+
+        backgroundView.backgroundColor = color
+        backgroundView.layer.masksToBounds = true
+        backgroundView.layer.cornerRadius = cornerRadius
+
         if shadowHidden == false {
             layer.shadowColor = shadowColor.cgColor
             layer.shadowOffset = shadowOffset
@@ -132,14 +144,9 @@ public class FloatingPanelSurfaceView: UIView {
             // Don't use `contentView.clipToBounds` because it prevents content view from expanding the height of a subview of it
             // for the bottom overflow like Auto Layout settings of UIVisualEffectView in Main.storyborad of Example/Maps.
             // Because the bottom of contentView must be fit to the bottom of a screen to work the `safeLayoutGuide` of a content VC.
-            let maskLayer = CAShapeLayer()
-            var rect = bounds
-            rect.size.height += bottomOverflow
-            let path = UIBezierPath(roundedRect: rect,
-                                    byRoundingCorners: [.topLeft, .topRight],
-                                    cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
-            maskLayer.path = path.cgPath
-            contentView?.layer.mask = maskLayer
+            contentView?.layer.masksToBounds = true
+            contentView?.layer.cornerRadius = cornerRadius
+            contentView?.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         } else {
             // Don't use `contentView.layer.mask` because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
             // Instead, a user can mask the content view manually in an application.
