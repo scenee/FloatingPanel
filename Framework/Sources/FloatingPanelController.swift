@@ -236,8 +236,9 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         // Don't re-layout the surface on SafeArea.Bottom enabled/disabled in interaction progress
         guard
             floatingPanel.layoutAdapter.safeAreaInsets != safeAreaInsets,
-            self.floatingPanel.interactionInProgress == false
-        else { return }
+            self.floatingPanel.interactionInProgress == false,
+            self.floatingPanel.isDecelerating == false
+            else { return }
 
         log.debug("Update safeAreaInsets", safeAreaInsets)
 

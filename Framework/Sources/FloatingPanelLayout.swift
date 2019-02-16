@@ -206,7 +206,7 @@ class FloatingPanelLayoutAdapter {
     }
 
     var topMaxY: CGFloat {
-        return layout is FloatingPanelFullScreenLayout ? 0.0 : -safeAreaInsets.top
+        return layout is FloatingPanelFullScreenLayout ? 0.0 : safeAreaInsets.top
     }
     var bottomMaxY: CGFloat { return safeAreaBottomY }
 
