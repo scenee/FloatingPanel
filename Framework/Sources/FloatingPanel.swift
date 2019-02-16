@@ -375,7 +375,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private func panningChange(with translation: CGPoint) {
         log.debug("panningChange")
-
+        let pre = surfaceView.frame.minY
         let dy = translation.y - initialTranslationY
 
         layoutAdapter.updateInteractiveTopConstraint(diff: dy,
@@ -383,6 +383,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         backdropView.alpha = getBackdropAlpha(with: translation)
         preserveContentVCLayoutIfNeeded()
+
+        let didMove = (pre != surfaceView.frame.minY)
+        guard didMove else { return }
 
         viewcontroller.delegate?.floatingPanelDidMove(viewcontroller)
     }
