@@ -517,7 +517,19 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         viewcontroller.delegate?.floatingPanelDidEndDragging(viewcontroller, withVelocity: velocity, targetPosition: targetPosition)
 
+        // Workaround: Disable a tracking scroll to prevent bouncing a scroll content in a panel animating
+        let isScrollEnabled = scrollView?.isScrollEnabled
+        if let scrollView = scrollView, targetPosition != .full {
+            scrollView.isScrollEnabled = false
+        }
+
         startAnimation(to: targetPosition, at: distance, with: velocity)
+
+        // Workaround: Reset `self.scrollView.isScrollEnabled`
+        if let scrollView = scrollView, targetPosition != .full,
+            let isScrollEnabled = isScrollEnabled {
+            scrollView.isScrollEnabled = isScrollEnabled
+        }
     }
 
     private func shouldStartRemovalAnimation(with velocityVector: CGVector) -> Bool {
