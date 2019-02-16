@@ -92,6 +92,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         if to != .full {
             lockScrollView()
         }
+        tearDownActiveInteraction()
 
         if animated {
             let animator: UIViewPropertyAnimator
@@ -538,6 +539,12 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         }
 
         layoutAdapter.endInteraction(at: targetPosition)
+    }
+
+    private func tearDownActiveInteraction() {
+        // Cancel the pan gesture so that panningEnd(with:velocity:) is called
+        panGestureRecognizer.isEnabled = false
+        panGestureRecognizer.isEnabled = true
     }
 
     private func startAnimation(to targetPosition: FloatingPanelPosition, at distance: CGFloat, with velocity: CGPoint) {
