@@ -295,7 +295,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
             if let animator = self.animator {
                 if animator.isInterruptible {
-                    animator.stopAnimation(true)
+                    animator.stopAnimation(false)
+                    animator.finishAnimation(at: .current)
                 }
                 self.animator = nil
             }
@@ -562,11 +563,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         animator.addCompletion { [weak self] pos in
             guard let `self` = self else { return }
             self.isDecelerating = false
-            guard
-                self.interactionInProgress == false,
-                animator == self.animator,
-                pos == .end
-                else { return }
             self.animator = nil
             self.finishAnimation(at: targetPosition)
         }
