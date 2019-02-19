@@ -41,7 +41,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     fileprivate var animator: UIViewPropertyAnimator?
     private var initialFrame: CGRect = .zero
-    private var initialScrollOffset: CGPoint = .zero
     private var initialTranslationY: CGFloat = 0
     private var initialLocation: CGPoint = .nan
 
@@ -49,6 +48,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     var isDecelerating: Bool = false
 
     // Scroll handling
+    private var initialScrollOffset: CGPoint = .zero
+    private var initialScrollFrame: CGRect = .zero
     private var stopScrollDeceleration: Bool = false
     private var scrollBouncable = false
     private var scrollIndictorVisible = false
@@ -232,7 +233,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     // MARK: - Gesture handling
-    private let offsetThreshold: CGFloat = 5.0 // Optimal value from testing
     @objc func handle(panGesture: UIPanGestureRecognizer) {
         log.debug("Gesture >>>>", panGesture)
         let velocity = panGesture.velocity(in: panGesture.view)
@@ -243,11 +243,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
             log.debug("SrollPanGesture ScrollView.contentOffset >>>", scrollView.contentOffset.y, scrollView.contentSize, scrollView.bounds.size)
 
-            // Prevent scoll slip by the top bounce when the scroll view's height is
-            // less than the content's height
-            if scrollView.isDecelerating == false, scrollView.contentSize.height > scrollView.bounds.height {
-                scrollView.bounces = (scrollView.contentOffset.y > offsetThreshold)
-            }
+            let location = panGesture.location(in: surfaceView)
 
             if surfaceView.frame.minY > layoutAdapter.topY {
                 // Scroll offset pinning
@@ -256,13 +252,15 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                     if interactionInProgress {
                         scrollView.setContentOffset(initialScrollOffset, animated: false)
                     } else {
-                        let point = panGesture.location(in: surfaceView)
-                        if grabberAreaFrame.contains(point) {
+                        if grabberAreaFrame.contains(location) {
                             // Preserve the current content offset in moving from full.
                             scrollView.contentOffset.y = initialScrollOffset.y
                         } else {
-                            // Prevent over scrolling in moving from full.
-                            scrollView.contentOffset.y = scrollView.contentOffsetZero.y
+                            if scrollView.contentOffset.y < 0 {
+                                fitToBounds(scrollView: scrollView)
+                                let translation = panGesture.translation(in: panGestureRecognizer.view!.superview)
+                                startInteraction(with: translation, at: location)
+                            }
                         }
                     }
                 case .half, .tip:
@@ -286,10 +284,16 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 // Always show a scroll indicator at the top.
                 if interactionInProgress {
                     unlockScrollView()
+                } else {
+                    if state == .full, scrollView.contentOffset.y < 0, velocity.y > 0 {
+                        fitToBounds(scrollView: scrollView)
+                        let translation = panGesture.translation(in: panGestureRecognizer.view!.superview)
+                        startInteraction(with: translation, at: location)
+                    }
                 }
             }
         case panGestureRecognizer:
-            let translation = panGesture.translation(in: panGesture.view!.superview)
+            let translation = panGesture.translation(in: panGestureRecognizer.view!.superview)
             let location = panGesture.location(in: panGesture.view)
 
             log.debug(panGesture.state, ">>>", "translation: \(translation.y), velocity: \(velocity.y)")
@@ -319,7 +323,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             switch panGesture.state {
             case .changed:
                 if interactionInProgress == false {
-                    startInteraction(with: translation)
+                    startInteraction(with: translation, at: location)
                 }
                 panningChange(with: translation)
             case .ended, .cancelled, .failed:
@@ -370,7 +374,12 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         log.debug("ScrollView.contentOffset >>>", scrollView.contentOffset.y)
 
         let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
-        if  abs(offset) > offsetThreshold {
+        // 10 pt is introduced from my testing(there might be better one)
+        // It should be low as possible because a user scroll view frame will
+        // change as far as the specified value temporarily.
+        // The zero offset is an excetpion because the offset is usually zero
+        // when a panel moves from half or tip position to full.
+        if  offset > -10.0, offset != 0.0 {
             return true
         }
         if scrollView.isDecelerating {
@@ -388,9 +397,12 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         // because it can be recognized in scrolling a content in a content view controller.
         // So here just preserve the current state if needed.
         log.debug("panningBegan")
+        initialLocation = location
         switch state {
         case .full:
-            initialLocation = location
+            if let scrollView = scrollView {
+                initialScrollFrame = scrollView.frame
+            }
         default:
             if let scrollView = scrollView {
                 initialScrollOffset = scrollView.contentOffset
@@ -534,13 +546,19 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         animator.startAnimation()
     }
 
-    private func startInteraction(with translation: CGPoint) {
+    private func startInteraction(with translation: CGPoint, at location: CGPoint) {
         /* Don't lock a scroll view to show a scroll indicator after hitting the top */
         log.debug("startInteraction")
+        guard interactionInProgress == false else { return }
 
         initialFrame = surfaceView.frame
         if state == .full, let scrollView = scrollView {
-            initialScrollOffset = scrollView.contentOffset
+            if grabberAreaFrame.contains(location) {
+                initialScrollOffset = scrollView.contentOffset
+            } else {
+                settle(scrollView: scrollView)
+                initialScrollOffset = scrollView.contentOffsetZero
+            }
         }
 
         initialTranslationY = translation.y
@@ -554,6 +572,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private func endInteraction(for targetPosition: FloatingPanelPosition) {
         log.debug("endInteraction for \(targetPosition)")
+
         interactionInProgress = false
 
         // Prevent to keep a scoll view indicator visible at the half/tip position
@@ -820,6 +839,24 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         scrollView.isDirectionalLockEnabled = false
         scrollView.bounces = scrollBouncable
         scrollView.showsVerticalScrollIndicator = scrollIndictorVisible
+    }
+
+    private func fitToBounds(scrollView: UIScrollView) {
+        surfaceView.frame.origin.y = layoutAdapter.topY - scrollView.contentOffset.y
+        scrollView.transform = CGAffineTransform.identity.translatedBy(x: 0.0,
+                                                                       y: scrollView.contentOffset.y)
+        scrollView.scrollIndicatorInsets = UIEdgeInsets(top: -scrollView.contentOffset.y,
+                                                        left: 0.0,
+                                                        bottom: 0.0,
+                                                        right: 0.0)
+    }
+
+    private func settle(scrollView: UIScrollView) {
+        surfaceView.transform = .identity
+        scrollView.transform = .identity
+        scrollView.frame = initialScrollFrame
+        scrollView.contentOffset = scrollView.contentOffsetZero
+        scrollView.scrollIndicatorInsets = .zero
     }
 
 
