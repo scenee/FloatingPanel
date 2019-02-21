@@ -293,10 +293,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             }
 
             if let animator = self.animator {
-                if animator.isInterruptible == false {
-                    return
+                if animator.isInterruptible {
+                    animator.stopAnimation(true)
                 }
-                animator.stopAnimation(true)
                 self.animator = nil
             }
 
