@@ -114,7 +114,7 @@ public class FloatingPanelSurfaceView: UIView {
 
     public override func layoutSubviews() {
         super.layoutSubviews()
-        log.debug("SurfaceView frame", frame)
+        log.debug("surface view frame = \(frame)")
 
         updateLayers()
         updateContentViewMask()
@@ -125,8 +125,6 @@ public class FloatingPanelSurfaceView: UIView {
     }
 
     private func updateLayers() {
-        log.debug("SurfaceView bounds", bounds)
-
         backgroundView.backgroundColor = color
         backgroundView.layer.masksToBounds = true
         backgroundView.layer.cornerRadius = cornerRadius
