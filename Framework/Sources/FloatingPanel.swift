@@ -252,13 +252,17 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 // Scroll offset pinning
                 switch state {
                 case .full:
-                    let point = panGesture.location(in: surfaceView)
-                    if grabberAreaFrame.contains(point) {
-                        // Preserve the current content offset in moving from full.
-                        scrollView.contentOffset.y = initialScrollOffset.y
+                    if interactionInProgress {
+                        scrollView.setContentOffset(initialScrollOffset, animated: false)
                     } else {
-                        // Prevent over scrolling in moving from full.
-                        scrollView.contentOffset.y = scrollView.contentOffsetZero.y
+                        let point = panGesture.location(in: surfaceView)
+                        if grabberAreaFrame.contains(point) {
+                            // Preserve the current content offset in moving from full.
+                            scrollView.contentOffset.y = initialScrollOffset.y
+                        } else {
+                            // Prevent over scrolling in moving from full.
+                            scrollView.contentOffset.y = scrollView.contentOffsetZero.y
+                        }
                     }
                 case .half, .tip:
                     guard scrollView.isDecelerating == false else {
