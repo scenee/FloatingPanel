@@ -43,6 +43,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private var initialFrame: CGRect = .zero
     private var initialScrollOffset: CGPoint = .zero
     private var initialTranslationY: CGFloat = 0
+    private var initialLocation: CGPoint = .nan
 
     var interactionInProgress: Bool = false
     var isDecelerating: Bool = false
@@ -293,10 +294,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
             log.debug(panGesture.state, ">>>", "translation: \(translation.y), velocity: \(velocity.y)")
 
-            if shouldScrollViewHandleTouch(scrollView, point: location, velocity: velocity) {
-                return
-            }
-
             if let animator = self.animator {
                 if animator.isInterruptible {
                     animator.stopAnimation(false)
@@ -310,9 +307,16 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 return
             }
 
+            if panGesture.state == .began {
+                panningBegan(at: location)
+                return
+            }
+
+            if shouldScrollViewHandleTouch(scrollView, point: location, velocity: velocity) {
+                return
+            }
+
             switch panGesture.state {
-            case .began:
-                panningBegan()
             case .changed:
                 if interactionInProgress == false {
                     startInteraction(with: translation)
@@ -320,7 +324,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 panningChange(with: translation)
             case .ended, .cancelled, .failed:
                 panningEnd(with: translation, velocity: velocity)
-            case .possible:
+            default:
                 break
             }
         default:
@@ -346,9 +350,19 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         guard
             state == .full,                   // When not .full, don't scroll.
-            interactionInProgress == false,   // When interaction already in progress, don't scroll.
-            scrollView.frame.contains(point), // When point not in scrollView, don't scroll.
-            !grabberAreaFrame.contains(point) // When point within grabber area, don't scroll.
+            interactionInProgress == false    // When interaction already in progress, don't scroll.
+        else {
+            return false
+        }
+
+        // When the current and initial point within grabber area, do scroll.
+        if grabberAreaFrame.contains(point), !grabberAreaFrame.contains(initialLocation) {
+            return true
+        }
+
+        guard
+            scrollView.frame.contains(initialLocation), // When initialLocation not in scrollView, don't scroll.
+            !grabberAreaFrame.contains(point)           // When point within grabber area, don't scroll.
         else {
             return false
         }
@@ -369,13 +383,18 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         return false
     }
 
-    private func panningBegan() {
+    private func panningBegan(at location: CGPoint) {
         // A user interaction does not always start from Began state of the pan gesture
         // because it can be recognized in scrolling a content in a content view controller.
         // So here just preserve the current state if needed.
         log.debug("panningBegan")
-        if state != .full, let scrollView = scrollView {
-            initialScrollOffset = scrollView.contentOffset
+        switch state {
+        case .full:
+            initialLocation = location
+        default:
+            if let scrollView = scrollView {
+                initialScrollOffset = scrollView.contentOffset
+            }
         }
     }
 
@@ -450,7 +469,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private func panningEnd(with translation: CGPoint, velocity: CGPoint) {
         log.debug("panningEnd")
 
-        guard state != .hidden else {
+        if state == .hidden {
             log.debug("Already hidden")
             return
         }

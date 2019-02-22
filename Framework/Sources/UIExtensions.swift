@@ -101,3 +101,10 @@ extension UISpringTimingParameters {
         self.init(mass: mass, stiffness: stiffness, damping: damp, initialVelocity: initialVelocity)
     }
 }
+
+extension CGPoint {
+    static var nan: CGPoint {
+        return CGPoint(x: CGFloat.nan,
+                       y: CGFloat.nan)
+    }
+}
