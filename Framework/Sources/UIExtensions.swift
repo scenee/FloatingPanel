@@ -77,12 +77,12 @@ extension UIView {
 extension UIGestureRecognizerState: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
-        case .began: return "Began"
-        case .changed: return "Changed"
-        case .failed: return "Failed"
-        case .cancelled: return "Cancelled"
-        case .ended: return "Endeded"
-        case .possible: return "Possible"
+        case .began: return "began"
+        case .changed: return "changed"
+        case .failed: return "failed"
+        case .cancelled: return "cancelled"
+        case .ended: return "endeded"
+        case .possible: return "possible"
         }
     }
 }
