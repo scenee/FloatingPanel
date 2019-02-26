@@ -24,7 +24,7 @@ class FloatingPanelModalTransition: NSObject, UIViewControllerTransitioningDeleg
 class FloatingPanelPresentationController: UIPresentationController {
     override func presentationTransitionWillBegin() {
         // Must call here even if duplicating on in containerViewWillLayoutSubviews()
-        // Because it let the floating panel present correclty with the presentation animation
+        // Because it let the floating panel present correctly with the presentation animation
         addFloatingPanel()
     }
 
@@ -52,14 +52,14 @@ class FloatingPanelPresentationController: UIPresentationController {
 
         /*
          * Layout the views managed by `FloatingPanelController` here for the
-         * sake of the presentation and disimissal modally from the controller.
+         * sake of the presentation and dismissal modally from the controller.
          */
         addFloatingPanel()
 
         // Forward touch events to the presenting view controller
         (fpc.view as? FloatingPanelPassThroughView)?.eventForwardingView = presentingViewController.view
 
-        // Set tap-to-dimiss in the backdrop view
+        // Set tap-to-dismiss in the backdrop view
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
         fpc.backdropView.addGestureRecognizer(tapGesture)
     }

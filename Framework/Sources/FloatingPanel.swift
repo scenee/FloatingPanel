@@ -9,7 +9,7 @@ import UIKit.UIGestureRecognizerSubclass // For Xcode 9.4.1
 /// FloatingPanel presentation model
 ///
 class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate {
-    // MUST be a weak reference to prevent UI freeze on the presentaion modally
+    // MUST be a weak reference to prevent UI freeze on the presentation modally
     weak var viewcontroller: FloatingPanelController!
 
     let surfaceView: FloatingPanelSurfaceView
@@ -219,7 +219,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             // Do not begin the pan gesture until these gestures fail
             return true
         default:
-            // Should begin the pan gesture witout waiting tap/long press gestures fail
+            // Should begin the pan gesture without waiting tap/long press gestures fail
             return false
         }
     }
@@ -382,7 +382,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         // 10 pt is introduced from my testing(there might be better one)
         // It should be low as possible because a user scroll view frame will
         // change as far as the specified value temporarily.
-        // The zero offset is an excetpion because the offset is usually zero
+        // The zero offset is an exception because the offset is usually zero
         // when a panel moves from half or tip position to full.
         if  offset > -10.0, offset != 0.0 {
             return true
@@ -444,7 +444,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     private var disabledBottomAutoLayout = false
-    // Prevent streching a view having a constraint to SafeArea.bottom in an overflow
+    // Prevent stretching a view having a constraint to SafeArea.bottom in an overflow
     // from the full position because SafeArea is global in a screen.
     private func preserveContentVCLayoutIfNeeded() {
         // Must include topY
@@ -585,7 +585,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         interactionInProgress = false
 
-        // Prevent to keep a scoll view indicator visible at the half/tip position
+        // Prevent to keep a scroll view indicator visible at the half/tip position
         if targetPosition != .full {
             lockScrollView()
         }

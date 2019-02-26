@@ -13,7 +13,7 @@ public class FloatingPanelSurfaceView: UIView {
     /// A GrabberHandleView object displayed at the top of the surface view.
     ///
     /// To use a custom grabber handle, hide this and then add the custom one
-    /// to the surface view at appropirate coordinates.
+    /// to the surface view at appropriate coordinates.
     public var grabberHandle: GrabberHandleView!
 
     /// The height of the grabber bar area
@@ -140,7 +140,7 @@ public class FloatingPanelSurfaceView: UIView {
     private func updateContentViewMask() {
         if #available(iOS 11, *) {
             // Don't use `contentView.clipToBounds` because it prevents content view from expanding the height of a subview of it
-            // for the bottom overflow like Auto Layout settings of UIVisualEffectView in Main.storyborad of Example/Maps.
+            // for the bottom overflow like Auto Layout settings of UIVisualEffectView in Main.storyboard of Example/Maps.
             // Because the bottom of contentView must be fit to the bottom of a screen to work the `safeLayoutGuide` of a content VC.
             contentView?.layer.masksToBounds = true
             contentView?.layer.cornerRadius = cornerRadius
