@@ -757,7 +757,7 @@ class TabBarContentViewController: UIViewController {
         // Set a content view controller and track the scroll view
         let consoleVC = storyboard?.instantiateViewController(withIdentifier: "ConsoleViewController") as! DebugTextViewController
         fpc.set(contentViewController: consoleVC)
-        consoleVC.textView.delegate = self
+        consoleVC.textView.delegate = self // MUST call it before fpc.track(scrollView:)
         fpc.track(scrollView: consoleVC.textView)
         self.consoleVC = consoleVC
 
@@ -828,15 +828,6 @@ class TabBarContentViewController: UIViewController {
 extension TabBarContentViewController: UITextViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard self.tabBarItem.tag == 2 else { return }
-
-        // Reset an invalid content offset after `consoleVC.textView` is relayouted.
-        // NOTE:
-        // FloatingPanel can implicity reset it with KVO of `scrollView.contentOffset`
-        // but it causes a crash because it leads to an infinit loop when a user
-        // resets a content offset as below.
-        if fpc.position != .full, fpc.surfaceView.frame.minY > fpc.originYOfSurface(for: .full)  {
-            scrollView.contentOffset = .zero
-        }
     }
 }
 
@@ -870,7 +861,12 @@ extension TabBarContentViewController: FloatingPanelControllerDelegate {
                 consoleVC.textViewTopConstraint?.constant = threeLayout.topPadding
             }
         case .changeOffset:
-            /* Bad solution: Manipulate scoll content inset */
+            /*
+             Bad solution: Manipulate scoll content inset
+
+             FloatingPanelController keeps a content offset in moving a panel
+             so that changing content inset or offset causes a buggy behavior.
+             */
             guard let scrollView = consoleVC.textView else { return }
             var insets = vc.adjustedContentInsets
             if vc.surfaceView.frame.minY < vc.layoutInsets.top {
@@ -926,7 +922,9 @@ extension TabBarContentViewController: FloatingPanelControllerDelegate {
             threeLayout.leftConstraint.constant = 0.0
             threeLayout.rightConstraint.constant = 0.0
         }
-        vc.view.layoutIfNeeded() // Can call it but it's not necessary
+        // Can call it, but it's not necessary because it will be also called
+        // by FloatingPanelController after the delegate method
+        vc.view.layoutIfNeeded()
     }
 }
 
