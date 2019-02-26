@@ -294,7 +294,7 @@ class FloatingPanelLayoutAdapter {
 
         fixedConstraints = surfaceConstraints + backdropConstraints
 
-        // Flexible surface constarints for full, half, tip and off
+        // Flexible surface constraints for full, half, tip and off
         let topAnchor: NSLayoutYAxisAnchor = {
             if layout is FloatingPanelFullScreenLayout {
                 return vc.view.topAnchor
@@ -357,7 +357,7 @@ class FloatingPanelLayoutAdapter {
     }
 
     func endInteraction(at state: FloatingPanelPosition) {
-        // Don't deacitvate `interactiveTopConstraint` here because it leads to
+        // Don't deactivate `interactiveTopConstraint` here because it leads to
         // unsatisfiable constraints
     }
 
