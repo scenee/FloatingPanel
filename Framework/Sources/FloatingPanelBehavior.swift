@@ -6,7 +6,18 @@
 import UIKit
 
 public protocol FloatingPanelBehavior {
-    /// Returns the progress to redirect to the previous position
+    /// Asks the behavior object if the floating panel should project a momentum of a user interaction to move the proposed position.
+    ///
+    /// The default implementation of this method returns true. This method is called for a layout to support all positions(tip, half and full).
+    /// Therfore, `proposedTargetPosition` can only be `FloatingPanelPosition.tip` or `FloatingPanelPosition.full`.
+    func shouldProjectMomentum(_ fpc: FloatingPanelController, for proposedTargetPosition: FloatingPanelPosition) -> Bool
+
+    /// Returns a deceleration rate to calculate a target position projected a dragging momentum.
+    ///
+    /// The default implementation of this method returns the normal deceleration rate of UIScrollView.
+    func momentumProjectionRate(_ fpc: FloatingPanelController) -> CGFloat
+
+    /// Returns the progress to redirect to the previous position.
     ///
     /// The progress is represented by a floating-point value between 0.0 and 1.0, inclusive, where 1.0 indicates the floating panel is impossible to move to the next posiiton. The default value is 0.5. Values less than 0.0 and greater than 1.0 are pinned to those limits.
     func redirectionalProgress(_ fpc: FloatingPanelController, from: FloatingPanelPosition, to: FloatingPanelPosition) -> CGFloat
@@ -49,8 +60,27 @@ public protocol FloatingPanelBehavior {
 }
 
 public extension FloatingPanelBehavior {
+    func shouldProjectMomentum(_ fpc: FloatingPanelController, for proposedTargetPosition: FloatingPanelPosition) -> Bool {
+        switch (fpc.position, proposedTargetPosition) {
+        case (.full, .tip):
+            return false
+        case (.tip,  .full):
+            return false
+        default:
+            return true
+        }
+    }
+
+    func momentumProjectionRate(_ fpc: FloatingPanelController) -> CGFloat {
+        return UIScrollViewDecelerationRateNormal
+    }
+
     func redirectionalProgress(_ fpc: FloatingPanelController, from: FloatingPanelPosition, to: FloatingPanelPosition) -> CGFloat {
         return 0.5
+    }
+
+    public func interactionAnimator(_ fpc: FloatingPanelController, to targetPosition: FloatingPanelPosition, with velocity: CGVector) -> UIViewPropertyAnimator {
+        return defaultBehavior.interactionAnimator(fpc, to: targetPosition, with: velocity)
     }
 
     func addAnimator(_ fpc: FloatingPanelController, to: FloatingPanelPosition) -> UIViewPropertyAnimator {
@@ -82,8 +112,12 @@ public extension FloatingPanelBehavior {
     }
 }
 
-class FloatingPanelDefaultBehavior: FloatingPanelBehavior {
-    func interactionAnimator(_ fpc: FloatingPanelController, to targetPosition: FloatingPanelPosition, with velocity: CGVector) -> UIViewPropertyAnimator {
+private let defaultBehavior = FloatingPanelDefaultBehavior()
+
+public class FloatingPanelDefaultBehavior: FloatingPanelBehavior {
+    public init() { }
+
+    public func interactionAnimator(_ fpc: FloatingPanelController, to targetPosition: FloatingPanelPosition, with velocity: CGVector) -> UIViewPropertyAnimator {
         let timing = timeingCurve(with: velocity)
         let animator = UIViewPropertyAnimator(duration: 0, timingParameters: timing)
         animator.isInterruptible = false
