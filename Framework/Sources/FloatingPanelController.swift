@@ -14,7 +14,10 @@ public protocol FloatingPanelControllerDelegate: class {
 
     func floatingPanelDidChangePosition(_ vc: FloatingPanelController) // changed the settled position in the model layer
 
-    func floatingPanelDidMove(_ vc: FloatingPanelController) // any offset changes
+    /// Asks the delegate if dragging should begin by the pan gesture recognizer.
+    func floatingPanelShouldBeginDragging(_ vc: FloatingPanelController) -> Bool
+
+    func floatingPanelDidMove(_ vc: FloatingPanelController) // any surface frame changes in dragging
 
     // called on start of dragging (may require some time and or distance to move)
     func floatingPanelWillBeginDragging(_ vc: FloatingPanelController)
@@ -28,7 +31,10 @@ public protocol FloatingPanelControllerDelegate: class {
     // called when its views are removed from a parent view controller
     func floatingPanelDidEndRemove(_ vc: FloatingPanelController)
 
-    func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith gestureRecognizer: UIGestureRecognizer) -> Bool
+    /// Asks the delegate if the other gesture recognizer should be allowed to recognize the gesture in parallel.
+    ///
+    /// By default, any tap and long gesture recognizers are allowed to recognize gestures simultaneously.
+    func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool
 }
 
 public extension FloatingPanelControllerDelegate {
@@ -39,6 +45,9 @@ public extension FloatingPanelControllerDelegate {
         return nil
     }
     func floatingPanelDidChangePosition(_ vc: FloatingPanelController) {}
+    func floatingPanelShouldBeginDragging(_ vc: FloatingPanelController) -> Bool {
+        return true
+    }
     func floatingPanelDidMove(_ vc: FloatingPanelController) {}
     func floatingPanelWillBeginDragging(_ vc: FloatingPanelController) {}
     func floatingPanelDidEndDragging(_ vc: FloatingPanelController, withVelocity velocity: CGPoint, targetPosition: FloatingPanelPosition) {}
@@ -48,7 +57,9 @@ public extension FloatingPanelControllerDelegate {
     func floatingPanelDidEndDraggingToRemove(_ vc: FloatingPanelController, withVelocity velocity: CGPoint) {}
     func floatingPanelDidEndRemove(_ vc: FloatingPanelController) {}
 
-    func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith gestureRecognizer: UIGestureRecognizer) -> Bool { return false }
+    func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return false
+    }
 }
 
 
@@ -233,10 +244,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     }
 
     private func update(safeAreaInsets: UIEdgeInsets) {
-        // Don't re-layout the surface on SafeArea.Bottom enabled/disabled in interaction progress
         guard
             floatingPanel.layoutAdapter.safeAreaInsets != safeAreaInsets,
-            self.floatingPanel.interactionInProgress == false,
             self.floatingPanel.isDecelerating == false
             else { return }
 
@@ -381,7 +390,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             vc.willMove(toParentViewController: nil)
             vc.view.removeFromSuperview()
             vc.removeFromParentViewController()
-            
+
             if let scrollView = floatingPanel.scrollView,
                 let delegate = floatingPanel.userScrollViewDelegate,
                 vc.view.subviews.contains(scrollView) {
@@ -417,10 +426,22 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     /// Tracks the specified scroll view to correspond with the scroll.
     ///
+    /// - Parameters:
+    ///     - scrollView: Specify a scroll view to continuously and seamlessly work in concert with interactions of the surface view or nil to cancel it.
     /// - Attention:
     ///     The specified scroll view must be already assigned to the delegate property because the controller intermediates between the various delegate methods.
-    ///
-    public func track(scrollView: UIScrollView) {
+    public func track(scrollView: UIScrollView?) {
+        if let trackingScrollView = floatingPanel.scrollView,
+            let delegate = floatingPanel.userScrollViewDelegate {
+            trackingScrollView.delegate = delegate // restore delegate
+            floatingPanel.userScrollViewDelegate = nil
+        }
+
+        guard let scrollView = scrollView else {
+            floatingPanel.scrollView = nil
+            return
+        }
+
         floatingPanel.scrollView = scrollView
         if scrollView.delegate !== floatingPanel {
             floatingPanel.userScrollViewDelegate = scrollView.delegate

@@ -10,11 +10,12 @@ var log = {
     return Logger()
 }()
 
+#if __FP_LOG
 struct Logger {
     private let osLog: OSLog
     private let s = DispatchSemaphore(value: 1)
 
-    enum Level: Int, Comparable {
+    private enum Level: Int, Comparable {
         case debug = 0
         case info = 1
         case warning = 2
@@ -55,17 +56,16 @@ struct Logger {
             }
         }
 
-        public static func < (lhs: Logger.Level, rhs: Logger.Level) -> Bool {
+        static func < (lhs: Logger.Level, rhs: Logger.Level) -> Bool {
             return lhs.rawValue < rhs.rawValue
         }
     }
 
-    init() {
+    fileprivate init() {
         osLog = OSLog(subsystem: "com.scenee.FloatingPanel", category: "FloatingPanel")
     }
 
     private func log(_ level: Level, _ message: Any, _ arguments: [Any], function: String, line: UInt) {
-        #if __FP_LOG
         _ = s.wait(timeout: .now() + 0.033)
         defer { s.signal() }
 
@@ -73,7 +73,6 @@ struct Logger {
         let log = "\(level.shortName) \(message) \(extraMessage) (\(function):\(line))"
 
         os_log("%@", log: osLog, type: level.osLogType, log)
-        #endif
     }
 
     private func getPrettyFunction(_ function: String, _ file: String) -> String {
@@ -104,3 +103,12 @@ struct Logger {
         self.log(.fault, log, arguments, function: getPrettyFunction(function, file), line: line)
     }
 }
+#else
+struct Logger {
+    func debug(_ log: Any, _ arguments: Any...) { }
+    func info(_ log: Any, _ arguments: Any...) { }
+    func warning(_ log: Any, _ arguments: Any...) { }
+    func error(_ log: Any, _ arguments: Any...) { }
+    func fault(_ log: Any, _ arguments: Any...) { }
+}
+#endif

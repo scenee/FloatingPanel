@@ -77,12 +77,12 @@ extension UIView {
 extension UIGestureRecognizerState: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
-        case .began: return "Began"
-        case .changed: return "Changed"
-        case .failed: return "Failed"
-        case .cancelled: return "Cancelled"
-        case .ended: return "Endeded"
-        case .possible: return "Possible"
+        case .began: return "began"
+        case .changed: return "changed"
+        case .failed: return "failed"
+        case .cancelled: return "cancelled"
+        case .ended: return "endeded"
+        case .possible: return "possible"
         }
     }
 }
@@ -99,5 +99,12 @@ extension UISpringTimingParameters {
         let stiffness = pow(2 * .pi / frequencyResponse, 2) * mass
         let damp = 4 * .pi * dampingRatio * mass / frequencyResponse
         self.init(mass: mass, stiffness: stiffness, damping: damp, initialVelocity: initialVelocity)
+    }
+}
+
+extension CGPoint {
+    static var nan: CGPoint {
+        return CGPoint(x: CGFloat.nan,
+                       y: CGFloat.nan)
     }
 }
