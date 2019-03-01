@@ -398,7 +398,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         if scrollView.isDecelerating {
             return true
         }
-        if velocity.y < 0 {
+        if velocity.y <= 0 {
             return true
         }
 
