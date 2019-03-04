@@ -384,18 +384,12 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         floatingPanel.move(to: to, animated: animated, completion: completion)
     }
 
-    /// Sets the view controller responsible for the content portion of the floating panel..
+    /// Sets the view controller responsible for the content portion of the floating panel.
     public func set(contentViewController: UIViewController?) {
         if let vc = _contentViewController {
             vc.willMove(toParentViewController: nil)
             vc.view.removeFromSuperview()
             vc.removeFromParentViewController()
-
-            if let scrollView = floatingPanel.scrollView,
-                let delegate = floatingPanel.userScrollViewDelegate,
-                vc.view.subviews.contains(scrollView) {
-                scrollView.delegate = delegate
-            }
         }
 
         if let vc = contentViewController {
@@ -428,25 +422,14 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     ///
     /// - Parameters:
     ///     - scrollView: Specify a scroll view to continuously and seamlessly work in concert with interactions of the surface view or nil to cancel it.
-    /// - Attention:
-    ///     The specified scroll view must be already assigned to the delegate property because the controller intermediates between the various delegate methods.
     public func track(scrollView: UIScrollView?) {
-        if let trackingScrollView = floatingPanel.scrollView,
-            let delegate = floatingPanel.userScrollViewDelegate {
-            trackingScrollView.delegate = delegate // restore delegate
-            floatingPanel.userScrollViewDelegate = nil
-        }
-
         guard let scrollView = scrollView else {
             floatingPanel.scrollView = nil
             return
         }
 
         floatingPanel.scrollView = scrollView
-        if scrollView.delegate !== floatingPanel {
-            floatingPanel.userScrollViewDelegate = scrollView.delegate
-            scrollView.delegate = floatingPanel
-        }
+
         switch contentInsetAdjustmentBehavior {
         case .always:
             if #available(iOS 11.0, *) {
@@ -475,7 +458,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         setUpLayout()
     }
 
-    /// Returns the y-coordinate of the point at the origin of the surface view
+    /// Returns the y-coordinate of the point at the origin of the surface view.
     public func originYOfSurface(for pos: FloatingPanelPosition) -> CGFloat {
         switch pos {
         case .full:
