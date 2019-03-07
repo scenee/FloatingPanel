@@ -294,7 +294,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             // inset's update expectedly.
             // 2. The safe area top inset can be variable on the large title navigation bar(iOS11+).
             // That's why it needs the observation to keep `adjustedContentInsets` correct.
-            safeAreaInsetsObservation = self.observe(\.view.safeAreaInsets) { [weak self] (vc, chaneg) in
+            safeAreaInsetsObservation = self.observe(\.view.safeAreaInsets, options: [.initial, .new]) { [weak self] (vc, _) in
                 guard let `self` = self else { return }
                 self.update(safeAreaInsets: vc.layoutInsets)
             }
