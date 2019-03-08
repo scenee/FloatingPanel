@@ -476,7 +476,7 @@ class FloatingPanelLayoutAdapter {
     private func checkLayoutConsistance() {
         // Verify layout configurations
         assert(supportedPositions.count > 0)
-        assert(supportedPositions.contains(layout.initialPosition),
+        assert(supportedPositions.union([.hidden]).contains(layout.initialPosition),
                "Does not include an initial potision(\(layout.initialPosition)) in supportedPositions(\(supportedPositions))")
 
         if layout is FloatingPanelIntrinsicLayout {
