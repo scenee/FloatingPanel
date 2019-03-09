@@ -907,7 +907,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 }
 
 class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
-    fileprivate var floatingPanel: FloatingPanel?
+    fileprivate weak var floatingPanel: FloatingPanel?
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
         super.touchesBegan(touches, with: event)
         if floatingPanel?.animator != nil {
