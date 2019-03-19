@@ -477,7 +477,7 @@ class FloatingPanelLayoutAdapter {
         // Verify layout configurations
         assert(supportedPositions.count > 0)
         assert(supportedPositions.union([.hidden]).contains(layout.initialPosition),
-               "Does not include an initial potision(\(layout.initialPosition)) in supportedPositions(\(supportedPositions))")
+               "Does not include an initial position (\(layout.initialPosition)) in supportedPositions (\(supportedPositions))")
 
         if layout is FloatingPanelIntrinsicLayout {
             assert(layout.insetFor(position: .full) == nil, "Return `nil` for full position on FloatingPanelIntrinsicLayout")
