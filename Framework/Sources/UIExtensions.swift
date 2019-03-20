@@ -73,7 +73,7 @@ extension UIView {
     }
 }
 
-
+#if __FP_LOG
 extension UIGestureRecognizerState: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
@@ -86,6 +86,7 @@ extension UIGestureRecognizerState: CustomDebugStringConvertible {
         }
     }
 }
+#endif
 
 extension UIScrollView {
     var contentOffsetZero: CGPoint {
