@@ -306,11 +306,18 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 "translation =  \(translation.y), location = \(location.y), velocity = \(velocity.y)")
 
             if let animator = self.animator {
+                log.debug("panel animation interrupted!!!")
                 if animator.isInterruptible {
                     animator.stopAnimation(false)
                     animator.finishAnimation(at: .current)
                 }
+
                 self.animator = nil
+
+                // A user can stop a panel at the nearest Y of a target position
+                if fabs(surfaceView.frame.minY - layoutAdapter.topY) < 1 {
+                    surfaceView.frame.origin.y = layoutAdapter.topY
+                }
             }
 
             if interactionInProgress == false,
@@ -361,7 +368,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         guard
             state == .full,                   // When not .full, don't scroll.
-            interactionInProgress == false    // When interaction already in progress, don't scroll.
+            interactionInProgress == false,   // When interaction already in progress, don't scroll.
+            surfaceView.frame.minY == layoutAdapter.topY
         else {
             return false
         }
@@ -390,7 +398,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         if scrollView.isDecelerating {
             return true
         }
-        if velocity.y < 0 {
+        if velocity.y <= 0 {
             return true
         }
 
