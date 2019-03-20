@@ -59,7 +59,7 @@ public class FloatingPanelSurfaceView: UIView {
     /// The color of the surface border.
     public var borderWidth: CGFloat = 0.0  { didSet { setNeedsLayout() } }
 
-    private var backgroundView: UIView!
+    public var backgroundView: UIView!
     private var backgroundHeightConstraint: NSLayoutConstraint!
 
     private struct Default {
@@ -126,8 +126,11 @@ public class FloatingPanelSurfaceView: UIView {
 
     private func updateLayers() {
         backgroundView.backgroundColor = color
-        backgroundView.layer.masksToBounds = true
-        backgroundView.layer.cornerRadius = cornerRadius
+
+        if cornerRadius != 0.0, backgroundView.layer.cornerRadius != cornerRadius {
+            backgroundView.layer.masksToBounds = true
+            backgroundView.layer.cornerRadius = cornerRadius
+        }
 
         if shadowHidden == false {
             layer.shadowColor = shadowColor.cgColor
@@ -138,13 +141,19 @@ public class FloatingPanelSurfaceView: UIView {
     }
 
     private func updateContentViewMask() {
+        guard
+            let contentView = contentView,
+            cornerRadius != 0.0,
+            contentView.layer.cornerRadius != cornerRadius
+            else { return }
+
         if #available(iOS 11, *) {
             // Don't use `contentView.clipToBounds` because it prevents content view from expanding the height of a subview of it
             // for the bottom overflow like Auto Layout settings of UIVisualEffectView in Main.storyboard of Example/Maps.
             // Because the bottom of contentView must be fit to the bottom of a screen to work the `safeLayoutGuide` of a content VC.
-            contentView?.layer.masksToBounds = true
-            contentView?.layer.cornerRadius = cornerRadius
-            contentView?.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            contentView.layer.masksToBounds = true
+            contentView.layer.cornerRadius = cornerRadius
+            contentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         } else {
             // Don't use `contentView.layer.mask` because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
             // Instead, a user can mask the content view manually in an application.
