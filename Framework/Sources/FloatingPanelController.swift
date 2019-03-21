@@ -245,13 +245,10 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     private func update(safeAreaInsets: UIEdgeInsets) {
         guard
-            floatingPanel.layoutAdapter.safeAreaInsets != safeAreaInsets,
             self.floatingPanel.isDecelerating == false
             else { return }
 
         log.debug("Update safeAreaInsets", safeAreaInsets)
-
-        floatingPanel.layoutAdapter.safeAreaInsets = safeAreaInsets
 
         setUpLayout()
 
