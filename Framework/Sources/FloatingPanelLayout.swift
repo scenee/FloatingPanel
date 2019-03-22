@@ -408,10 +408,10 @@ class FloatingPanelLayoutAdapter {
         let minY: CGFloat = {
             var ret: CGFloat = 0.0
             switch layout {
-            case is FloatingPanelIntrinsicLayout:
+            case is FloatingPanelIntrinsicLayout, is FloatingPanelFullScreenLayout:
                 ret = topY
             default:
-                ret = fullInset
+                ret = topY - safeAreaInsets.top
             }
             if allowsTopBuffer {
                 ret -= layout.topInteractionBuffer
