@@ -180,6 +180,16 @@ class FloatingPanelLayoutAdapter {
         return supportedPositions
     }
 
+    var topMostState: FloatingPanelPosition {
+        if supportedPositions.contains(.full) {
+            return .full
+        }
+        if supportedPositions.contains(.half) {
+            return .half
+        }
+        return .tip
+    }
+
     var topY: CGFloat {
         if supportedPositions.contains(.full) {
             switch layout {
