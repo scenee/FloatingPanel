@@ -388,12 +388,10 @@ class FloatingPanelLayoutAdapter {
         case is FloatingPanelIntrinsicLayout:
             updateIntrinsicHeight()
             heightConstraint = surfaceView.heightAnchor.constraint(equalToConstant: intrinsicHeight + safeAreaInsets.bottom)
-        case is FloatingPanelFullScreenLayout:
-            heightConstraint =  surfaceView.heightAnchor.constraint(equalTo: vc.view.heightAnchor,
-                                                                    constant: -fullInset)
         default:
-            heightConstraint = surfaceView.heightAnchor.constraint(equalTo: vc.view.heightAnchor,
-                                                                   constant: -(safeAreaInsets.top + fullInset))
+            let const = -(positionY(for: topMostState))
+            heightConstraint =  surfaceView.heightAnchor.constraint(equalTo: vc.view.heightAnchor,
+                                                                    constant: const)
         }
 
         NSLayoutConstraint.activate([heightConstraint])
