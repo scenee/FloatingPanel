@@ -25,7 +25,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             scrollIndictorVisible = scrollView.showsVerticalScrollIndicator
         }
     }
-    weak var userScrollViewDelegate: UIScrollViewDelegate?
 
     private(set) var state: FloatingPanelPosition = .hidden {
         didSet { viewcontroller.delegate?.floatingPanelDidChangePosition(viewcontroller) }
@@ -40,6 +39,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     var isRemovalInteractionEnabled: Bool = false
 
     fileprivate var animator: UIViewPropertyAnimator?
+
     private var initialFrame: CGRect = .zero
     private var initialTranslationY: CGFloat = 0
     private var initialLocation: CGPoint = .nan
@@ -260,7 +260,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                     } else {
                         if grabberAreaFrame.contains(location) {
                             // Preserve the current content offset in moving from full.
-                            scrollView.contentOffset.y = initialScrollOffset.y
+                            scrollView.setContentOffset(initialScrollOffset, animated: false)
                         } else {
                             if scrollView.contentOffset.y < 0 {
                                 fitToBounds(scrollView: scrollView)
@@ -270,14 +270,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                         }
                     }
                 case .half, .tip:
-                    guard scrollView.isDecelerating == false else {
-                        // Don't fix the scroll offset in animating the panel to half and tip.
-                        // It causes a buggy scrolling deceleration because `state` becomes
-                        // a target position in animating the panel on the interaction from full.
-                        return
-                    }
-                    // Fix the scroll offset in moving the panel from half and tip.
-                    scrollView.contentOffset.y = initialScrollOffset.y
+                    scrollView.setContentOffset(initialScrollOffset, animated: false)
                 case .hidden:
                     break
                 }
@@ -500,6 +493,12 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         }
 
         stopScrollDeceleration = (surfaceView.frame.minY > layoutAdapter.topY) // Projecting the dragging to the scroll dragging or not
+        if stopScrollDeceleration {
+            DispatchQueue.main.async { [weak self] in
+                guard let `self` = self else { return }
+                self.stopScrollingWithDeceleration(at: self.initialScrollOffset)
+            }
+        }
 
         let targetPosition = self.targetPosition(with: velocity)
         let distance = self.distance(to: targetPosition)
@@ -526,7 +525,19 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         viewcontroller.delegate?.floatingPanelDidEndDragging(viewcontroller, withVelocity: velocity, targetPosition: targetPosition)
 
+        // Workaround: Disable a tracking scroll to prevent bouncing a scroll content in a panel animating
+        let isScrollEnabled = scrollView?.isScrollEnabled
+        if let scrollView = scrollView, targetPosition != .full {
+            scrollView.isScrollEnabled = false
+        }
+
         startAnimation(to: targetPosition, at: distance, with: velocity)
+
+        // Workaround: Reset `self.scrollView.isScrollEnabled`
+        if let scrollView = scrollView, targetPosition != .full,
+            let isScrollEnabled = isScrollEnabled {
+            scrollView.isScrollEnabled = isScrollEnabled
+        }
     }
 
     private func shouldStartRemovalAnimation(with velocityVector: CGVector) -> Bool {
@@ -885,32 +896,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         scrollView.scrollIndicatorInsets = .zero
     }
 
-
-    // MARK: - UIScrollViewDelegate Intermediation
-    override func responds(to aSelector: Selector!) -> Bool {
-        return super.responds(to: aSelector) || userScrollViewDelegate?.responds(to: aSelector) == true
-    }
-
-    override func forwardingTarget(for aSelector: Selector!) -> Any? {
-        if userScrollViewDelegate?.responds(to: aSelector) == true {
-            return userScrollViewDelegate
-        } else {
-            return super.forwardingTarget(for: aSelector)
-        }
-    }
-
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        if stopScrollDeceleration {
-            targetContentOffset.pointee = scrollView.contentOffset
-            stopScrollDeceleration = false
-        } else {
-            let targetOffset = targetContentOffset.pointee
-            userScrollViewDelegate?.scrollViewWillEndDragging?(scrollView, withVelocity: velocity, targetContentOffset: targetContentOffset)
-            // Stop scrolling on tip and half
-            if state != .full, targetOffset == targetContentOffset.pointee {
-                targetContentOffset.pointee.y = scrollView.contentOffset.y
-            }
-        }
+    private func stopScrollingWithDeceleration(at contentOffset: CGPoint) {
+        // Must use setContentOffset(_:animated) to force-stop deceleration
+        scrollView?.setContentOffset(contentOffset, animated: false)
     }
 }
 

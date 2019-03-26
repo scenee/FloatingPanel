@@ -828,6 +828,15 @@ class TabBarContentViewController: UIViewController {
 extension TabBarContentViewController: UITextViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard self.tabBarItem.tag == 2 else { return }
+        // Reset an invalid content offset by a user after updating the layout
+        // of `consoleVC.textView`.
+        // NOTE: FloatingPanel doesn't implicity reset the offset(i.e.
+        // Using KVO of `scrollView.contentOffset`). Because it can lead to an
+        // infinit loop if a user also resets a content offset as below and,
+        // in the situation, a user has to modify the library.
+        if fpc.position != .full, fpc.surfaceView.frame.minY < fpc.originYOfSurface(for: .full) {
+            scrollView.contentOffset = .zero
+        }
     }
 }
 
