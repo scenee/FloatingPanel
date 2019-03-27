@@ -180,6 +180,16 @@ class FloatingPanelLayoutAdapter {
         return supportedPositions
     }
 
+    var topMostState: FloatingPanelPosition {
+        if supportedPositions.contains(.full) {
+            return .full
+        }
+        if supportedPositions.contains(.half) {
+            return .half
+        }
+        return .tip
+    }
+
     var topY: CGFloat {
         if supportedPositions.contains(.full) {
             switch layout {
@@ -378,12 +388,10 @@ class FloatingPanelLayoutAdapter {
         case is FloatingPanelIntrinsicLayout:
             updateIntrinsicHeight()
             heightConstraint = surfaceView.heightAnchor.constraint(equalToConstant: intrinsicHeight + safeAreaInsets.bottom)
-        case is FloatingPanelFullScreenLayout:
-            heightConstraint =  surfaceView.heightAnchor.constraint(equalTo: vc.view.heightAnchor,
-                                                                    constant: -fullInset)
         default:
-            heightConstraint = surfaceView.heightAnchor.constraint(equalTo: vc.view.heightAnchor,
-                                                                   constant: -(safeAreaInsets.top + fullInset))
+            let const = -(positionY(for: topMostState))
+            heightConstraint =  surfaceView.heightAnchor.constraint(equalTo: vc.view.heightAnchor,
+                                                                    constant: const)
         }
 
         NSLayoutConstraint.activate([heightConstraint])
@@ -408,10 +416,10 @@ class FloatingPanelLayoutAdapter {
         let minY: CGFloat = {
             var ret: CGFloat = 0.0
             switch layout {
-            case is FloatingPanelIntrinsicLayout:
+            case is FloatingPanelIntrinsicLayout, is FloatingPanelFullScreenLayout:
                 ret = topY
             default:
-                ret = fullInset
+                ret = topY - safeAreaInsets.top
             }
             if allowsTopBuffer {
                 ret -= layout.topInteractionBuffer
