@@ -620,7 +620,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         isDecelerating = true
         viewcontroller.delegate?.floatingPanelWillBeginDecelerating(viewcontroller)
 
-        let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: min(fabs(velocity.y)/distance, 30.0)) : .zero
+        let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: min(abs(velocity.y)/distance, 30.0)) : .zero
         let animator = behavior.interactionAnimator(self.viewcontroller, to: targetPosition, with: velocityVector)
         animator.addAnimations { [weak self] in
             guard let `self` = self else { return }
