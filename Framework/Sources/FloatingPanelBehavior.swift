@@ -72,14 +72,14 @@ public extension FloatingPanelBehavior {
     }
 
     func momentumProjectionRate(_ fpc: FloatingPanelController) -> CGFloat {
-        return UIScrollViewDecelerationRateNormal
+        return UIScrollView.DecelerationRate.normal.rawValue
     }
 
     func redirectionalProgress(_ fpc: FloatingPanelController, from: FloatingPanelPosition, to: FloatingPanelPosition) -> CGFloat {
         return 0.5
     }
 
-    public func interactionAnimator(_ fpc: FloatingPanelController, to targetPosition: FloatingPanelPosition, with velocity: CGVector) -> UIViewPropertyAnimator {
+    func interactionAnimator(_ fpc: FloatingPanelController, to targetPosition: FloatingPanelPosition, with velocity: CGVector) -> UIViewPropertyAnimator {
         return defaultBehavior.interactionAnimator(fpc, to: targetPosition, with: velocity)
     }
 
