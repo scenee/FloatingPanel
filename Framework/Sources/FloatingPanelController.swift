@@ -351,7 +351,11 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             parent.view.addSubview(self.view)
         }
 
+        #if swift(>=4.2)
+        parent.addChild(self)
+        #else
         parent.addChildViewController(self)
+        #endif
 
         view.frame = parent.view.bounds // Needed for a correct safe area configuration
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -364,7 +368,11 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
         show(animated: animated) { [weak self] in
             guard let `self` = self else { return }
+            #if swift(>=4.2)
+            self.didMove(toParent: self)
+            #else
             self.didMove(toParentViewController: self)
+            #endif
         }
     }
 
@@ -380,9 +388,20 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
         hide(animated: animated) { [weak self] in
             guard let `self` = self else { return }
+            #if swift(>=4.2)
+            self.willMove(toParent: nil)
+            #else
             self.willMove(toParentViewController: nil)
+            #endif
+
             self.view.removeFromSuperview()
+
+            #if swift(>=4.2)
+            self.removeFromParent()
+            #else
             self.removeFromParentViewController()
+            #endif
+
             completion?()
         }
     }
@@ -400,16 +419,36 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     /// Sets the view controller responsible for the content portion of the floating panel.
     public func set(contentViewController: UIViewController?) {
         if let vc = _contentViewController {
+            #if swift(>=4.2)
+            vc.willMove(toParent: nil)
+            #else
             vc.willMove(toParentViewController: nil)
+            #endif
+
             vc.view.removeFromSuperview()
+
+            #if swift(>=4.2)
+            vc.removeFromParent()
+            #else
             vc.removeFromParentViewController()
+            #endif
         }
 
         if let vc = contentViewController {
+            #if swift(>=4.2)
+            addChild(vc)
+            #else
             addChildViewController(vc)
+            #endif
+
             let surfaceView = floatingPanel.surfaceView
             surfaceView.add(contentView: vc.view)
+
+            #if swift(>=4.2)
+            vc.didMove(toParent: self)
+            #else
             vc.didMove(toParentViewController: self)
+            #endif
         }
 
         _contentViewController = contentViewController
@@ -448,9 +487,15 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             if #available(iOS 11.0, *) {
                 scrollView.contentInsetAdjustmentBehavior = .never
             } else {
+                #if swift(>=4.2)
+                children.forEach { (vc) in
+                    vc.automaticallyAdjustsScrollViewInsets = false
+                }
+                #else
                 childViewControllers.forEach { (vc) in
                     vc.automaticallyAdjustsScrollViewInsets = false
                 }
+                #endif
             }
         default:
             break
@@ -504,10 +549,10 @@ extension FloatingPanelController {
 }
 
 public extension UIViewController {
-    @objc public func fp_original_dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+    @objc func fp_original_dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         // Implementation will be replaced by IMP of self.dismiss(animated:completion:)
     }
-    @objc public func fp_dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+    @objc func fp_dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         // Call dismiss(animated:completion:) to a content view controller
         if let fpc = parent as? FloatingPanelController {
             if fpc.presentingViewController != nil {
