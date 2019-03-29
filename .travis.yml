@@ -2,7 +2,6 @@ language: swift
 branches:
   only:
     - master
-    - next
 cache:
   directories:
   - /usr/local/Homebrew
@@ -19,15 +18,20 @@ jobs:
   - stage: Build framework(swift 4.1)
     osx_image: xcode9.4
     script:
-    - xcodebuild -scheme FloatingPanel clean build
+    - xcodebuild -scheme FloatingPanel SWIFT_VERSION=4.1 clean build
 
   - stage: Build framework(swift 4.2)
     osx_image: xcode10
     script:
-    - xcodebuild -scheme FloatingPanel clean build
+    - xcodebuild -scheme FloatingPanel SWIFT_VERSION=4.2 clean build
+
+  - stage: Build framework(swift 5.0)
+    osx_image: xcode10.2
+    script:
+    - xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.0 clean build
 
   - stage: Carthage
-    osx_image: xcode10
+    osx_image: xcode10.2
     before_install:
     - brew update
     - brew outdated carthage || brew upgrade carthage
@@ -35,21 +39,21 @@ jobs:
     - carthage build --no-skip-current
 
   - stage: Podspec
-    osx_image: xcode10
+    osx_image: xcode10.2
     script:
     - pod spec lint
 
   - stage: Build maps example
-    osx_image: xcode10
+    osx_image: xcode10.2
     script:
     - xcodebuild -scheme Maps -sdk iphonesimulator clean build
 
   - stage: Build stocks example
-    osx_image: xcode10
+    osx_image: xcode10.2
     script:
     - xcodebuild -scheme Stocks -sdk iphonesimulator clean build
 
   - stage: Build samples example
-    osx_image: xcode10
+    osx_image: xcode10.2
     script:
     - xcodebuild -scheme Samples -sdk iphonesimulator clean build
