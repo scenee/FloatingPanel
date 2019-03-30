@@ -9,12 +9,7 @@
 import UIKit
 import FloatingPanel
 
-/**
- - Attention: `FloatingPanelLayout` must not be applied by the parent view
- controller of a floating panel. But here `SampleListViewController` adopts it
- purposely to check if the library prints an appropriate warning.
- */
-class SampleListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, FloatingPanelControllerDelegate, FloatingPanelLayout {
+class SampleListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
 
     enum Menu: Int, CaseIterable {
@@ -24,6 +19,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case showModal
         case showFloatingPanelModal
         case showTabBar
+        case showPageView
         case showNestedScrollView
         case showRemovablePanel
         case showIntrinsicView
@@ -36,6 +32,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             case .showModal: return "Show Modal"
             case .showFloatingPanelModal: return "Show Floating Panel Modal"
             case .showTabBar: return "Show Tab Bar"
+            case .showPageView: return "Show Page View"
             case .showNestedScrollView: return "Show Nested ScrollView"
             case .showRemovablePanel: return "Show Removable Panel"
             case .showIntrinsicView: return "Show Intrinsic View"
@@ -50,6 +47,7 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             case .showModal: return "ModalViewController"
             case .showFloatingPanelModal: return nil
             case .showTabBar: return "TabBarViewController"
+            case .showPageView: return nil
             case .showNestedScrollView: return "NestedScrollViewController"
             case .showRemovablePanel: return "DetailViewController"
             case .showIntrinsicView: return "IntrinsicViewController"
@@ -65,6 +63,19 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
 
     var mainPanelObserves: [NSKeyValueObservation] = []
     var settingsObserves: [NSKeyValueObservation] = []
+
+    lazy var pages: [UIViewController] = {
+        let page1 = FloatingPanelController(delegate: self)
+        page1.view.backgroundColor = .blue
+        page1.show()
+        let page2 = FloatingPanelController(delegate: self)
+        page2.view.backgroundColor = .red
+        page2.show()
+        let page3 = FloatingPanelController(delegate: self)
+        page3.view.backgroundColor = .green
+        page3.show()
+        return [page1, page2, page3]
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -164,31 +175,6 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         }
     }
 
-    // MARK:- TableViewDatasource
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if #available(iOS 11.0, *) {
-            if navigationController?.navigationBar.prefersLargeTitles == true {
-                return Menu.allCases.count + 30
-            } else {
-                return Menu.allCases.count
-            }
-        } else {
-            return Menu.allCases.count
-        }
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        if Menu.allCases.count > indexPath.row {
-            let menu = Menu.allCases[indexPath.row]
-            cell.textLabel?.text = menu.name
-        } else {
-            cell.textLabel?.text = "\(indexPath.row) row"
-        }
-        return cell
-    }
-
     // MARK:- Actions
     @IBAction func showDebugMenu(_ sender: UIBarButtonItem) {
         guard settingsPanelVC == nil else { return }
@@ -213,9 +199,34 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         //  Add FloatingPanel to self.view
         settingsPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
     }
+}
 
-    // MARK:- TableViewDelegate
+extension SampleListViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if #available(iOS 11.0, *) {
+            if navigationController?.navigationBar.prefersLargeTitles == true {
+                return Menu.allCases.count + 30
+            } else {
+                return Menu.allCases.count
+            }
+        } else {
+            return Menu.allCases.count
+        }
+    }
 
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        if Menu.allCases.count > indexPath.row {
+            let menu = Menu.allCases[indexPath.row]
+            cell.textLabel?.text = menu.name
+        } else {
+            cell.textLabel?.text = "\(indexPath.row) row"
+        }
+        return cell
+    }
+}
+
+extension SampleListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard Menu.allCases.count > indexPath.row else { return }
         let menu = Menu.allCases[indexPath.row]
@@ -246,6 +257,22 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case .showModal, .showTabBar:
             let modalVC = contentVC
             present(modalVC, animated: true, completion: nil)
+
+        case .showPageView:
+            let pageVC = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
+            let closeButton = UIButton(type: .custom)
+            pageVC.view.addSubview(closeButton)
+            closeButton.setTitle("Close", for: .normal)
+            closeButton.translatesAutoresizingMaskIntoConstraints = false
+            closeButton.addTarget(self, action: #selector(dismissPresentedVC), for: .touchUpInside)
+            NSLayoutConstraint.activate([
+                closeButton.topAnchor.constraint(equalTo: pageVC.layoutGuide.topAnchor, constant: 16.0),
+                closeButton.leftAnchor.constraint(equalTo: pageVC.view.leftAnchor, constant: 16.0),
+                ])
+            pageVC.dataSource = self
+            pageVC.setViewControllers([pages[0]], direction: .forward, animated: false, completion: nil)
+            present(pageVC, animated: true, completion: nil)
+
         case .showFloatingPanelModal:
             let fpc = FloatingPanelController()
             let contentVC = self.storyboard!.instantiateViewController(withIdentifier: "DetailViewController")
@@ -266,6 +293,12 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         }
     }
 
+    @objc func dismissPresentedVC() {
+        self.presentedViewController?.dismiss(animated: true, completion: nil)
+    }
+}
+
+extension SampleListViewController: FloatingPanelControllerDelegate {
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
         if vc == settingsPanelVC {
             return IntrinsicPanelLayout()
@@ -290,6 +323,9 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         switch currentMenu {
         case .showNestedScrollView:
             return (vc.contentViewController as? NestedScrollViewController)?.nestedScrollView.gestureRecognizers?.contains(gestureRecognizer) ?? false
+        case .showPageView:
+            // Tips: Need to allow recognizing the pan gesture of UIPageViewController simultaneously.
+            return true
         default:
             return false
         }
@@ -303,7 +339,14 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
             break
         }
     }
+}
 
+/**
+ - Attention: `FloatingPanelLayout` must not be applied by the parent view
+ controller of a floating panel. But here `SampleListViewController` adopts it
+ purposely to check if the library prints an appropriate warning.
+ */
+extension SampleListViewController: FloatingPanelLayout {
     var initialPosition: FloatingPanelPosition {
         return .half
     }
@@ -315,6 +358,23 @@ class SampleListViewController: UIViewController, UITableViewDataSource, UITable
         case .tip: return 69.0
         case .hidden: return nil
         }
+    }
+}
+
+extension SampleListViewController: UIPageViewControllerDataSource {
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        guard
+            let index = pages.firstIndex(of: viewController),
+            index + 1 < pages.count
+            else { return nil }
+        return pages[index + 1]
+    }
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        guard
+            let index = pages.firstIndex(of: viewController),
+            index - 1 >= 0
+            else { return nil }
+        return pages[index - 1]
     }
 }
 
