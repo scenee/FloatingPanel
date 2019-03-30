@@ -11,7 +11,7 @@
 		54352E9821A521CA00CBCA08 /* FloatingPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54352E9721A521CA00CBCA08 /* FloatingPanelView.swift */; };
 		5450EEE421646DF500135936 /* FloatingPanelBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5450EEE321646DF500135936 /* FloatingPanelBehavior.swift */; };
 		545DB9CB2151169500CA77B8 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 545DB9C12151169500CA77B8 /* FloatingPanel.framework */; };
-		545DB9D02151169500CA77B8 /* ViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9CF2151169500CA77B8 /* ViewTests.swift */; };
+		545DB9D02151169500CA77B8 /* FloatingPanelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9CF2151169500CA77B8 /* FloatingPanelTests.swift */; };
 		545DB9D22151169500CA77B8 /* FloatingPanelController.h in Headers */ = {isa = PBXBuildFile; fileRef = 545DB9C42151169500CA77B8 /* FloatingPanelController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		545DB9DE215118C800CA77B8 /* UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9DD215118C800CA77B8 /* UIExtensions.swift */; };
 		545DB9E021511AC100CA77B8 /* FloatingPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9DF21511AC100CA77B8 /* FloatingPanelController.swift */; };
@@ -41,7 +41,7 @@
 		545DB9C42151169500CA77B8 /* FloatingPanelController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FloatingPanelController.h; sourceTree = "<group>"; };
 		545DB9C52151169500CA77B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		545DB9CA2151169500CA77B8 /* FloatingPanelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FloatingPanelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		545DB9CF2151169500CA77B8 /* ViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTests.swift; sourceTree = "<group>"; };
+		545DB9CF2151169500CA77B8 /* FloatingPanelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelTests.swift; sourceTree = "<group>"; };
 		545DB9D12151169500CA77B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		545DB9DD215118C800CA77B8 /* UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIExtensions.swift; sourceTree = "<group>"; };
 		545DB9DF21511AC100CA77B8 /* FloatingPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelController.swift; sourceTree = "<group>"; };
@@ -113,7 +113,7 @@
 		545DB9CE2151169500CA77B8 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				545DB9CF2151169500CA77B8 /* ViewTests.swift */,
+				545DB9CF2151169500CA77B8 /* FloatingPanelTests.swift */,
 				545DB9D12151169500CA77B8 /* Info.plist */,
 			);
 			path = Tests;
@@ -246,7 +246,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				545DB9D02151169500CA77B8 /* ViewTests.swift in Sources */,
+				545DB9D02151169500CA77B8 /* FloatingPanelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
