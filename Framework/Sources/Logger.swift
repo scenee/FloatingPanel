@@ -10,7 +10,6 @@ var log = {
     return Logger()
 }()
 
-#if __FP_LOG
 struct Logger {
     private let osLog: OSLog
     private let s = DispatchSemaphore(value: 1)
@@ -84,7 +83,9 @@ struct Logger {
     }
 
     func debug(_ log: Any, _ arguments: Any..., function: String = #function, file: String  = #file, line: UInt = #line) {
+        #if __FP_LOG
         self.log(.debug, log, arguments, function: getPrettyFunction(function, file), line: line)
+        #endif
     }
 
     func info(_ log: Any, _ arguments: Any..., function: String = #function, file: String  = #file, line: UInt = #line) {
@@ -103,12 +104,3 @@ struct Logger {
         self.log(.fault, log, arguments, function: getPrettyFunction(function, file), line: line)
     }
 }
-#else
-struct Logger {
-    func debug(_ log: Any, _ arguments: Any...) { }
-    func info(_ log: Any, _ arguments: Any...) { }
-    func warning(_ log: Any, _ arguments: Any...) { }
-    func error(_ log: Any, _ arguments: Any...) { }
-    func fault(_ log: Any, _ arguments: Any...) { }
-}
-#endif
