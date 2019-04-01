@@ -9,6 +9,11 @@
 import UIKit
 import FloatingPanel
 
+/**
+ - Attention: `FloatingPanelLayout` must not be applied by the parent view
+ controller of a floating panel. But here `SampleListViewController` adopts it
+ purposely to check if the library prints an appropriate warning.
+ */
 class SampleListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, FloatingPanelControllerDelegate, FloatingPanelLayout {
     @IBOutlet weak var tableView: UITableView!
 
