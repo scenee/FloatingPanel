@@ -261,7 +261,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                             // Preserve the current content offset in moving from full.
                             scrollView.setContentOffset(initialScrollOffset, animated: false)
                         } else {
-                            if scrollView.contentOffset.y < 0 {
+                            let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
+                            if offset < 0 {
                                 fitToBounds(scrollView: scrollView)
                                 let translation = panGesture.translation(in: panGestureRecognizer.view!.superview)
                                 startInteraction(with: translation, at: location)
@@ -281,7 +282,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 if interactionInProgress {
                     unlockScrollView()
                 } else {
-                    if state == layoutAdapter.topMostState, scrollView.contentOffset.y < 0, velocity.y > 0 {
+                    let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
+                    if state == layoutAdapter.topMostState, offset < 0, velocity.y > 0 {
                         fitToBounds(scrollView: scrollView)
                         let translation = panGesture.translation(in: panGestureRecognizer.view!.superview)
                         startInteraction(with: translation, at: location)
@@ -377,12 +379,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         }
 
         let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
-        // 10 pt is introduced from my testing(there might be better one)
-        // It should be low as possible because a user scroll view frame will
-        // change as far as the specified value temporarily.
-        // The zero offset is an exception because the offset is usually zero
-        // when a panel moves from half or tip position to full.
-        if  offset > -10.0, offset != 0.0 {
+        // The zero offset must be excluded because the offset is usually zero
+        // after a panel moves from half/tip to full.
+        if  offset > 0.0 {
             return true
         }
         if scrollView.isDecelerating {
@@ -884,8 +883,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private func settle(scrollView: UIScrollView) {
         log.debug("settle scroll view")
-
+        let frame = surfaceView.layer.presentation()?.frame ?? surfaceView.frame
         surfaceView.transform = .identity
+        surfaceView.frame = frame
         scrollView.transform = .identity
         scrollView.frame = initialScrollFrame
         scrollView.contentOffset = scrollView.contentOffsetZero
