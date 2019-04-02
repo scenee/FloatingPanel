@@ -146,6 +146,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     private var _contentViewController: UIViewController?
 
     private var floatingPanel: FloatingPanel!
+    private var preSafeAreaInsets: UIEdgeInsets = .zero // Capture the latest one
     private var safeAreaInsetsObservation: NSKeyValueObservation?
     private let modalTransition = FloatingPanelModalTransition()
 
@@ -200,7 +201,9 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         if #available(iOS 11.0, *) {}
         else {
             // Because {top,bottom}LayoutGuide is managed as a view
-            self.update(safeAreaInsets: layoutInsets)
+            if preSafeAreaInsets != layoutInsets {
+                self.update(safeAreaInsets: layoutInsets)
+            }
         }
     }
 
@@ -245,10 +248,14 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     private func update(safeAreaInsets: UIEdgeInsets) {
         guard
+            preSafeAreaInsets != safeAreaInsets,
             self.floatingPanel.isDecelerating == false
             else { return }
 
         log.debug("Update safeAreaInsets", safeAreaInsets)
+
+        // Prevent an infinite loop on iOS 10: setUpLayout() -> viewDidLayoutSubviews() -> setUpLayout()
+        preSafeAreaInsets = safeAreaInsets
 
         setUpLayout()
 
