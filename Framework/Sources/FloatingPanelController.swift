@@ -271,6 +271,15 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     private func reloadLayout(for traitCollection: UITraitCollection) {
         floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
         floatingPanel.layoutAdapter.prepareLayout(in: self)
+
+        if let parent = self.parent {
+            if let layout = layout as? UIViewController, layout == parent {
+                log.warning("A memory leak will occur by a retain cycle because \(self) owns the parent view controller(\(parent)) as the layout object. Don't let the parent adopt FloatingPanelLayout.")
+            }
+            if let behavior = behavior as? UIViewController, behavior == parent {
+                log.warning("A memory leak will occur by a retain cycle because \(self) owns the parent view controller(\(parent)) as the behavior object. Don't let the parent adopt FloatingPanelBehavior.")
+            }
+        }
     }
 
     private func setUpLayout() {

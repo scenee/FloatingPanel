@@ -23,12 +23,31 @@
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Test"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "545DB9C92151169500CA77B8"
+               BuildableName = "FloatingPanelTests.xctest"
+               BlueprintName = "FloatingPanelTests"
+               ReferencedContainer = "container:FloatingPanel.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "545DB9C02151169500CA77B8"
+            BuildableName = "FloatingPanel.framework"
+            BlueprintName = "FloatingPanel"
+            ReferencedContainer = "container:FloatingPanel.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
