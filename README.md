@@ -68,7 +68,9 @@ Examples are here.
 
 ## Requirements
 
-FloatingPanel is written in Swift. It can be built by Xcode 9.4.1 or later. Compatible with iOS 10.0+.
+FloatingPanel is written in Swift 4.0+. It can be built by Xcode 9.4.1 or later. Compatible with iOS 10.0+.
+
+✏️ The default Swift version is 4.0 because it avoids build errors with Carthage on each Xcode version from the source compatibility between Swift 4.0, 4.2 and 5.0.
 
 ## Installation
 
@@ -80,6 +82,8 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod 'FloatingPanel'
 ```
+
+✏️ To suppress "Swift Conversion" warnings in Xcode, please set a Swift version to `SWIFT_VERSION` for the project in your Podfile. It will be resolved in CocoaPods v1.7.0.
 
 ### Carthage
 
@@ -142,7 +146,7 @@ self.present(fpc, animated: true, completion: nil)
 
 You can show a floating panel over UINavigationController from the container view controllers as a modality of `.overCurrentContext` style.
 
-NOTE: FloatingPanelController has the custom presentation controller. If you would like to customize the presentation/dismissal, please see [FloatingPanelTransitioning](https://github.com/SCENEE/FloatingPanel/blob/master/Framework/Sources/FloatingPanelTransitioning.swift).
+✏️ FloatingPanelController has the custom presentation controller. If you would like to customize the presentation/dismissal, please see [FloatingPanelTransitioning](https://github.com/SCENEE/FloatingPanel/blob/master/Framework/Sources/FloatingPanelTransitioning.swift).
 
 ## View hierarchy
 
