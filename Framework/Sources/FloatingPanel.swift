@@ -307,7 +307,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 self.animator = nil
 
                 // A user can stop a panel at the nearest Y of a target position
-                if fabs(surfaceView.frame.minY - layoutAdapter.topY) < 1 {
+                if abs(surfaceView.frame.minY - layoutAdapter.topY) < 1 {
                     surfaceView.frame.origin.y = layoutAdapter.topY
                 }
             }
@@ -502,7 +502,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         if isRemovalInteractionEnabled, isBottomState {
             let velocityVector = (distance != 0) ? CGVector(dx: 0,
-                                                            dy: min(fabs(velocity.y)/distance, behavior.removalVelocity)) : .zero
+                                                            dy: min(abs(velocity.y)/distance, behavior.removalVelocity)) : .zero
 
             if shouldStartRemovalAnimation(with: velocityVector) {
 
@@ -619,7 +619,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         isDecelerating = true
         viewcontroller.delegate?.floatingPanelWillBeginDecelerating(viewcontroller)
 
-        let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: min(fabs(velocity.y)/distance, 30.0)) : .zero
+        let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: min(abs(velocity.y)/distance, 30.0)) : .zero
         let animator = behavior.interactionAnimator(self.viewcontroller, to: targetPosition, with: velocityVector)
         animator.addAnimations { [weak self] in
             guard let `self` = self else { return }
@@ -660,11 +660,11 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
         switch targetPosition {
         case .full:
-            return CGFloat(fabs(currentY - topY))
+            return CGFloat(abs(currentY - topY))
         case .half:
-            return CGFloat(fabs(currentY - middleY))
+            return CGFloat(abs(currentY - middleY))
         case .tip:
-            return CGFloat(fabs(currentY - bottomY))
+            return CGFloat(abs(currentY - bottomY))
         case .hidden:
             fatalError("Now .hidden must not be used for a user interaction")
         }
@@ -703,7 +703,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     // Distance travelled after decelerating to zero velocity at a constant rate.
     // Refer to the slides p176 of [Designing Fluid Interfaces](https://developer.apple.com/videos/play/wwdc2018/803/)
-    private func project(initialVelocity: CGFloat, decelerationRate: CGFloat = UIScrollViewDecelerationRateNormal) -> CGFloat {
+    private func project(initialVelocity: CGFloat, decelerationRate: CGFloat) -> CGFloat {
         return (initialVelocity / 1000.0) * decelerationRate / (1.0 - decelerationRate)
     }
 

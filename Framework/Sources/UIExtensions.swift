@@ -74,6 +74,20 @@ extension UIView {
 }
 
 #if __FP_LOG
+#if swift(>=4.2)
+extension UIGestureRecognizer.State: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .began: return "began"
+        case .changed: return "changed"
+        case .failed: return "failed"
+        case .cancelled: return "cancelled"
+        case .ended: return "endeded"
+        case .possible: return "possible"
+        }
+    }
+}
+#else
 extension UIGestureRecognizerState: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
@@ -86,6 +100,7 @@ extension UIGestureRecognizerState: CustomDebugStringConvertible {
         }
     }
 }
+#endif
 #endif
 
 extension UIScrollView {
