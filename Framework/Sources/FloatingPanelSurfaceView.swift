@@ -93,7 +93,6 @@ public class FloatingPanelSurfaceView: UIView {
             backgroundHeightConstraint,
             ])
 
-
         let grabberHandle = GrabberHandleView()
         addSubview(grabberHandle)
         self.grabberHandle = grabberHandle
@@ -119,8 +118,9 @@ public class FloatingPanelSurfaceView: UIView {
         updateLayers()
         updateContentViewMask()
 
-        contentView?.layer.borderColor = borderColor?.cgColor
-        contentView?.layer.borderWidth = borderWidth
+        backgroundView.layer.borderColor = borderColor?.cgColor
+        backgroundView.layer.borderWidth = borderWidth
+
         contentView?.frame = bounds
     }
 
@@ -142,18 +142,17 @@ public class FloatingPanelSurfaceView: UIView {
 
     private func updateContentViewMask() {
         guard
-            let contentView = contentView,
             cornerRadius != 0.0,
-            contentView.layer.cornerRadius != cornerRadius
+            backgroundView.layer.cornerRadius != cornerRadius
             else { return }
 
         if #available(iOS 11, *) {
             // Don't use `contentView.clipToBounds` because it prevents content view from expanding the height of a subview of it
             // for the bottom overflow like Auto Layout settings of UIVisualEffectView in Main.storyboard of Example/Maps.
             // Because the bottom of contentView must be fit to the bottom of a screen to work the `safeLayoutGuide` of a content VC.
-            contentView.layer.masksToBounds = true
-            contentView.layer.cornerRadius = cornerRadius
-            contentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            backgroundView.layer.masksToBounds = true
+            backgroundView.layer.cornerRadius = cornerRadius
+            backgroundView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         } else {
             // Don't use `contentView.layer.mask` because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
             // Instead, a user can mask the content view manually in an application.
@@ -161,7 +160,7 @@ public class FloatingPanelSurfaceView: UIView {
     }
 
     func add(contentView: UIView) {
-        insertSubview(contentView, belowSubview: grabberHandle)
+        backgroundView.addSubview(contentView)
         self.contentView = contentView
         /* contentView.frame = bounds */ // MUST NOT: Because the top safe area inset of a content VC will be incorrect.
         contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -169,7 +168,7 @@ public class FloatingPanelSurfaceView: UIView {
             contentView.topAnchor.constraint(equalTo: topAnchor, constant: 0.0),
             contentView.leftAnchor.constraint(equalTo: leftAnchor, constant: 0.0),
             contentView.rightAnchor.constraint(equalTo: rightAnchor, constant: 0.0),
-            contentView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0.0),
+            contentView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0)
             ])
     }
 }
