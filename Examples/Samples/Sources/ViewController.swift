@@ -877,7 +877,7 @@ class TabBarContentViewController: UIViewController {
         dismiss(animated: true, completion: nil)
     }
 
-    // MAKR: - Private
+    // MARK: - Private
 
     @objc
     private func changeTab3Mode(_ sender: UISwitch) {
@@ -895,9 +895,9 @@ extension TabBarContentViewController: UITextViewDelegate {
         guard self.tabBarItem.tag == 2 else { return }
         // Reset an invalid content offset by a user after updating the layout
         // of `consoleVC.textView`.
-        // NOTE: FloatingPanel doesn't implicity reset the offset(i.e.
+        // NOTE: FloatingPanel doesn't implicitly reset the offset(i.e.
         // Using KVO of `scrollView.contentOffset`). Because it can lead to an
-        // infinit loop if a user also resets a content offset as below and,
+        // infinite loop if a user also resets a content offset as below and,
         // in the situation, a user has to modify the library.
         if fpc.position != .full, fpc.surfaceView.frame.minY < fpc.originYOfSurface(for: .full) {
             scrollView.contentOffset = .zero
@@ -936,7 +936,7 @@ extension TabBarContentViewController: FloatingPanelControllerDelegate {
             }
         case .changeOffset:
             /*
-             Bad solution: Manipulate scoll content inset
+             Bad solution: Manipulate scroll content inset
 
              FloatingPanelController keeps a content offset in moving a panel
              so that changing content inset or offset causes a buggy behavior.
@@ -978,7 +978,7 @@ extension TabBarContentViewController: FloatingPanelControllerDelegate {
             consoleVC.textViewTopConstraint?.constant = (vc.position == .full) ? vc.layoutInsets.top : 17.0
 
         case .changeOffset:
-            /* Bad Solution: Manipulate scoll content inset */
+            /* Bad Solution: Manipulate scroll content inset */
             guard let scrollView = consoleVC.textView else { return }
             var insets = vc.adjustedContentInsets
             insets.top = (vc.position == .full) ? vc.layoutInsets.top : 0.0
@@ -1107,7 +1107,7 @@ class SettingsViewController: InspectableViewController {
     override func viewDidLoad() {
         versionLabel.text = "Version: \(Bundle.main.infoDictionary?["CFBundleVersion"] ?? "--")"
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if #available(iOS 11.0, *) {
