@@ -117,9 +117,7 @@ public class FloatingPanelSurfaceView: UIView {
 
         updateLayers()
         updateContentViewMask()
-
-        backgroundView.layer.borderColor = borderColor?.cgColor
-        backgroundView.layer.borderWidth = borderWidth
+        updateBorder()
 
         contentView?.frame = bounds
     }
@@ -157,6 +155,11 @@ public class FloatingPanelSurfaceView: UIView {
             // Don't use `contentView.layer.mask` because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
             // Instead, a user can mask the content view manually in an application.
         }
+    }
+
+    private func updateBorder() {
+        backgroundView.layer.borderColor = borderColor?.cgColor
+        backgroundView.layer.borderWidth = borderWidth
     }
 
     func add(contentView: UIView) {
