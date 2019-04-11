@@ -73,7 +73,7 @@ public enum FloatingPanelPosition: Int {
 ///
 /// A container view controller to display a floating panel to present contents in parallel as a user wants.
 ///
-public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
+open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     /// Constants indicating how safe area insets are added to the adjusted content inset.
     public enum ContentInsetAdjustmentBehavior: Int {
         case always
@@ -181,7 +181,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     // MARK:- Overrides
 
     /// Creates the view that the controller manages.
-    override public func loadView() {
+    open override func loadView() {
         assert(self.storyboard == nil, "Storyboard isn't supported")
 
         let view = FloatingPanelPassThroughView()
@@ -196,7 +196,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         self.view = view as UIView
     }
 
-    public override func viewDidLayoutSubviews() {
+    open  override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if #available(iOS 11.0, *) {}
         else {
@@ -207,7 +207,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         }
     }
 
-    public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    open  override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
         if view.translatesAutoresizingMaskIntoConstraints {
@@ -216,7 +216,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         }
     }
 
-    public override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+    open  override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
         super.willTransition(to: newCollection, with: coordinator)
 
         // Change layout for a new trait collection
@@ -226,7 +226,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         floatingPanel.behavior = fetchBehavior(for: newCollection)
     }
 
-    public override func viewWillDisappear(_ animated: Bool) {
+    open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         safeAreaInsetsObservation = nil
     }
@@ -455,14 +455,14 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
     }
 
     @available(*, unavailable, renamed: "set(contentViewController:)")
-    public override func show(_ vc: UIViewController, sender: Any?) {
+    open  override func show(_ vc: UIViewController, sender: Any?) {
         if let target = self.parent?.targetViewController(forAction: #selector(UIViewController.show(_:sender:)), sender: sender) {
             target.show(vc, sender: sender)
         }
     }
 
     @available(*, unavailable, renamed: "set(contentViewController:)")
-    public override func showDetailViewController(_ vc: UIViewController, sender: Any?) {
+    open  override func showDetailViewController(_ vc: UIViewController, sender: Any?) {
         if let target = self.parent?.targetViewController(forAction: #selector(UIViewController.showDetailViewController(_:sender:)), sender: sender) {
             target.showDetailViewController(vc, sender: sender)
         }
