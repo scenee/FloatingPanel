@@ -59,7 +59,14 @@ public class FloatingPanelSurfaceView: UIView {
     /// The color of the surface border.
     public var borderWidth: CGFloat = 0.0  { didSet { setNeedsLayout() } }
 
+
+    /// The view presents an actual surface shape.
+    ///
+    /// It renders a background color, border line, and top rounded masking
+    /// a content view specified by other propertiea. The reason why they don't
+    /// apply to a content view directly is to avoid any side-effects.
     public var backgroundView: UIView!
+
     private var backgroundHeightConstraint: NSLayoutConstraint!
 
     private struct Default {
