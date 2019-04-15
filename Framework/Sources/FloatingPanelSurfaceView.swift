@@ -62,9 +62,10 @@ public class FloatingPanelSurfaceView: UIView {
 
     /// The view presents an actual surface shape.
     ///
-    /// It renders the specified background color, border line, and top rounded
-    /// masking a content view by other propertiea. The reason why they don't
-    /// apply to a content view directly is to avoid any side-effects.
+    /// It renders the background color, border line and top rounded corners,
+    /// specified by other properties. The reason why they're not be applied to
+    /// a content view directly is because it avoids any side-effects to the
+    /// content view.
     public var containerView: UIView!
 
     @available(*, unavailable, renamed: "containerView")
