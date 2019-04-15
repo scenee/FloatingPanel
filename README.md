@@ -156,7 +156,7 @@ You can show a floating panel over UINavigationController from the container vie
 FloatingPanelController.view (FloatingPanelPassThroughView)
  ├─ .backdropView (FloatingPanelBackdropView)
  └─ .surfaceView (FloatingPanelSurfaceView)
-    ├─ .backgroundView (UIView)
+    ├─ .containerView (UIView)
     │  └─ .contentView (FloatingPanelController.contentViewController.view)
     └─ .grabberHandle (GrabberHandleView)
 ```
