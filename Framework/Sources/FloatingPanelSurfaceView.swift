@@ -91,16 +91,16 @@ public class FloatingPanelSurfaceView: UIView {
         super.backgroundColor = .clear
         self.clipsToBounds = false
 
-        let backgroundView = UIView()
-        addSubview(backgroundView)
-        self.containerView = backgroundView
+        let containerView = UIView()
+        addSubview(containerView)
+        self.containerView = containerView
 
-        backgroundView.translatesAutoresizingMaskIntoConstraints = false
-        containerViewHeightConstraint = backgroundView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0)
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerViewHeightConstraint = containerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0)
         NSLayoutConstraint.activate([
-            backgroundView.topAnchor.constraint(equalTo: topAnchor, constant: 0.0),
-            backgroundView.leftAnchor.constraint(equalTo: leftAnchor, constant: 0.0),
-            backgroundView.rightAnchor.constraint(equalTo: rightAnchor, constant: 0.0),
+            containerView.topAnchor.constraint(equalTo: topAnchor, constant: 0.0),
+            containerView.leftAnchor.constraint(equalTo: leftAnchor, constant: 0.0),
+            containerView.rightAnchor.constraint(equalTo: rightAnchor, constant: 0.0),
             containerViewHeightConstraint,
             ])
 
