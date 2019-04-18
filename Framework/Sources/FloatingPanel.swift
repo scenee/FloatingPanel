@@ -38,7 +38,14 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     let panGestureRecognizer: FloatingPanelPanGestureRecognizer
     var isRemovalInteractionEnabled: Bool = false
 
-    fileprivate var animator: UIViewPropertyAnimator?
+    fileprivate var animator: UIViewPropertyAnimator? {
+        didSet { 
+            // This prevents an unexpected UIScrollViewDelayedTouchesBeganGestureRecognizer
+            // failed as possible because it cauese tableView(_:didSelectRowAt:)
+            // not being called on first tap after an animation.
+            scrollView?.isUserInteractionEnabled = (animator == nil)
+        }
+    }
 
     private var initialFrame: CGRect = .zero
     private var initialTranslationY: CGFloat = 0
@@ -302,7 +309,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 // Prevent aborting the touch events when the animator is
                 // released almost at a target position. Because user expect to
                 // enable tap gestures at that position.
-                if fabs(surfaceView.frame.minY - layoutAdapter.topY) > 20.0 {
+                if fabs(surfaceView.frame.minY - layoutAdapter.topY) > 40.0 {
                     if animator.isInterruptible {
                         animator.stopAnimation(false)
                         animator.finishAnimation(at: .current)
@@ -640,6 +647,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private func finishAnimation(at targetPosition: FloatingPanelPosition) {
         log.debug("finishAnimation to \(targetPosition)")
+
         self.isDecelerating = false
         self.animator = nil
 
