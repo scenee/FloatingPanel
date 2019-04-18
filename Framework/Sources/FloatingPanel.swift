@@ -40,8 +40,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     fileprivate var animator: UIViewPropertyAnimator? {
         didSet { 
-            // This prevents an unexpected UIScrollViewDelayedTouchesBeganGestureRecognizer
-            // failed as possible because it cauese tableView(_:didSelectRowAt:)
+            // This prevents an unexpected `UIScrollViewDelayedTouchesBeganGestureRecognizer`
+            // failed as possible because it causes `tableView(_:didSelectRowAt:)`
             // not being called on first tap after an animation.
             scrollView?.isUserInteractionEnabled = (animator == nil)
         }
