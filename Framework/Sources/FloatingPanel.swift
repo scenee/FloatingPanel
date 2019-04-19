@@ -39,10 +39,11 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     var isRemovalInteractionEnabled: Bool = false
 
     fileprivate var animator: UIViewPropertyAnimator? {
-        didSet { 
-            // This prevents an unexpected `UIScrollViewDelayedTouchesBeganGestureRecognizer`
-            // failed as possible because it causes `tableView(_:didSelectRowAt:)`
-            // not being called on first tap after an animation.
+        didSet {
+            // This intends to avoid `tableView(_:didSelectRowAt:)` not being
+            // called on first tap after the moving animation, but it doesn't
+            // seem to be enough. The same issue happens on Apple Maps so it
+            // might be an issue in `UITableView`.
             scrollView?.isUserInteractionEnabled = (animator == nil)
         }
     }
@@ -306,9 +307,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
             if let animator = self.animator {
                 log.debug("panel animation interrupted!!!")
-                // Prevent aborting the touch events when the animator is
-                // released almost at a target position. Because user expect to
-                // enable tap gestures at that position.
+                // Prevent aborting touch events when the current animator is
+                // released almost at a target position. Because any tap gestures
+                // shouldn't be disturbed at the position.
                 if fabs(surfaceView.frame.minY - layoutAdapter.topY) > 40.0 {
                     if animator.isInterruptible {
                         animator.stopAnimation(false)
