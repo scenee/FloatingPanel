@@ -6,11 +6,8 @@
 import UIKit
 
 public class GrabberHandleView: UIView {
-    public struct Default {
-        public static let width: CGFloat = 36.0
-        public static let height: CGFloat = 5.0
-        public static let barColor = UIColor(displayP3Red: 0.76, green: 0.77, blue: 0.76, alpha: 1.0)
-    }
+
+    public var barColor = UIColor(displayP3Red: 0.76, green: 0.77, blue: 0.76, alpha: 1.0) { didSet { backgroundColor = barColor } }
 
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -18,10 +15,8 @@ public class GrabberHandleView: UIView {
     }
 
     init() {
-        let size = CGSize(width: Default.width,
-                          height: Default.height)
-        super.init(frame: CGRect(origin: .zero, size: size))
-        self.backgroundColor = Default.barColor
+        super.init(frame: .zero)
+        backgroundColor = barColor
         render()
     }
 
