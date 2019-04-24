@@ -38,7 +38,15 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     let panGestureRecognizer: FloatingPanelPanGestureRecognizer
     var isRemovalInteractionEnabled: Bool = false
 
-    fileprivate var animator: UIViewPropertyAnimator?
+    fileprivate var animator: UIViewPropertyAnimator? {
+        didSet {
+            // This intends to avoid `tableView(_:didSelectRowAt:)` not being
+            // called on first tap after the moving animation, but it doesn't
+            // seem to be enough. The same issue happens on Apple Maps so it
+            // might be an issue in `UITableView`.
+            scrollView?.isUserInteractionEnabled = (animator == nil)
+        }
+    }
 
     private var initialFrame: CGRect = .zero
     private var initialTranslationY: CGFloat = 0
@@ -299,15 +307,19 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
             if let animator = self.animator {
                 log.debug("panel animation interrupted!!!")
-                if animator.isInterruptible {
-                    animator.stopAnimation(false)
-                    animator.finishAnimation(at: .current)
+                // Prevent aborting touch events when the current animator is
+                // released almost at a target position. Because any tap gestures
+                // shouldn't be disturbed at the position.
+                if fabs(surfaceView.frame.minY - layoutAdapter.topY) > 40.0 {
+                    if animator.isInterruptible {
+                        animator.stopAnimation(false)
+                        animator.finishAnimation(at: .current)
+                    }
+                    self.animator = nil
                 }
 
-                self.animator = nil
-
                 // A user can stop a panel at the nearest Y of a target position
-                if abs(surfaceView.frame.minY - layoutAdapter.topY) < 1 {
+                if abs(surfaceView.frame.minY - layoutAdapter.topY) < 1.0 {
                     surfaceView.frame.origin.y = layoutAdapter.topY
                 }
             }
@@ -636,6 +648,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private func finishAnimation(at targetPosition: FloatingPanelPosition) {
         log.debug("finishAnimation to \(targetPosition)")
+
         self.isDecelerating = false
         self.animator = nil
 
