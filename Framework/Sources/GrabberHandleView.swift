@@ -11,18 +11,21 @@ public class GrabberHandleView: UIView {
 
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        render()
     }
 
     init() {
         super.init(frame: .zero)
         backgroundColor = barColor
-        render()
     }
 
     private func render() {
         self.layer.masksToBounds = true
         self.layer.cornerRadius = frame.size.height * 0.5
+    }
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        render()
     }
 
     public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
