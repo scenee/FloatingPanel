@@ -204,10 +204,10 @@ public class FloatingPanelSurfaceView: UIView {
         /* contentView.frame = bounds */ // MUST NOT: Because the top safe area inset of a content VC will be incorrect.
         contentView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(equalTo: topAnchor, constant: 0.0),
-            contentView.leftAnchor.constraint(equalTo: leftAnchor, constant: 0.0),
-            contentView.rightAnchor.constraint(equalTo: rightAnchor, constant: 0.0),
-            contentView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0)
+            contentView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 0.0),
+            contentView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 0.0),
+            contentView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0.0),
+            contentView.heightAnchor.constraint(equalTo: heightAnchor, constant: -containerTopInset)
             ])
     }
 }
