@@ -447,7 +447,7 @@ class FloatingPanelLayoutAdapter {
         if behavior.allowsRubberBanding(for: .top),
             const < (minY + layout.topInteractionBuffer) {
             var buffer = (minY + layout.topInteractionBuffer) - const
-            buffer = rubberbandingEffect(for: buffer, base: UIScreen.main.bounds.height)
+            buffer = rubberbandingEffect(for: buffer, base: vc.view.bounds.height)
             const = (minY + layout.topInteractionBuffer) - buffer
         }
 
@@ -455,7 +455,7 @@ class FloatingPanelLayoutAdapter {
         if behavior.allowsRubberBanding(for: .bottom),
             const > (maxY - layout.bottomInteractionBuffer) {
             var buffer = const - (maxY - layout.bottomInteractionBuffer)
-            buffer = rubberbandingEffect(for: buffer, base: UIScreen.main.bounds.height)
+            buffer = rubberbandingEffect(for: buffer, base: vc.view.bounds.height)
             const = (maxY - layout.bottomInteractionBuffer) + buffer
         }
 
