@@ -18,7 +18,7 @@ public class FloatingPanelSurfaceView: UIView {
 
     /// Offset of the grabber handle from the top
     public var grabberTopPadding: CGFloat = 6.0 { didSet {
-        grabberHandleTopConstraint.constant = grabberTopPadding + containerTopInset
+        setNeedsUpdateConstraints()
     } }
 
     /// The height of the grabber bar area
@@ -28,10 +28,10 @@ public class FloatingPanelSurfaceView: UIView {
 
     /// Grabber view width and height
     public var grabberHandleWidth: CGFloat = 36.0 { didSet {
-        grabberHandleWidthConstraint.constant = grabberHandleWidth
+        setNeedsUpdateConstraints()
     } }
     public var grabberHandleHeight: CGFloat = 5.0 { didSet {
-        grabberHandleHeightConstraint.constant = grabberHandleHeight
+        setNeedsUpdateConstraints()
     } }
 
     /// A root view of a content view controller
@@ -74,8 +74,7 @@ public class FloatingPanelSurfaceView: UIView {
 
     /// Offset of the container view from the top
     public var containerTopInset: CGFloat = 0.0 { didSet {
-        topOffsetConstraint.constant = containerTopInset
-        containerView.setNeedsLayout()
+        setNeedsUpdateConstraints()
     } }
 
     /// The view presents an actual surface shape.
@@ -142,6 +141,10 @@ public class FloatingPanelSurfaceView: UIView {
     public override func updateConstraints() {
         super.updateConstraints()
         containerViewHeightConstraint.constant = bottomOverflow
+        topOffsetConstraint.constant = containerTopInset
+        grabberHandleTopConstraint.constant = grabberTopPadding + containerTopInset
+        grabberHandleWidthConstraint.constant = grabberHandleWidth
+        grabberHandleHeightConstraint.constant = grabberHandleHeight
     }
 
     public override func layoutSubviews() {
