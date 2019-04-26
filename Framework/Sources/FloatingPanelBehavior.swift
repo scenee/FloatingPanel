@@ -6,7 +6,7 @@
 import UIKit
 
 public protocol FloatingPanelBehavior {
-    /// Asks the behavior object if the floating panel should project a momentum of a user interaction to move the proposed position.
+    /// Asks the behavior if the floating panel should project a momentum of a user interaction to move the proposed position.
     ///
     /// The default implementation of this method returns true. This method is called for a layout to support all positions(tip, half and full).
     /// Therefore, `proposedTargetPosition` can only be `FloatingPanelPosition.tip` or `FloatingPanelPosition.full`.
@@ -59,9 +59,9 @@ public protocol FloatingPanelBehavior {
     func removalInteractionAnimator(_ fpc: FloatingPanelController, with velocity: CGVector) -> UIViewPropertyAnimator
 
 
-    /// Asks whether a floating panel allows rubberbanding in moving over a given edge.
+    /// Asks the behavior whether the rubberbanding effect is enabled in moving over a given edge of a surface view.
     ///
-    /// By default, this method returns false. If it returns true for a edge, a behavior allows the rubberbanding effect to the edge buffer of the surface view.
+    /// This method allows the behavior to specify that the rubberbanding effect to a given edge buffer of a surface view is enabled. By default, the effect is disabled.
     func allowsRubberBanding(for edge: UIRectEdge) -> Bool
 }
 
