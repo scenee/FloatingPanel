@@ -576,3 +576,37 @@ public extension UIViewController {
         self.fp_original_dismiss(animated: flag, completion: completion)
     }
 }
+
+// MARK: - ContentInsets
+
+public extension FloatingPanelController {
+    
+    /// The ContentInsets
+    struct ContentInsets: Equatable, Hashable {
+        
+        /// The top content inset
+        public var top: CGFloat
+        
+        /// The left content inset
+        public var left: CGFloat
+        
+        /// The right content inset
+        public var right: CGFloat
+        
+        /// Designated Initializer
+        ///
+        /// - Parameters:
+        ///   - top: The top content inset. Default value `0`
+        ///   - left: The left content inset. Default value `0`
+        ///   - right: The right content inset. Default value `0`
+        public init(top: CGFloat = 0,
+                    left: CGFloat = 0,
+                    right: CGFloat = 0) {
+            self.top = top
+            self.left = left
+            self.right = right
+        }
+        
+    }
+    
+}
