@@ -23,6 +23,7 @@ class SampleListViewController: UIViewController {
         case showNestedScrollView
         case showRemovablePanel
         case showIntrinsicView
+        case showContentInset
 
         var name: String {
             switch self {
@@ -36,6 +37,7 @@ class SampleListViewController: UIViewController {
             case .showNestedScrollView: return "Show Nested ScrollView"
             case .showRemovablePanel: return "Show Removable Panel"
             case .showIntrinsicView: return "Show Intrinsic View"
+            case .showContentInset: return "Show with ContentInset"
             }
         }
 
@@ -51,6 +53,7 @@ class SampleListViewController: UIViewController {
             case .showNestedScrollView: return "NestedScrollViewController"
             case .showRemovablePanel: return "DetailViewController"
             case .showIntrinsicView: return "IntrinsicViewController"
+            case .showContentInset: return nil
             }
         }
     }
@@ -284,6 +287,20 @@ extension SampleListViewController: UITableViewDelegate {
 
             fpc.isRemovalInteractionEnabled = true
 
+            self.present(fpc, animated: true, completion: nil)
+            
+        case .showContentInset:
+            let contentViewController = UIViewController()
+            contentViewController.view.backgroundColor = .green
+            
+            let fpc = FloatingPanelController()
+            fpc.set(
+                contentViewController: contentViewController,
+                insets: .init(top: 20, left: 20, right: -20)
+            )
+            fpc.delegate = self
+            
+            fpc.isRemovalInteractionEnabled = true
             self.present(fpc, animated: true, completion: nil)
         default:
             detailPanelVC?.removePanelFromParent(animated: true, completion: nil)
