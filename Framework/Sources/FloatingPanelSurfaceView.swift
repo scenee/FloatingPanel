@@ -173,15 +173,15 @@ public class FloatingPanelSurfaceView: UIView {
         containerView.layer.borderWidth = borderWidth
     }
 
-    func add(contentView: UIView) {
+    func add(contentView: UIView, topInset: CGFloat = 0, leftInset: CGFloat = 0, rightInset: CGFloat = 0) {
         containerView.addSubview(contentView)
         self.contentView = contentView
         /* contentView.frame = bounds */ // MUST NOT: Because the top safe area inset of a content VC will be incorrect.
         contentView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(equalTo: topAnchor, constant: 0.0),
-            contentView.leftAnchor.constraint(equalTo: leftAnchor, constant: 0.0),
-            contentView.rightAnchor.constraint(equalTo: rightAnchor, constant: 0.0),
+            contentView.topAnchor.constraint(equalTo: topAnchor, constant: topInset),
+            contentView.leftAnchor.constraint(equalTo: leftAnchor, constant: leftInset),
+            contentView.rightAnchor.constraint(equalTo: rightAnchor, constant: rightInset),
             contentView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0)
             ])
     }
