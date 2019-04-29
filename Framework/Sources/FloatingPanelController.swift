@@ -417,7 +417,11 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
     }
 
     /// Sets the view controller responsible for the content portion of the floating panel.
-    public func set(contentViewController: UIViewController?) {
+    ///
+    /// - Parameters:
+    ///   - contentViewController: The Content UIViewController
+    ///   - insets: The ContentInsets. Default value `.zero`
+    public func set(contentViewController: UIViewController?, insets: ContentInsets = .zero) {
         if let vc = _contentViewController {
             #if swift(>=4.2)
             vc.willMove(toParent: nil)
@@ -442,7 +446,12 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
             #endif
 
             let surfaceView = floatingPanel.surfaceView
-            surfaceView.add(contentView: vc.view)
+            surfaceView.add(
+                contentView: vc.view,
+                topInset: insets.top,
+                leftInset: insets.left,
+                rightInset: insets.right
+            )
 
             #if swift(>=4.2)
             vc.didMove(toParent: self)
@@ -581,8 +590,11 @@ public extension UIViewController {
 
 public extension FloatingPanelController {
     
-    /// The ContentInsets
+    /// The ContentInsets specifies the ContentViewController inset distance
     struct ContentInsets: Equatable, Hashable {
+        
+        /// The zero ContentInsets
+        public static let zero = ContentInsets(top: 0, left: 0, right: 0)
         
         /// The top content inset
         public var top: CGFloat
@@ -596,12 +608,12 @@ public extension FloatingPanelController {
         /// Designated Initializer
         ///
         /// - Parameters:
-        ///   - top: The top content inset. Default value `0`
-        ///   - left: The left content inset. Default value `0`
-        ///   - right: The right content inset. Default value `0`
-        public init(top: CGFloat = 0,
-                    left: CGFloat = 0,
-                    right: CGFloat = 0) {
+        ///   - top: The top content inset
+        ///   - left: The left content inset
+        ///   - right: The right content inset
+        public init(top: CGFloat,
+                    left: CGFloat,
+                    right: CGFloat) {
             self.top = top
             self.left = left
             self.right = right
