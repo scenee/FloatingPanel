@@ -181,8 +181,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             // and handle them in self.handle(panGesture:)
             return scrollView?.gestureRecognizers?.contains(otherGestureRecognizer) ?? false
         default:
-            // Should always recognize tap/long press gestures in parallel
-            return true
+            // Should recognize tap/long press gestures in parallel when the surface view is at an anchor position.
+            let surfaceFrame = surfaceView.layer.presentation()?.frame ?? surfaceView.frame
+            return surfaceFrame.minY == layoutAdapter.positionY(for: state)
         }
     }
 
