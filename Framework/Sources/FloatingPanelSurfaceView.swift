@@ -129,7 +129,7 @@ public class FloatingPanelSurfaceView: UIView {
         grabberHandle.translatesAutoresizingMaskIntoConstraints = false
         grabberHandleWidthConstraint = grabberHandle.widthAnchor.constraint(equalToConstant: grabberHandleWidth)
         grabberHandleHeightConstraint = grabberHandle.heightAnchor.constraint(equalToConstant: grabberHandleHeight)
-        grabberHandleTopConstraint = grabberHandle.topAnchor.constraint(equalTo: topAnchor, constant: grabberTopPadding + containerTopInset)
+        grabberHandleTopConstraint = grabberHandle.topAnchor.constraint(equalTo: topAnchor, constant: grabberTopPadding)
         NSLayoutConstraint.activate([
             grabberHandleWidthConstraint,
             grabberHandleHeightConstraint,
@@ -142,7 +142,7 @@ public class FloatingPanelSurfaceView: UIView {
         super.updateConstraints()
         containerViewHeightConstraint.constant = bottomOverflow
         topOffsetConstraint.constant = containerTopInset
-        grabberHandleTopConstraint.constant = grabberTopPadding + containerTopInset
+        grabberHandleTopConstraint.constant = grabberTopPadding
         grabberHandleWidthConstraint.constant = grabberHandleWidth
         grabberHandleHeightConstraint.constant = grabberHandleHeight
     }
