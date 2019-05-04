@@ -21,8 +21,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         didSet {
             guard let scrollView = scrollView else { return }
             scrollView.panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
-            scrollBouncable = scrollView.bounces
-            scrollIndictorVisible = scrollView.showsVerticalScrollIndicator
         }
     }
 
@@ -124,6 +122,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             animator.addCompletion { [weak self] _ in
                 guard let `self` = self else { return }
                 self.animator = nil
+                self.unlockScrollView()
                 completion?()
             }
             self.animator = animator
@@ -131,6 +130,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         } else {
             self.state = to
             self.updateLayout(to: to)
+            self.unlockScrollView()
             completion?()
         }
     }
@@ -868,6 +868,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private func lockScrollView() {
         guard let scrollView = scrollView else { return }
+
+        scrollBouncable = scrollView.bounces
+        scrollIndictorVisible = scrollView.showsVerticalScrollIndicator
 
         scrollView.isDirectionalLockEnabled = true
         scrollView.bounces = false
