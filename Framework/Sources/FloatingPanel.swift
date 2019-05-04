@@ -308,13 +308,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
             if let animator = self.animator {
                 log.debug("panel animation interrupted!!!")
-                // Prevent aborting touch events when the current animator is
-                // released almost at a target position. Because any tap gestures
-                // shouldn't be disturbed at the position.
-                let surfaceFrame = surfaceView.layer.presentation()?.frame ?? surfaceView.frame
-                guard fabs(surfaceFrame.minY - layoutAdapter.topY) > 10.0 else {
-                    return
-                }
                 if animator.isInterruptible {
                     animator.stopAnimation(false)
                     animator.finishAnimation(at: .current)
