@@ -174,10 +174,6 @@ class SampleListViewController: UIViewController {
         }
     }
 
-    @objc func dismissDetailPanelVC()  {
-        detailPanelVC.removePanelFromParent(animated: true, completion: nil)
-    }
-
     @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
         switch tapGesture.view {
         case mainPanelVC.backdropView:
