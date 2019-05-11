@@ -417,7 +417,7 @@ class FloatingPanelLayoutAdapter {
             surfaceView.superview!.layoutIfNeeded() // MUST call here to update `surfaceView.frame`
         }
 
-        let minY: CGFloat = {
+        let minConstant: CGFloat = {
             var ret: CGFloat = 0.0
             switch layout {
             case is FloatingPanelIntrinsicLayout, is FloatingPanelFullScreenLayout:
@@ -430,7 +430,7 @@ class FloatingPanelLayoutAdapter {
             }
             return max(ret, 0.0) // The top boundary is equal to the related topAnchor.
         }()
-        let maxY: CGFloat = {
+        let maxConstant: CGFloat = {
             var ret: CGFloat = 0.0
             switch layout {
             case is FloatingPanelIntrinsicLayout, is FloatingPanelFullScreenLayout:
@@ -445,21 +445,21 @@ class FloatingPanelLayoutAdapter {
 
         // Rubberbanding top buffer
         if behavior.allowsRubberBanding(for: .top),
-            const < (minY + layout.topInteractionBuffer) {
-            var buffer = (minY + layout.topInteractionBuffer) - const
+            const < (minConstant + layout.topInteractionBuffer) {
+            var buffer = (minConstant + layout.topInteractionBuffer) - const
             buffer = rubberbandingEffect(for: buffer, base: vc.view.bounds.height)
-            const = (minY + layout.topInteractionBuffer) - buffer
+            const = (minConstant + layout.topInteractionBuffer) - buffer
         }
 
         // Rubberbanding bottom buffer
         if behavior.allowsRubberBanding(for: .bottom),
-            const > (maxY - layout.bottomInteractionBuffer) {
-            var buffer = const - (maxY - layout.bottomInteractionBuffer)
+            const > (maxConstant - layout.bottomInteractionBuffer) {
+            var buffer = const - (maxConstant - layout.bottomInteractionBuffer)
             buffer = rubberbandingEffect(for: buffer, base: vc.view.bounds.height)
-            const = (maxY - layout.bottomInteractionBuffer) + buffer
+            const = (maxConstant - layout.bottomInteractionBuffer) + buffer
         }
 
-        interactiveTopConstraint?.constant = max(minY, min(maxY, const))
+        interactiveTopConstraint?.constant = max(minConstant, min(maxConstant, const))
     }
 
     // According to @chpwn's tweet: https://twitter.com/chpwn/status/285540192096497664
