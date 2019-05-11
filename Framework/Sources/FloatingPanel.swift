@@ -21,8 +21,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         didSet {
             guard let scrollView = scrollView else { return }
             scrollView.panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
-            scrollBouncable = scrollView.bounces
-            scrollIndictorVisible = scrollView.showsVerticalScrollIndicator
         }
     }
 
@@ -124,6 +122,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             animator.addCompletion { [weak self] _ in
                 guard let `self` = self else { return }
                 self.animator = nil
+                self.unlockScrollView()
                 completion?()
             }
             self.animator = animator
@@ -131,6 +130,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         } else {
             self.state = to
             self.updateLayout(to: to)
+            self.unlockScrollView()
             completion?()
         }
     }
@@ -181,8 +181,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             // and handle them in self.handle(panGesture:)
             return scrollView?.gestureRecognizers?.contains(otherGestureRecognizer) ?? false
         default:
-            // Should always recognize tap/long press gestures in parallel
-            return true
+            // Should recognize tap/long press gestures in parallel when the surface view is at an anchor position.
+            let surfaceFrame = surfaceView.layer.presentation()?.frame ?? surfaceView.frame
+            return surfaceFrame.minY == layoutAdapter.positionY(for: state)
         }
     }
 
@@ -307,16 +308,11 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
             if let animator = self.animator {
                 log.debug("panel animation interrupted!!!")
-                // Prevent aborting touch events when the current animator is
-                // released almost at a target position. Because any tap gestures
-                // shouldn't be disturbed at the position.
-                if fabs(surfaceView.frame.minY - layoutAdapter.topY) > 40.0 {
-                    if animator.isInterruptible {
-                        animator.stopAnimation(false)
-                        animator.finishAnimation(at: .current)
-                    }
-                    self.animator = nil
+                if animator.isInterruptible {
+                    animator.stopAnimation(false)
+                    animator.finishAnimation(at: .current)
                 }
+                self.animator = nil
 
                 // A user can stop a panel at the nearest Y of a target position
                 if abs(surfaceView.frame.minY - layoutAdapter.topY) < 1.0 {
@@ -868,6 +864,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
     private func lockScrollView() {
         guard let scrollView = scrollView else { return }
+
+        scrollBouncable = scrollView.bounces
+        scrollIndictorVisible = scrollView.showsVerticalScrollIndicator
 
         scrollView.isDirectionalLockEnabled = true
         scrollView.bounces = false
