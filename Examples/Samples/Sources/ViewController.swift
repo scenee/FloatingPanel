@@ -129,6 +129,11 @@ class SampleListViewController: UIViewController {
 
         // Enable tap-to-hide and removal interaction
         switch currentMenu {
+        case .trackingTableView:
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleSurface(tapGesture:)))
+            tapGesture.cancelsTouchesInView = false
+            tapGesture.numberOfTapsRequired = 2
+            mainPanelVC.surfaceView.addGestureRecognizer(tapGesture)
         case .showRemovablePanel, .showIntrinsicView:
             mainPanelVC.isRemovalInteractionEnabled = true
 
@@ -159,8 +164,14 @@ class SampleListViewController: UIViewController {
         mainPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
     }
 
-    @objc func dismissDetailPanelVC()  {
-        detailPanelVC.removePanelFromParent(animated: true, completion: nil)
+    @objc
+    func handleSurface(tapGesture: UITapGestureRecognizer) {
+        switch mainPanelVC.position {
+        case .full:
+            mainPanelVC.move(to: .half, animated: true)
+        default:
+            mainPanelVC.move(to: .full, animated: true)
+        }
     }
 
     @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
@@ -533,7 +544,7 @@ class InspectableViewController: UIViewController {
     }
 }
 
-class DebugTableViewController: InspectableViewController, UITableViewDataSource, UITableViewDelegate {
+class DebugTableViewController: InspectableViewController {
     weak var tableView: UITableView!
     var items: [String] = []
     var itemHeight: CGFloat = 66.0
@@ -651,7 +662,9 @@ class DebugTableViewController: InspectableViewController, UITableViewDataSource
         //  Remove FloatingPanel from a view
         (self.parent as! FloatingPanelController).removePanelFromParent(animated: true, completion: nil)
     }
+}
 
+extension DebugTableViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
@@ -664,6 +677,12 @@ class DebugTableViewController: InspectableViewController, UITableViewDataSource
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         cell.textLabel?.text = items[indexPath.row]
         return cell
+    }
+}
+
+extension DebugTableViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("DebugTableViewController -- select row \(indexPath.row)")
     }
 
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
