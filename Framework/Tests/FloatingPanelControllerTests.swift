@@ -14,8 +14,16 @@ class FloatingPanelControllerTests: XCTestCase {
 
     func test_warningRetainCycle() {
         let myVC = MyZombieViewController(nibName: nil, bundle: nil)
+        let exp = expectation(description: "Warning retain cycle")
+        exp.expectedFulfillmentCount = 2 // For layout & behavior logs
+        log.hook = {(log, level) in
+            if log.contains("A memory leak will occur by a retain cycle because") {
+                XCTAssert(level == .warning)
+                exp.fulfill()
+            }
+        }
         myVC.loadViewIfNeeded()
-        // Check if there are memory leak warnings in console logs
+        wait(for: [exp], timeout: 10)
     }
 
     func test_addPanel() {
