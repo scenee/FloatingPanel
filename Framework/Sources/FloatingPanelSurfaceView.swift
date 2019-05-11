@@ -18,7 +18,7 @@ public class FloatingPanelSurfaceView: UIView {
 
     /// Offset of the grabber handle from the top
     public var grabberTopPadding: CGFloat = 6.0 { didSet {
-        grabberHandleTopConstraint.constant = grabberTopPadding - containerTopInset
+        setNeedsUpdateConstraints()
     } }
 
     /// The height of the grabber bar area
@@ -28,10 +28,10 @@ public class FloatingPanelSurfaceView: UIView {
 
     /// Grabber view width and height
     public var grabberHandleWidth: CGFloat = 36.0 { didSet {
-        grabberHandleWidthConstraint.constant = grabberHandleWidth
+        setNeedsUpdateConstraints()
     } }
     public var grabberHandleHeight: CGFloat = 5.0 { didSet {
-        grabberHandleHeightConstraint.constant = grabberHandleHeight
+        setNeedsUpdateConstraints()
     } }
 
     /// A root view of a content view controller
@@ -74,8 +74,7 @@ public class FloatingPanelSurfaceView: UIView {
 
     /// Offset of the container view from the top
     public var containerTopInset: CGFloat = 0.0 { didSet {
-        topOffsetConstraint.constant = containerTopInset
-        containerView.setNeedsLayout()
+        setNeedsUpdateConstraints()
     } }
 
     /// The view presents an actual surface shape.
@@ -89,11 +88,14 @@ public class FloatingPanelSurfaceView: UIView {
     @available(*, unavailable, renamed: "containerView")
     public var backgroundView: UIView!
 
+    private var containerViewTopInsetConstraint: NSLayoutConstraint!
     private var containerViewHeightConstraint: NSLayoutConstraint!
+
+    private var contentViewHeightConstraint: NSLayoutConstraint!
+
     private var grabberHandleWidthConstraint: NSLayoutConstraint!
     private var grabberHandleHeightConstraint: NSLayoutConstraint!
     private var grabberHandleTopConstraint: NSLayoutConstraint!
-    private var topOffsetConstraint: NSLayoutConstraint!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -114,10 +116,10 @@ public class FloatingPanelSurfaceView: UIView {
         self.containerView = containerView
 
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        topOffsetConstraint = topAnchor.constraint(equalTo: containerView.topAnchor, constant: containerTopInset)
+        containerViewTopInsetConstraint = containerView.topAnchor.constraint(equalTo: topAnchor, constant: containerTopInset)
         containerViewHeightConstraint = containerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0)
         NSLayoutConstraint.activate([
-            topOffsetConstraint,
+            containerViewTopInsetConstraint,
             containerView.leftAnchor.constraint(equalTo: leftAnchor, constant: 0.0),
             containerView.rightAnchor.constraint(equalTo: rightAnchor, constant: 0.0),
             containerViewHeightConstraint,
@@ -130,7 +132,7 @@ public class FloatingPanelSurfaceView: UIView {
         grabberHandle.translatesAutoresizingMaskIntoConstraints = false
         grabberHandleWidthConstraint = grabberHandle.widthAnchor.constraint(equalToConstant: grabberHandleWidth)
         grabberHandleHeightConstraint = grabberHandle.heightAnchor.constraint(equalToConstant: grabberHandleHeight)
-        grabberHandleTopConstraint = grabberHandle.topAnchor.constraint(equalTo: topAnchor, constant: grabberTopPadding - containerTopInset)
+        grabberHandleTopConstraint = grabberHandle.topAnchor.constraint(equalTo: topAnchor, constant: grabberTopPadding)
         NSLayoutConstraint.activate([
             grabberHandleWidthConstraint,
             grabberHandleHeightConstraint,
@@ -141,7 +143,12 @@ public class FloatingPanelSurfaceView: UIView {
 
     public override func updateConstraints() {
         super.updateConstraints()
+        containerViewTopInsetConstraint.constant = containerTopInset
         containerViewHeightConstraint.constant = bottomOverflow
+        contentViewHeightConstraint.constant = -containerTopInset
+        grabberHandleTopConstraint.constant = grabberTopPadding
+        grabberHandleWidthConstraint.constant = grabberHandleWidth
+        grabberHandleHeightConstraint.constant = grabberHandleHeight
     }
 
     public override func layoutSubviews() {
@@ -200,11 +207,12 @@ public class FloatingPanelSurfaceView: UIView {
         self.contentView = contentView
         /* contentView.frame = bounds */ // MUST NOT: Because the top safe area inset of a content VC will be incorrect.
         contentView.translatesAutoresizingMaskIntoConstraints = false
+        contentViewHeightConstraint = contentView.heightAnchor.constraint(equalTo: heightAnchor, constant: -containerTopInset)
         NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(equalTo: topAnchor, constant: 0.0),
-            contentView.leftAnchor.constraint(equalTo: leftAnchor, constant: 0.0),
-            contentView.rightAnchor.constraint(equalTo: rightAnchor, constant: 0.0),
-            contentView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0)
+            contentView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 0.0),
+            contentView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 0.0),
+            contentView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0.0),
+            contentViewHeightConstraint,
             ])
     }
 }
