@@ -145,7 +145,7 @@ public class FloatingPanelSurfaceView: UIView {
         super.updateConstraints()
         containerViewTopInsetConstraint.constant = containerTopInset
         containerViewHeightConstraint.constant = bottomOverflow
-        contentViewHeightConstraint.constant = -containerTopInset
+        contentViewHeightConstraint?.constant = -containerTopInset
         grabberHandleTopConstraint.constant = grabberTopPadding
         grabberHandleWidthConstraint.constant = grabberHandleWidth
         grabberHandleHeightConstraint.constant = grabberHandleHeight
