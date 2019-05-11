@@ -88,11 +88,12 @@ public class FloatingPanelSurfaceView: UIView {
     @available(*, unavailable, renamed: "containerView")
     public var backgroundView: UIView!
 
+    private var containerViewTopInsetConstraint: NSLayoutConstraint!
     private var containerViewHeightConstraint: NSLayoutConstraint!
+
     private var grabberHandleWidthConstraint: NSLayoutConstraint!
     private var grabberHandleHeightConstraint: NSLayoutConstraint!
     private var grabberHandleTopConstraint: NSLayoutConstraint!
-    private var topOffsetConstraint: NSLayoutConstraint!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -113,10 +114,10 @@ public class FloatingPanelSurfaceView: UIView {
         self.containerView = containerView
 
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        topOffsetConstraint = containerView.topAnchor.constraint(equalTo: topAnchor, constant: containerTopInset)
+        containerViewTopInsetConstraint = containerView.topAnchor.constraint(equalTo: topAnchor, constant: containerTopInset)
         containerViewHeightConstraint = containerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0)
         NSLayoutConstraint.activate([
-            topOffsetConstraint,
+            containerViewTopInsetConstraint,
             containerView.leftAnchor.constraint(equalTo: leftAnchor, constant: 0.0),
             containerView.rightAnchor.constraint(equalTo: rightAnchor, constant: 0.0),
             containerViewHeightConstraint,
@@ -140,8 +141,8 @@ public class FloatingPanelSurfaceView: UIView {
 
     public override func updateConstraints() {
         super.updateConstraints()
+        containerViewTopInsetConstraint.constant = containerTopInset
         containerViewHeightConstraint.constant = bottomOverflow
-        topOffsetConstraint.constant = containerTopInset
         grabberHandleTopConstraint.constant = grabberTopPadding
         grabberHandleWidthConstraint.constant = grabberHandleWidth
         grabberHandleHeightConstraint.constant = grabberHandleHeight
