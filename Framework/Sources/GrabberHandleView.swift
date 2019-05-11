@@ -18,11 +18,6 @@ public class GrabberHandleView: UIView {
         backgroundColor = barColor
     }
 
-    private func render() {
-        self.layer.masksToBounds = true
-        self.layer.cornerRadius = frame.size.height * 0.5
-    }
-
     public override func layoutSubviews() {
         super.layoutSubviews()
         render()
@@ -31,5 +26,10 @@ public class GrabberHandleView: UIView {
     public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         let view = super.hitTest(point, with: event)
         return view == self ? nil : view
+    }
+
+    private func render() {
+        self.layer.masksToBounds = true
+        self.layer.cornerRadius = frame.size.height * 0.5
     }
 }

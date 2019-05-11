@@ -104,15 +104,15 @@ public class FloatingPanelSurfaceView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        render()
+        addSubViews()
     }
 
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        render()
+        addSubViews()
     }
 
-    private func render() {
+    private func addSubViews() {
         super.backgroundColor = .clear
         self.clipsToBounds = false
 
