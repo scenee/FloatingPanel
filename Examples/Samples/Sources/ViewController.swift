@@ -294,12 +294,10 @@ extension SampleListViewController: UITableViewDelegate {
             contentViewController.view.backgroundColor = .green
             
             let fpc = FloatingPanelController()
-            fpc.set(
-                contentViewController: contentViewController,
-                insets: .init(top: 20, left: 20, right: -20)
-            )
-            fpc.delegate = self
+            fpc.set(contentViewController: contentViewController)
+            fpc.surfaceView.contentInsets = .init(top: 20, left: 20, bottom: 0, right: -20)
             
+            fpc.delegate = self
             fpc.isRemovalInteractionEnabled = true
             self.present(fpc, animated: true, completion: nil)
         default:

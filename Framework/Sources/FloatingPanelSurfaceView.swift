@@ -23,6 +23,13 @@ public class FloatingPanelSurfaceView: UIView {
 
     /// A root view of a content view controller
     public weak var contentView: UIView!
+    
+    /// The content insets
+    public var contentInsets: UIEdgeInsets = .zero {
+        didSet {
+            self.needsUpdateConstraints()
+        }
+    }
 
     private var color: UIColor? = .white { didSet { setNeedsLayout() } }
     var bottomOverflow: CGFloat = 0.0 // Must not call setNeedsLayout()
@@ -72,6 +79,15 @@ public class FloatingPanelSurfaceView: UIView {
     public var backgroundView: UIView!
 
     private var containerViewHeightConstraint: NSLayoutConstraint!
+    
+    /// The content view top constraint
+    private var contentTopConstraint: NSLayoutConstraint?
+    
+    /// The content view left constraint
+    private var contentLeftConstraint: NSLayoutConstraint?
+    
+    /// The content right constraint
+    private var contentRightConstraint: NSLayoutConstraint?
 
     private struct Default {
         public static let grabberTopPadding: CGFloat = 6.0
@@ -120,6 +136,9 @@ public class FloatingPanelSurfaceView: UIView {
     public override func updateConstraints() {
         super.updateConstraints()
         containerViewHeightConstraint.constant = bottomOverflow
+        self.contentTopConstraint?.constant = self.contentInsets.top
+        self.contentLeftConstraint?.constant = self.contentInsets.left
+        self.contentRightConstraint?.constant = self.contentInsets.right
     }
 
     public override func layoutSubviews() {
@@ -173,16 +192,22 @@ public class FloatingPanelSurfaceView: UIView {
         containerView.layer.borderWidth = borderWidth
     }
 
-    func add(contentView: UIView, topInset: CGFloat = 0, leftInset: CGFloat = 0, rightInset: CGFloat = 0) {
+    func add(contentView: UIView) {
         containerView.addSubview(contentView)
         self.contentView = contentView
         /* contentView.frame = bounds */ // MUST NOT: Because the top safe area inset of a content VC will be incorrect.
         contentView.translatesAutoresizingMaskIntoConstraints = false
+        let topConstraint = contentView.topAnchor.constraint(equalTo: topAnchor, constant: self.contentInsets.top)
+        let leftConstraint = contentView.leftAnchor.constraint(equalTo: leftAnchor, constant: self.contentInsets.left)
+        let rightConstraint = contentView.rightAnchor.constraint(equalTo: rightAnchor, constant: self.contentInsets.right)
         NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(equalTo: topAnchor, constant: topInset),
-            contentView.leftAnchor.constraint(equalTo: leftAnchor, constant: leftInset),
-            contentView.rightAnchor.constraint(equalTo: rightAnchor, constant: rightInset),
+            topConstraint,
+            leftConstraint,
+            rightConstraint,
             contentView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0)
-            ])
+        ])
+        self.contentTopConstraint = topConstraint
+        self.contentLeftConstraint = leftConstraint
+        self.contentRightConstraint = rightConstraint
     }
 }
