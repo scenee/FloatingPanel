@@ -123,10 +123,6 @@ class SampleListViewController: UIViewController {
         mainPanelVC = FloatingPanelController()
         mainPanelVC.delegate = self
 
-        // Initialize FloatingPanelController and add the view
-        mainPanelVC.surfaceView.cornerRadius = 6.0
-        mainPanelVC.surfaceView.shadowHidden = false
-
         // Set a content view controller
         mainPanelVC.set(contentViewController: contentVC)
 
