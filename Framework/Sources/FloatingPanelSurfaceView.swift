@@ -24,9 +24,12 @@ public class FloatingPanelSurfaceView: UIView {
     /// A root view of a content view controller
     public weak var contentView: UIView!
     
-    /// The content insets
+    /// The content insets specifying the insets around the content view.
+    ///
+    /// - important: Currently the `bottom` inset is ignored.
     public var contentInsets: UIEdgeInsets = .zero {
         didSet {
+            // Needs update constraints
             self.needsUpdateConstraints()
         }
     }
