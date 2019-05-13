@@ -172,6 +172,9 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         get { return floatingPanel.isRemovalInteractionEnabled }
     }
 
+    /// A Boolean value that determines whether the tap to dismiss interaction is enabled.
+    public var isTapToDismissEnabled: Bool = true
+
     /// The view controller responsible for the content portion of the floating panel.
     public var contentViewController: UIViewController? {
         set { set(contentViewController: newValue) }
