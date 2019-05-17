@@ -202,7 +202,7 @@ public class FloatingPanelSurfaceView: UIView {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         let topConstraint = contentView.topAnchor.constraint(equalTo: topAnchor, constant: self.contentInsets.top)
         let leftConstraint = contentView.leftAnchor.constraint(equalTo: leftAnchor, constant: self.contentInsets.left)
-        let rightConstraint = contentView.rightAnchor.constraint(equalTo: rightAnchor, constant: self.contentInsets.right)
+        let rightConstraint = rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: self.contentInsets.left)
         NSLayoutConstraint.activate([
             topConstraint,
             leftConstraint,
