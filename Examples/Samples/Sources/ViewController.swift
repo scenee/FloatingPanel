@@ -295,7 +295,7 @@ extension SampleListViewController: UITableViewDelegate {
             
             let fpc = FloatingPanelController()
             fpc.set(contentViewController: contentViewController)
-            fpc.surfaceView.contentInsets = .init(top: 20, left: 20, bottom: 0, right: -20)
+            fpc.surfaceView.contentInsets = .init(top: 20, left: 20, bottom: 0, right: 20)
             
             fpc.delegate = self
             fpc.isRemovalInteractionEnabled = true
