@@ -30,7 +30,7 @@ public class FloatingPanelSurfaceView: UIView {
     public var contentInsets: UIEdgeInsets = .zero {
         didSet {
             // Needs update constraints
-            self.needsUpdateConstraints()
+            self.setNeedsUpdateConstraints()
         }
     }
 
