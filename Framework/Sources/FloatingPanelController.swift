@@ -516,6 +516,26 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         setUpLayout()
     }
 
+    /// Prepares an update to the layout object from the delegate.
+    ///
+    /// This method must eventually be balanced with a call to endUpdateLayout().
+    /// It can be called in an animation block.
+    public func beginUpdateLayout() {
+        floatingPanel.layoutAdapter.beginUpdateHeight()
+    }
+
+    /// Balances a previous call to beginUpdateLayout(), and updates the layout
+    /// object from the delegate and lays out the views managed by the
+    /// controller immediately.
+    ///
+    /// This method updates the `FloatingPanelLayout` object from the delegate and
+    /// then it calls `layoutIfNeeded()` of the root view to force the view
+    /// to update the floating panel's layout immediately. It can be called in an
+    /// animation block.
+    public func endUpdateLayout() {
+        updateLayout()
+    }
+
     /// Returns the y-coordinate of the point at the origin of the surface view.
     public func originYOfSurface(for pos: FloatingPanelPosition) -> CGFloat {
         switch pos {

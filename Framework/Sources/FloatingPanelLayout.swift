@@ -412,6 +412,26 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
+    // Support for FloatingPanelController.beginUpdateLayout/endUpdateLayout.
+    //
+    /// This method must eventually be balanced with a call to updateHeight().
+    func beginUpdateHeight() {
+        guard vc != nil else { return }
+
+        // Deactivate the hard height constraint until updateHeight()
+        if let const = self.heightConstraint {
+            NSLayoutConstraint.deactivate([const])
+        }
+
+        // Activate a very weak temporary height constraint which makes sure the
+        // surface view is not totally free-form.
+        let heightConstraint = surfaceView.heightAnchor.constraint(equalToConstant: 0)
+        heightConstraint.priority = UILayoutPriority(1)
+
+        NSLayoutConstraint.activate([heightConstraint])
+        self.heightConstraint = heightConstraint
+    }
+
     func updateInteractiveTopConstraint(diff: CGFloat, allowsTopBuffer: Bool) {
         defer {
             surfaceView.superview!.layoutIfNeeded() // MUST call here to update `surfaceView.frame`
