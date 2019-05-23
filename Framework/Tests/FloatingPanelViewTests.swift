@@ -27,10 +27,30 @@ class FloatingPanelViewTests: XCTestCase {
     func test_surfaceView_cornderRaduis() {
         let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
         XCTAssert(surface.cornerRadius == 0.0)
-        surface.containerView.layer.cornerRadius = 10.0
+        XCTAssert(surface.containerView.layer.masksToBounds == false)
+
+        surface.cornerRadius = 10.0
         surface.layoutIfNeeded()
         XCTAssert(surface.cornerRadius == 10.0)
         XCTAssert(surface.containerView.layer.cornerRadius == 10.0)
+        XCTAssert(surface.containerView.layer.masksToBounds == true)
+
+        surface.containerView.layer.cornerRadius = 12.0
+        surface.layoutIfNeeded()
+        XCTAssert(surface.cornerRadius == 12.0)
+        XCTAssert(surface.containerView.layer.masksToBounds == true)
+
+        surface.cornerRadius = 0.0
+        surface.layoutIfNeeded()
+        XCTAssert(surface.cornerRadius == 0.0)
+        XCTAssert(surface.containerView.layer.cornerRadius == 0.0)
+        XCTAssert(surface.containerView.layer.masksToBounds == false)
+
+        surface.containerView.layer.cornerRadius = 12.0
+        surface.setNeedsLayout()
+        surface.layoutIfNeeded()
+        XCTAssert(surface.cornerRadius == 12.0)
+        XCTAssert(surface.containerView.layer.masksToBounds == true)
     }
 
     func test_surfaceView_border() {
