@@ -5,8 +5,6 @@
 
 import UIKit
 
-class FloatingPanelSurfaceContentView: UIView {}
-
 /// A view that presents a surface interface in a floating panel.
 public class FloatingPanelSurfaceView: UIView {
 
@@ -14,7 +12,7 @@ public class FloatingPanelSurfaceView: UIView {
     ///
     /// To use a custom grabber handle, hide this and then add the custom one
     /// to the surface view at appropriate coordinates.
-    public lazy var grabberHandle: GrabberHandleView = { GrabberHandleView() }()
+    public let grabberHandle: GrabberHandleView = GrabberHandleView()
 
     /// Offset of the grabber handle from the top
     public var grabberTopPadding: CGFloat = 6.0 { didSet {
@@ -86,24 +84,19 @@ public class FloatingPanelSurfaceView: UIView {
     /// specified by other properties. The reason why they're not be applied to
     /// a content view directly is because it avoids any side-effects to the
     /// content view.
-    public lazy var containerView: UIView = { UIView() }()
+    public let containerView: UIView = UIView()
 
     @available(*, unavailable, renamed: "containerView")
     public var backgroundView: UIView!
 
-    private lazy var containerViewTopInsetConstraint: NSLayoutConstraint
-        = { containerView.topAnchor.constraint(equalTo: topAnchor, constant: containerTopInset) }()
-    private lazy var containerViewHeightConstraint: NSLayoutConstraint
-        = { containerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0) } ()
+    private lazy var containerViewTopInsetConstraint: NSLayoutConstraint = containerView.topAnchor.constraint(equalTo: topAnchor, constant: containerTopInset)
+    private lazy var containerViewHeightConstraint: NSLayoutConstraint = containerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0)
 
-    private var contentViewHeightConstraint: NSLayoutConstraint?
+    private lazy var contentViewHeightConstraint: NSLayoutConstraint? = nil
 
-    private lazy var grabberHandleWidthConstraint: NSLayoutConstraint!
-        = { grabberHandle.widthAnchor.constraint(equalToConstant: grabberHandleWidth) }()
-    private lazy var grabberHandleHeightConstraint: NSLayoutConstraint!
-        = { grabberHandle.heightAnchor.constraint(equalToConstant: grabberHandleHeight) }()
-    private lazy var grabberHandleTopConstraint: NSLayoutConstraint!
-        = { grabberHandle.topAnchor.constraint(equalTo: topAnchor, constant: grabberTopPadding) }()
+    private lazy var grabberHandleWidthConstraint: NSLayoutConstraint! = grabberHandle.widthAnchor.constraint(equalToConstant: grabberHandleWidth)
+    private lazy var grabberHandleHeightConstraint: NSLayoutConstraint! = grabberHandle.heightAnchor.constraint(equalToConstant: grabberHandleHeight)
+    private lazy var grabberHandleTopConstraint: NSLayoutConstraint! = grabberHandle.topAnchor.constraint(equalTo: topAnchor, constant: grabberTopPadding)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
