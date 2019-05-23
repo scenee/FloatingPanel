@@ -169,15 +169,15 @@ public class FloatingPanelSurfaceView: UIView {
     }
 
     private func updateContentViewMask() {
-        guard
-            containerView.layer.cornerRadius != 0.0
-            else { return }
-
+        guard containerView.layer.cornerRadius != 0.0 else {
+            containerView.layer.masksToBounds = false
+            return
+        }
+        containerView.layer.masksToBounds = true
         if #available(iOS 11, *) {
             // Don't use `contentView.clipToBounds` because it prevents content view from expanding the height of a subview of it
             // for the bottom overflow like Auto Layout settings of UIVisualEffectView in Main.storyboard of Example/Maps.
             // Because the bottom of contentView must be fit to the bottom of a screen to work the `safeLayoutGuide` of a content VC.
-            containerView.layer.masksToBounds = true
             containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         } else {
             // Don't use `contentView.layer.mask` because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
