@@ -140,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				54A6B6B022968B530077F348 /* FloatingPanelTests.swift */,
+				54A6B6B72296A8520077F348 /* FloatingPanelViewTests.swift */,
 				545DB9CF2151169500CA77B8 /* FloatingPanelControllerTests.swift */,
 				545DB9D12151169500CA77B8 /* Info.plist */,
 			);
@@ -317,6 +318,7 @@
 			files = (
 				54A6B6B122968B530077F348 /* FloatingPanelTests.swift in Sources */,
 				545DB9D02151169500CA77B8 /* FloatingPanelControllerTests.swift in Sources */,
+				54A6B6B82296A8520077F348 /* FloatingPanelViewTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
