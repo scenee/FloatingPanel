@@ -537,7 +537,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingModalControllerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FloatingPanelTesting.app/FloatingPanelTesting";
 			};
@@ -558,7 +558,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingModalControllerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FloatingPanelTesting.app/FloatingPanelTesting";
 			};
@@ -707,7 +707,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingModalControllerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FloatingPanelTesting.app/FloatingPanelTesting";
 			};
@@ -718,9 +718,12 @@
 			buildSettings = {
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = TestingApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingPanelTesting;
 				PRODUCT_NAME = FloatingPanelTesting;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Test;
 		};
