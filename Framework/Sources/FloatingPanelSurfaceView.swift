@@ -150,8 +150,6 @@ public class FloatingPanelSurfaceView: UIView {
         updateShadow()
         updateCornerRadius()
         updateBorder()
-
-        contentView?.frame = bounds
     }
 
     private func updateShadow() {
