@@ -145,30 +145,31 @@ public class FloatingPanelSurfaceView: UIView {
         super.layoutSubviews()
         log.debug("surface view frame = \(frame)")
 
-        updateLayers()
-        updateContentViewMask()
+        containerView.backgroundColor = color
+
+        updateShadow()
+        updateCornerRadius()
         updateBorder()
 
         contentView?.frame = bounds
     }
 
-    private func updateLayers() {
-        containerView.backgroundColor = color
-
-        if cornerRadius != 0.0, containerView.layer.cornerRadius != cornerRadius {
-            containerView.layer.masksToBounds = true
-            containerView.layer.cornerRadius = cornerRadius
-        }
-
+    private func updateShadow() {
         if shadowHidden == false {
-            layer.shadowColor = shadowColor.cgColor
-            layer.shadowOffset = shadowOffset
-            layer.shadowOpacity = shadowOpacity
-            layer.shadowRadius = shadowRadius
+            if #available(iOS 11, *) {
+                // For clear background. See also, https://github.com/SCENEE/FloatingPanel/pull/51.
+                layer.shadowColor = shadowColor.cgColor
+                layer.shadowOffset = shadowOffset
+                layer.shadowOpacity = shadowOpacity
+                layer.shadowRadius = shadowRadius
+            } else {
+                // Can't update `layer.shadow*` directly because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
+                // Instead, a user should display shadow appropriately.
+            }
         }
     }
 
-    private func updateContentViewMask() {
+    private func updateCornerRadius() {
         guard containerView.layer.cornerRadius != 0.0 else {
             containerView.layer.masksToBounds = false
             return
@@ -180,8 +181,8 @@ public class FloatingPanelSurfaceView: UIView {
             // Because the bottom of contentView must be fit to the bottom of a screen to work the `safeLayoutGuide` of a content VC.
             containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         } else {
-            // Don't use `contentView.layer.mask` because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
-            // Instead, a user can mask the content view manually in an application.
+            // Can't use `containerView.layer.mask` because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
+            // Instead, a user should display rounding corners appropriately.
         }
     }
 
