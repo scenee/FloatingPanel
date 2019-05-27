@@ -14,7 +14,7 @@ struct Logger {
     private let osLog: OSLog
     private let s = DispatchSemaphore(value: 1)
 
-    enum Level: Int, Comparable {
+    private enum Level: Int, Comparable {
         case debug = 0
         case info = 1
         case warning = 2
@@ -47,9 +47,6 @@ struct Logger {
         }
     }
 
-    typealias Hook = ((String, Level) -> Void)
-    var hook: Hook?
-
     fileprivate init() {
         osLog = OSLog(subsystem: "com.scenee.FloatingPanel", category: "FloatingPanel")
     }
@@ -67,8 +64,6 @@ struct Logger {
                 return "\(level.displayName) \(message) \(extraMessage)"
             }
         }()
-
-        hook?(log, level)
 
         os_log("%@", log: osLog, type: level.osLogType, log)
     }
