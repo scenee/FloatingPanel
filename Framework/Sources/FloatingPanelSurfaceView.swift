@@ -5,8 +5,6 @@
 
 import UIKit
 
-class FloatingPanelSurfaceContentView: UIView {}
-
 /// A view that presents a surface interface in a floating panel.
 public class FloatingPanelSurfaceView: UIView {
 
@@ -14,7 +12,7 @@ public class FloatingPanelSurfaceView: UIView {
     ///
     /// To use a custom grabber handle, hide this and then add the custom one
     /// to the surface view at appropriate coordinates.
-    public lazy var grabberHandle: GrabberHandleView = { GrabberHandleView() }()
+    public let grabberHandle: GrabberHandleView = GrabberHandleView()
 
     /// Offset of the grabber handle from the top
     public var grabberTopPadding: CGFloat = 6.0 { didSet {
@@ -49,7 +47,10 @@ public class FloatingPanelSurfaceView: UIView {
     ///
     /// `self.contentView` is masked with the top rounded corners automatically on iOS 11 and later.
     /// On iOS 10, they are not automatically masked because of a UIVisualEffectView issue. See https://forums.developer.apple.com/thread/50854
-    public var cornerRadius: CGFloat = 0.0 { didSet { setNeedsLayout() } }
+    public var cornerRadius: CGFloat {
+        set { containerView.layer.cornerRadius = newValue; setNeedsLayout() }
+        get { return containerView.layer.cornerRadius }
+    }
 
     /// A Boolean indicating whether the surface shadow is displayed.
     public var shadowHidden: Bool = false  { didSet { setNeedsLayout() } }
@@ -83,24 +84,19 @@ public class FloatingPanelSurfaceView: UIView {
     /// specified by other properties. The reason why they're not be applied to
     /// a content view directly is because it avoids any side-effects to the
     /// content view.
-    public lazy var containerView: UIView = { UIView() }()
+    public let containerView: UIView = UIView()
 
     @available(*, unavailable, renamed: "containerView")
     public var backgroundView: UIView!
 
-    private lazy var containerViewTopInsetConstraint: NSLayoutConstraint
-        = { containerView.topAnchor.constraint(equalTo: topAnchor, constant: containerTopInset) }()
-    private lazy var containerViewHeightConstraint: NSLayoutConstraint
-        = { containerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0) } ()
+    private lazy var containerViewTopInsetConstraint: NSLayoutConstraint = containerView.topAnchor.constraint(equalTo: topAnchor, constant: containerTopInset)
+    private lazy var containerViewHeightConstraint: NSLayoutConstraint = containerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0)
 
-    private var contentViewHeightConstraint: NSLayoutConstraint?
+    private lazy var contentViewHeightConstraint: NSLayoutConstraint? = nil
 
-    private lazy var grabberHandleWidthConstraint: NSLayoutConstraint!
-        = { grabberHandle.widthAnchor.constraint(equalToConstant: grabberHandleWidth) }()
-    private lazy var grabberHandleHeightConstraint: NSLayoutConstraint!
-        = { grabberHandle.heightAnchor.constraint(equalToConstant: grabberHandleHeight) }()
-    private lazy var grabberHandleTopConstraint: NSLayoutConstraint!
-        = { grabberHandle.topAnchor.constraint(equalTo: topAnchor, constant: grabberTopPadding) }()
+    private lazy var grabberHandleWidthConstraint: NSLayoutConstraint! = grabberHandle.widthAnchor.constraint(equalToConstant: grabberHandleWidth)
+    private lazy var grabberHandleHeightConstraint: NSLayoutConstraint! = grabberHandle.heightAnchor.constraint(equalToConstant: grabberHandleHeight)
+    private lazy var grabberHandleTopConstraint: NSLayoutConstraint! = grabberHandle.topAnchor.constraint(equalTo: topAnchor, constant: grabberTopPadding)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -149,45 +145,42 @@ public class FloatingPanelSurfaceView: UIView {
         super.layoutSubviews()
         log.debug("surface view frame = \(frame)")
 
-        updateLayers()
-        updateContentViewMask()
-        updateBorder()
-
-        contentView?.frame = bounds
-    }
-
-    private func updateLayers() {
         containerView.backgroundColor = color
 
-        if cornerRadius != 0.0, containerView.layer.cornerRadius != cornerRadius {
-            containerView.layer.masksToBounds = true
-            containerView.layer.cornerRadius = cornerRadius
-        }
+        updateShadow()
+        updateCornerRadius()
+        updateBorder()
+    }
 
+    private func updateShadow() {
         if shadowHidden == false {
-            layer.shadowColor = shadowColor.cgColor
-            layer.shadowOffset = shadowOffset
-            layer.shadowOpacity = shadowOpacity
-            layer.shadowRadius = shadowRadius
+            if #available(iOS 11, *) {
+                // For clear background. See also, https://github.com/SCENEE/FloatingPanel/pull/51.
+                layer.shadowColor = shadowColor.cgColor
+                layer.shadowOffset = shadowOffset
+                layer.shadowOpacity = shadowOpacity
+                layer.shadowRadius = shadowRadius
+            } else {
+                // Can't update `layer.shadow*` directly because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
+                // Instead, a user should display shadow appropriately.
+            }
         }
     }
 
-    private func updateContentViewMask() {
-        guard
-            cornerRadius != 0.0,
-            containerView.layer.cornerRadius != cornerRadius
-            else { return }
-
+    private func updateCornerRadius() {
+        guard containerView.layer.cornerRadius != 0.0 else {
+            containerView.layer.masksToBounds = false
+            return
+        }
+        containerView.layer.masksToBounds = true
         if #available(iOS 11, *) {
             // Don't use `contentView.clipToBounds` because it prevents content view from expanding the height of a subview of it
             // for the bottom overflow like Auto Layout settings of UIVisualEffectView in Main.storyboard of Example/Maps.
             // Because the bottom of contentView must be fit to the bottom of a screen to work the `safeLayoutGuide` of a content VC.
-            containerView.layer.masksToBounds = true
-            containerView.layer.cornerRadius = cornerRadius
             containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         } else {
-            // Don't use `contentView.layer.mask` because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
-            // Instead, a user can mask the content view manually in an application.
+            // Can't use `containerView.layer.mask` because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
+            // Instead, a user should display rounding corners appropriately.
         }
     }
 
