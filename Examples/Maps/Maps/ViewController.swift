@@ -21,7 +21,11 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate, 
 
         // Initialize FloatingPanelController and add the view
         fpc.surfaceView.backgroundColor = .clear
-        fpc.surfaceView.cornerRadius = 9.0
+        if #available(iOS 11, *) {
+            fpc.surfaceView.cornerRadius = 9.0
+        } else {
+            fpc.surfaceView.cornerRadius = 0.0
+        }
         fpc.surfaceView.shadowHidden = false
 
         searchVC = storyboard?.instantiateViewController(withIdentifier: "SearchPanel") as? SearchPanelViewController
@@ -135,7 +139,10 @@ class SearchPanelViewController: UIViewController, UITableViewDataSource, UITabl
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var visualEffectView: UIVisualEffectView!
-    
+
+    // For iOS 10 only
+    private lazy var shadowLayer: CAShapeLayer = CAShapeLayer()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
@@ -150,9 +157,24 @@ class SearchPanelViewController: UIViewController, UITableViewDataSource, UITabl
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if #available(iOS 10, *) {
+        if #available(iOS 11, *) {
+        } else {
+            // Exmaple: Add rounding corners on iOS 10
             visualEffectView.layer.cornerRadius = 9.0
             visualEffectView.clipsToBounds = true
+
+            // Exmaple: Add shadow manually on iOS 10
+            view.layer.insertSublayer(shadowLayer, at: 0)
+            let rect = visualEffectView.frame
+            let path = UIBezierPath(roundedRect: rect,
+                                    byRoundingCorners: [.topLeft, .topRight],
+                                    cornerRadii: CGSize(width: 9.0, height: 9.0))
+            shadowLayer.frame = visualEffectView.frame
+            shadowLayer.shadowPath = path.cgPath
+            shadowLayer.shadowColor = UIColor.black.cgColor
+            shadowLayer.shadowOffset = CGSize(width: 0.0, height: 1.0)
+            shadowLayer.shadowOpacity = 0.2
+            shadowLayer.shadowRadius = 3.0
         }
     }
 
