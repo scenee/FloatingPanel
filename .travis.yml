@@ -46,6 +46,8 @@ jobs:
 
   - stage: CocoaPods
     osx_image: xcode10.2
+    before_install: 
+    - gem install cocoapods
     script:
     - pod spec lint
     - pod lib lint
