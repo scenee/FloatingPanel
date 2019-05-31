@@ -1,4 +1,4 @@
-language: swift
+language: objective-c
 branches:
   only:
     - master
@@ -12,23 +12,29 @@ env:
   global:
   - LANG=en_US.UTF-8
   - LC_ALL=en_US.UTF-8
-skip_cleanup: true
 jobs:
   include:
-  - stage: Build framework(swift 4.1)
+  - stage: "Builds"
     osx_image: xcode9.4
-    script:
-    - xcodebuild -scheme FloatingPanel SWIFT_VERSION=4.1 clean build
-
-  - stage: Build framework(swift 4.2)
+    script: xcodebuild -scheme FloatingPanel SWIFT_VERSION=4.1 clean build
+    name: "Swift 4.1"
+  - script: xcodebuild -scheme FloatingPanel SWIFT_VERSION=4.2 clean build
     osx_image: xcode10
-    script:
-    - xcodebuild -scheme FloatingPanel SWIFT_VERSION=4.2 clean build
-
-  - stage: Build framework(swift 5.0)
+    name: "Swift 4.2"
+  - script: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.0 clean build
     osx_image: xcode10.2
-    script:
-    - xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.0 clean build
+    name: "Swift 5.0"
+
+  - stage: "Tests"
+    osx_image: xcode10.2
+    script: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=10.3.1,name=iPhone SE'
+    name: "iPhone SE (iOS 10.3)"
+  - script: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=11.4,name=iPhone 7'
+    osx_image: xcode10.2
+    name: "iPhone 7 (iOS 11.4)"
+  - script: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=12.2,name=iPhone X'
+    osx_image: xcode10.2
+    name: "iPhone X (iOS 12.2)"
 
   - stage: Carthage
     osx_image: xcode10.2
@@ -38,22 +44,19 @@ jobs:
     script:
     - carthage build --no-skip-current
 
-  - stage: Podspec
+  - stage: CocoaPods
     osx_image: xcode10.2
     script:
     - pod spec lint
+    - pod lib lint
 
-  - stage: Build maps example
+  - stage: Build examples
     osx_image: xcode10.2
-    script:
-    - xcodebuild -scheme Maps -sdk iphonesimulator clean build
-
-  - stage: Build stocks example
+    script: xcodebuild -scheme Maps -sdk iphonesimulator clean build
+    name: "Maps"
+  - script: xcodebuild -scheme Stocks -sdk iphonesimulator clean build
     osx_image: xcode10.2
-    script:
-    - xcodebuild -scheme Stocks -sdk iphonesimulator clean build
-
-  - stage: Build samples example
+    name: "Stocks"
+  - script: xcodebuild -scheme Samples -sdk iphonesimulator clean build
     osx_image: xcode10.2
-    script:
-    - xcodebuild -scheme Samples -sdk iphonesimulator clean build
+    name: "Samples"
