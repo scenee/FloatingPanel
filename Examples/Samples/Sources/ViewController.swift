@@ -956,6 +956,15 @@ extension TabBarContentViewController: FloatingPanelControllerDelegate {
         }
     }
 
+    func floatingPanel(_ vc: FloatingPanelController, behaviorFor newCollection: UITraitCollection) -> FloatingPanelBehavior? {
+        switch self.tabBarItem.tag {
+        case 1:
+            return TwoTabBarPanelBehavior()
+        default:
+            return nil
+        }
+    }
+
     func floatingPanelDidMove(_ vc: FloatingPanelController) {
         guard self.tabBarItem.tag == 2 else { return }
 
@@ -1076,18 +1085,28 @@ class TwoTabBarPanelLayout: FloatingPanelLayout {
     var supportedPositions: Set<FloatingPanelPosition> {
         return [.full, .half]
     }
+    var topInteractionBuffer: CGFloat {
+        return 100.0
+    }
     var bottomInteractionBuffer: CGFloat {
         return 261.0 - 22.0
     }
 
     func insetFor(position: FloatingPanelPosition) -> CGFloat? {
         switch position {
-        case .full: return 16.0
+        case .full: return 100.0
         case .half: return 261.0
         default: return nil
         }
     }
 }
+
+class TwoTabBarPanelBehavior: FloatingPanelBehavior {
+    func allowsRubberBanding(for edge: UIRectEdge) -> Bool {
+        return (edge == .bottom || edge == .top)
+    }
+}
+
 
 class ThreeTabBarPanelLayout: FloatingPanelFullScreenLayout {
     weak var parentVC: UIViewController!
