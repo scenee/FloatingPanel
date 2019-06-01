@@ -59,9 +59,9 @@ public protocol FloatingPanelBehavior {
     func removalInteractionAnimator(_ fpc: FloatingPanelController, with velocity: CGVector) -> UIViewPropertyAnimator
 
 
-    /// Asks the behavior whether the rubberbanding effect is enabled in moving over a given edge of a surface view.
+    /// Asks the behavior whether the rubber band effect is enabled in moving over a given edge of a surface view.
     ///
-    /// This method allows the behavior to specify that the rubberbanding effect to a given edge buffer of a surface view is enabled. By default, the effect is disabled.
+    /// This method allows the behavior to specify that the rubber band effect to a given edge buffer of a surface view is enabled. By default, the effect is disabled.
     func allowsRubberBanding(for edge: UIRectEdge) -> Bool
 }
 

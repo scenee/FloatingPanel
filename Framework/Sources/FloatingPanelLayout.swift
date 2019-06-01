@@ -445,13 +445,13 @@ class FloatingPanelLayoutAdapter {
         // Rubberbanding top buffer
         if behavior.allowsRubberBanding(for: .top), const < topMostConst {
             let buffer = topMostConst - const
-            const = topMostConst - rubberbandingEffect(for: buffer, base: vc.view.bounds.height)
+            const = topMostConst - rubberbandEffect(for: buffer, base: vc.view.bounds.height)
         }
 
         // Rubberbanding bottom buffer
         if behavior.allowsRubberBanding(for: .bottom), const > bottomMostConst {
             let buffer = const - bottomMostConst
-            const = bottomMostConst + rubberbandingEffect(for: buffer, base: vc.view.bounds.height)
+            const = bottomMostConst + rubberbandEffect(for: buffer, base: vc.view.bounds.height)
         }
 
         interactiveTopConstraint?.constant = max(minConst, min(maxConst, const))
@@ -461,7 +461,7 @@ class FloatingPanelLayoutAdapter {
     // x = distance from the edge
     // c = constant value, UIScrollView uses 0.55
     // d = dimension, either width or height
-    private func rubberbandingEffect(for buffer: CGFloat, base: CGFloat) -> CGFloat {
+    private func rubberbandEffect(for buffer: CGFloat, base: CGFloat) -> CGFloat {
         return (1.0 - (1.0 / ((buffer * 0.55 / base) + 1.0))) * base
     }
 
