@@ -23,6 +23,26 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
         XCTAssert(surface.backgroundColor == surface.containerView.backgroundColor)
     }
 
+    func test_surfaceView_constraintsUpdate() {
+        let window = UIWindow()
+        let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+        window.addSubview(surface)
+        window.makeKeyAndVisible()
+        XCTAssert(surface.contentView == nil)
+        surface.layoutIfNeeded()
+        XCTAssert(surface.grabberHandle.frame.minY == 6.0)
+        XCTAssert(surface.grabberHandle.frame.width == surface.grabberHandleWidth)
+        XCTAssert(surface.grabberHandle.frame.height == surface.grabberHandleHeight)
+
+        surface.grabberHandleWidth = 44.0
+        surface.grabberHandleHeight = 12.0
+        surface.layoutIfNeeded()
+        waitRunLoop(secs: 0.000_001)
+        XCTAssert(surface.grabberHandle.frame.width == surface.grabberHandleWidth, "\(surface.grabberHandle.frame.width) == \(surface.grabberHandleWidth)")
+        XCTAssert(surface.grabberHandle.frame.height == surface.grabberHandleHeight, "\(surface.grabberHandle.frame.height) == \(surface.grabberHandleHeight)")
+        window.resignKey()
+    }
+
     func test_surfaceView_cornderRaduis() {
         let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
         XCTAssert(surface.cornerRadius == 0.0)
