@@ -149,7 +149,6 @@ public class FloatingPanelSurfaceView: UIView {
     }
 
     public override func updateConstraints() {
-        super.updateConstraints()
         containerViewTopInsetConstraint.constant = containerTopInset
         containerViewHeightConstraint.constant = bottomOverflow
 
@@ -161,6 +160,8 @@ public class FloatingPanelSurfaceView: UIView {
         grabberHandleTopConstraint.constant = grabberTopPadding
         grabberHandleWidthConstraint.constant = grabberHandleWidth
         grabberHandleHeightConstraint.constant = grabberHandleHeight
+
+        super.updateConstraints()
     }
 
     public override func layoutSubviews() {
