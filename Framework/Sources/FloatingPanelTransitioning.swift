@@ -58,16 +58,6 @@ class FloatingPanelPresentationController: UIPresentationController {
 
         // Forward touch events to the presenting view controller
         (fpc.view as? FloatingPanelPassThroughView)?.eventForwardingView = presentingViewController.view
-
-        if fpc.isTapToDismissEnabled {
-            // Set tap-to-dismiss in the backdrop view
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
-            fpc.backdropView.addGestureRecognizer(tapGesture)
-        }
-    }
-
-    @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
-        presentedViewController.dismiss(animated: true, completion: nil)
     }
 
     private func addFloatingPanel() {
