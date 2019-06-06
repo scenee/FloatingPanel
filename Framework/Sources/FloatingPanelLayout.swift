@@ -432,12 +432,12 @@ class FloatingPanelLayoutAdapter {
         self.heightConstraint = heightConstraint
     }
 
-    func updateInteractiveTopConstraint(diff: CGFloat, allowsTopBuffer: Bool) {
+    func updateInteractiveTopConstraint(diff: CGFloat, allowsTopBuffer: Bool, with behavior: FloatingPanelBehavior) {
         defer {
             surfaceView.superview!.layoutIfNeeded() // MUST call here to update `surfaceView.frame`
         }
 
-        let minY: CGFloat = {
+        let topMostConst: CGFloat = {
             var ret: CGFloat = 0.0
             switch layout {
             case is FloatingPanelIntrinsicLayout, is FloatingPanelFullScreenLayout:
@@ -445,12 +445,9 @@ class FloatingPanelLayoutAdapter {
             default:
                 ret = topY - safeAreaInsets.top
             }
-            if allowsTopBuffer {
-                ret -= layout.topInteractionBuffer
-            }
             return max(ret, 0.0) // The top boundary is equal to the related topAnchor.
         }()
-        let maxY: CGFloat = {
+        let bottomMostConst: CGFloat = {
             var ret: CGFloat = 0.0
             switch layout {
             case is FloatingPanelIntrinsicLayout, is FloatingPanelFullScreenLayout:
@@ -458,12 +455,34 @@ class FloatingPanelLayoutAdapter {
             default:
                 ret = bottomY - safeAreaInsets.top
             }
-            ret += layout.bottomInteractionBuffer
             return min(ret, bottomMaxY)
         }()
-        let const = initialConst + diff
+        let minConst = allowsTopBuffer ? topMostConst - layout.topInteractionBuffer : topMostConst
+        let maxConst = bottomMostConst + layout.bottomInteractionBuffer
 
-        interactiveTopConstraint?.constant = max(minY, min(maxY, const))
+        var const = initialConst + diff
+
+        // Rubberbanding top buffer
+        if behavior.allowsRubberBanding(for: .top), const < topMostConst {
+            let buffer = topMostConst - const
+            const = topMostConst - rubberbandEffect(for: buffer, base: vc.view.bounds.height)
+        }
+
+        // Rubberbanding bottom buffer
+        if behavior.allowsRubberBanding(for: .bottom), const > bottomMostConst {
+            let buffer = const - bottomMostConst
+            const = bottomMostConst + rubberbandEffect(for: buffer, base: vc.view.bounds.height)
+        }
+
+        interactiveTopConstraint?.constant = max(minConst, min(maxConst, const))
+    }
+
+    // According to @chpwn's tweet: https://twitter.com/chpwn/status/285540192096497664
+    // x = distance from the edge
+    // c = constant value, UIScrollView uses 0.55
+    // d = dimension, either width or height
+    private func rubberbandEffect(for buffer: CGFloat, base: CGFloat) -> CGFloat {
+        return (1.0 - (1.0 / ((buffer * 0.55 / base) + 1.0))) * base
     }
 
     func activateLayout(of state: FloatingPanelPosition) {
