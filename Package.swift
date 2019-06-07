@@ -20,5 +20,8 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(name: "FloatingPanel", path: "Framework/Sources"),
     ],
+    platforms: [
+        .iOS(.v10)
+    ],
     swiftLanguageVersions: [.version("5")]
 )
