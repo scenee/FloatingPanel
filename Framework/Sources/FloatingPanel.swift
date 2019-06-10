@@ -519,11 +519,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
 
                 viewcontroller.delegate?.floatingPanelDidEndDraggingToRemove(viewcontroller, withVelocity: velocity)
                 self.startRemovalAnimation(with: velocityVector) { [weak self] in
-                    guard let `self` = self else { return }
-                    self.viewcontroller.dismiss(animated: false, completion: { [weak self] in
-                        guard let `self` = self else { return }
-                        self.viewcontroller.delegate?.floatingPanelDidEndRemove(self.viewcontroller)
-                    })
+                    self?.finishRemovalAnimation()
                 }
                 return
             }
@@ -574,6 +570,13 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         })
         self.animator = animator
         animator.startAnimation()
+    }
+
+    private func finishRemovalAnimation() {
+        viewcontroller?.dismiss(animated: false) { [weak self] in
+            guard let vc = self?.viewcontroller else { return }
+            vc.delegate?.floatingPanelDidEndRemove(vc)
+        }
     }
 
     private func startInteraction(with translation: CGPoint, at location: CGPoint) {
