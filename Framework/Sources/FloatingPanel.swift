@@ -292,13 +292,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 // Always show a scroll indicator at the top.
                 if interactionInProgress {
                     unlockScrollView()
-                } else {
-                    let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
-                    if state == layoutAdapter.topMostState, offset < 0, velocity.y > 0 {
-                        fitToBounds(scrollView: scrollView)
-                        let translation = panGesture.translation(in: panGestureRecognizer.view!.superview)
-                        startInteraction(with: translation, at: location)
-                    }
                 }
             }
         case panGestureRecognizer:
@@ -589,6 +582,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             if grabberAreaFrame.contains(location) {
                 initialScrollOffset = scrollView.contentOffset
             } else {
+                fitToBounds(scrollView: scrollView)
                 settle(scrollView: scrollView)
                 initialScrollOffset = scrollView.contentOffsetZero
             }
