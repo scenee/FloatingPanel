@@ -271,13 +271,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                         if grabberAreaFrame.contains(location) {
                             // Preserve the current content offset in moving from full.
                             scrollView.setContentOffset(initialScrollOffset, animated: false)
-                        } else {
-                            let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
-                            if offset < 0 {
-                                fitToBounds(scrollView: scrollView)
-                                let translation = panGesture.translation(in: panGestureRecognizer.view!.superview)
-                                startInteraction(with: translation, at: location)
-                            }
                         }
                     }
                 } else {
