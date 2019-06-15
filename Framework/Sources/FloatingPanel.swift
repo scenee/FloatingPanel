@@ -500,7 +500,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
             }
         }
 
-        let targetPosition = self.targetPosition(with: velocity)
+        let currentY = surfaceView.frame.minY
+        let targetPosition = self.targetPosition(from: currentY, with: velocity)
         let distance = self.distance(to: targetPosition)
 
         endInteraction(for: targetPosition)
@@ -681,22 +682,31 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         if supportedPositions.count == 1 {
             return state
         }
-        let isForwardYAxis = (translation.y >= 0)
+
+        let isForwardYAxis = (translation.y >= 0) == directional
+        let sortedPositions = Array(supportedPositions).sorted(by: { $0.rawValue < $1.rawValue })
+
+        if supportedPositions.count == 2 {
+            return getPosition(from: sortedPositions, with: isForwardYAxis)
+        }
+
         switch supportedPositions {
-        case [.full, .half]:
-            return (isForwardYAxis == directional) ? .half : .full
-        case [.half, .tip]:
-            return (isForwardYAxis == directional) ? .tip : .half
-        case [.full, .tip]:
-            return (isForwardYAxis == directional) ? .tip : .full
         default:
             let middleY = layoutAdapter.middleY
             if currentY > middleY {
-                return (isForwardYAxis == directional) ? .tip : .half
+                return (isForwardYAxis) ? .tip : .half
             } else {
-                return (isForwardYAxis == directional) ? .half : .full
+                return (isForwardYAxis) ? .half : .full
             }
         }
+    }
+
+    private func getPosition(from positions: [FloatingPanelPosition], with isForwardYAxis: Bool) -> FloatingPanelPosition {
+        assert(positions.count == 2)
+        let top = positions[0]
+        let bottom = positions[1]
+        assert(top.rawValue < bottom.rawValue)
+        return isForwardYAxis ? bottom : top
     }
 
     // Distance travelled after decelerating to zero velocity at a constant rate.
@@ -705,148 +715,56 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         return (initialVelocity / 1000.0) * decelerationRate / (1.0 - decelerationRate)
     }
 
-    private func targetPosition(with velocity: CGPoint) -> (FloatingPanelPosition) {
-        let currentY = surfaceView.frame.minY
+    func targetPosition(from currentY: CGFloat, with velocity: CGPoint) -> (FloatingPanelPosition) {
         let supportedPositions = layoutAdapter.supportedPositions
 
-        if supportedPositions.count == 1 {
+        guard supportedPositions.count > 1 else {
             return state
         }
 
-        switch supportedPositions {
-        case [.full, .half]:
-            return targetPosition(from: [.full, .half], at: currentY, velocity: velocity)
-        case [.half, .tip]:
-            return targetPosition(from: [.half, .tip], at: currentY, velocity: velocity)
-        case [.full, .tip]:
-            return targetPosition(from: [.full, .tip], at: currentY, velocity: velocity)
-        default:
-            /*
-             [topY|full]---[th1]---[middleY|half]---[th2]---[bottomY|tip]
-             */
-            let topY = layoutAdapter.topY
-            let middleY = layoutAdapter.middleY
-            let bottomY = layoutAdapter.bottomY
+        let sortedPositions = Array(supportedPositions).sorted(by: { $0.rawValue < $1.rawValue })
 
-            let nextState: FloatingPanelPosition
-            let forwardYDirection: Bool
-
-            /*
-             full <-> half <-> tip
-             */
-            switch state {
-            case .full:
-                nextState = .half
-                forwardYDirection = true
-            case .half:
-                nextState = (currentY > middleY) ? .tip : .full
-                forwardYDirection = (currentY > middleY)
-            case .tip:
-                nextState = .half
-                forwardYDirection = false
-            case .hidden:
-                fatalError("Now .hidden must not be used for a user interaction")
-            }
-
-            let redirectionalProgress = max(min(behavior.redirectionalProgress(viewcontroller, from: state, to: nextState), 1.0), 0.0)
-
-            let th1: CGFloat
-            let th2: CGFloat
-
-            if forwardYDirection {
-                th1 = topY + (middleY - topY) * redirectionalProgress
-                th2 = middleY + (bottomY - middleY) * redirectionalProgress
-            } else {
-                th1 = middleY - (middleY - topY) * redirectionalProgress
-                th2 = bottomY - (bottomY - middleY) * redirectionalProgress
-            }
-
-            let decelerationRate = behavior.momentumProjectionRate(viewcontroller)
-
-            let baseY = abs(bottomY - topY)
-            let vecY = velocity.y / baseY
-            let pY = project(initialVelocity: vecY, decelerationRate: decelerationRate) * baseY + currentY
-
-            switch currentY {
-            case ..<th1:
-                switch pY {
-                case bottomY...:
-                    return behavior.shouldProjectMomentum(viewcontroller, for: .tip) ? .tip : .half
-                case middleY...:
-                    return .half
-                case topY...:
-                    return .full
-                default:
-                    return .full
-                }
-            case ...middleY:
-                switch pY {
-                case bottomY...:
-                    return behavior.shouldProjectMomentum(viewcontroller, for: .tip) ? .tip : .half
-                case middleY...:
-                    return .half
-                case topY...:
-                    return .half
-                default:
-                    return .full
-                }
-            case ..<th2:
-                switch pY {
-                case bottomY...:
-                    return .tip
-                case middleY...:
-                    return .half
-                case topY...:
-                    return .half
-                default:
-                    return behavior.shouldProjectMomentum(viewcontroller, for: .full) ? .full : .half
-                }
-            default:
-                switch pY {
-                case bottomY...:
-                    return .tip
-                case middleY...:
-                    return .tip
-                case topY...:
-                    return .half
-                default:
-                    return behavior.shouldProjectMomentum(viewcontroller, for: .full) ? .full : .half
-                }
-            }
-        }
-    }
-
-    private func targetPosition(from positions: [FloatingPanelPosition], at currentY: CGFloat, velocity: CGPoint) -> FloatingPanelPosition {
-        assert(positions.count == 2)
-
-        let top = positions[0]
-        let bottom = positions[1]
-
-        let topY = layoutAdapter.positionY(for: top)
-        let bottomY = layoutAdapter.positionY(for: bottom)
-
-        let target = top == state ? bottom : top
-        let redirectionalProgress = max(min(behavior.redirectionalProgress(viewcontroller, from: state, to: target), 1.0), 0.0)
-
-        let th = topY + (bottomY - topY) * redirectionalProgress
-
+        // Projection
         let decelerationRate = behavior.momentumProjectionRate(viewcontroller)
-        let pY = project(initialVelocity: velocity.y, decelerationRate: decelerationRate) + currentY
+        let baseY = abs(layoutAdapter.positionY(for: layoutAdapter.bottomMostState) - layoutAdapter.positionY(for: layoutAdapter.topMostState))
+        let vecY = velocity.y / baseY
+        var pY = project(initialVelocity: vecY, decelerationRate: decelerationRate) * baseY + currentY
 
-        switch currentY {
-        case ..<th:
-            if pY >= bottomY {
-                return bottom
-            } else {
-                return top
+        let forwardY = velocity.y == 0 ? (currentY - layoutAdapter.positionY(for: state) > 0) : velocity.y > 0
+
+        let segment = layoutAdapter.segument(at: pY, forward: forwardY)
+
+        var fromPos: FloatingPanelPosition
+        var toPos: FloatingPanelPosition
+
+        let (lowerPos, upperPos) = (segment.lower ?? sortedPositions.first!, segment.upper ?? sortedPositions.last!)
+        (fromPos, toPos) = forwardY ? (lowerPos, upperPos) : (upperPos, lowerPos)
+
+        if behavior.shouldProjectMomentum(viewcontroller, for: toPos) == false {
+            let segment = layoutAdapter.segument(at: currentY, forward: forwardY)
+            var (lowerPos, upperPos) = (segment.lower ?? sortedPositions.first!, segment.upper ?? sortedPositions.last!)
+            // Equate the segment out of {top,bottom} most state to the {top,bottom} most segment
+            if lowerPos == upperPos {
+                if forwardY {
+                    upperPos = lowerPos.next(in: sortedPositions)
+                } else {
+                    lowerPos = upperPos.pre(in: sortedPositions)
+                }
             }
-        default:
-            if pY <= topY {
-                return top
+            (fromPos, toPos) = forwardY ? (lowerPos, upperPos) : (upperPos, lowerPos)
+            // Block a projection to a segment over the next from the current segment
+            // (= Trim pY with the current segment)
+            if forwardY {
+                pY = max(min(pY, layoutAdapter.positionY(for: toPos.next(in: sortedPositions))), layoutAdapter.positionY(for: fromPos))
             } else {
-                return bottom
+                pY = max(min(pY, layoutAdapter.positionY(for: fromPos)), layoutAdapter.positionY(for: toPos.pre(in: sortedPositions)))
             }
         }
+
+        // Redirection
+        let redirectionalProgress = max(min(behavior.redirectionalProgress(viewcontroller, from: fromPos, to: toPos), 1.0), 0.0)
+        let progress = abs(pY - layoutAdapter.positionY(for: fromPos)) / abs(layoutAdapter.positionY(for: fromPos) - layoutAdapter.positionY(for: toPos))
+        return progress > redirectionalProgress ? toPos : fromPos
     }
 
     // MARK: - ScrollView handling

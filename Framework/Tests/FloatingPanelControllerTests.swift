@@ -7,9 +7,7 @@ import XCTest
 @testable import FloatingPanel
 
 class FloatingPanelControllerTests: XCTestCase {
-
     override func setUp() {}
-
     override func tearDown() {}
 
     func test_warningRetainCycle() {
@@ -114,8 +112,8 @@ class FloatingPanelControllerTests: XCTestCase {
         var positions: [FloatingPanelPosition]
         positions = [.full, .half, .tip, .hidden]
         XCTAssertEqual(FloatingPanelPosition.full.next(in: positions),  .half)
-        XCTAssertEqual(FloatingPanelPosition.full.pre(in: positions),  nil)
-        XCTAssertEqual(FloatingPanelPosition.hidden.next(in: positions), nil)
+        XCTAssertEqual(FloatingPanelPosition.full.pre(in: positions),  .full)
+        XCTAssertEqual(FloatingPanelPosition.hidden.next(in: positions), .hidden)
         XCTAssertEqual(FloatingPanelPosition.hidden.pre(in: positions), .tip)
 
         positions = [.full, .hidden]

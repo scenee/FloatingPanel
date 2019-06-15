@@ -542,16 +542,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
 
     /// Returns the y-coordinate of the point at the origin of the surface view.
     public func originYOfSurface(for pos: FloatingPanelPosition) -> CGFloat {
-        switch pos {
-        case .full:
-            return floatingPanel.layoutAdapter.topY
-        case .half:
-            return floatingPanel.layoutAdapter.middleY
-        case .tip:
-            return floatingPanel.layoutAdapter.bottomY
-        case .hidden:
-            return floatingPanel.layoutAdapter.hiddenY
-        }
+        return floatingPanel.layoutAdapter.positionY(for: pos)
     }
 }
 

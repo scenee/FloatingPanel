@@ -67,14 +67,7 @@ public protocol FloatingPanelBehavior {
 
 public extension FloatingPanelBehavior {
     func shouldProjectMomentum(_ fpc: FloatingPanelController, for proposedTargetPosition: FloatingPanelPosition) -> Bool {
-        switch (fpc.position, proposedTargetPosition) {
-        case (.full, .tip):
-            return false
-        case (.tip,  .full):
-            return false
-        default:
-            return true
-        }
+        return false
     }
 
     func momentumProjectionRate(_ fpc: FloatingPanelController) -> CGFloat {
