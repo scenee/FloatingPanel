@@ -20,7 +20,11 @@ extension FloatingPanelController {
 
 class FloatingPanelTestDelegate: FloatingPanelControllerDelegate {
     var layout: FloatingPanelLayout?
+    var behavior: FloatingPanelBehavior?
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
         return layout
+    }
+    func floatingPanel(_ vc: FloatingPanelController, behaviorFor newCollection: UITraitCollection) -> FloatingPanelBehavior? {
+        return behavior
     }
 }

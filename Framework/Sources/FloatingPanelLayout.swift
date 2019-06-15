@@ -43,8 +43,7 @@ public protocol FloatingPanelLayout: class {
     /// Returns a set of FloatingPanelPosition objects to tell the applicable
     /// positions of the floating panel controller.
     ///
-    /// By default, it returns all position except for `hidden` position. Because
-    /// it's always supported by `FloatingPanelController` so you don't need to return it.
+    /// By default, it returns all position except for `hidden` position.
     var supportedPositions: Set<FloatingPanelPosition> { get }
 
     /// Return the interaction buffer to the top from the top position. Default is 6.0.
@@ -179,9 +178,7 @@ class FloatingPanelLayoutAdapter {
     }
 
     var supportedPositions: Set<FloatingPanelPosition> {
-        var supportedPositions = layout.supportedPositions
-        supportedPositions.remove(.hidden)
-        return supportedPositions
+        return layout.supportedPositions
     }
 
     var topMostState: FloatingPanelPosition {
@@ -194,41 +191,41 @@ class FloatingPanelLayoutAdapter {
 
     var topY: CGFloat {
         if supportedPositions.contains(.full) {
-            switch layout {
-            case is FloatingPanelIntrinsicLayout:
-                return surfaceView.superview!.bounds.height - surfaceView.bounds.height
-            case is FloatingPanelFullScreenLayout:
-                return fullInset
-            default:
-                return (safeAreaInsets.top + fullInset)
-            }
-        } else {
-            return middleY
+            return positionY(for: .full)
         }
+        if supportedPositions.contains(.half) {
+            return positionY(for: .half)
+        }
+        if supportedPositions.contains(.tip) {
+            return positionY(for: .tip)
+        }
+        return .nan
     }
 
     var middleY: CGFloat {
-        if layout is FloatingPanelFullScreenLayout {
-            return surfaceView.superview!.bounds.height - halfInset
-        } else{
-            return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + halfInset)
+        if supportedPositions.contains(.half), [topMostState, bottomMostState].contains(.half) == false {
+            return positionY(for: .half)
         }
+        if supportedPositions.contains(.tip), [topMostState, bottomMostState].contains(.tip) == false  {
+            return positionY(for: .tip)
+        }
+        return .nan
     }
 
     var bottomY: CGFloat {
-        if supportedPositions.contains(.tip) {
-            if layout is FloatingPanelFullScreenLayout {
-                return surfaceView.superview!.bounds.height - tipInset
-            } else{
-                return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + tipInset)
-            }
-        } else {
-            return middleY
+        if supportedPositions.contains(.hidden) {
+            return positionY(for: .hidden)
         }
-    }
-
-    var hiddenY: CGFloat {
-        return surfaceView.superview!.bounds.height
+        if supportedPositions.contains(.tip) {
+            return positionY(for: .tip)
+        }
+        if supportedPositions.contains(.half) {
+            return positionY(for: .half)
+        }
+        if supportedPositions.contains(.full) {
+            return positionY(for: .full)
+        }
+        return .nan
     }
 
     var topMaxY: CGFloat {
@@ -253,13 +250,30 @@ class FloatingPanelLayoutAdapter {
     func positionY(for pos: FloatingPanelPosition) -> CGFloat {
         switch pos {
         case .full:
-            return topY
+            switch layout {
+            case is FloatingPanelIntrinsicLayout:
+                return surfaceView.superview!.bounds.height - surfaceView.bounds.height
+            case is FloatingPanelFullScreenLayout:
+                return fullInset
+            default:
+                return (safeAreaInsets.top + fullInset)
+            }
         case .half:
-            return middleY
+            switch layout {
+            case is FloatingPanelFullScreenLayout:
+                return surfaceView.superview!.bounds.height - halfInset
+            default:
+                return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + halfInset)
+            }
         case .tip:
-            return bottomY
+            switch layout {
+            case is FloatingPanelFullScreenLayout:
+                return surfaceView.superview!.bounds.height - tipInset
+            default:
+                return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + tipInset)
+            }
         case .hidden:
-            return hiddenY
+            return surfaceView.superview!.bounds.height - hiddenInset
         }
     }
 
@@ -515,7 +529,7 @@ class FloatingPanelLayoutAdapter {
     private func checkLayoutConsistance() {
         // Verify layout configurations
         assert(supportedPositions.count > 0)
-        assert(supportedPositions.union([.hidden]).contains(layout.initialPosition),
+        assert(supportedPositions.contains(layout.initialPosition),
                "Does not include an initial position (\(layout.initialPosition)) in supportedPositions (\(supportedPositions))")
 
         if layout is FloatingPanelIntrinsicLayout {
