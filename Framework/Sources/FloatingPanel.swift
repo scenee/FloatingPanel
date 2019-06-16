@@ -124,7 +124,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             animator.addCompletion { [weak self] _ in
                 guard let `self` = self else { return }
                 self.animator = nil
-                self.unlockScrollView()
+                if self.state == self.layoutAdapter.topMostState {
+                    self.unlockScrollView()
+                }
                 completion?()
             }
             self.animator = animator
@@ -132,7 +134,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
         } else {
             self.state = to
             self.updateLayout(to: to)
-            self.unlockScrollView()
+            if self.state == self.layoutAdapter.topMostState {
+                self.unlockScrollView()
+            }
             completion?()
         }
     }
@@ -282,9 +286,18 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                     lockScrollView()
                 }
             } else {
+                let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
                 // Always show a scroll indicator at the top.
                 if interactionInProgress {
-                    unlockScrollView()
+                    if offset > 0 {
+                        unlockScrollView()
+                    }
+                } else {
+                    // Hide a scroll indicator just before starting an interaction by swiping a panel down.
+                    if state == layoutAdapter.topMostState,
+                        offset < 0, velocity.y > 0 {
+                        lockScrollView()
+                    }
                 }
             }
         case panGestureRecognizer:
