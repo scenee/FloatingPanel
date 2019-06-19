@@ -36,15 +36,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     let panGestureRecognizer: FloatingPanelPanGestureRecognizer
     var isRemovalInteractionEnabled: Bool = false
 
-    fileprivate var animator: UIViewPropertyAnimator? {
-        didSet {
-            // This intends to avoid `tableView(_:didSelectRowAt:)` not being
-            // called on first tap after the moving animation, but it doesn't
-            // seem to be enough. The same issue happens on Apple Maps so it
-            // might be an issue in `UITableView`.
-            scrollView?.isUserInteractionEnabled = (animator == nil)
-        }
-    }
+    fileprivate var animator: UIViewPropertyAnimator?
 
     private var initialFrame: CGRect = .zero
     private var initialTranslationY: CGFloat = 0
