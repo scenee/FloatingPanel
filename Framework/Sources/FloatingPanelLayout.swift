@@ -412,51 +412,6 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
-    func updateInteractiveTopConstraint(diff: CGFloat, allowsTopBuffer: Bool, with behavior: FloatingPanelBehavior) {
-        defer {
-            surfaceView.superview!.layoutIfNeeded() // MUST call here to update `surfaceView.frame`
-        }
-
-        let topMostConst: CGFloat = {
-            var ret: CGFloat = 0.0
-            switch layout {
-            case is FloatingPanelIntrinsicLayout, is FloatingPanelFullScreenLayout:
-                ret = topY
-            default:
-                ret = topY - safeAreaInsets.top
-            }
-            return max(ret, 0.0) // The top boundary is equal to the related topAnchor.
-        }()
-        let bottomMostConst: CGFloat = {
-            var ret: CGFloat = 0.0
-            switch layout {
-            case is FloatingPanelIntrinsicLayout, is FloatingPanelFullScreenLayout:
-                ret = bottomY
-            default:
-                ret = bottomY - safeAreaInsets.top
-            }
-            return min(ret, bottomMaxY)
-        }()
-        let minConst = allowsTopBuffer ? topMostConst - layout.topInteractionBuffer : topMostConst
-        let maxConst = bottomMostConst + layout.bottomInteractionBuffer
-
-        var const = initialConst + diff
-
-        // Rubberbanding top buffer
-        if behavior.allowsRubberBanding(for: .top), const < topMostConst {
-            let buffer = topMostConst - const
-            const = topMostConst - rubberbandEffect(for: buffer, base: vc.view.bounds.height)
-        }
-
-        // Rubberbanding bottom buffer
-        if behavior.allowsRubberBanding(for: .bottom), const > bottomMostConst {
-            let buffer = const - bottomMostConst
-            const = bottomMostConst + rubberbandEffect(for: buffer, base: vc.view.bounds.height)
-        }
-
-        interactiveTopConstraint?.constant = max(minConst, min(maxConst, const))
-    }
-
     // According to @chpwn's tweet: https://twitter.com/chpwn/status/285540192096497664
     // x = distance from the edge
     // c = constant value, UIScrollView uses 0.55
