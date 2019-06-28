@@ -124,3 +124,12 @@ extension CGPoint {
                        y: CGFloat.nan)
     }
 }
+
+extension UITraitCollection {
+    func shouldUpdateLayout(from previous: UITraitCollection) -> Bool {
+        return previous.horizontalSizeClass != horizontalSizeClass
+            || previous.verticalSizeClass != verticalSizeClass
+            || previous.preferredContentSizeCategory != preferredContentSizeCategory
+            || previous.layoutDirection != layoutDirection
+    }
+}

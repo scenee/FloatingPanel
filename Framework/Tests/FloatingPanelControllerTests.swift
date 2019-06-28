@@ -28,7 +28,6 @@ class FloatingPanelControllerTests: XCTestCase {
 
     func test_addPanel() {
         guard let rootVC = UIApplication.shared.keyWindow?.rootViewController else { fatalError() }
-
         let fpc = FloatingPanelController()
         fpc.addPanel(toParent: rootVC)
 
@@ -38,6 +37,24 @@ class FloatingPanelControllerTests: XCTestCase {
         fpc.move(to: .tip, animated: true)
         waitRunLoop(secs: 1.0)
         XCTAssert(fpc.surfaceView.frame.minY == (fpc.view.bounds.height - fpc.layoutInsets.bottom) - fpc.layout.insetFor(position: .tip)!)
+    }
+
+    @available(iOS 12.0, *)
+    func test_updateLayout_willTransition() {
+        class MyDelegate: FloatingPanelControllerDelegate {
+            func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
+                if newCollection.userInterfaceStyle == .dark {
+                    XCTFail()
+                }
+                return nil
+            }
+        }
+        let myDelegate = MyDelegate()
+        let fpc = FloatingPanelController(delegate: myDelegate)
+        let traitCollection = UITraitCollection(traitsFrom: [fpc.traitCollection,
+                                                             UITraitCollection(userInterfaceStyle: .dark)])
+        XCTAssertEqual(traitCollection.userInterfaceStyle, .dark)
+        fpc.prepare(for: traitCollection)
     }
 }
 
