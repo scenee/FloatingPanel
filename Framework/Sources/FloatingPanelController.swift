@@ -221,7 +221,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
 
         // Change layout for a new trait collection
         reloadLayout(for: newCollection)
-        setUpLayout()
+        activateLayout()
 
         floatingPanel.behavior = fetchBehavior(for: newCollection)
     }
@@ -257,7 +257,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         // Prevent an infinite loop on iOS 10: setUpLayout() -> viewDidLayoutSubviews() -> setUpLayout()
         preSafeAreaInsets = safeAreaInsets
 
-        setUpLayout()
+        activateLayout()
 
         switch contentInsetAdjustmentBehavior {
         case .always:
@@ -282,7 +282,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         }
     }
 
-    private func setUpLayout() {
+    private func activateLayout() {
         // preserve the current content offset
         let contentOffset = scrollView?.contentOffset
 
@@ -298,7 +298,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
     public func show(animated: Bool = false, completion: (() -> Void)? = nil) {
         // Must apply the current layout here
         reloadLayout(for: traitCollection)
-        setUpLayout()
+        activateLayout()
 
         if #available(iOS 11.0, *) {
             // Must track the safeAreaInsets of `self.view` to update the layout.
@@ -513,7 +513,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
     /// animation block.
     public func updateLayout() {
         reloadLayout(for: traitCollection)
-        setUpLayout()
+        activateLayout()
     }
 
     /// Returns the y-coordinate of the point at the origin of the surface view.
