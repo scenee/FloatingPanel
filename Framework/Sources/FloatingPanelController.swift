@@ -196,7 +196,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         self.view = view as UIView
     }
 
-    open  override func viewDidLayoutSubviews() {
+    open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if #available(iOS 11.0, *) {}
         else {
@@ -207,7 +207,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         }
     }
 
-    open  override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
         if view.translatesAutoresizingMaskIntoConstraints {
@@ -216,19 +216,23 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         }
     }
 
-    open  override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+    open override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
         super.willTransition(to: newCollection, with: coordinator)
-
-        // Change layout for a new trait collection
-        reloadLayout(for: newCollection)
-        activateLayout()
-
-        floatingPanel.behavior = fetchBehavior(for: newCollection)
+        self.prepare(for: newCollection)
     }
 
     open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         safeAreaInsetsObservation = nil
+    }
+
+    // MARK:- Internals
+    func prepare(for newCollection: UITraitCollection) {
+        guard newCollection.shouldUpdateLayout(from: traitCollection) else { return }
+        // Change a layout & behavior for a new trait collection
+        reloadLayout(for: newCollection)
+        activateLayout()
+        floatingPanel.behavior = fetchBehavior(for: newCollection)
     }
 
     // MARK:- Privates
