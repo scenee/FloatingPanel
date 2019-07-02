@@ -107,6 +107,9 @@ extension UIScrollView {
     var contentOffsetZero: CGPoint {
         return CGPoint(x: 0.0, y: 0.0 - contentInset.top)
     }
+    var isLocked: Bool {
+        return !showsVerticalScrollIndicator && !bounces &&  isDirectionalLockEnabled
+    }
 }
 
 extension UISpringTimingParameters {

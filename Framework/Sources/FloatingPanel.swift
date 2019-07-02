@@ -52,8 +52,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
     private var scrollBouncable = false
     private var scrollIndictorVisible = false
 
-    private var isScrollLocked: Bool = false
-
     // MARK: - Interface
 
     init(_ vc: FloatingPanelController, layout: FloatingPanelLayout, behavior: FloatingPanelBehavior) {
@@ -118,6 +116,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                 self.animator = nil
                 if self.state == self.layoutAdapter.topMostState {
                     self.unlockScrollView()
+                } else {
+                    self.lockScrollView()
                 }
                 completion?()
             }
@@ -128,6 +128,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
             self.updateLayout(to: to)
             if self.state == self.layoutAdapter.topMostState {
                 self.unlockScrollView()
+            } else {
+                self.lockScrollView()
             }
             completion?()
         }
@@ -863,11 +865,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
     private func lockScrollView() {
         guard let scrollView = scrollView else { return }
 
-        if isScrollLocked {
+        if scrollView.isLocked {
             log.debug("Already scroll locked.")
             return
         }
-        isScrollLocked = true
 
         scrollBouncable = scrollView.bounces
         scrollIndictorVisible = scrollView.showsVerticalScrollIndicator
@@ -878,9 +879,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
     }
 
     private func unlockScrollView() {
-        guard let scrollView = scrollView, isScrollLocked else { return }
-
-        isScrollLocked = false
+        guard let scrollView = scrollView, scrollView.isLocked else { return }
 
         scrollView.isDirectionalLockEnabled = false
         scrollView.bounces = scrollBouncable
