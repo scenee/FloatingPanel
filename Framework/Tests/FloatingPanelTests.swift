@@ -63,3 +63,16 @@ class FloatingPanelTests: XCTestCase {
         XCTAssertEqual(contentVC2.tableView.bounces, false)
     }
 }
+
+class FloatingPanelLayoutTests: XCTestCase {
+    override func setUp() {}
+
+    override func tearDown() {}
+
+    func test_mostStates() {
+        let fpc = FloatingPanelController(delegate: nil)
+        fpc.loadViewIfNeeded()
+        fpc.view.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
+        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.topMostState, .full)
+    }
+}
