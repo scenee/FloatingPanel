@@ -89,6 +89,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
     }
 
     private func move(from: FloatingPanelPosition, to: FloatingPanelPosition, animated: Bool, completion: (() -> Void)? = nil) {
+        assert(layoutAdapter.isValid(to), "Can't move to '\(to)' position because it's not valid in the layout")
         if state != layoutAdapter.topMostState {
             lockScrollView()
         }
