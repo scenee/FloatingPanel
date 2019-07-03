@@ -479,7 +479,7 @@ class FloatingPanelLayoutAdapter {
         }
         NSLayoutConstraint.activate(fixedConstraints)
 
-        if supportedPositions.union([.hidden]).contains(state) == false {
+        if isValid(state) == false {
             state = layout.initialPosition
         }
 
@@ -494,6 +494,10 @@ class FloatingPanelLayoutAdapter {
         case .hidden:
             NSLayoutConstraint.activate(offConstraints)
         }
+    }
+
+    func isValid(_ state: FloatingPanelPosition) -> Bool {
+        return supportedPositions.union([.hidden]).contains(state)
     }
 
     private func setBackdropAlpha(of target: FloatingPanelPosition) {
