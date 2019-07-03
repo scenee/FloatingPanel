@@ -65,48 +65,14 @@ class FloatingPanelTests: XCTestCase {
 
 }
 
-class FloatingPanelTestDelegate: FloatingPanelControllerDelegate {
-    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
-        return FloatingPanel2PositionsLayout()
-    }
-    func floatingPanel(_ vc: FloatingPanelController, behaviorFor newCollection: UITraitCollection) -> FloatingPanelBehavior? {
-        return nil
-    }
-}
-
-class FloatingPanel2PositionsLayout: FloatingPanelLayout {
+private protocol FloatingPanelTestLayout: FloatingPanelLayout {}
+private extension FloatingPanelTestLayout {
     func insetFor(position: FloatingPanelPosition) -> CGFloat? {
         switch position {
-        case .full: return 44.0
-        case .half: return 216.0
+        case .full: return 18.0
+        case .half: return 262.0
+        case .tip: return 69.0
         default: return nil
         }
-    }
-
-    var initialPosition: FloatingPanelPosition {
-        return .hidden
-    }
-
-    var supportedPositions: Set<FloatingPanelPosition> {
-        return [.hidden, .half, .full]
-    }
-}
-
-class FloatingPanelLayoutTests: XCTestCase {
-    override func setUp() {}
-
-    override func tearDown() {}
-
-    func test_mostStates() {
-        let fpc = FloatingPanelController(delegate: nil)
-        fpc.loadViewIfNeeded()
-        fpc.view.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
-        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.topMostState, .full)
-        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.bottomMostState, .tip)
-
-        let delegate = FloatingPanelTestDelegate()
-        fpc.delegate = delegate
-        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.topMostState, .full)
-        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.bottomMostState, .hidden)
     }
 }

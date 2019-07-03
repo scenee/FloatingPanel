@@ -54,11 +54,7 @@ class FloatingPanelControllerTests: XCTestCase {
     }
 }
 
-func waitRunLoop(secs: TimeInterval = 0) {
-    RunLoop.main.run(until: Date(timeIntervalSinceNow: secs))
-}
-
-class MyZombieViewController: UIViewController, FloatingPanelLayout, FloatingPanelBehavior, FloatingPanelControllerDelegate {
+private class MyZombieViewController: UIViewController, FloatingPanelLayout, FloatingPanelBehavior, FloatingPanelControllerDelegate {
     var fpc: FloatingPanelController?
     override func viewDidLoad() {
         fpc = FloatingPanelController(delegate: self)

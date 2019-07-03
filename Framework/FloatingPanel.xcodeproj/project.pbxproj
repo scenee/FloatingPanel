@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		542753C622C49A6E00D17955 /* FloatingPanelLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542753C522C49A6E00D17955 /* FloatingPanelLayoutTests.swift */; };
+		542753C822C49A8F00D17955 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542753C722C49A8F00D17955 /* Utils.swift */; };
 		54352E9621A51A2500CBCA08 /* FloatingPanelTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54352E9521A51A2500CBCA08 /* FloatingPanelTransitioning.swift */; };
 		54352E9821A521CA00CBCA08 /* FloatingPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54352E9721A521CA00CBCA08 /* FloatingPanelView.swift */; };
 		5450EEE421646DF500135936 /* FloatingPanelBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5450EEE321646DF500135936 /* FloatingPanelBehavior.swift */; };
@@ -45,6 +47,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		542753C522C49A6E00D17955 /* FloatingPanelLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelLayoutTests.swift; sourceTree = "<group>"; };
+		542753C722C49A8F00D17955 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		54352E9521A51A2500CBCA08 /* FloatingPanelTransitioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelTransitioning.swift; sourceTree = "<group>"; };
 		54352E9721A521CA00CBCA08 /* FloatingPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelView.swift; sourceTree = "<group>"; };
 		5450EEE321646DF500135936 /* FloatingPanelBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelBehavior.swift; sourceTree = "<group>"; };
@@ -140,8 +144,10 @@
 			isa = PBXGroup;
 			children = (
 				54A6B6B022968B530077F348 /* FloatingPanelTests.swift */,
+				542753C522C49A6E00D17955 /* FloatingPanelLayoutTests.swift */,
 				54A6B6B72296A8520077F348 /* FloatingPanelViewTests.swift */,
 				545DB9CF2151169500CA77B8 /* FloatingPanelControllerTests.swift */,
+				542753C722C49A8F00D17955 /* Utils.swift */,
 				545DB9D12151169500CA77B8 /* Info.plist */,
 			);
 			path = Tests;
@@ -309,6 +315,7 @@
 				545DBA2B2152383100CA77B8 /* GrabberHandleView.swift in Sources */,
 				54352E9621A51A2500CBCA08 /* FloatingPanelTransitioning.swift in Sources */,
 				545DB9DE215118C800CA77B8 /* UIExtensions.swift in Sources */,
+				542753C822C49A8F00D17955 /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,6 +325,7 @@
 			files = (
 				54A6B6B122968B530077F348 /* FloatingPanelTests.swift in Sources */,
 				545DB9D02151169500CA77B8 /* FloatingPanelControllerTests.swift in Sources */,
+				542753C622C49A6E00D17955 /* FloatingPanelLayoutTests.swift in Sources */,
 				54A6B6B82296A8520077F348 /* FloatingPanelViewTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
