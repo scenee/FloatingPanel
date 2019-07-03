@@ -8,7 +8,7 @@ import UIKit.UIGestureRecognizerSubclass // For Xcode 9.4.1
 ///
 /// FloatingPanel presentation model
 ///
-class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate {
+class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
     // MUST be a weak reference to prevent UI freeze on the presentation modally
     weak var viewcontroller: FloatingPanelController!
 
@@ -51,8 +51,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private var stopScrollDeceleration: Bool = false
     private var scrollBouncable = false
     private var scrollIndictorVisible = false
-
-    private var isScrollLocked: Bool = false
 
     // MARK: - Interface
 
@@ -118,6 +116,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
                 self.animator = nil
                 if self.state == self.layoutAdapter.topMostState {
                     self.unlockScrollView()
+                } else {
+                    self.lockScrollView()
                 }
                 completion?()
             }
@@ -128,6 +128,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
             self.updateLayout(to: to)
             if self.state == self.layoutAdapter.topMostState {
                 self.unlockScrollView()
+            } else {
+                self.lockScrollView()
             }
             completion?()
         }
@@ -863,11 +865,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     private func lockScrollView() {
         guard let scrollView = scrollView else { return }
 
-        if isScrollLocked {
+        if scrollView.isLocked {
             log.debug("Already scroll locked.")
             return
         }
-        isScrollLocked = true
 
         scrollBouncable = scrollView.bounces
         scrollIndictorVisible = scrollView.showsVerticalScrollIndicator
@@ -878,9 +879,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
 
     private func unlockScrollView() {
-        guard let scrollView = scrollView, isScrollLocked else { return }
-
-        isScrollLocked = false
+        guard let scrollView = scrollView, scrollView.isLocked else { return }
 
         scrollView.isDirectionalLockEnabled = false
         scrollView.bounces = scrollBouncable
