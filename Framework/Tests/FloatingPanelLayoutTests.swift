@@ -31,7 +31,7 @@ class FloatingPanelLayoutTests: XCTestCase {
         delegate.layout = FloatingPanelLayoutWithHidden()
         fpc.delegate = delegate
         XCTAssertEqual(fpc.floatingPanel.layoutAdapter.topMostState, .full)
-        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.bottomMostState, .half) // Will fixed on fix-hidden-position branch
+        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.bottomMostState, .hidden)
 
         delegate.layout = FloatingPanelLayout2Positions()
         fpc.delegate = delegate
