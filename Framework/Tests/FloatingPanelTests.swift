@@ -62,4 +62,17 @@ class FloatingPanelTests: XCTestCase {
         XCTAssertEqual(contentVC2.tableView.showsVerticalScrollIndicator, false)
         XCTAssertEqual(contentVC2.tableView.bounces, false)
     }
+
+}
+
+private protocol FloatingPanelTestLayout: FloatingPanelLayout {}
+private extension FloatingPanelTestLayout {
+    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        switch position {
+        case .full: return 18.0
+        case .half: return 262.0
+        case .tip: return 69.0
+        default: return nil
+        }
+    }
 }

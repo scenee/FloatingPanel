@@ -30,12 +30,8 @@ class FloatingPanelControllerTests: XCTestCase {
         guard let rootVC = UIApplication.shared.keyWindow?.rootViewController else { fatalError() }
         let fpc = FloatingPanelController()
         fpc.addPanel(toParent: rootVC)
-
-        waitRunLoop(secs: 1.0)
         XCTAssert(fpc.surfaceView.frame.minY ==  (fpc.view.bounds.height - fpc.layoutInsets.bottom) - fpc.layout.insetFor(position: .half)!)
-
-        fpc.move(to: .tip, animated: true)
-        waitRunLoop(secs: 1.0)
+        fpc.move(to: .tip, animated: false)
         XCTAssert(fpc.surfaceView.frame.minY == (fpc.view.bounds.height - fpc.layoutInsets.bottom) - fpc.layout.insetFor(position: .tip)!)
     }
 
@@ -58,11 +54,7 @@ class FloatingPanelControllerTests: XCTestCase {
     }
 }
 
-func waitRunLoop(secs: TimeInterval = 0) {
-    RunLoop.main.run(until: Date(timeIntervalSinceNow: secs))
-}
-
-class MyZombieViewController: UIViewController, FloatingPanelLayout, FloatingPanelBehavior, FloatingPanelControllerDelegate {
+private class MyZombieViewController: UIViewController, FloatingPanelLayout, FloatingPanelBehavior, FloatingPanelControllerDelegate {
     var fpc: FloatingPanelController?
     override func viewDidLoad() {
         fpc = FloatingPanelController(delegate: self)

@@ -662,21 +662,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
     }
 
     private func distance(to targetPosition: FloatingPanelPosition) -> CGFloat {
-        let topY = layoutAdapter.topY
-        let middleY = layoutAdapter.middleY
-        let bottomY = layoutAdapter.bottomY
         let currentY = surfaceView.frame.minY
-
-        switch targetPosition {
-        case .full:
-            return CGFloat(abs(currentY - topY))
-        case .half:
-            return CGFloat(abs(currentY - middleY))
-        case .tip:
-            return CGFloat(abs(currentY - bottomY))
-        case .hidden:
-            fatalError("Now .hidden must not be used for a user interaction")
-        }
+        let targetY = layoutAdapter.positionY(for: targetPosition)
+        return CGFloat(abs(currentY - targetY))
     }
 
     private func directionalPosition(at currentY: CGFloat, with translation: CGPoint) -> FloatingPanelPosition {

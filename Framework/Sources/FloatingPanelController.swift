@@ -68,6 +68,10 @@ public enum FloatingPanelPosition: Int {
     case half
     case tip
     case hidden
+
+    static var allCases: [FloatingPanelPosition] {
+        return [.full, .half, .tip, .hidden]
+    }
 }
 
 ///
@@ -145,7 +149,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
     }
     private var _contentViewController: UIViewController?
 
-    private var floatingPanel: FloatingPanel!
+    private(set) var floatingPanel: FloatingPanel!
     private var preSafeAreaInsets: UIEdgeInsets = .zero // Capture the latest one
     private var safeAreaInsetsObservation: NSKeyValueObservation?
     private let modalTransition = FloatingPanelModalTransition()
