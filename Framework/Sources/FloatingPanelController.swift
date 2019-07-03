@@ -68,6 +68,10 @@ public enum FloatingPanelPosition: Int {
     case half
     case tip
     case hidden
+
+    static var allCases: [FloatingPanelPosition] {
+        return [.full, .half, .tip, .hidden]
+    }
 }
 
 ///

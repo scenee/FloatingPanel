@@ -181,13 +181,11 @@ class FloatingPanelLayoutAdapter {
     }
 
     var topMostState: FloatingPanelPosition {
-        if supportedPositions.contains(.full) {
-            return .full
-        }
-        if supportedPositions.contains(.half) {
-            return .half
-        }
-        return .tip
+        return supportedPositions.sorted(by: { $0.rawValue < $1.rawValue }).first ?? .hidden
+    }
+
+    var bottomMostState: FloatingPanelPosition {
+        return supportedPositions.sorted(by: { $0.rawValue < $1.rawValue }).last ?? .hidden
     }
 
     var topY: CGFloat {
