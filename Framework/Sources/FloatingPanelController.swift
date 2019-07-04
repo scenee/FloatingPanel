@@ -72,6 +72,22 @@ public enum FloatingPanelPosition: Int {
     static var allCases: [FloatingPanelPosition] {
         return [.full, .half, .tip, .hidden]
     }
+
+    func next(in positions: [FloatingPanelPosition]) -> FloatingPanelPosition {
+        guard
+            let index = positions.firstIndex(of: self),
+            positions.indices.contains(index + 1)
+            else { return self }
+        return positions[index + 1]
+    }
+
+    func pre(in positions: [FloatingPanelPosition]) -> FloatingPanelPosition {
+        guard
+            let index = positions.firstIndex(of: self),
+            positions.indices.contains(index - 1)
+            else { return self }
+        return positions[index - 1]
+    }
 }
 
 ///
