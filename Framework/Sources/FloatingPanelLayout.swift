@@ -130,6 +130,10 @@ public class FloatingPanelDefaultLandscapeLayout: FloatingPanelLayout {
     }
 }
 
+struct LayoutSegment {
+    let lower: FloatingPanelPosition?
+    let upper: FloatingPanelPosition?
+}
 
 class FloatingPanelLayoutAdapter {
     weak var vc: UIViewController!
@@ -529,5 +533,31 @@ class FloatingPanelLayoutAdapter {
             assert(middleY > topY, "Invalid insets { topY: \(topY), middleY: \(middleY) }")
             assert(bottomY > topY, "Invalid insets { topY: \(topY), bottomY: \(bottomY) }")
          }*/
+    }
+
+    func segument(at posY: CGFloat, forward: Bool) -> LayoutSegment {
+        /// ----------------------->Y
+        /// --> forward                <-- backward
+        /// |-------|===o===|-------|  |-------|-------|===o===|
+        /// |-------|-------x=======|  |-------|=======x-------|
+        /// |-------|-------|===o===|  |-------|===o===|-------|
+        /// pos: o/x, seguement: =
+        let sortedPositions = supportedPositions.sorted(by: { $0.rawValue < $1.rawValue })
+
+        let upperIndex: Int?
+        if forward {
+            upperIndex = sortedPositions.firstIndex(where: { posY < positionY(for: $0) })
+        } else {
+            upperIndex = sortedPositions.firstIndex(where: { posY <= positionY(for: $0) })
+        }
+
+        switch upperIndex {
+        case 0:
+            return LayoutSegment(lower: nil, upper: sortedPositions.first)
+        case let upperIndex?:
+            return LayoutSegment(lower: sortedPositions[upperIndex - 1], upper: sortedPositions[upperIndex])
+        default:
+            return LayoutSegment(lower: sortedPositions[sortedPositions.endIndex - 1], upper: nil)
+        }
     }
 }
