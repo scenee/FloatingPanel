@@ -530,17 +530,6 @@ private func assertTargetPosition(_ floatingPanel: FloatingPanel, with params: [
     }
 }
 
-private protocol FloatingPanelTestLayout: FloatingPanelFullScreenLayout {}
-private extension FloatingPanelTestLayout {
-    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        switch position {
-        case .full: return 20.0
-        case .half: return 250.0
-        case .tip: return 60.0
-        default: return nil
-        }
-    }
-}
 private class FloatingPanelProjectionalBehavior: FloatingPanelBehavior {
     func shouldProjectMomentum(_ fpc: FloatingPanelController, for proposedTargetPosition: FloatingPanelPosition) -> Bool {
         return true
