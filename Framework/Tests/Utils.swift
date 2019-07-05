@@ -28,3 +28,15 @@ class FloatingPanelTestDelegate: FloatingPanelControllerDelegate {
         return behavior
     }
 }
+
+protocol FloatingPanelTestLayout: FloatingPanelFullScreenLayout {}
+extension FloatingPanelTestLayout {
+    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        switch position {
+        case .full: return 20.0
+        case .half: return 250.0
+        case .tip: return 60.0
+        default: return nil
+        }
+    }
+}

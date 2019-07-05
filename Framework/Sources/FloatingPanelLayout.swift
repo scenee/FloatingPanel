@@ -360,6 +360,7 @@ class FloatingPanelLayoutAdapter {
     }
 
     func startInteraction(at state: FloatingPanelPosition) {
+        guard self.interactiveTopConstraint == nil else { return }
         NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
 
         let interactiveTopConstraint: NSLayoutConstraint
