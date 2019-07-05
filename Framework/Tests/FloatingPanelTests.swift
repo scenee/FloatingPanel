@@ -7,22 +7,19 @@ import XCTest
 @testable import FloatingPanel
 
 class FloatingPanelTests: XCTestCase {
-
     override func setUp() {}
-
     override func tearDown() {}
 
     func test_scrolllock() {
         let fpc = FloatingPanelController()
-        fpc.loadViewIfNeeded()
-        fpc.view.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
+
         let contentVC1 = UITableViewController(nibName: nil, bundle: nil)
         XCTAssertEqual(contentVC1.tableView.showsVerticalScrollIndicator, true)
         XCTAssertEqual(contentVC1.tableView.bounces, true)
-
         fpc.set(contentViewController: contentVC1)
         fpc.track(scrollView: contentVC1.tableView)
-        fpc.show(animated: false, completion: nil) // half
+        fpc.showForTest()
+
         XCTAssertEqual(fpc.position, .half)
         XCTAssertEqual(contentVC1.tableView.showsVerticalScrollIndicator, false)
         XCTAssertEqual(contentVC1.tableView.bounces, false)
@@ -63,6 +60,14 @@ class FloatingPanelTests: XCTestCase {
         XCTAssertEqual(contentVC2.tableView.bounces, false)
     }
 
+}
+
+private extension FloatingPanelController {
+    func showForTest() {
+        loadViewIfNeeded()
+        view.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
+        show(animated: false, completion: nil)
+    }
 }
 
 private protocol FloatingPanelTestLayout: FloatingPanelLayout {}
