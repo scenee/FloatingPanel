@@ -62,14 +62,6 @@ class FloatingPanelTests: XCTestCase {
 
 }
 
-private extension FloatingPanelController {
-    func showForTest() {
-        loadViewIfNeeded()
-        view.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
-        show(animated: false, completion: nil)
-    }
-}
-
 private protocol FloatingPanelTestLayout: FloatingPanelLayout {}
 private extension FloatingPanelTestLayout {
     func insetFor(position: FloatingPanelPosition) -> CGFloat? {
