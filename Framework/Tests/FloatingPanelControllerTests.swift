@@ -52,6 +52,22 @@ class FloatingPanelControllerTests: XCTestCase {
         XCTAssertEqual(traitCollection.userInterfaceStyle, .dark)
         fpc.prepare(for: traitCollection)
     }
+
+    func test_originSurfaceY() {
+        let fpc = FloatingPanelController(delegate: nil)
+        fpc.loadViewIfNeeded()
+        fpc.view.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
+        fpc.show(animated: false, completion: nil)
+
+        fpc.move(to: .full, animated: false)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .full))
+        fpc.move(to: .half, animated: false)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .half))
+        fpc.move(to: .tip, animated: false)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .tip))
+        fpc.move(to: .hidden, animated: false)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .hidden))
+    }
 }
 
 private class MyZombieViewController: UIViewController, FloatingPanelLayout, FloatingPanelBehavior, FloatingPanelControllerDelegate {
