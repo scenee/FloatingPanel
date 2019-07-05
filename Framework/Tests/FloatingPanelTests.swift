@@ -60,6 +60,120 @@ class FloatingPanelTests: XCTestCase {
         XCTAssertEqual(contentVC2.tableView.bounces, false)
     }
 
+    func test_getBackdropAlpha_1positions() {
+        class FloatingPanelLayout1Positions: FloatingPanelTestLayout {
+            let initialPosition: FloatingPanelPosition = .full
+            let supportedPositions: Set<FloatingPanelPosition> = [.full]
+        }
+        let delegate = FloatingPanelTestDelegate()
+        delegate.layout = FloatingPanelLayout1Positions()
+
+        let fpc = FloatingPanelController(delegate: delegate)
+        fpc.showForTest()
+
+        let fullPos = fpc.originYOfSurface(for: .full)
+
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos - 100.0, with: CGPoint(x: 0.0, y: -100.0)), 0.3)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos, with: CGPoint(x: 0.0, y: 0.0)), 0.3)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos + 100.0, with: CGPoint(x: 0.0, y: 100.0)), 0.3) // ok??
+    }
+
+    func test_getBackdropAlpha_2positions() {
+        class FloatingPanelLayout2Positions: FloatingPanelTestLayout {
+            let initialPosition: FloatingPanelPosition = .half
+            let supportedPositions: Set<FloatingPanelPosition> = [.half, .full]
+        }
+        let delegate = FloatingPanelTestDelegate()
+        delegate.layout = FloatingPanelLayout2Positions()
+
+        let fpc = FloatingPanelController(delegate: delegate)
+        fpc.showForTest()
+
+        let fullPos = fpc.originYOfSurface(for: .full)
+        let halfPos = fpc.originYOfSurface(for: .half)
+        let distance1 = abs(halfPos - fullPos)
+
+        fpc.move(to: .full, animated: false)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos, with: CGPoint(x: 0.0, y: 0.0)), 0.3)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos + distance1 * 0.5, with: CGPoint(x: 0.0, y: distance1 * 0.5)), 0.3 * 0.5)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: halfPos, with: CGPoint(x: 0.0, y: distance1)), 0.0)
+
+        fpc.move(to: .half, animated: false)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: halfPos, with: CGPoint(x: 0.0, y: 0.0)), 0.0)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos + distance1 * 0.5, with: CGPoint(x: 0.0, y: -0.5 * distance1)), 0.3 * 0.5)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos, with: CGPoint(x: 0.0, y: -1 * distance1)), 0.3)
+    }
+
+    func test_getBackdropAlpha_2positionsWithHidden() {
+        class FloatingPanelLayout2Positions: FloatingPanelTestLayout {
+            let initialPosition: FloatingPanelPosition = .hidden
+            let supportedPositions: Set<FloatingPanelPosition> = [.hidden, .full]
+        }
+        let delegate = FloatingPanelTestDelegate()
+        delegate.layout = FloatingPanelLayout2Positions()
+
+        let fpc = FloatingPanelController(delegate: delegate)
+        fpc.showForTest()
+
+        let fullPos = fpc.originYOfSurface(for: .full)
+        let hiddenPos = fpc.originYOfSurface(for: .hidden)
+
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos - 100.0, with: CGPoint(x: 0.0, y: -100.0)), 0.3)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos, with: CGPoint(x: 0.0, y: 0.0)), 0.3)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: hiddenPos, with: CGPoint(x: 0.0, y: 100.0)), 0.0)
+    }
+
+    func test_getBackdropAlpha_3positions() {
+        let fpc = FloatingPanelController()
+        fpc.showForTest()
+
+        let fullPos = fpc.originYOfSurface(for: .full)
+        let halfPos = fpc.originYOfSurface(for: .half)
+        let tipPos = fpc.originYOfSurface(for: .tip)
+        let distance1 = abs(halfPos - fullPos)
+        let distance2 = abs(tipPos - halfPos)
+
+        fpc.move(to: .full, animated: false)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos, with: CGPoint(x: 0.0, y: 0.0)), 0.3)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos + distance1 * 0.5, with: CGPoint(x: 0.0, y: distance1 * 0.5)), 0.3 * 0.5)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: halfPos, with: CGPoint(x: 0.0, y: distance1)), 0.0)
+
+        fpc.move(to: .half, animated: false)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: halfPos, with: CGPoint(x: 0.0, y: 0.0)), 0.0)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos + distance1 * 0.5, with: CGPoint(x: 0.0, y: -0.5 * distance1)), 0.3 * 0.5)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos, with: CGPoint(x: 0.0, y: -1 * distance1)), 0.3)
+
+        fpc.move(to: .tip, animated: false)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: tipPos, with: CGPoint(x: 0.0, y: 0.0)), 0.0)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: halfPos + distance2 * 0.5, with: CGPoint(x: 0.0, y: -0.5 * distance2)), 0.0)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: halfPos, with: CGPoint(x: 0.0, y: -1 * distance2)), 0.0)
+    }
+
+    func test_targetPosition_1positions() {
+        class FloatingPanelLayout1Positions: FloatingPanelTestLayout {
+            let initialPosition: FloatingPanelPosition = .full
+            let supportedPositions: Set<FloatingPanelPosition> = [.full]
+        }
+        let delegate = FloatingPanelTestDelegate()
+        delegate.layout = FloatingPanelLayout1Positions()
+
+        let fpc = FloatingPanelController(delegate: delegate)
+        fpc.showForTest()
+
+        let fullPos = fpc.originYOfSurface(for: .full)
+
+        fpc.move(to: .full, animated: false)
+        assertTargetPosition(fpc.floatingPanel, with: [
+            (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .full), // redirect
+            (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full), // redirect
+            (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full), // redirect
+            (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
+            (#line, fullPos, CGPoint(x: 0.0, y: 100.0), .full), // redirect
+            (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .full), // redirect
+            (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full), // redirect
+            ])
+    }
+
     func test_targetPosition_2positions() {
         class FloatingPanelLayout2Positions: FloatingPanelTestLayout {
             let initialPosition: FloatingPanelPosition = .half

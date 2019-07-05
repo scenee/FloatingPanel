@@ -142,11 +142,15 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         self.layoutAdapter.activateLayout(of: target)
     }
 
-    private func getBackdropAlpha(with translation: CGPoint) -> CGFloat {
-        let currentY = surfaceView.frame.minY
+    func getBackdropAlpha(at currentY: CGFloat, with translation: CGPoint) -> CGFloat {
+        let forwardY = (translation.y >= 0)
+        let segment = layoutAdapter.segument(at: currentY, forward: forwardY)
+        let lowerPos = segment.lower ?? layoutAdapter.topMostState
+        let upperPos = segment.upper ?? layoutAdapter.bottomMostState
 
-        let next = directionalPosition(at: currentY, with: translation)
-        let pre = redirectionalPosition(at: currentY, with: translation)
+        let pre = forwardY ? lowerPos : upperPos
+        let next = forwardY ? upperPos : lowerPos
+
         let nextY = layoutAdapter.positionY(for: next)
         let preY = layoutAdapter.positionY(for: pre)
 
@@ -417,17 +421,18 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
     private func panningChange(with translation: CGPoint) {
         log.debug("panningChange -- translation = \(translation.y)")
-        let pre = surfaceView.frame.minY
+        let preY = surfaceView.frame.minY
         let dy = translation.y - initialTranslationY
 
         layoutAdapter.updateInteractiveTopConstraint(diff: dy,
                                                      allowsTopBuffer: allowsTopBuffer(for: dy),
                                                      with: behavior)
 
-        backdropView.alpha = getBackdropAlpha(with: translation)
+        let currentY = surfaceView.frame.minY
+        backdropView.alpha = getBackdropAlpha(at: currentY, with: translation)
         preserveContentVCLayoutIfNeeded()
 
-        let didMove = (pre != surfaceView.frame.minY)
+        let didMove = (preY != currentY)
         guard didMove else { return }
 
         viewcontroller.delegate?.floatingPanelDidMove(viewcontroller)
