@@ -674,46 +674,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         return CGFloat(abs(currentY - targetY))
     }
 
-    private func directionalPosition(at currentY: CGFloat, with translation: CGPoint) -> FloatingPanelPosition {
-        return getPosition(at: currentY, with: translation, directional: true)
-    }
-
-    private func redirectionalPosition(at currentY: CGFloat, with translation: CGPoint) -> FloatingPanelPosition {
-        return getPosition(at: currentY, with: translation, directional: false)
-    }
-
-    private func getPosition(at currentY: CGFloat, with translation: CGPoint, directional: Bool) -> FloatingPanelPosition {
-        let supportedPositions: Set = layoutAdapter.supportedPositions
-        if supportedPositions.count == 1 {
-            return state
-        }
-
-        let isForwardYAxis = (translation.y >= 0) == directional
-        let sortedPositions = Array(supportedPositions).sorted(by: { $0.rawValue < $1.rawValue })
-
-        if supportedPositions.count == 2 {
-            return getPosition(from: sortedPositions, with: isForwardYAxis)
-        }
-
-        switch supportedPositions {
-        default:
-            let middleY = layoutAdapter.middleY
-            if currentY > middleY {
-                return (isForwardYAxis) ? .tip : .half
-            } else {
-                return (isForwardYAxis) ? .half : .full
-            }
-        }
-    }
-
-    private func getPosition(from positions: [FloatingPanelPosition], with isForwardYAxis: Bool) -> FloatingPanelPosition {
-        assert(positions.count == 2)
-        let top = positions[0]
-        let bottom = positions[1]
-        assert(top.rawValue < bottom.rawValue)
-        return isForwardYAxis ? bottom : top
-    }
-
     // Distance travelled after decelerating to zero velocity at a constant rate.
     // Refer to the slides p176 of [Designing Fluid Interfaces](https://developer.apple.com/videos/play/wwdc2018/803/)
     private func project(initialVelocity: CGFloat, decelerationRate: CGFloat) -> CGFloat {
