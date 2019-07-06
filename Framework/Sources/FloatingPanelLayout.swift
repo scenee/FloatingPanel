@@ -190,32 +190,11 @@ class FloatingPanelLayoutAdapter {
     }
 
     var topY: CGFloat {
-        if supportedPositions.contains(.full) {
-            return positionY(for: .full)
-        }
-        if supportedPositions.contains(.half) {
-            return positionY(for: .half)
-        }
-        if supportedPositions.contains(.tip) {
-            return positionY(for: .tip)
-        }
-        return .nan
+        return positionY(for: topMostState)
     }
 
     var bottomY: CGFloat {
-        if supportedPositions.contains(.hidden) {
-            return positionY(for: .hidden)
-        }
-        if supportedPositions.contains(.tip) {
-            return positionY(for: .tip)
-        }
-        if supportedPositions.contains(.half) {
-            return positionY(for: .half)
-        }
-        if supportedPositions.contains(.full) {
-            return positionY(for: .full)
-        }
-        return .nan
+        return positionY(for: bottomMostState)
     }
 
     var topMaxY: CGFloat {
