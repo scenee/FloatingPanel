@@ -60,6 +60,10 @@ extension UIView {
             return self
         }
     }
+
+    var presentationFrame: CGRect {
+        return layer.presentation()?.frame ?? frame
+    }
 }
 
 extension UIView {
