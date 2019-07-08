@@ -316,17 +316,16 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                 "translation =  \(translation.y), location = \(location.y), velocity = \(velocity.y)")
 
             if let animator = self.animator {
+                guard surfaceView.presentationFrame.minY - layoutAdapter.topY > -1.0 else { return }
+                guard animator.isInterruptible else { return }
                 log.debug("panel animation interrupted!!!")
-                if animator.isInterruptible {
-                    animator.stopAnimation(false)
-                    animator.finishAnimation(at: .current)
-                }
-                self.animator = nil
 
+                animator.stopAnimation(false)
                 // A user can stop a panel at the nearest Y of a target position
-                if abs(surfaceView.frame.minY - layoutAdapter.topY) < 1.0 {
+                if abs(surfaceView.frame.minY - layoutAdapter.topY) <= 1.0 {
                     surfaceView.frame.origin.y = layoutAdapter.topY
                 }
+                animator.finishAnimation(at: .current)
             }
 
             if interactionInProgress == false,
@@ -619,6 +618,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         layoutAdapter.startInteraction(at: state)
 
         interactionInProgress = true
+
+        lockScrollView()
     }
 
     private func endInteraction(for targetPosition: FloatingPanelPosition) {
@@ -631,7 +632,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         interactionInProgress = false
 
         // Prevent to keep a scroll view indicator visible at the half/tip position
-        if state != layoutAdapter.topMostState {
+        if targetPosition != layoutAdapter.topMostState {
             lockScrollView()
         }
 
@@ -683,7 +684,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
         stopScrollDeceleration = false
         // Don't unlock scroll view in animating view when presentation layer != model layer
-        if state == layoutAdapter.topMostState {
+        if state == layoutAdapter.topMostState, surfaceView.frame.minY == layoutAdapter.topY {
             unlockScrollView()
         }
     }
