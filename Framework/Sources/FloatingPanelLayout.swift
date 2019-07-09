@@ -530,9 +530,17 @@ class FloatingPanelLayoutAdapter {
 
         let upperIndex: Int?
         if forward {
+            #if swift(>=4.2)
             upperIndex = sortedPositions.firstIndex(where: { posY < positionY(for: $0) })
+            #else
+            upperIndex = sortedPositions.index(where: { posY < positionY(for: $0) })
+            #endif
         } else {
+            #if swift(>=4.2)
             upperIndex = sortedPositions.firstIndex(where: { posY <= positionY(for: $0) })
+            #else
+            upperIndex = sortedPositions.index(where: { posY <= positionY(for: $0) })
+            #endif
         }
 
         switch upperIndex {
