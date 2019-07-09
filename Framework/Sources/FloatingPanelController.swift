@@ -74,18 +74,32 @@ public enum FloatingPanelPosition: Int {
     }
 
     func next(in positions: [FloatingPanelPosition]) -> FloatingPanelPosition {
+        #if swift(>=4.2)
         guard
             let index = positions.firstIndex(of: self),
             positions.indices.contains(index + 1)
             else { return self }
+        #else
+        guard
+            let index = positions.index(of: self),
+            positions.indices.contains(index + 1)
+            else { return self }
+        #endif
         return positions[index + 1]
     }
 
     func pre(in positions: [FloatingPanelPosition]) -> FloatingPanelPosition {
+        #if swift(>=4.2)
         guard
             let index = positions.firstIndex(of: self),
             positions.indices.contains(index - 1)
             else { return self }
+        #else
+        guard
+            let index = positions.index(of: self),
+            positions.indices.contains(index - 1)
+            else { return self }
+        #endif
         return positions[index - 1]
     }
 }
