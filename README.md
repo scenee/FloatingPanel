@@ -93,6 +93,10 @@ For [Carthage](https://github.com/Carthage/Carthage), add the following to your 
 github "scenee/FloatingPanel"
 ```
 
+### Swift Package Manager with Xcode 11
+
+Follow [this doc](https://developer.apple.com/documentation/swift_packages/adding_package_dependencies_to_your_app).
+
 ## Getting Started
 
 ### Add a floating panel as a child view controller
