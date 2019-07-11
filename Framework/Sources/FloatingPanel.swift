@@ -289,15 +289,15 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                     scrollView.setContentOffset(initialScrollOffset, animated: false)
                 }
 
-                // Always hide a scroll indicator at the non-top.
+                // Hide a scroll indicator at the non-top in dragging.
                 if interactionInProgress {
                     lockScrollView()
                 }
             } else {
                 let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
-                // Always show a scroll indicator at the top.
+                // Show a scroll indicator at the top in dragging.
                 if interactionInProgress {
-                    if offset > 0 {
+                    if offset >= 0 {
                         unlockScrollView()
                     }
                 } else {
