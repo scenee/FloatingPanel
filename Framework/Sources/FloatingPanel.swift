@@ -597,13 +597,15 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         log.debug("startInteraction  -- translation = \(translation.y), location = \(location.y)")
         guard interactionInProgress == false else { return }
 
+        var offset: CGPoint = .zero
+
         initialFrame = surfaceView.frame
         if state == layoutAdapter.topMostState, let scrollView = scrollView {
             if grabberAreaFrame.contains(location) {
                 initialScrollOffset = scrollView.contentOffset
             } else {
-                fitToBounds(scrollView: scrollView)
-                settle(scrollView: scrollView)
+                // Fit the surface bounds to a scroll offset content by startInteraction(at:offset:)
+                offset = CGPoint(x: -scrollView.contentOffset.x, y: -scrollView.contentOffset.y)
                 initialScrollOffset = scrollView.contentOffsetZero
             }
             log.debug("initial scroll offset --", initialScrollOffset)
@@ -615,7 +617,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
             vc.delegate?.floatingPanelWillBeginDragging(vc)
         }
 
-        layoutAdapter.startInteraction(at: state)
+        layoutAdapter.startInteraction(at: state, offset: offset)
 
         interactionInProgress = true
 
@@ -779,30 +781,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         scrollView.bounces = scrollBouncable
         scrollView.showsVerticalScrollIndicator = scrollIndictorVisible
     }
-
-    private func fitToBounds(scrollView: UIScrollView) {
-        log.debug("fit scroll view to bounds -- scroll offset =", scrollView.contentOffset.y)
-
-        surfaceView.frame.origin.y = layoutAdapter.topY - scrollView.contentOffset.y
-        scrollView.transform = CGAffineTransform.identity.translatedBy(x: 0.0,
-                                                                       y: scrollView.contentOffset.y)
-        scrollView.scrollIndicatorInsets = UIEdgeInsets(top: -scrollView.contentOffset.y,
-                                                        left: 0.0,
-                                                        bottom: 0.0,
-                                                        right: 0.0)
-    }
-
-    private func settle(scrollView: UIScrollView) {
-        log.debug("settle scroll view")
-        let frame = surfaceView.layer.presentation()?.frame ?? surfaceView.frame
-        surfaceView.transform = .identity
-        surfaceView.frame = frame
-        scrollView.transform = .identity
-        scrollView.frame = initialScrollFrame
-        scrollView.contentOffset = scrollView.contentOffsetZero
-        scrollView.scrollIndicatorInsets = .zero
-    }
-
 
     private func stopScrollingWithDeceleration(at contentOffset: CGPoint) {
         // Must use setContentOffset(_:animated) to force-stop deceleration
