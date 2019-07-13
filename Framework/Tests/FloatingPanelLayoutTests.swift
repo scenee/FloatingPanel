@@ -41,31 +41,88 @@ class FloatingPanelLayoutTests: XCTestCase {
         XCTAssertEqual(fpc.floatingPanel.layoutAdapter.bottomMostState, .tip)
     }
 
-    func test_positionSegment() {
+    func test_layoutSegment_3position() {
+        class FloatingPanelLayout3Positions: FloatingPanelTestLayout {
+            let initialPosition: FloatingPanelPosition = .half
+            let supportedPositions: Set<FloatingPanelPosition> = [.tip, .half, .full]
+        }
+
+        let delegate = FloatingPanelTestDelegate()
+        delegate.layout = FloatingPanelLayout3Positions()
+        fpc.delegate = delegate
+
         let fullPos = fpc.originYOfSurface(for: .full)
         let halfPos = fpc.originYOfSurface(for: .half)
         let tipPos = fpc.originYOfSurface(for: .tip)
 
-        var segument: LayoutSegment
+        let minPos = CGFloat.leastNormalMagnitude
+        let maxPos = CGFloat.greatestFiniteMagnitude
 
-        segument = fpc.floatingPanel.layoutAdapter.segument(at: fullPos, forward: true)
-        XCTAssertEqual(segument.lower, .full)
-        XCTAssertEqual(segument.upper, .half)
-        segument = fpc.floatingPanel.layoutAdapter.segument(at: fullPos, forward: false)
-        XCTAssertEqual(segument.lower, nil)
-        XCTAssertEqual(segument.upper, .full)
-        segument = fpc.floatingPanel.layoutAdapter.segument(at: halfPos, forward: true)
-        XCTAssertEqual(segument.lower, .half)
-        XCTAssertEqual(segument.upper, .tip)
-        segument = fpc.floatingPanel.layoutAdapter.segument(at: halfPos, forward: false)
-        XCTAssertEqual(segument.lower, .full)
-        XCTAssertEqual(segument.upper, .half)
-        segument = fpc.floatingPanel.layoutAdapter.segument(at: tipPos, forward: true)
-        XCTAssertEqual(segument.lower, .tip)
-        XCTAssertEqual(segument.upper, nil)
-        segument = fpc.floatingPanel.layoutAdapter.segument(at: tipPos, forward: false)
-        XCTAssertEqual(segument.lower, .half)
-        XCTAssertEqual(segument.upper, .tip)
+        assertLayoutSegment(fpc.floatingPanel, with: [
+            (#line, pos: minPos, forwardY: true, lower: nil, upper: .full),
+            (#line, pos: minPos, forwardY: false, lower: nil, upper: .full),
+            (#line, pos: fullPos, forwardY: true, lower: .full, upper: .half),
+            (#line, pos: fullPos, forwardY: false, lower: nil,  upper: .full),
+            (#line, pos: halfPos, forwardY: true, lower: .half, upper: .tip),
+            (#line, pos: halfPos, forwardY: false, lower: .full,  upper: .half),
+            (#line, pos: tipPos, forwardY: true, lower: .tip, upper: nil),
+            (#line, pos: tipPos, forwardY: false, lower: .half,  upper: .tip),
+            (#line, pos: maxPos, forwardY: true, lower: .tip, upper: nil),
+            (#line, pos: maxPos, forwardY: false, lower: .tip, upper: nil),
+            ])
+    }
+
+    func test_layoutSegment_2positions() {
+        class FloatingPanelLayout2Positions: FloatingPanelTestLayout {
+            let initialPosition: FloatingPanelPosition = .half
+            let supportedPositions: Set<FloatingPanelPosition> = [.half, .full]
+        }
+
+        let delegate = FloatingPanelTestDelegate()
+        delegate.layout = FloatingPanelLayout2Positions()
+        fpc.delegate = delegate
+
+        let fullPos = fpc.originYOfSurface(for: .full)
+        let halfPos = fpc.originYOfSurface(for: .half)
+
+        let minPos = CGFloat.leastNormalMagnitude
+        let maxPos = CGFloat.greatestFiniteMagnitude
+
+        assertLayoutSegment(fpc.floatingPanel, with: [
+            (#line, pos: minPos, forwardY: true, lower: nil, upper: .full),
+            (#line, pos: minPos, forwardY: false, lower: nil, upper: .full),
+            (#line, pos: fullPos, forwardY: true, lower: .full, upper: .half),
+            (#line, pos: fullPos, forwardY: false, lower: nil,  upper: .full),
+            (#line, pos: halfPos, forwardY: true, lower: .half, upper: nil),
+            (#line, pos: halfPos, forwardY: false, lower: .full,  upper: .half),
+            (#line, pos: maxPos, forwardY: true, lower: .half, upper: nil),
+            (#line, pos: maxPos, forwardY: false, lower: .half, upper: nil),
+            ])
+    }
+
+    func test_layoutSegment_1positions() {
+        class FloatingPanelLayout1Positions: FloatingPanelTestLayout {
+            let initialPosition: FloatingPanelPosition = .full
+            let supportedPositions: Set<FloatingPanelPosition> = [.full]
+        }
+
+        let delegate = FloatingPanelTestDelegate()
+        delegate.layout = FloatingPanelLayout1Positions()
+        fpc.delegate = delegate
+
+        let fullPos = fpc.originYOfSurface(for: .full)
+
+        let minPos = CGFloat.leastNormalMagnitude
+        let maxPos = CGFloat.greatestFiniteMagnitude
+
+        assertLayoutSegment(fpc.floatingPanel, with: [
+            (#line, pos: minPos, forwardY: true, lower: nil, upper: .full),
+            (#line, pos: minPos, forwardY: false, lower: nil, upper: .full),
+            (#line, pos: fullPos, forwardY: true, lower: .full, upper: nil),
+            (#line, pos: fullPos, forwardY: false, lower: nil,  upper: .full),
+            (#line, pos: maxPos, forwardY: true, lower: .full, upper: nil),
+            (#line, pos: maxPos, forwardY: false, lower: .full, upper: nil),
+            ])
     }
 
     func test_updateInteractiveTopConstraint() {
@@ -136,5 +193,14 @@ class FloatingPanelLayoutTests: XCTestCase {
         XCTAssertEqual(next, hiddenPos + fpc.layout.bottomInteractionBuffer)
 
         fpc.floatingPanel.layoutAdapter.endInteraction(at: fpc.position)
+    }
+}
+
+private typealias LayoutSegmentTestParameter = (UInt, pos: CGFloat, forwardY: Bool, lower: FloatingPanelPosition?, upper: FloatingPanelPosition?)
+private func assertLayoutSegment(_ floatingPanel: FloatingPanel, with params: [LayoutSegmentTestParameter]) {
+    params.forEach { (line, pos, forwardY, lowr, upper) in
+        let segument = floatingPanel.layoutAdapter.segument(at: pos, forward: forwardY)
+        XCTAssertEqual(segument.lower, lowr, line: line)
+        XCTAssertEqual(segument.upper, upper, line: line)
     }
 }
