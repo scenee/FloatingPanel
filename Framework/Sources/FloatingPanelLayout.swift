@@ -43,7 +43,7 @@ public protocol FloatingPanelLayout: class {
     /// Returns a set of FloatingPanelPosition objects to tell the applicable
     /// positions of the floating panel controller.
     ///
-    /// By default, it returns all position except for `hidden` position.
+    /// By default, it returns full, half and tip positions.
     var supportedPositions: Set<FloatingPanelPosition> { get }
 
     /// Return the interaction buffer to the top from the top position. Default is 6.0.

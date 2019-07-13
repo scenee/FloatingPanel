@@ -321,7 +321,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                 log.debug("panel animation interrupted!!!")
 
                 animator.stopAnimation(false)
-                // A user can stop a panel at the nearest Y of a target position
+                // A user can stop a panel at the nearest Y of a target position so this fine-tunes
+                // the a small gap between the presentation layer frame and model layer frame
+                // to unlock scroll view properly at finishAnimation(at:)
                 if abs(surfaceView.frame.minY - layoutAdapter.topY) <= 1.0 {
                     surfaceView.frame.origin.y = layoutAdapter.topY
                 }
@@ -685,7 +687,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         }
 
         stopScrollDeceleration = false
-        // Don't unlock scroll view in animating view when presentation layer != model layer
+
         if state == layoutAdapter.topMostState, surfaceView.frame.minY == layoutAdapter.topY {
             unlockScrollView()
         }
