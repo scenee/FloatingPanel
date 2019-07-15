@@ -127,6 +127,7 @@ public class FloatingPanelDefaultBehavior: FloatingPanelBehavior {
     public func interactionAnimator(_ fpc: FloatingPanelController, to targetPosition: FloatingPanelPosition, with velocity: CGVector) -> UIViewPropertyAnimator {
         let timing = timeingCurve(with: velocity)
         let animator = UIViewPropertyAnimator(duration: 0, timingParameters: timing)
+        animator.isInterruptible = false // Prevent a propagation of the animation(spring etc) to a content view
         return animator
     }
 

@@ -317,17 +317,18 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
             if let animator = self.animator {
                 guard surfaceView.presentationFrame.minY - layoutAdapter.topY > -1.0 else { return }
-                guard animator.isInterruptible else { return }
                 log.debug("panel animation interrupted!!!")
 
-                animator.stopAnimation(false)
-                // A user can stop a panel at the nearest Y of a target position so this fine-tunes
-                // the a small gap between the presentation layer frame and model layer frame
-                // to unlock scroll view properly at finishAnimation(at:)
-                if abs(surfaceView.frame.minY - layoutAdapter.topY) <= 1.0 {
-                    surfaceView.frame.origin.y = layoutAdapter.topY
+                if animator.isInterruptible {
+                    animator.stopAnimation(false)
+                    // A user can stop a panel at the nearest Y of a target position so this fine-tunes
+                    // the a small gap between the presentation layer frame and model layer frame
+                    // to unlock scroll view properly at finishAnimation(at:)
+                    if abs(surfaceView.frame.minY - layoutAdapter.topY) <= 1.0 {
+                        surfaceView.frame.origin.y = layoutAdapter.topY
+                    }
+                    animator.finishAnimation(at: .current)
                 }
-                animator.finishAnimation(at: .current)
             }
 
             if interactionInProgress == false,
