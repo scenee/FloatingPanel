@@ -7,9 +7,7 @@ import XCTest
 @testable import FloatingPanel
 
 class FloatingPanelControllerTests: XCTestCase {
-
     override func setUp() {}
-
     override func tearDown() {}
 
     func test_warningRetainCycle() {
@@ -51,6 +49,63 @@ class FloatingPanelControllerTests: XCTestCase {
                                                              UITraitCollection(userInterfaceStyle: .dark)])
         XCTAssertEqual(traitCollection.userInterfaceStyle, .dark)
         fpc.prepare(for: traitCollection)
+    }
+
+    func test_moveTo() {
+        let fpc = FloatingPanelController(delegate: nil)
+        fpc.showForTest()
+        fpc.move(to: .full, animated: false)
+        XCTAssertEqual(fpc.position, .full)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .full))
+
+        fpc.move(to: .half, animated: false)
+        XCTAssertEqual(fpc.position, .half)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .half))
+
+        fpc.move(to: .tip, animated: false)
+        XCTAssertEqual(fpc.position, .tip)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .tip))
+
+        fpc.move(to: .hidden, animated: false)
+        XCTAssertEqual(fpc.position, .hidden)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .hidden))
+
+        fpc.move(to: .full, animated: true)
+        waitRunLoop(secs: 0.3)
+        XCTAssertEqual(fpc.position, .full)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .full))
+
+        fpc.move(to: .half, animated: true)
+        waitRunLoop(secs: 0.3)
+        XCTAssertEqual(fpc.position, .half)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .half))
+
+        fpc.move(to: .tip, animated: true)
+        waitRunLoop(secs: 0.3)
+        XCTAssertEqual(fpc.position, .tip)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .tip))
+
+        fpc.move(to: .hidden, animated: true)
+        waitRunLoop(secs: 0.3)
+        XCTAssertEqual(fpc.position, .hidden)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .hidden))
+
+    }
+
+    func test_originSurfaceY() {
+        let fpc = FloatingPanelController(delegate: nil)
+        fpc.loadViewIfNeeded()
+        fpc.view.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
+        fpc.show(animated: false, completion: nil)
+
+        fpc.move(to: .full, animated: false)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .full))
+        fpc.move(to: .half, animated: false)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .half))
+        fpc.move(to: .tip, animated: false)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .tip))
+        fpc.move(to: .hidden, animated: false)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .hidden))
     }
 }
 

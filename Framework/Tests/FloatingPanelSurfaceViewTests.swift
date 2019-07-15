@@ -8,7 +8,6 @@ import XCTest
 
 class FloatingPanelSurfaceViewTests: XCTestCase {
     override func setUp() {}
-
     override func tearDown() {}
 
     func test_surfaceView() {

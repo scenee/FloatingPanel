@@ -72,6 +72,36 @@ public enum FloatingPanelPosition: Int {
     static var allCases: [FloatingPanelPosition] {
         return [.full, .half, .tip, .hidden]
     }
+
+    func next(in positions: [FloatingPanelPosition]) -> FloatingPanelPosition {
+        #if swift(>=4.2)
+        guard
+            let index = positions.firstIndex(of: self),
+            positions.indices.contains(index + 1)
+            else { return self }
+        #else
+        guard
+            let index = positions.index(of: self),
+            positions.indices.contains(index + 1)
+            else { return self }
+        #endif
+        return positions[index + 1]
+    }
+
+    func pre(in positions: [FloatingPanelPosition]) -> FloatingPanelPosition {
+        #if swift(>=4.2)
+        guard
+            let index = positions.firstIndex(of: self),
+            positions.indices.contains(index - 1)
+            else { return self }
+        #else
+        guard
+            let index = positions.index(of: self),
+            positions.indices.contains(index - 1)
+            else { return self }
+        #endif
+        return positions[index - 1]
+    }
 }
 
 ///
@@ -526,16 +556,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
 
     /// Returns the y-coordinate of the point at the origin of the surface view.
     public func originYOfSurface(for pos: FloatingPanelPosition) -> CGFloat {
-        switch pos {
-        case .full:
-            return floatingPanel.layoutAdapter.topY
-        case .half:
-            return floatingPanel.layoutAdapter.middleY
-        case .tip:
-            return floatingPanel.layoutAdapter.bottomY
-        case .hidden:
-            return floatingPanel.layoutAdapter.hiddenY
-        }
+        return floatingPanel.layoutAdapter.positionY(for: pos)
     }
 }
 
