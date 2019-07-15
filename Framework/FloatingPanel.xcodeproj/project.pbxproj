@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		187BDD94CC9516F88359B26D /* Pods_FloatingPanelTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36D1E7F7D09B093158DE7DBC /* Pods_FloatingPanelTests.framework */; };
 		542753C622C49A6E00D17955 /* FloatingPanelLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542753C522C49A6E00D17955 /* FloatingPanelLayoutTests.swift */; };
 		542753C822C49A8F00D17955 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542753C722C49A8F00D17955 /* Utils.swift */; };
 		54352E9621A51A2500CBCA08 /* FloatingPanelTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54352E9521A51A2500CBCA08 /* FloatingPanelTransitioning.swift */; };
