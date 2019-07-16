@@ -308,7 +308,6 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
 
     private func reloadLayout(for traitCollection: UITraitCollection) {
         floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
-        floatingPanel.layoutAdapter.prepareLayout(in: self)
 
         if let parent = self.parent {
             if let layout = layout as? UIViewController, layout == parent {
@@ -321,6 +320,8 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
     }
 
     private func activateLayout() {
+        floatingPanel.layoutAdapter.prepareLayout(in: self)
+
         // preserve the current content offset
         let contentOffset = scrollView?.contentOffset
 
