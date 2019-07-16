@@ -659,7 +659,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
         vc.delegate?.floatingPanelWillBeginDecelerating(vc)
 
-        let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: min(abs(velocity.y)/distance, 30.0)) : .zero
+        let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: abs(velocity.y)/distance) : .zero
         let animator = behavior.interactionAnimator(vc, to: targetPosition, with: velocityVector)
         animator.addAnimations { [weak self] in
             guard let `self` = self else { return }
