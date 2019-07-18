@@ -306,14 +306,10 @@ class FloatingPanelLayoutAdapter {
         self.vc = vc
 
         NSLayoutConstraint.deactivate(fixedConstraints + fullConstraints + halfConstraints + tipConstraints + offConstraints)
-        if let heightConstraint = self.heightConstraint {
-            NSLayoutConstraint.deactivate([heightConstraint])
-            self.heightConstraint = nil
-        }
-        if let bottomConstraint = self.bottomConstraint {
-            NSLayoutConstraint.deactivate([bottomConstraint])
-            self.bottomConstraint = nil
-        }
+        NSLayoutConstraint.deactivate(constraint: self.heightConstraint)
+        self.heightConstraint = nil
+        NSLayoutConstraint.deactivate(constraint: self.bottomConstraint)
+        self.bottomConstraint = nil
 
         surfaceView.translatesAutoresizingMaskIntoConstraints = false
         backdropView.translatesAutoresizingMaskIntoConstraints = false
@@ -412,11 +408,12 @@ class FloatingPanelLayoutAdapter {
     // It must be called in FloatingPanelController.traitCollectionDidChange(_:)
     func updateHeight() {
         guard let vc = vc else { return }
+        NSLayoutConstraint.deactivate(constraint: heightConstraint)
+        heightConstraint = nil
 
         if layout is FloatingPanelIntrinsicLayout {
             updateIntrinsicHeight()
         }
-
         defer {
             if layout is FloatingPanelIntrinsicLayout {
                 NSLayoutConstraint.deactivate(fullConstraints)
@@ -427,13 +424,7 @@ class FloatingPanelLayoutAdapter {
             }
         }
 
-        if let const = self.heightConstraint {
-            NSLayoutConstraint.deactivate([const])
-        }
-
         guard vc.contentMode != .fitToBounds else { return }
-
-        let heightConstraint: NSLayoutConstraint
 
         switch layout {
         case is FloatingPanelIntrinsicLayout:
@@ -443,9 +434,7 @@ class FloatingPanelLayoutAdapter {
             heightConstraint =  surfaceView.heightAnchor.constraint(equalTo: vc.view.heightAnchor,
                                                                     constant: const)
         }
-
-        NSLayoutConstraint.activate([heightConstraint])
-        self.heightConstraint = heightConstraint
+        NSLayoutConstraint.activate(constraint: heightConstraint)
 
         surfaceView.bottomOverflow = vc.view.bounds.height + layout.topInteractionBuffer
     }
@@ -506,17 +495,13 @@ class FloatingPanelLayoutAdapter {
 
     func activateFixedLayout() {
         // Must deactivate `interactiveTopConstraint` here
-        if let interactiveTopConstraint = interactiveTopConstraint {
-            NSLayoutConstraint.deactivate([interactiveTopConstraint])
-            self.interactiveTopConstraint = nil
-        }
+        NSLayoutConstraint.deactivate(constraint: self.interactiveTopConstraint)
+        self.interactiveTopConstraint = nil
 
         NSLayoutConstraint.activate(fixedConstraints)
 
         if vc.contentMode == .fitToBounds {
-            if let bottomConstraint = bottomConstraint {
-                NSLayoutConstraint.activate([bottomConstraint])
-            }
+            NSLayoutConstraint.activate(constraint: self.bottomConstraint)
         }
     }
 

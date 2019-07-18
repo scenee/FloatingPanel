@@ -146,3 +146,14 @@ extension UITraitCollection {
             || previous.layoutDirection != layoutDirection
     }
 }
+
+extension NSLayoutConstraint {
+    static func activate(constraint: NSLayoutConstraint?) {
+        guard let constraint = constraint else { return }
+        self.activate([constraint])
+    }
+    static func deactivate(constraint: NSLayoutConstraint?) {
+        guard let constraint = constraint else { return }
+        self.deactivate([constraint])
+    }
+}
