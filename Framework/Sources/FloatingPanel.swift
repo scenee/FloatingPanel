@@ -294,11 +294,17 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                 // Hide a scroll indicator at the non-top in dragging.
                 if interactionInProgress {
                     lockScrollView()
+                } else {
+                    if state == layoutAdapter.topMostState, self.animator == nil,
+                        offset > 0, velocity.y < 0 {
+                        unlockScrollView()
+                    }
                 }
             } else {
+                guard surfaceView.presentationFrame.minY == layoutAdapter.topY else { return }
                 // Show a scroll indicator at the top in dragging.
                 if interactionInProgress {
-                    if offset >= 0 {
+                    if offset >= 0, velocity.y <= 0 {
                         unlockScrollView()
                     }
                 } else {
@@ -329,6 +335,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                         surfaceView.frame.origin.y = layoutAdapter.topY
                     }
                     animator.finishAnimation(at: .current)
+                } else {
+                    self.animator = nil
                 }
             }
 
