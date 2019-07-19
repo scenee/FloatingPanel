@@ -323,9 +323,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                 "translation =  \(translation.y), location = \(location.y), velocity = \(velocity.y)")
 
             if let animator = self.animator {
-                guard surfaceView.presentationFrame.minY - layoutAdapter.topY > -1.0 else { return }
+                guard surfaceView.presentationFrame.minY >= layoutAdapter.topMaxY else { return }
                 log.debug("panel animation interrupted!!!")
-
                 if animator.isInterruptible {
                     animator.stopAnimation(false)
                     // A user can stop a panel at the nearest Y of a target position so this fine-tunes
