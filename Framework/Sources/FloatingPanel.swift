@@ -472,6 +472,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
     }
 
     private var disabledBottomAutoLayout = false
+    private var disabledAutoLayoutItems: Set<NSLayoutConstraint> = []
     // Prevent stretching a view having a constraint to SafeArea.bottom in an overflow
     // from the full position because SafeArea is global in a screen.
     private func preserveContentVCLayoutIfNeeded() {
@@ -479,14 +480,17 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         // Must include topY
         if (surfaceView.frame.minY <= layoutAdapter.topY) {
             if !disabledBottomAutoLayout {
+                disabledAutoLayoutItems.removeAll()
                 vc.contentViewController?.view?.constraints.forEach({ (const) in
                     switch vc.contentViewController?.layoutGuide.bottomAnchor {
                     case const.firstAnchor:
                         (const.secondItem as? UIView)?.disableAutoLayout()
                         const.isActive = false
+                        disabledAutoLayoutItems.insert(const)
                     case const.secondAnchor:
                         (const.firstItem as? UIView)?.disableAutoLayout()
                         const.isActive = false
+                        disabledAutoLayoutItems.insert(const)
                     default:
                         break
                     }
@@ -495,7 +499,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
             disabledBottomAutoLayout = true
         } else {
             if disabledBottomAutoLayout {
-                vc.contentViewController?.view?.constraints.forEach({ (const) in
+                disabledAutoLayoutItems.forEach({ (const) in
                     switch vc.contentViewController?.layoutGuide.bottomAnchor {
                     case const.firstAnchor:
                         (const.secondItem as? UIView)?.enableAutoLayout()
@@ -507,6 +511,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                         break
                     }
                 })
+                disabledAutoLayoutItems.removeAll()
             }
             disabledBottomAutoLayout = false
         }
