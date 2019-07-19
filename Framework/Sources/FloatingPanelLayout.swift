@@ -50,6 +50,9 @@ public protocol FloatingPanelLayout: class {
     var topInteractionBuffer: CGFloat { get }
 
     /// Return the interaction buffer to the bottom from the bottom position. Default is 6.0.
+    ///
+    /// - Important:
+    /// The specified buffer is ignored when `FloatingPanelController.isRemovalInteractionEnabled` is set to true.
     var bottomInteractionBuffer: CGFloat { get }
 
     /// Returns a CGFloat value to determine a Y coordinate of a floating panel for each position(full, half, tip and hidden).
@@ -135,7 +138,7 @@ struct LayoutSegment {
 }
 
 class FloatingPanelLayoutAdapter {
-    weak var vc: UIViewController!
+    weak var vc: FloatingPanelController!
     private weak var surfaceView: FloatingPanelSurfaceView!
     private weak var backdropView: FloatingPanelBackdropView!
 
@@ -276,7 +279,7 @@ class FloatingPanelLayoutAdapter {
                   ", content safe area(bottom) =", safeAreaBottom)
     }
 
-    func prepareLayout(in vc: UIViewController) {
+    func prepareLayout(in vc: FloatingPanelController) {
         self.vc = vc
 
         NSLayoutConstraint.deactivate(fixedConstraints + fullConstraints + halfConstraints + tipConstraints + offConstraints)
@@ -415,11 +418,12 @@ class FloatingPanelLayoutAdapter {
         }()
         let bottomMostConst: CGFloat = {
             var ret: CGFloat = 0.0
+            let _bottomY = vc.isRemovalInteractionEnabled ? positionY(for: .hidden) : bottomY
             switch layout {
             case is FloatingPanelIntrinsicLayout, is FloatingPanelFullScreenLayout:
-                ret = bottomY
+                ret = _bottomY
             default:
-                ret = bottomY - safeAreaInsets.top
+                ret = _bottomY - safeAreaInsets.top
             }
             return min(ret, bottomMaxY)
         }()
