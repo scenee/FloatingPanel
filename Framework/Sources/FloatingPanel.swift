@@ -569,12 +569,12 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
     private func shouldStartRemovalAnimation(with velocityVector: CGVector) -> Bool {
         let posY = layoutAdapter.positionY(for: state)
         let currentY = surfaceView.frame.minY
-        let bottomMaxY = layoutAdapter.bottomMaxY
+        let hiddenY = layoutAdapter.positionY(for: .hidden)
         let vth = behavior.removalVelocity
         let pth = max(min(behavior.removalProgress, 1.0), 0.0)
 
         let num = (currentY - posY)
-        let den = (bottomMaxY - posY)
+        let den = (hiddenY - posY)
 
         guard num >= 0, den != 0, (num / den >= pth || velocityVector.dy == vth)
         else { return false }
