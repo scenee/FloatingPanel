@@ -265,13 +265,15 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
             let location = panGesture.location(in: surfaceView)
 
-            let belowTop = surfaceView.frame.minY > layoutAdapter.topY
+            let belowTop = surfaceView.presentationFrame.minY > layoutAdapter.topY
+            let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
 
             log.debug("scroll gesture(\(state):\(panGesture.state)) --",
                 "belowTop = \(belowTop),",
                 "interactionInProgress = \(interactionInProgress),",
-                "scroll offset = \(scrollView.contentOffset.y),",
+                "scroll offset = \(offset),",
                 "location = \(location.y), velocity = \(velocity.y)")
+
 
             if belowTop {
                 // Scroll offset pinning
@@ -294,7 +296,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                     lockScrollView()
                 }
             } else {
-                let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
                 // Show a scroll indicator at the top in dragging.
                 if interactionInProgress {
                     if offset >= 0 {
@@ -317,17 +318,18 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
             if let animator = self.animator {
                 guard surfaceView.presentationFrame.minY - layoutAdapter.topY > -1.0 else { return }
-                guard animator.isInterruptible else { return }
                 log.debug("panel animation interrupted!!!")
 
-                animator.stopAnimation(false)
-                // A user can stop a panel at the nearest Y of a target position so this fine-tunes
-                // the a small gap between the presentation layer frame and model layer frame
-                // to unlock scroll view properly at finishAnimation(at:)
-                if abs(surfaceView.frame.minY - layoutAdapter.topY) <= 1.0 {
-                    surfaceView.frame.origin.y = layoutAdapter.topY
+                if animator.isInterruptible {
+                    animator.stopAnimation(false)
+                    // A user can stop a panel at the nearest Y of a target position so this fine-tunes
+                    // the a small gap between the presentation layer frame and model layer frame
+                    // to unlock scroll view properly at finishAnimation(at:)
+                    if abs(surfaceView.frame.minY - layoutAdapter.topY) <= 1.0 {
+                        surfaceView.frame.origin.y = layoutAdapter.topY
+                    }
+                    animator.finishAnimation(at: .current)
                 }
-                animator.finishAnimation(at: .current)
             }
 
             if interactionInProgress == false,
@@ -657,7 +659,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
         vc.delegate?.floatingPanelWillBeginDecelerating(vc)
 
-        let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: min(abs(velocity.y)/distance, 30.0)) : .zero
+        let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: abs(velocity.y)/distance) : .zero
         let animator = behavior.interactionAnimator(vc, to: targetPosition, with: velocityVector)
         animator.addAnimations { [weak self] in
             guard let `self` = self else { return }
@@ -665,7 +667,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
             self.updateLayout(to: targetPosition)
         }
         animator.addCompletion { [weak self] pos in
-            guard let `self` = self else { return }
+            // Prevent calling `finishAnimation(at:)` by the old animator whose `isInterruptive` is false
+            // when a new animator has been started after the old one is interrupted.
+            guard let `self` = self, self.animator == animator else { return }
             self.finishAnimation(at: targetPosition)
         }
         self.animator = animator
@@ -688,7 +692,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
         stopScrollDeceleration = false
 
-        if state == layoutAdapter.topMostState, surfaceView.frame.minY == layoutAdapter.topY {
+        log.debug("finishAnimation -- state = \(state) surface.minY = \(surfaceView.presentationFrame.minY) topY = \(layoutAdapter.topY)")
+        if state == layoutAdapter.topMostState, abs(surfaceView.presentationFrame.minY - layoutAdapter.topY) <= 1.0 {
             unlockScrollView()
         }
     }
@@ -767,6 +772,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
             log.debug("Already scroll locked.")
             return
         }
+        log.debug("lock scroll view")
 
         scrollBouncable = scrollView.bounces
         scrollIndictorVisible = scrollView.showsVerticalScrollIndicator
@@ -778,6 +784,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
     private func unlockScrollView() {
         guard let scrollView = scrollView, scrollView.isLocked else { return }
+        log.debug("unlock scroll view")
 
         scrollView.isDirectionalLockEnabled = false
         scrollView.bounces = scrollBouncable
