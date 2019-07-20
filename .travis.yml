@@ -24,6 +24,9 @@ jobs:
   - script: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.0 clean build
     osx_image: xcode10.2
     name: "Swift 5.0"
+  - script: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.1 clean build
+    osx_image: xcode11
+    name: "Swift 5.1"
 
   - stage: "Tests"
     osx_image: xcode10.2
