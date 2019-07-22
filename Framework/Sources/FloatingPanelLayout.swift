@@ -201,15 +201,11 @@ class FloatingPanelLayoutAdapter {
     }
 
     var topMaxY: CGFloat {
-        return layout is FloatingPanelFullScreenLayout ? 0.0 : safeAreaInsets.top
+        return topY - layout.topInteractionBuffer
     }
 
     var bottomMaxY: CGFloat {
-        if layout is FloatingPanelFullScreenLayout{
-            return surfaceView.superview!.bounds.height - hiddenInset
-        } else {
-            return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + hiddenInset)
-        }
+        return bottomY + layout.bottomInteractionBuffer
     }
 
     var adjustedContentInsets: UIEdgeInsets {
@@ -425,7 +421,7 @@ class FloatingPanelLayoutAdapter {
             default:
                 ret = _bottomY - safeAreaInsets.top
             }
-            return min(ret, bottomMaxY)
+            return min(ret, surfaceView.superview!.bounds.height)
         }()
         let minConst = allowsTopBuffer ? topMostConst - layout.topInteractionBuffer : topMostConst
         let maxConst = bottomMostConst + layout.bottomInteractionBuffer

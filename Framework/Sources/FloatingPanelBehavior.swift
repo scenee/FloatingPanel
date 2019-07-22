@@ -23,6 +23,11 @@ public protocol FloatingPanelBehavior {
     func redirectionalProgress(_ fpc: FloatingPanelController, from: FloatingPanelPosition, to: FloatingPanelPosition) -> CGFloat
 
     /// Returns a UIViewPropertyAnimator object to project a floating panel to a position on finger up if the user dragged.
+    ///
+    /// - Attention:
+    /// By default, it returns a non-interruptible animator to prevent a propagation of the animation to a content view.
+    /// However returning an interruptible animator is working well depending on a content view and it can be better
+    /// than using a non-interruptible one.
     func interactionAnimator(_ fpc: FloatingPanelController, to targetPosition: FloatingPanelPosition, with velocity: CGVector) -> UIViewPropertyAnimator
 
     /// Returns a UIViewPropertyAnimator object to add a floating panel to a position.
