@@ -294,11 +294,17 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                 // Hide a scroll indicator at the non-top in dragging.
                 if interactionInProgress {
                     lockScrollView()
+                } else {
+                    if state == layoutAdapter.topMostState, self.animator == nil,
+                        offset > 0, velocity.y < 0 {
+                        unlockScrollView()
+                    }
                 }
             } else {
+                guard surfaceView.presentationFrame.minY == layoutAdapter.topY else { return }
                 // Show a scroll indicator at the top in dragging.
                 if interactionInProgress {
-                    if offset >= 0 {
+                    if offset >= 0, velocity.y <= 0 {
                         unlockScrollView()
                     }
                 } else {
@@ -317,9 +323,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                 "translation =  \(translation.y), location = \(location.y), velocity = \(velocity.y)")
 
             if let animator = self.animator {
-                guard surfaceView.presentationFrame.minY - layoutAdapter.topY > -1.0 else { return }
+                guard surfaceView.presentationFrame.minY >= layoutAdapter.topMaxY else { return }
                 log.debug("panel animation interrupted!!!")
-
                 if animator.isInterruptible {
                     animator.stopAnimation(false)
                     // A user can stop a panel at the nearest Y of a target position so this fine-tunes
@@ -329,6 +334,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                         surfaceView.frame.origin.y = layoutAdapter.topY
                     }
                     animator.finishAnimation(at: .current)
+                } else {
+                    self.animator = nil
                 }
             }
 
@@ -465,6 +472,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
     }
 
     private var disabledBottomAutoLayout = false
+    private var disabledAutoLayoutItems: Set<NSLayoutConstraint> = []
     // Prevent stretching a view having a constraint to SafeArea.bottom in an overflow
     // from the full position because SafeArea is global in a screen.
     private func preserveContentVCLayoutIfNeeded() {
@@ -472,14 +480,17 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         // Must include topY
         if (surfaceView.frame.minY <= layoutAdapter.topY) {
             if !disabledBottomAutoLayout {
+                disabledAutoLayoutItems.removeAll()
                 vc.contentViewController?.view?.constraints.forEach({ (const) in
                     switch vc.contentViewController?.layoutGuide.bottomAnchor {
                     case const.firstAnchor:
                         (const.secondItem as? UIView)?.disableAutoLayout()
                         const.isActive = false
+                        disabledAutoLayoutItems.insert(const)
                     case const.secondAnchor:
                         (const.firstItem as? UIView)?.disableAutoLayout()
                         const.isActive = false
+                        disabledAutoLayoutItems.insert(const)
                     default:
                         break
                     }
@@ -488,7 +499,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
             disabledBottomAutoLayout = true
         } else {
             if disabledBottomAutoLayout {
-                vc.contentViewController?.view?.constraints.forEach({ (const) in
+                disabledAutoLayoutItems.forEach({ (const) in
                     switch vc.contentViewController?.layoutGuide.bottomAnchor {
                     case const.firstAnchor:
                         (const.secondItem as? UIView)?.enableAutoLayout()
@@ -500,6 +511,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                         break
                     }
                 })
+                disabledAutoLayoutItems.removeAll()
             }
             disabledBottomAutoLayout = false
         }
@@ -544,6 +556,15 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
             vc.delegate?.floatingPanelDidEndDragging(vc, withVelocity: velocity, targetPosition: targetPosition)
         }
 
+        if scrollView != nil, !stopScrollDeceleration,
+            surfaceView.frame.minY == layoutAdapter.topY,
+            targetPosition == layoutAdapter.topMostState {
+            self.state = targetPosition
+            self.updateLayout(to: targetPosition)
+            self.unlockScrollView()
+            return
+        }
+
         // Workaround: Disable a tracking scroll to prevent bouncing a scroll content in a panel animating
         let isScrollEnabled = scrollView?.isScrollEnabled
         if let scrollView = scrollView, targetPosition != .full {
@@ -562,12 +583,12 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
     private func shouldStartRemovalAnimation(with velocityVector: CGVector) -> Bool {
         let posY = layoutAdapter.positionY(for: state)
         let currentY = surfaceView.frame.minY
-        let bottomMaxY = layoutAdapter.bottomMaxY
+        let hiddenY = layoutAdapter.positionY(for: .hidden)
         let vth = behavior.removalVelocity
         let pth = max(min(behavior.removalProgress, 1.0), 0.0)
 
         let num = (currentY - posY)
-        let den = (bottomMaxY - posY)
+        let den = (hiddenY - posY)
 
         guard num >= 0, den != 0, (num / den >= pth || velocityVector.dy == vth)
         else { return false }
