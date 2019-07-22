@@ -301,17 +301,21 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                     }
                 }
             } else {
-                guard surfaceView.presentationFrame.minY == layoutAdapter.topY else { return }
-                // Show a scroll indicator at the top in dragging.
                 if interactionInProgress {
+                    // Show a scroll indicator at the top in dragging.
                     if offset >= 0, velocity.y <= 0 {
                         unlockScrollView()
                     }
                 } else {
-                    // Hide a scroll indicator just before starting an interaction by swiping a panel down.
-                    if state == layoutAdapter.topMostState,
-                        offset < 0, velocity.y > 0 {
-                        lockScrollView()
+                    if state == layoutAdapter.topMostState {
+                        // Hide a scroll indicator just before starting an interaction by swiping a panel down.
+                        if offset < 0, velocity.y > 0 {
+                            lockScrollView()
+                        }
+                        // Show a scroll indicator when an animation is interrupted at the top and content is scrolled up
+                        if offset > 0, velocity.y < 0 {
+                            unlockScrollView()
+                        }
                     }
                 }
             }
