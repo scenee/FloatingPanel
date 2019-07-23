@@ -4,8 +4,18 @@
 //
 
 import UIKit
+import FloatingPanel
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FloatingPanelSurfaceView.appearance().shadowHidden = false
+        FloatingPanelSurfaceView.appearance().cornerRadius = 6.0
+        // FloatingPanelSurfaceView.appearance().backgroundColor = .lightGray
+        // FloatingPanelBackdropView.appearance().backgroundColor = .red
+        // GrabberHandleView.appearance().barColor = .red
+        return true
+    }
 }

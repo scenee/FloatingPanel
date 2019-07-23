@@ -62,10 +62,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         viewcontroller = vc
 
         surfaceView = FloatingPanelSurfaceView()
-        surfaceView.backgroundColor = .white
 
         backdropView = FloatingPanelBackdropView()
-        backdropView.backgroundColor = .black
         backdropView.alpha = 0.0
 
         self.layoutAdapter = FloatingPanelLayoutAdapter(surfaceView: surfaceView,
