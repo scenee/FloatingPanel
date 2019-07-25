@@ -677,6 +677,10 @@ class DebugTableViewController: InspectableViewController {
         //  Remove FloatingPanel from a view
         (self.parent as! FloatingPanelController).removePanelFromParent(animated: true, completion: nil)
     }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        print("TableView --- ", scrollView.contentOffset, scrollView.contentInset)
+    }
 }
 
 extension DebugTableViewController: UITableViewDataSource {
