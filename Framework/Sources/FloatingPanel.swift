@@ -51,7 +51,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
     // Scroll handling
     private var initialScrollOffset: CGPoint = .zero
-    private var initialScrollFrame: CGRect = .zero
     private var stopScrollDeceleration: Bool = false
     private var scrollBouncable = false
     private var scrollIndictorVisible = false
@@ -301,17 +300,33 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                     }
                 }
             } else {
-                guard surfaceView.presentationFrame.minY == layoutAdapter.topY else { return }
-                // Show a scroll indicator at the top in dragging.
                 if interactionInProgress {
+                    // Show a scroll indicator at the top in dragging.
                     if offset >= 0, velocity.y <= 0 {
                         unlockScrollView()
+                    } else {
+                        if state == layoutAdapter.topMostState {
+                            // Adjust a small gap of the scroll offset just after swiping down starts in the grabber area.
+                            if grabberAreaFrame.contains(location), grabberAreaFrame.contains(initialLocation) {
+                                scrollView.setContentOffset(initialScrollOffset, animated: false)
+                            }
+                        }
                     }
                 } else {
-                    // Hide a scroll indicator just before starting an interaction by swiping a panel down.
-                    if state == layoutAdapter.topMostState,
-                        offset < 0, velocity.y > 0 {
-                        lockScrollView()
+                    if state == layoutAdapter.topMostState {
+                        // Hide a scroll indicator just before starting an interaction by swiping a panel down.
+                        if offset < 0, velocity.y > 0 {
+                            lockScrollView()
+                        }
+                        // Show a scroll indicator when an animation is interrupted at the top and content is scrolled up
+                        if offset > 0, velocity.y < 0 {
+                            unlockScrollView()
+                        }
+
+                        // Adjust a small gap of the scroll offset just before swiping down starts in the grabber area,
+                        if grabberAreaFrame.contains(location), grabberAreaFrame.contains(initialLocation) {
+                            scrollView.setContentOffset(initialScrollOffset, animated: false)
+                        }
                     }
                 }
             }
@@ -428,14 +443,14 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         // So here just preserve the current state if needed.
         log.debug("panningBegan -- location = \(location.y)")
         initialLocation = location
+
+        guard let scrollView = scrollView else { return }
         if state == layoutAdapter.topMostState {
-            if let scrollView = scrollView {
-                initialScrollFrame = scrollView.frame
-            }
-        } else {
-            if let scrollView = scrollView {
+            if grabberAreaFrame.contains(location) {
                 initialScrollOffset = scrollView.contentOffset
             }
+        } else {
+            initialScrollOffset = scrollView.contentOffset
         }
     }
 

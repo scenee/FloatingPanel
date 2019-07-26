@@ -36,6 +36,17 @@ jobs:
     osx_image: xcode10.2
     name: "iPhone X (iOS 12.2)"
 
+  - stage: Build examples
+    osx_image: xcode10.2
+    script: xcodebuild -scheme Maps -sdk iphonesimulator clean build
+    name: "Maps"
+  - script: xcodebuild -scheme Stocks -sdk iphonesimulator clean build
+    osx_image: xcode10.2
+    name: "Stocks"
+  - script: xcodebuild -scheme Samples -sdk iphonesimulator clean build
+    osx_image: xcode10.2
+    name: "Samples"
+
   - stage: Carthage
     osx_image: xcode10.2
     before_install:
@@ -49,14 +60,3 @@ jobs:
     script:
     - pod spec lint --allow-warnings
     - pod lib lint --allow-warnings
-
-  - stage: Build examples
-    osx_image: xcode10.2
-    script: xcodebuild -scheme Maps -sdk iphonesimulator clean build
-    name: "Maps"
-  - script: xcodebuild -scheme Stocks -sdk iphonesimulator clean build
-    osx_image: xcode10.2
-    name: "Stocks"
-  - script: xcodebuild -scheme Samples -sdk iphonesimulator clean build
-    osx_image: xcode10.2
-    name: "Samples"
