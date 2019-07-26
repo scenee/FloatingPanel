@@ -235,7 +235,8 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         if #available(iOS 11.0, *) {}
         else {
             // Because {top,bottom}LayoutGuide is managed as a view
-            if preSafeAreaInsets != layoutInsets {
+            if preSafeAreaInsets != layoutInsets,
+                floatingPanel.isDecelerating == false {
                 self.update(safeAreaInsets: layoutInsets)
             }
         }
@@ -286,8 +287,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
 
     private func update(safeAreaInsets: UIEdgeInsets) {
         guard
-            preSafeAreaInsets != safeAreaInsets,
-            self.floatingPanel.isDecelerating == false
+            preSafeAreaInsets != safeAreaInsets
             else { return }
 
         log.debug("Update safeAreaInsets", safeAreaInsets)
