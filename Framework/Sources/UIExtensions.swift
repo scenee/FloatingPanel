@@ -21,7 +21,7 @@ class CustomLayoutGuide: LayoutGuideProvider {
 }
 
 extension UIViewController {
-    var layoutInsets: UIEdgeInsets {
+    @objc var layoutInsets: UIEdgeInsets {
         if #available(iOS 11.0, *) {
             return view.safeAreaInsets
         } else {
