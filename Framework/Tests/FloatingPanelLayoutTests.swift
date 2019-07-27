@@ -194,6 +194,47 @@ class FloatingPanelLayoutTests: XCTestCase {
 
         fpc.floatingPanel.layoutAdapter.endInteraction(at: fpc.position)
     }
+
+    func test_positionReference() {
+        fpc = CustomSafeAreaFloatingPanelController()
+        fpc.loadViewIfNeeded()
+        fpc.view.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
+
+        class MyFloatingPanelFullLayout: FloatingPanelTestLayout {
+            var initialPosition: FloatingPanelPosition = .half
+            var positionReference: FloatingPanelLayoutReference {
+                return .fromSuperview
+            }
+        }
+        class MyFloatingPanelSafeAreaLayout: FloatingPanelTestLayout {
+            var initialPosition: FloatingPanelPosition = .half
+            var positionReference: FloatingPanelLayoutReference {
+                return .fromSafeArea
+            }
+        }
+        let fullLayout = MyFloatingPanelFullLayout()
+        let delegate = FloatingPanelTestDelegate()
+        delegate.layout = fullLayout
+        fpc.delegate = delegate
+        fpc.showForTest()
+
+        XCTAssertEqual(fpc.layout.positionReference, .fromSuperview)
+        XCTAssertEqual(fpc.originYOfSurface(for: .full), fullLayout.insetFor(position: .full))
+        XCTAssertEqual(fpc.originYOfSurface(for: .half), fpc.view!.frame.height - fullLayout.insetFor(position: .half)!)
+        XCTAssertEqual(fpc.originYOfSurface(for: .tip), fpc.view!.frame.height - fullLayout.insetFor(position: .tip)!)
+
+        let safeAreaLayout = MyFloatingPanelSafeAreaLayout()
+        delegate.layout = safeAreaLayout
+        fpc.delegate = delegate
+
+        XCTAssertEqual(fpc.layout.positionReference, .fromSafeArea)
+        XCTAssertEqual(fpc.originYOfSurface(for: .full),
+                       fullLayout.insetFor(position: .full)! + fpc.layoutInsets.top)
+        XCTAssertEqual(fpc.originYOfSurface(for: .half),
+                       fpc.view!.frame.height - (fullLayout.insetFor(position: .half)! +  fpc.layoutInsets.bottom))
+        XCTAssertEqual(fpc.originYOfSurface(for: .tip),
+                       fpc.view!.frame.height - (fullLayout.insetFor(position: .tip)! +  fpc.layoutInsets.bottom))
+    }
 }
 
 private typealias LayoutSegmentTestParameter = (UInt, pos: CGFloat, forwardY: Bool, lower: FloatingPanelPosition?, upper: FloatingPanelPosition?)
@@ -202,5 +243,12 @@ private func assertLayoutSegment(_ floatingPanel: FloatingPanel, with params: [L
         let segument = floatingPanel.layoutAdapter.segument(at: pos, forward: forwardY)
         XCTAssertEqual(segument.lower, lowr, line: line)
         XCTAssertEqual(segument.upper, upper, line: line)
+    }
+}
+
+private class CustomSafeAreaFloatingPanelController: FloatingPanelController { }
+extension CustomSafeAreaFloatingPanelController {
+    override var layoutInsets: UIEdgeInsets {
+        return UIEdgeInsets(top: 64.0, left: 0.0, bottom: 0.0, right: 34.0)
     }
 }
