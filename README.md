@@ -24,6 +24,7 @@ The new interface displays the related contents and utilities in parallel as a u
 - [Installation](#installation)
   - [CocoaPods](#cocoapods)
   - [Carthage](#carthage)
+  - [Swift Package Manager with Xcode 11](#swift-package-manager-with-xcode-11)
 - [Getting Started](#getting-started)
   - [Add a floating panel as a child view controller](#add-a-floating-panel-as-a-child-view-controller)
   - [Present a floating panel as a modality](#present-a-floating-panel-as-a-modality)
@@ -34,8 +35,11 @@ The new interface displays the related contents and utilities in parallel as a u
     - [Change the initial position and height](#change-the-initial-position-and-height)
     - [Support your landscape layout](#support-your-landscape-layout)
     - [Use Intrinsic height layout](#use-intrinsic-height-layout)
+    - [Specify position insets from the frame of `FloatingPanelContrller.view`, not the SafeArea](#specify-position-insets-from-the-frame-of-floatingpanelcontrllerview-not-the-safearea)
   - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
     - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
+    - [Activate the rubberband effect on the top/bottom edges](#activate-the-rubberband-effect-on-the-topbottom-edges)
+    - [Manage the projection of a pan gesture momentum](#manage-the-projection-of-a-pan-gesture-momentum)
   - [Use a custom grabber handle](#use-a-custom-grabber-handle)
   - [Add tap gestures to the surface or backdrop views](#add-tap-gestures-to-the-surface-or-backdrop-views)
   - [Create an additional floating panel for a detail](#create-an-additional-floating-panel-for-a-detail)
@@ -92,6 +96,10 @@ For [Carthage](https://github.com/Carthage/Carthage), add the following to your 
 ```ogdl
 github "scenee/FloatingPanel"
 ```
+
+### Swift Package Manager with Xcode 11
+
+Follow [this doc](https://developer.apple.com/documentation/swift_packages/adding_package_dependencies_to_your_app).
 
 ## Getting Started
 
@@ -291,6 +299,27 @@ class RemovablePanelLayout: FloatingPanelIntrinsicLayout {
 }
 ```
 
+#### Specify position insets from the frame of `FloatingPanelContrller.view`, not the SafeArea
+
+There are 2 ways. One is returning `.fromSuperview` for `FloatingPanelLayout.positionReference` in your layout.
+
+```swift
+class MyFullScreenLayout: FloatingPanelLayout {
+    ...
+    var positionReference: FloatingPanelLayoutReference {
+        return .fromSuperview
+    }
+}
+```
+
+Another is using `FloatingPanelFullScreenLayout` protocol.
+
+```swift
+class MyFullScreenLayout: FloatingPanelFullScreenLayout {
+    ...
+}
+```
+
 ### Customize the behavior with `FloatingPanelBehavior` protocol
 
 #### Modify your floating panel's interaction
@@ -309,6 +338,30 @@ class FloatingPanelStocksBehavior: FloatingPanelBehavior {
         let damping = self.damping(with: velocity)
         let springTiming = UISpringTimingParameters(dampingRatio: damping, initialVelocity: velocity)
         return UIViewPropertyAnimator(duration: 0.5, timingParameters: springTiming)
+    }
+}
+```
+
+#### Activate the rubberband effect on the top/bottom edges
+
+```swift
+class FloatingPanelBehavior: FloatingPanelBehavior {
+    ...
+    func allowsRubberBanding(for edge: UIRectEdge) -> Bool {
+        return true
+    }
+}
+```
+
+#### Manage the projection of a pan gesture momentum
+
+This allows full projectional panel behavior. For example, a user can swipe up a panel from tip to full nearby the tip position.
+
+```swift
+class FloatingPanelBehavior: FloatingPanelBehavior {
+    ...
+    func shouldProjectMomentum(_ fpc: FloatingPanelController, for proposedTargetPosition: FloatingPanelPosition) -> Bool
+        return true
     }
 }
 ```

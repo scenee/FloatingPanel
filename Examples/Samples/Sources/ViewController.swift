@@ -677,6 +677,10 @@ class DebugTableViewController: InspectableViewController {
         //  Remove FloatingPanel from a view
         (self.parent as! FloatingPanelController).removePanelFromParent(animated: true, completion: nil)
     }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        print("TableView --- ", scrollView.contentOffset, scrollView.contentInset)
+    }
 }
 
 extension DebugTableViewController: UITableViewDataSource {
@@ -933,7 +937,7 @@ extension TabBarContentViewController: UITextViewDelegate {
         // Using KVO of `scrollView.contentOffset`). Because it can lead to an
         // infinite loop if a user also resets a content offset as below and,
         // in the situation, a user has to modify the library.
-        if fpc.position != .full, fpc.surfaceView.frame.minY < fpc.originYOfSurface(for: .full) {
+        if fpc.position != .full, fpc.surfaceView.frame.minY > fpc.originYOfSurface(for: .full) {
             scrollView.contentOffset = .zero
         }
     }

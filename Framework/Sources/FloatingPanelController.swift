@@ -68,6 +68,40 @@ public enum FloatingPanelPosition: Int {
     case half
     case tip
     case hidden
+
+    static var allCases: [FloatingPanelPosition] {
+        return [.full, .half, .tip, .hidden]
+    }
+
+    func next(in positions: [FloatingPanelPosition]) -> FloatingPanelPosition {
+        #if swift(>=4.2)
+        guard
+            let index = positions.firstIndex(of: self),
+            positions.indices.contains(index + 1)
+            else { return self }
+        #else
+        guard
+            let index = positions.index(of: self),
+            positions.indices.contains(index + 1)
+            else { return self }
+        #endif
+        return positions[index + 1]
+    }
+
+    func pre(in positions: [FloatingPanelPosition]) -> FloatingPanelPosition {
+        #if swift(>=4.2)
+        guard
+            let index = positions.firstIndex(of: self),
+            positions.indices.contains(index - 1)
+            else { return self }
+        #else
+        guard
+            let index = positions.index(of: self),
+            positions.indices.contains(index - 1)
+            else { return self }
+        #endif
+        return positions[index - 1]
+    }
 }
 
 ///
@@ -145,7 +179,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
     }
     private var _contentViewController: UIViewController?
 
-    private var floatingPanel: FloatingPanel!
+    private(set) var floatingPanel: FloatingPanel!
     private var preSafeAreaInsets: UIEdgeInsets = .zero // Capture the latest one
     private var safeAreaInsetsObservation: NSKeyValueObservation?
     private let modalTransition = FloatingPanelModalTransition()
@@ -196,18 +230,19 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         self.view = view as UIView
     }
 
-    open  override func viewDidLayoutSubviews() {
+    open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if #available(iOS 11.0, *) {}
         else {
             // Because {top,bottom}LayoutGuide is managed as a view
-            if preSafeAreaInsets != layoutInsets {
+            if preSafeAreaInsets != layoutInsets,
+                floatingPanel.isDecelerating == false {
                 self.update(safeAreaInsets: layoutInsets)
             }
         }
     }
 
-    open  override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
         if view.translatesAutoresizingMaskIntoConstraints {
@@ -216,19 +251,23 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         }
     }
 
-    open  override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+    open override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
         super.willTransition(to: newCollection, with: coordinator)
-
-        // Change layout for a new trait collection
-        reloadLayout(for: newCollection)
-        setUpLayout()
-
-        floatingPanel.behavior = fetchBehavior(for: newCollection)
+        self.prepare(for: newCollection)
     }
 
     open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         safeAreaInsetsObservation = nil
+    }
+
+    // MARK:- Internals
+    func prepare(for newCollection: UITraitCollection) {
+        guard newCollection.shouldUpdateLayout(from: traitCollection) else { return }
+        // Change a layout & behavior for a new trait collection
+        reloadLayout(for: newCollection)
+        activateLayout()
+        floatingPanel.behavior = fetchBehavior(for: newCollection)
     }
 
     // MARK:- Privates
@@ -248,8 +287,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
 
     private func update(safeAreaInsets: UIEdgeInsets) {
         guard
-            preSafeAreaInsets != safeAreaInsets,
-            self.floatingPanel.isDecelerating == false
+            preSafeAreaInsets != safeAreaInsets
             else { return }
 
         log.debug("Update safeAreaInsets", safeAreaInsets)
@@ -257,7 +295,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         // Prevent an infinite loop on iOS 10: setUpLayout() -> viewDidLayoutSubviews() -> setUpLayout()
         preSafeAreaInsets = safeAreaInsets
 
-        setUpLayout()
+        activateLayout()
 
         switch contentInsetAdjustmentBehavior {
         case .always:
@@ -282,7 +320,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         }
     }
 
-    private func setUpLayout() {
+    private func activateLayout() {
         // preserve the current content offset
         let contentOffset = scrollView?.contentOffset
 
@@ -298,7 +336,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
     public func show(animated: Bool = false, completion: (() -> Void)? = nil) {
         // Must apply the current layout here
         reloadLayout(for: traitCollection)
-        setUpLayout()
+        activateLayout()
 
         if #available(iOS 11.0, *) {
             // Must track the safeAreaInsets of `self.view` to update the layout.
@@ -513,7 +551,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
     /// animation block.
     public func updateLayout() {
         reloadLayout(for: traitCollection)
-        setUpLayout()
+        activateLayout()
     }
 
     /// Prepares an update to the layout object from the delegate.
@@ -538,16 +576,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
 
     /// Returns the y-coordinate of the point at the origin of the surface view.
     public func originYOfSurface(for pos: FloatingPanelPosition) -> CGFloat {
-        switch pos {
-        case .full:
-            return floatingPanel.layoutAdapter.topY
-        case .half:
-            return floatingPanel.layoutAdapter.middleY
-        case .tip:
-            return floatingPanel.layoutAdapter.bottomY
-        case .hidden:
-            return floatingPanel.layoutAdapter.hiddenY
-        }
+        return floatingPanel.layoutAdapter.positionY(for: pos)
     }
 }
 

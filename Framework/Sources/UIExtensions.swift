@@ -21,7 +21,7 @@ class CustomLayoutGuide: LayoutGuideProvider {
 }
 
 extension UIViewController {
-    var layoutInsets: UIEdgeInsets {
+    @objc var layoutInsets: UIEdgeInsets {
         if #available(iOS 11.0, *) {
             return view.safeAreaInsets
         } else {
@@ -59,6 +59,10 @@ extension UIView {
         } else {
             return self
         }
+    }
+
+    var presentationFrame: CGRect {
+        return layer.presentation()?.frame ?? frame
     }
 }
 
@@ -107,6 +111,9 @@ extension UIScrollView {
     var contentOffsetZero: CGPoint {
         return CGPoint(x: 0.0, y: 0.0 - contentInset.top)
     }
+    var isLocked: Bool {
+        return !showsVerticalScrollIndicator && !bounces &&  isDirectionalLockEnabled
+    }
 }
 
 extension UISpringTimingParameters {
@@ -122,5 +129,14 @@ extension CGPoint {
     static var nan: CGPoint {
         return CGPoint(x: CGFloat.nan,
                        y: CGFloat.nan)
+    }
+}
+
+extension UITraitCollection {
+    func shouldUpdateLayout(from previous: UITraitCollection) -> Bool {
+        return previous.horizontalSizeClass != horizontalSizeClass
+            || previous.verticalSizeClass != verticalSizeClass
+            || previous.preferredContentSizeCategory != preferredContentSizeCategory
+            || previous.layoutDirection != layoutDirection
     }
 }
