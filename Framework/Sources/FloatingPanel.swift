@@ -88,6 +88,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
         // Set tap-to-dismiss in the backdrop view
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
+        backdropView.dismissalTapGestureRecognizer = tapGesture
         backdropView.addGestureRecognizer(tapGesture)
     }
 
@@ -261,9 +262,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
     // MARK: - Gesture handling
 
     @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
-        if viewcontroller.isTapToDismissEnabled {
-            viewcontroller.dismiss(animated: true, completion: nil)
-        }
+        viewcontroller?.dismiss(animated: true, completion: nil)
     }
 
     @objc func handle(panGesture: UIPanGestureRecognizer) {
