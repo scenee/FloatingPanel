@@ -85,6 +85,12 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         surfaceView.addGestureRecognizer(panGestureRecognizer)
         panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
         panGestureRecognizer.delegate = self
+
+        // Set tap-to-dismiss in the backdrop view
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
+        tapGesture.isEnabled = false
+        backdropView.dismissalTapGestureRecognizer = tapGesture
+        backdropView.addGestureRecognizer(tapGesture)
     }
 
     func move(to: FloatingPanelPosition, animated: Bool, completion: (() -> Void)? = nil) {
@@ -255,6 +261,11 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
     }
 
     // MARK: - Gesture handling
+
+    @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
+        viewcontroller?.dismiss(animated: true, completion: nil)
+    }
+
     @objc func handle(panGesture: UIPanGestureRecognizer) {
         let velocity = panGesture.velocity(in: panGesture.view)
 
