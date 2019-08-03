@@ -6,4 +6,6 @@
 import UIKit
 
 /// A view that presents a backdrop interface behind a floating panel.
-public class FloatingPanelBackdropView: UIView { }
+public class FloatingPanelBackdropView: UIView {
+    public var dismissalTapGestureRecognizer: UITapGestureRecognizer!
+}
