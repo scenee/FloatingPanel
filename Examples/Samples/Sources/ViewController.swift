@@ -17,7 +17,7 @@ class SampleListViewController: UIViewController {
         case trackingTextView
         case showDetail
         case showModal
-        case showFloatingPanelModal
+        case showPanelModal
         case showTabBar
         case showPageView
         case showNestedScrollView
@@ -31,7 +31,7 @@ class SampleListViewController: UIViewController {
             case .trackingTextView: return "Scroll tracking(TextView)"
             case .showDetail: return "Show Detail Panel"
             case .showModal: return "Show Modal"
-            case .showFloatingPanelModal: return "Show Floating Panel Modal"
+            case .showPanelModal: return "Show Panel Modal"
             case .showTabBar: return "Show Tab Bar"
             case .showPageView: return "Show Page View"
             case .showNestedScrollView: return "Show Nested ScrollView"
@@ -47,7 +47,7 @@ class SampleListViewController: UIViewController {
             case .trackingTextView: return "ConsoleViewController"
             case .showDetail: return "DetailViewController"
             case .showModal: return "ModalViewController"
-            case .showFloatingPanelModal: return nil
+            case .showPanelModal: return nil
             case .showTabBar: return "TabBarViewController"
             case .showPageView: return nil
             case .showNestedScrollView: return "NestedScrollViewController"
@@ -258,6 +258,7 @@ extension SampleListViewController: UITableViewDelegate {
 
             // Initialize FloatingPanelController
             detailPanelVC = FloatingPanelController()
+            detailPanelVC.delegate = self
 
             // Initialize FloatingPanelController and add the view
             detailPanelVC.surfaceView.cornerRadius = 6.0
@@ -265,6 +266,9 @@ extension SampleListViewController: UITableViewDelegate {
 
             // Set a content view controller
             detailPanelVC.set(contentViewController: contentVC)
+
+            detailPanelVC.contentMode = .fitToBounds
+            (contentVC as? DetailViewController)?.intrinsicHeightConstraint.priority = .defaultLow
 
             //  Add FloatingPanel to self.view
             detailPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
@@ -287,9 +291,11 @@ extension SampleListViewController: UITableViewDelegate {
             pageVC.setViewControllers([pages[0]], direction: .forward, animated: false, completion: nil)
             present(pageVC, animated: true, completion: nil)
 
-        case .showFloatingPanelModal:
+        case .showPanelModal:
             let fpc = FloatingPanelController()
             let contentVC = self.storyboard!.instantiateViewController(withIdentifier: "DetailViewController")
+            contentVC.loadViewIfNeeded()
+            (contentVC as? DetailViewController)?.modeChangeView.isHidden = true
             fpc.set(contentViewController: contentVC)
             fpc.delegate = self
 
@@ -335,7 +341,7 @@ extension SampleListViewController: FloatingPanelControllerDelegate {
             return newCollection.verticalSizeClass == .compact ? RemovablePanelLandscapeLayout() :  RemovablePanelLayout()
         case .showIntrinsicView:
             return IntrinsicPanelLayout()
-        case .showFloatingPanelModal:
+        case .showPanelModal:
             if vc != mainPanelVC && vc != detailPanelVC {
                 return ModalPanelLayout()
             }
@@ -723,6 +729,8 @@ extension DebugTableViewController: UITableViewDelegate {
 }
 
 class DetailViewController: InspectableViewController {
+    @IBOutlet weak var modeChangeView: UIStackView!
+    @IBOutlet weak var intrinsicHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var closeButton: UIButton!
     @IBAction func close(sender: UIButton) {
         // (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
@@ -738,6 +746,10 @@ class DetailViewController: InspectableViewController {
         default:
             break
         }
+    }
+    @IBAction func modeChanged(_ sender: Any) {
+        guard let fpc = parent as? FloatingPanelController else { return }
+        fpc.contentMode = (fpc.contentMode == .static) ? .fitToBounds : .static
     }
 
     @IBAction func tapped(_ sender: Any) {

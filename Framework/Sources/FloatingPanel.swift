@@ -152,7 +152,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
     // MARK: - Layout update
 
     private func updateLayout(to target: FloatingPanelPosition) {
-        self.layoutAdapter.activateLayout(of: target)
+        self.layoutAdapter.activateFixedLayout()
+        self.layoutAdapter.activateInteractiveLayout(of: target)
     }
 
     func getBackdropAlpha(at currentY: CGFloat, with translation: CGPoint) -> CGFloat {
@@ -503,6 +504,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
     // from the full position because SafeArea is global in a screen.
     private func preserveContentVCLayoutIfNeeded() {
         guard let vc = viewcontroller else { return }
+        guard vc.contentMode != .fitToBounds else { return }
+
         // Must include topY
         if (surfaceView.frame.minY <= layoutAdapter.topY) {
             if !disabledBottomAutoLayout {
@@ -709,9 +712,22 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: abs(velocity.y)/distance) : .zero
         let animator = behavior.interactionAnimator(vc, to: targetPosition, with: velocityVector)
         animator.addAnimations { [weak self] in
-            guard let `self` = self else { return }
+            guard let `self` = self, let vc = self.viewcontroller else { return }
             self.state = targetPosition
-            self.updateLayout(to: targetPosition)
+            if animator.isInterruptible {
+                switch vc.contentMode {
+                case .fitToBounds:
+                    UIView.performWithLinear(startTime: 0.0, relativeDuration: 0.75) {
+                        self.layoutAdapter.activateFixedLayout()
+                        self.surfaceView.superview!.layoutIfNeeded()
+                    }
+                case .static:
+                    self.layoutAdapter.activateFixedLayout()
+                }
+            } else {
+                self.layoutAdapter.activateFixedLayout()
+            }
+            self.layoutAdapter.activateInteractiveLayout(of: targetPosition)
         }
         animator.addCompletion { [weak self] pos in
             // Prevent calling `finishAnimation(at:)` by the old animator whose `isInterruptive` is false

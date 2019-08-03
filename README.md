@@ -31,6 +31,7 @@ The new interface displays the related contents and utilities in parallel as a u
 - [View hierarchy](#view-hierarchy)
 - [Usage](#usage)
   - [Show/Hide a floating panel in a view with your view hierarchy](#showhide-a-floating-panel-in-a-view-with-your-view-hierarchy)
+  - [Scale the content view when the surface position changes](#scale-the-content-view-when-the-surface-position-changes)
   - [Customize the layout with `FloatingPanelLayout` protocol](#customize-the-layout-with-floatingpanellayout-protocol)
     - [Change the initial position and height](#change-the-initial-position-and-height)
     - [Support your landscape layout](#support-your-landscape-layout)
@@ -208,6 +209,16 @@ fpc.hide(animated: true) {
 ```
 
 NOTE: `FloatingPanelController` wraps `show`/`hide` with `addPanel`/`removePanelFromParent` for easy-to-use. But `show`/`hide` are more convenience for your app.
+
+### Scale the content view when the surface position changes
+
+Specify the `contentMode` to `.fitToBounds` if the surface height fits the bounds of `FloatingPanelController.view` when the surface position changes
+
+```swift
+fpc.contentMode = .fitToBounds
+```
+
+Otherwise, `FloatingPanelController` fixes the content by the height of the top most position.
 
 ### Customize the layout with `FloatingPanelLayout` protocol
 

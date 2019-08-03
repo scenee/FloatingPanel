@@ -114,6 +114,14 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         case never
     }
 
+    /// A flag used to determine how the controller object lays out the content view when the surface position changes.
+    public enum ContentMode: Int {
+        /// The option to fix the content to keep the height of the top most position.
+        case `static`
+        /// The option to scale the content to fit the bounds of the root view by changing the surface position.
+        case fitToBounds
+    }
+
     /// The delegate of the floating panel controller object.
     public weak var delegate: FloatingPanelControllerDelegate?{
         didSet{
@@ -177,6 +185,14 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         set { set(contentViewController: newValue) }
         get { return _contentViewController }
     }
+
+    public var contentMode: ContentMode = .static {
+        didSet {
+            guard position != .hidden else { return }
+            activateLayout()
+        }
+    }
+
     private var _contentViewController: UIViewController?
 
     private(set) var floatingPanel: FloatingPanel!
@@ -308,7 +324,6 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
 
     private func reloadLayout(for traitCollection: UITraitCollection) {
         floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
-        floatingPanel.layoutAdapter.prepareLayout(in: self)
 
         if let parent = self.parent {
             if let layout = layout as? UIViewController, layout == parent {
@@ -321,6 +336,8 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
     }
 
     private func activateLayout() {
+        floatingPanel.layoutAdapter.prepareLayout(in: self)
+
         // preserve the current content offset
         let contentOffset = scrollView?.contentOffset
 
