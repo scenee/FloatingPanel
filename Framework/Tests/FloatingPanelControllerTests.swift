@@ -107,6 +107,31 @@ class FloatingPanelControllerTests: XCTestCase {
         fpc.move(to: .hidden, animated: false)
         XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .hidden))
     }
+
+    func test_contentMode() {
+        let fpc = FloatingPanelController(delegate: nil)
+        fpc.loadViewIfNeeded()
+        fpc.view.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
+        fpc.show(animated: false, completion: nil)
+
+        fpc.contentMode = .static
+
+        fpc.move(to: .full, animated: false)
+        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.originYOfSurface(for: .full))
+        fpc.move(to: .half, animated: false)
+        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.originYOfSurface(for: .full))
+        fpc.move(to: .tip, animated: false)
+        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.originYOfSurface(for: .full))
+
+        fpc.contentMode = .fitToBounds
+
+        fpc.move(to: .full, animated: false)
+        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.originYOfSurface(for: .full))
+        fpc.move(to: .half, animated: false)
+        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.originYOfSurface(for: .half))
+        fpc.move(to: .tip, animated: false)
+        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.originYOfSurface(for: .tip))
+    }
 }
 
 private class MyZombieViewController: UIViewController, FloatingPanelLayout, FloatingPanelBehavior, FloatingPanelControllerDelegate {
