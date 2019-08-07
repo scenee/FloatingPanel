@@ -375,6 +375,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                 }
                 panningChange(with: translation)
             case .ended, .cancelled, .failed:
+                if interactionInProgress == false {
+                    startInteraction(with: translation, at: location)
+                }
                 panningEnd(with: translation, velocity: velocity)
             default:
                 break
