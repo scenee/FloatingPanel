@@ -337,6 +337,11 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
             log.debug("panel gesture(\(state):\(panGesture.state)) --",
                 "translation =  \(translation.y), location = \(location.y), velocity = \(velocity.y)")
 
+            if interactionInProgress == false, isDecelerating == false,
+                let vc = viewcontroller, vc.delegate?.floatingPanelShouldBeginDragging(vc) == false {
+                return
+            }
+
             if let animator = self.animator {
                 guard surfaceView.presentationFrame.minY >= layoutAdapter.topMaxY else { return }
                 log.debug("panel animation interrupted!!!")
@@ -352,12 +357,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                 } else {
                     self.animator = nil
                 }
-            }
-
-            if interactionInProgress == false,
-                let vc = viewcontroller,
-                vc.delegate?.floatingPanelShouldBeginDragging(vc) == false {
-                return
             }
 
             if panGesture.state == .began {
