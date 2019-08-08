@@ -454,6 +454,7 @@ class FloatingPanelLayoutAdapter {
     func activateLayout(of state: FloatingPanelPosition) {
         defer {
             surfaceView.superview!.layoutIfNeeded()
+            log.debug("activateLayout -- surface.presentation = \(self.surfaceView.presentationFrame) surface.frame = \(self.surfaceView.frame)")
         }
 
         var state = state

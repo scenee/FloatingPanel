@@ -344,7 +344,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
             if let animator = self.animator {
                 guard surfaceView.presentationFrame.minY >= layoutAdapter.topMaxY else { return }
-                log.debug("panel animation interrupted!!!")
+                log.debug("panel animation(interruptible: \(animator.isInterruptible)) interrupted!!!")
                 if animator.isInterruptible {
                     animator.stopAnimation(false)
                     // A user can stop a panel at the nearest Y of a target position so this fine-tunes
@@ -377,6 +377,12 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
             case .ended, .cancelled, .failed:
                 if interactionInProgress == false {
                     startInteraction(with: translation, at: location)
+                    // Workaround: Prevent stopping the surface view b/w anchors if the pan gesture
+                    // doesn't pass through .changed state after an interruptible animator is interrupted.
+                    let dy = translation.y - .leastNonzeroMagnitude
+                    layoutAdapter.updateInteractiveTopConstraint(diff: dy,
+                                                                 allowsTopBuffer: true,
+                                                                 with: behavior)
                 }
                 panningEnd(with: translation, velocity: velocity)
             default:
