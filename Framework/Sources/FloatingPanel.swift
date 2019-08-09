@@ -349,9 +349,14 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
             log.debug("panel gesture(\(state):\(panGesture.state)) --",
                 "translation =  \(translation.y), location = \(location.y), velocity = \(velocity.y)")
 
+            if interactionInProgress == false, isDecelerating == false,
+                let vc = viewcontroller, vc.delegate?.floatingPanelShouldBeginDragging(vc) == false {
+                return
+            }
+
             if let animator = self.animator {
                 guard surfaceView.presentationFrame.minY >= layoutAdapter.topMaxY else { return }
-                log.debug("panel animation interrupted!!!")
+                log.debug("panel animation(interruptible: \(animator.isInterruptible)) interrupted!!!")
                 if animator.isInterruptible {
                     animator.stopAnimation(false)
                     // A user can stop a panel at the nearest Y of a target position so this fine-tunes
@@ -364,12 +369,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                 } else {
                     self.animator = nil
                 }
-            }
-
-            if interactionInProgress == false,
-                let vc = viewcontroller,
-                vc.delegate?.floatingPanelShouldBeginDragging(vc) == false {
-                return
             }
 
             if panGesture.state == .began {
@@ -388,6 +387,15 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                 }
                 panningChange(with: translation)
             case .ended, .cancelled, .failed:
+                if interactionInProgress == false {
+                    startInteraction(with: translation, at: location)
+                    // Workaround: Prevent stopping the surface view b/w anchors if the pan gesture
+                    // doesn't pass through .changed state after an interruptible animator is interrupted.
+                    let dy = translation.y - .leastNonzeroMagnitude
+                    layoutAdapter.updateInteractiveTopConstraint(diff: dy,
+                                                                 allowsTopBuffer: true,
+                                                                 with: behavior)
+                }
                 panningEnd(with: translation, velocity: velocity)
             default:
                 break
