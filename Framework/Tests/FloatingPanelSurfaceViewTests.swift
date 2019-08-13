@@ -12,6 +12,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
 
     func test_surfaceView() {
         let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+        XCTAssertTrue(FloatingPanelSurfaceView.requiresConstraintBasedLayout)
         XCTAssert(surface.contentView == nil)
         surface.layoutIfNeeded()
         XCTAssert(surface.grabberHandle.frame.minY == 6.0)
