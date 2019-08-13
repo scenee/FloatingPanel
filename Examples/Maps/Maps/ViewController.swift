@@ -148,11 +148,9 @@ class SearchPanelViewController: UIViewController, UITableViewDataSource, UITabl
         tableView.dataSource = self
         tableView.delegate = self
         searchBar.placeholder = "Search for a place or address"
-        let textField = searchBar.value(forKey: "_searchField") as! UITextField
-        textField.font = UIFont(name: textField.font!.fontName, size: 15.0)
+        searchBar.setSearchText(fontSize: 15.0)
 
         hideHeader()
-
     }
 
     override func viewDidLayoutSubviews() {
@@ -272,5 +270,17 @@ class SearchHeaderView: UIView {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.clipsToBounds = true
+    }
+}
+
+extension UISearchBar {
+    func setSearchText(fontSize: CGFloat) {
+        #if swift(>=5.1) // Xcode 11 or later
+            let font = searchTextField.font
+            searchTextField.font = font?.withSize(fontSize)
+        #else
+            let textField = value(forKey: "_searchField") as! UITextField
+            textField.font = textField.font?.withSize(fontSize)
+        #endif
     }
 }
