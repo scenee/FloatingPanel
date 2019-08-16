@@ -324,7 +324,7 @@
                                 </connections>
                             </button>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="44" translatesAutoresizingMaskIntoConstraints="NO" id="9p4-06-y2T">
-                                <rect key="frame" x="139.66666666666666" y="132" width="96" height="252"/>
+                                <rect key="frame" x="134.66666666666666" y="132" width="106" height="326"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i9x-x5-n1q">
                                         <rect key="frame" x="0.0" y="0.0" width="80" height="30"/>
@@ -347,8 +347,15 @@
                                             <action selector="moveToTipWithSender:" destination="bYI-y3-Rzb" eventType="touchUpInside" id="BmL-91-9ai"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="swr-XM-GzZ">
+                                        <rect key="frame" x="0.0" y="222" width="106" height="30"/>
+                                        <state key="normal" title="Move to hidden"/>
+                                        <connections>
+                                            <action selector="moveToHiddenWithSender:" destination="bYI-y3-Rzb" eventType="touchUpInside" id="jfJ-0f-fdk"/>
+                                        </connections>
+                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="szf-HE-QTk">
-                                        <rect key="frame" x="0.0" y="222" width="96" height="30"/>
+                                        <rect key="frame" x="0.0" y="296" width="96" height="30"/>
                                         <state key="normal" title="Update layout"/>
                                         <connections>
                                             <action selector="updateLayout:" destination="bYI-y3-Rzb" eventType="touchUpInside" id="Woz-a7-YMJ"/>
