@@ -361,7 +361,6 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
 
     /// Hides the surface view to the hidden position
     public func hide(animated: Bool = false, completion: (() -> Void)? = nil) {
-        safeAreaInsetsObservation = nil
         move(to: .hidden,
              animated: animated,
              completion: completion)
