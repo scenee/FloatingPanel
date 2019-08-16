@@ -43,6 +43,7 @@ The new interface displays the related contents and utilities in parallel as a u
   - [Work your contents together with a floating panel behavior](#work-your-contents-together-with-a-floating-panel-behavior)
 - [Notes](#notes)
   - ['Show' or 'Show Detail' Segues from `FloatingPanelController`'s content view controller](#show-or-show-detail-segues-from-floatingpanelcontrollers-content-view-controller)
+  - [UISearchController issue](#uisearchcontroller-issue)
   - [FloatingPanelSurfaceView's issue on iOS 10](#floatingpanelsurfaceviews-issue-on-ios-10)
 - [Author](#author)
 - [License](#license)
@@ -438,6 +439,12 @@ class ViewController: UIViewController {
 A `FloatingPanelController` object proxies an action for `show(_:sender)` to the master VC. That's why the master VC can handle a destination view controller of a 'Show' or 'Show Detail' segue and you can hook `show(_:sender)` to show a secondary floating panel set the destination view controller to the content.
 
 It's a great way to decouple between a floating panel and the content VC.
+
+### UISearchController issue
+
+`UISearchController` isn't able to be used with `FloatingPanelController` by the system design.
+
+Because `UISearchController` automatically presents itself modally when a user interacts with the search bar, and then it swaps the superview of the search bar to the view managed by itself while it displays. As a result, `FloatingPanelController` can't control the search bar when it's active, as you can see from [the screen shot](https://github.com/SCENEE/FloatingPanel/issues/248#issuecomment-521263831).
 
 ### FloatingPanelSurfaceView's issue on iOS 10
 
