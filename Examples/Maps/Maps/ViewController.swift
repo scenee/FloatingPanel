@@ -9,7 +9,15 @@ import FloatingPanel
 class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate, FloatingPanelControllerDelegate {
     var fpc: FloatingPanelController!
     var searchVC: SearchPanelViewController!
-
+    
+    var compassButton = MKCompassButton()
+    var detailButton = UIButton(type: .detailDisclosure)
+    let infoCtrl = UISegmentedControl(items: ["",""])
+    var locationButton = UIButton(type: .system)
+    var locationTracking:Bool = false
+    let locationOn = UIImage(named: "locationOn") as UIImage?
+    let locationOff = UIImage(named: "locationOff") as UIImage?
+    
     @IBOutlet weak var mapView: MKMapView!
 
     override func viewDidLoad() {
@@ -45,10 +53,48 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate, 
         // Must be here
         searchVC.searchBar.delegate = self
     }
+    
+    override func viewWillLayoutSubviews() {
+        handleRotate(size: view.frame.size)
+    }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         teardownMapView()
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        NSLog("viewWillTransition(to size: CGSize) = \(size)")
+        handleRotate(size: size)
+    }
+    
+    func handleRotate(size: CGSize) {
+        NSLog("size    = \(size)")
+        NSLog("self.view.bounds    = \(self.view.bounds)")
+        NSLog("mapView.bounds.size = \(mapView.bounds.size)")
+        
+        
+        
+        // TODO: - Magic Numbers for determing map buttons to be configured in the Upper Right (use autolayout?)
+        let segmentCtrlWidth  = 46.0 as CGFloat
+        let segmentCtrlHeight = 91.0 as CGFloat
+        
+        switch UIDevice.current.orientation {
+            case .landscapeLeft, .landscapeRight:
+                print("landscape")
+                detailButton.frame.origin   = CGPoint(x: size.width - 72, y: 44)
+                locationButton.frame.origin = CGPoint(x: size.width - 85, y: 77)
+                compassButton.frame.origin  = CGPoint(x: size.width - 77, y: 130)
+                infoCtrl.frame = CGRect(x: size.width - 84, y: 32, width: segmentCtrlWidth, height: segmentCtrlHeight)
+            case .portrait, .portraitUpsideDown:
+                print("portrait")
+                detailButton.frame.origin   = CGPoint(x: size.width - 42, y: 65)
+                locationButton.frame.origin = CGPoint(x: size.width - 54, y: 97)
+                compassButton.frame.origin  = CGPoint(x: size.width - 49, y: 150)
+                infoCtrl.frame = CGRect(x: size.width - 54, y: 52, width: segmentCtrlWidth, height: segmentCtrlHeight)
+            default:
+                print("other")
+        }
     }
 
     func setupMapView() {
@@ -61,6 +107,44 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate, 
         mapView.showsCompass = true
         mapView.showsUserLocation = true
         mapView.delegate = self
+        
+        // MARK: - Add Map Controls
+        
+        // Override compass
+        mapView.showsCompass = false
+        compassButton = MKCompassButton(mapView: mapView)
+        compassButton.compassVisibility = .adaptive
+        
+        // Detail Button
+        detailButton.addTarget(self,  action:#selector(self.detailButtonClicked(_:)), for: .touchUpInside)
+
+        // Segment control to hold Detail Button and Location
+        infoCtrl.layer.cornerRadius = 10
+        infoCtrl.layer.shadowRadius = 10
+        infoCtrl.tintColor = UIColor.black.withAlphaComponent(0.15)  // set to 'some' gray
+        infoCtrl.layer.backgroundColor = UIColor.white.withAlphaComponent(0.5).cgColor
+        infoCtrl.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi/2.0))
+        
+        // Location Button
+        locationButton.setImage(locationOff, for: .normal)
+        locationButton.frame = CGRect(x: 0, y: 0, width: 46, height: 46)  // to be updated in handleRotate
+        locationButton.addTarget(self,  action:#selector(self.locationButtonClicked(_:)), for: .touchUpInside)
+
+        mapView.addSubview(compassButton)
+        mapView.addSubview(infoCtrl)
+        mapView.addSubview(detailButton)
+        mapView.addSubview(locationButton)
+    }
+    
+    @objc func detailButtonClicked(_ sender:UIButton) {
+        print("detailButtonClicked \(sender.tag)")
+        fpc.move(to: .full, animated: true)
+    }
+    
+    @objc func locationButtonClicked(_ sender:UIButton) {
+        print("locationButtonClicked \(sender.tag)")
+        locationTracking = !locationTracking
+        locationButton.setImage(locationTracking ? locationOn : locationOff, for: .normal)
     }
 
     func teardownMapView() {
