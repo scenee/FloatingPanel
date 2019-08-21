@@ -264,7 +264,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
     // MARK: - Gesture handling
 
     @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
-        viewcontroller?.dismiss(animated: true, completion: nil)
+        viewcontroller?.dismiss(animated: true) { [weak self] in
+            guard let vc = self?.viewcontroller else { return }
+            vc.delegate?.floatingPanelDidEndRemove(vc)
+        }
     }
 
     @objc func handle(panGesture: UIPanGestureRecognizer) {
