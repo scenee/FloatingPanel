@@ -12,7 +12,9 @@ public protocol FloatingPanelControllerDelegate: class {
     // if it returns nil, FloatingPanelController uses the default behavior
     func floatingPanel(_ vc: FloatingPanelController, behaviorFor newCollection: UITraitCollection) -> FloatingPanelBehavior?
 
-    func floatingPanelDidChangePosition(_ vc: FloatingPanelController) // changed the settled position in the model layer
+    /// Called when the floating panel has changed to a new position. Can be called inside an animation block, so any
+    /// view properties set inside this function will be automatically animated alongside the panel.
+    func floatingPanelDidChangePosition(_ vc: FloatingPanelController)
 
     /// Asks the delegate if dragging should begin by the pan gesture recognizer.
     func floatingPanelShouldBeginDragging(_ vc: FloatingPanelController) -> Bool
