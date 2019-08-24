@@ -640,6 +640,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         let animator = behavior.removalInteractionAnimator(vc, with: velocityVector)
 
         animator.addAnimations { [weak self] in
+            self?.state = .hidden
             self?.updateLayout(to: .hidden)
         }
         animator.addCompletion({ _ in
