@@ -36,8 +36,6 @@ public class FloatingPanelSurfaceView: UIView {
     public weak var contentView: UIView!
     
     /// The content insets specifying the insets around the content view.
-    ///
-    /// - important: Currently the `bottom` inset is ignored.
     public var contentInsets: UIEdgeInsets = .zero {
         didSet {
             // Needs update constraints
@@ -98,9 +96,6 @@ public class FloatingPanelSurfaceView: UIView {
 
     @available(*, unavailable, renamed: "containerView")
     public var backgroundView: UIView!
-
-    private lazy var containerViewTopInsetConstraint: NSLayoutConstraint = containerView.topAnchor.constraint(equalTo: topAnchor, constant: containerTopInset)
-    private lazy var containerViewHeightConstraint: NSLayoutConstraint = containerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0)
     
     /// The content view top constraint
     private var contentViewTopConstraint: NSLayoutConstraint?
@@ -108,8 +103,8 @@ public class FloatingPanelSurfaceView: UIView {
     private var contentViewLeftConstraint: NSLayoutConstraint?
     /// The content right constraint
     private var contentViewRightConstraint: NSLayoutConstraint?
-    /// The content height constraint
-    private var contentViewHeightConstraint: NSLayoutConstraint?
+    /// The content bottom constraint
+    private var contentViewBottomConstraint: NSLayoutConstraint?
 
     private lazy var grabberHandleWidthConstraint: NSLayoutConstraint = grabberHandle.widthAnchor.constraint(equalToConstant: grabberHandleWidth)
     private lazy var grabberHandleHeightConstraint: NSLayoutConstraint = grabberHandle.heightAnchor.constraint(equalToConstant: grabberHandleHeight)
@@ -132,10 +127,10 @@ public class FloatingPanelSurfaceView: UIView {
         addSubview(containerView)
         containerView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            containerViewTopInsetConstraint,
-            containerView.leftAnchor.constraint(equalTo: leftAnchor, constant: 0.0),
-            containerView.rightAnchor.constraint(equalTo: rightAnchor, constant: 0.0),
-            containerViewHeightConstraint,
+            containerView.topAnchor.constraint(equalTo: topAnchor),
+            containerView.leftAnchor.constraint(equalTo: leftAnchor),
+            containerView.rightAnchor.constraint(equalTo: rightAnchor),
+            containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             ])
 
         addSubview(grabberHandle)
@@ -149,13 +144,10 @@ public class FloatingPanelSurfaceView: UIView {
     }
 
     public override func updateConstraints() {
-        containerViewTopInsetConstraint.constant = containerTopInset
-        containerViewHeightConstraint.constant = bottomOverflow
-
         contentViewTopConstraint?.constant = contentInsets.top
         contentViewLeftConstraint?.constant = contentInsets.left
         contentViewRightConstraint?.constant = contentInsets.right
-        contentViewHeightConstraint?.constant = -containerTopInset
+        contentViewBottomConstraint?.constant = contentInsets.bottom - bottomOverflow
 
         grabberHandleTopConstraint.constant = grabberTopPadding
         grabberHandleWidthConstraint.constant = grabberHandleWidth
@@ -221,16 +213,17 @@ public class FloatingPanelSurfaceView: UIView {
         let topConstraint = contentView.topAnchor.constraint(equalTo: topAnchor, constant: contentInsets.top)
         let leftConstraint = contentView.leftAnchor.constraint(equalTo: leftAnchor, constant: contentInsets.left)
         let rightConstraint = rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: contentInsets.right)
+        let bottomConstraint = bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: contentInsets.bottom)
         let heightConstraint = contentView.heightAnchor.constraint(equalTo: heightAnchor, constant: -containerTopInset)
         NSLayoutConstraint.activate([
             topConstraint,
             leftConstraint,
             rightConstraint,
-            heightConstraint,
+            bottomConstraint,
             ])
         self.contentViewTopConstraint = topConstraint
         self.contentViewLeftConstraint = leftConstraint
         self.contentViewRightConstraint = rightConstraint
-        self.contentViewHeightConstraint = heightConstraint
+        self.contentViewBottomConstraint = bottomConstraint
     }
 }
