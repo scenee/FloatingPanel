@@ -436,7 +436,7 @@ class FloatingPanelLayoutAdapter {
         }
         NSLayoutConstraint.activate(constraint: heightConstraint)
 
-        surfaceView.bottomOverflow = layout.topInteractionBuffer
+        surfaceView.bottomOverflow = vc.view.bounds.height + layout.topInteractionBuffer
     }
 
     func updateInteractiveTopConstraint(diff: CGFloat, allowsTopBuffer: Bool, with behavior: FloatingPanelBehavior) {
