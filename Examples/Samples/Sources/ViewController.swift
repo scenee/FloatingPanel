@@ -422,7 +422,9 @@ class NoInteractionBufferPanelLayout: FloatingPanelLayout {
     func insetFor(position: FloatingPanelPosition) -> CGFloat? {
         switch position {
         case .full: return 0
-        default: return nil
+        case .half: return 216
+        case .tip: return 60
+        case .hidden: return nil
         }
     }
 
