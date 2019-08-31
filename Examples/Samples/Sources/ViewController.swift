@@ -306,8 +306,8 @@ extension SampleListViewController: UITableViewDelegate {
             
             let fpc = FloatingPanelController()
             fpc.set(contentViewController: contentViewController)
-            fpc.surfaceView.contentInsets = .init(top: 20, left: 20, bottom: 0, right: 20)
-            
+            fpc.surfaceView.contentInsets = .init(top: 20, left: 20, bottom: 20, right: 20)
+
             fpc.delegate = self
             fpc.isRemovalInteractionEnabled = true
             self.present(fpc, animated: true, completion: nil)
@@ -340,8 +340,10 @@ extension SampleListViewController: FloatingPanelControllerDelegate {
                 return ModalPanelLayout()
             }
             fallthrough
+        case .showContentInset:
+            return NoInteractionBufferPanelLayout()
         default:
-            return (newCollection.verticalSizeClass == .compact) ? nil  : self
+            return (newCollection.verticalSizeClass == .compact) ? nil : self
         }
     }
 
@@ -405,6 +407,29 @@ extension SampleListViewController: UIPageViewControllerDataSource {
 }
 
 class IntrinsicPanelLayout: FloatingPanelIntrinsicLayout { }
+
+class NoInteractionBufferPanelLayout: FloatingPanelLayout {
+    var initialPosition: FloatingPanelPosition {
+        return .full
+    }
+
+    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+        switch position {
+        case .full: return 0
+        case .half: return 216
+        case .tip: return 60
+        case .hidden: return nil
+        }
+    }
+
+    var topInteractionBuffer: CGFloat {
+        return 0.0
+    }
+
+    var bottomInteractionBuffer: CGFloat {
+        return 0.0
+    }
+}
 
 class RemovablePanelLayout: FloatingPanelIntrinsicLayout {
     var supportedPositions: Set<FloatingPanelPosition> {
