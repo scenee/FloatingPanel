@@ -113,6 +113,8 @@ public class FloatingPanelSurfaceView: UIView {
     private lazy var grabberHandleHeightConstraint: NSLayoutConstraint = grabberHandle.heightAnchor.constraint(equalToConstant: grabberHandleHeight)
     private lazy var grabberHandleTopConstraint: NSLayoutConstraint = grabberHandle.topAnchor.constraint(equalTo: topAnchor, constant: grabberTopPadding)
 
+    public override class var requiresConstraintBasedLayout: Bool { return true }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubViews()

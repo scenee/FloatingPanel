@@ -836,7 +836,9 @@ class ModalViewController: UIViewController, FloatingPanelControllerDelegate {
     @IBAction func moveToTip(sender: UIButton) {
         fpc.move(to: .tip, animated: true)
     }
-
+    @IBAction func moveToHidden(sender: UIButton) {
+        fpc.move(to: .hidden, animated: true)
+    }
     @IBAction func updateLayout(_ sender: Any) {
         isNewlayout = !isNewlayout
         UIView.animate(withDuration: 0.5) {
