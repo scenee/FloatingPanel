@@ -1147,8 +1147,8 @@ class TwoTabBarPanelLayout: FloatingPanelLayout {
 }
 
 class TwoTabBarPanelBehavior: FloatingPanelBehavior {
-    func allowsRubberBanding(for edge: UIRectEdge) -> Bool {
-        return (edge == .bottom || edge == .top)
+    func allowsRubberBanding(for edges: UIRectEdge) -> Bool {
+        return [UIRectEdge.top, UIRectEdge.bottom].contains(edges)
     }
 }
 
