@@ -1,0 +1,83 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: macOS-10.14
+    steps:
+    - uses: actions/checkout@v1
+    - name: Swift 4.1
+      run: xcodebuild -scheme FloatingPanel SWIFT_VERSION=4.1 clean build
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_9.4.1.app/Contents/Developer
+    - name: Swift 4.2
+      run: xcodebuild -scheme FloatingPanel SWIFT_VERSION=4.2 clean build
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_10.app/Contents/Developer
+    - name: Swift 5.0
+      run: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.0 clean build
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_10.2.app/Contents/Developer
+    - name: Swift 5.1
+      # SUPPORTS_MACCATALYST=NO because Xcode 11 runs on macOS 10.14
+      run: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.1 SUPPORTS_MACCATALYST=NO clean build
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_11.app/Contents/Developer
+
+  test:
+    runs-on: macOS-10.14
+    steps:
+    - uses: actions/checkout@v1
+    #- name: "Testing on iPhone SE (iOS 10.3)"
+    #  run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=10.3.1,name=iPhone SE'
+    #  env:
+    #    DEVELOPER_DIR: /Applications/Xcode_10.3.app/Contents/Developer
+    - name: "Testing on iPhone 7 (iOS 11.4)"
+      run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=11.4,name=iPhone 7'
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_10.3.app/Contents/Developer
+    - name: "Testing on iPhone X (iOS 12.4)"
+      run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=12.4,name=iPhone X'
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_10.3.app/Contents/Developer
+    - name: "Testing on iPhone X (iOS 13.0)"
+      run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=13.0,name=iPhone Xs'
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_11.app/Contents/Developer
+
+  example:
+    runs-on: macOS-10.14
+    steps:
+    - uses: actions/checkout@v1
+    - name: "Build Maps"
+      run: xcodebuild -scheme Maps -sdk iphonesimulator clean build
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_10.3.app/Contents/Developer
+    - name: "Build Stocks"
+      run: xcodebuild -scheme Stocks -sdk iphonesimulator clean build
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_10.3.app/Contents/Developer
+    - name: "Build Samples"
+      run: xcodebuild -scheme Samples -sdk iphonesimulator clean build
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_10.3.app/Contents/Developer
+
+  carchage:
+    runs-on: macOS-10.14
+    steps:
+    - uses: actions/checkout@v1
+    - name: "carthage build"
+      run: carthage build --no-skip-current
+
+  cocoapods:
+    runs-on: macOS-10.14
+    steps:
+    - uses: actions/checkout@v1
+    - name: "pod lib lint"
+      run: pod lib lint --allow-warnings
+    - name: "pod spec lint"
+      run: pod spec lint --allow-warnings
