@@ -441,7 +441,7 @@ class FloatingPanelLayoutAdapter {
 
     func updateInteractiveTopConstraint(diff: CGFloat, allowsTopBuffer: Bool, with behavior: FloatingPanelBehavior) {
         defer {
-            surfaceView.superview!.layoutIfNeeded() // MUST call here to update `surfaceView.frame`
+            layoutSurfaceIfNeeded() // MUST be called to update `surfaceView.frame`
         }
 
         let topMostConst: CGFloat = {
@@ -507,7 +507,7 @@ class FloatingPanelLayoutAdapter {
 
     func activateInteractiveLayout(of state: FloatingPanelPosition) {
         defer {
-            surfaceView.superview!.layoutIfNeeded()
+            layoutSurfaceIfNeeded()
             log.debug("activateLayout -- surface.presentation = \(self.surfaceView.presentationFrame) surface.frame = \(self.surfaceView.frame)")
         }
 
@@ -539,6 +539,13 @@ class FloatingPanelLayoutAdapter {
 
     func isValid(_ state: FloatingPanelPosition) -> Bool {
         return supportedPositions.union([.hidden]).contains(state)
+    }
+
+    private func layoutSurfaceIfNeeded() {
+        #if !TEST
+        guard surfaceView.window != nil else { return }
+        #endif
+        surfaceView.superview?.layoutIfNeeded()
     }
 
     private func setBackdropAlpha(of target: FloatingPanelPosition) {
