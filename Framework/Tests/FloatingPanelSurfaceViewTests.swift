@@ -23,7 +23,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
         XCTAssert(surface.backgroundColor == surface.containerView.backgroundColor)
     }
 
-    func test_surfaceView_constraintsUpdate() {
+    func test_surfaceView_grabberHandle() {
         let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
         XCTAssert(surface.contentView == nil)
         surface.layoutIfNeeded()
@@ -37,6 +37,42 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
         surface.layoutIfNeeded()
         XCTAssert(surface.grabberHandle.frame.width == surface.grabberHandleWidth, "\(surface.grabberHandle.frame.width) == \(surface.grabberHandleWidth)")
         XCTAssert(surface.grabberHandle.frame.height == surface.grabberHandleHeight, "\(surface.grabberHandle.frame.height) == \(surface.grabberHandleHeight)")
+    }
+
+    func test_surfaceView_containerMargins() {
+        let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+        surface.layoutIfNeeded()
+        XCTAssertEqual(surface.containerView.frame, surface.bounds)
+        surface.containerMargins = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
+        surface.setNeedsLayout()
+        surface.layoutIfNeeded()
+        XCTAssertEqual(surface.containerView.frame, surface.bounds.inset(by: surface.containerMargins))
+    }
+
+    func test_surfaceView_contentInsets() {
+        let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+        let contentView = UIView()
+        surface.add(contentView: contentView)
+        surface.layoutIfNeeded()
+        XCTAssertEqual(surface.contentView.frame, surface.bounds)
+        surface.contentInsets = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
+        surface.setNeedsLayout()
+        surface.layoutIfNeeded()
+        XCTAssertEqual(surface.contentView.frame, surface.bounds.inset(by: surface.contentInsets))
+    }
+
+    func test_surfaceView_containerMargins_and_contentInsets() {
+        let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+        let contentView = UIView()
+        surface.add(contentView: contentView)
+        surface.layoutIfNeeded()
+        XCTAssertEqual(surface.contentView.frame, surface.bounds)
+        surface.containerMargins = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
+        surface.contentInsets = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
+        surface.setNeedsLayout()
+        surface.layoutIfNeeded()
+        XCTAssertEqual(surface.containerView.frame, surface.bounds.inset(by: surface.containerMargins))
+        XCTAssertEqual(surface.contentView.frame, surface.containerView.bounds.inset(by: surface.contentInsets))
     }
 
     func test_surfaceView_cornderRaduis() {
