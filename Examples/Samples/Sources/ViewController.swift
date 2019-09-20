@@ -270,6 +270,7 @@ extension SampleListViewController: UITableViewDelegate {
             detailPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
         case .showModal, .showTabBar:
             let modalVC = contentVC
+            modalVC.modalPresentationStyle = .fullScreen
             present(modalVC, animated: true, completion: nil)
 
         case .showPageView:
@@ -285,6 +286,7 @@ extension SampleListViewController: UITableViewDelegate {
                 ])
             pageVC.dataSource = self
             pageVC.setViewControllers([pages[0]], direction: .forward, animated: false, completion: nil)
+            pageVC.modalPresentationStyle = .fullScreen
             present(pageVC, animated: true, completion: nil)
 
         case .showFloatingPanelModal:
