@@ -11,7 +11,7 @@ import UIKit
 /// It can't be used with FloatingPanelIntrinsicLayout.
 public protocol FloatingPanelFullScreenLayout: FloatingPanelLayout { }
 
-extension FloatingPanelFullScreenLayout {
+public extension FloatingPanelFullScreenLayout {
     var positionReference: FloatingPanelLayoutReference {
         return .fromSuperview
     }
