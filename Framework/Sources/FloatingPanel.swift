@@ -19,8 +19,8 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
     weak var scrollView: UIScrollView? {
         didSet {
-            guard let scrollView = scrollView else { return }
-            scrollView.panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
+            oldValue?.panGestureRecognizer.removeTarget(self, action: nil)
+            scrollView?.panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
         }
     }
 
