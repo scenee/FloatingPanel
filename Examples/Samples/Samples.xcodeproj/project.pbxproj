@@ -14,9 +14,9 @@
 		545DB9F821511E6400CA77B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 545DB9F621511E6400CA77B8 /* LaunchScreen.storyboard */; };
 		545DBA0321511E6400CA77B8 /* SampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DBA0221511E6400CA77B8 /* SampleTests.swift */; };
 		545DBA0E21511E6400CA77B8 /* SampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DBA0D21511E6400CA77B8 /* SampleUITests.swift */; };
+		549D23CB233C7779008EF4D7 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23CA233C7779008EF4D7 /* FloatingPanel.framework */; };
+		549D23CC233C7779008EF4D7 /* FloatingPanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23CA233C7779008EF4D7 /* FloatingPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B51116216AFE5F0033A6F3 /* UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B51115216AFE5F0033A6F3 /* UIExtensions.swift */; };
-		54B5113C216C40670033A6F3 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54B5113B216C40670033A6F3 /* FloatingPanel.framework */; };
-		54B5113D216C40670033A6F3 /* FloatingPanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 54B5113B216C40670033A6F3 /* FloatingPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54CDC5D8215BBE23007D205C /* UIComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CDC5D7215BBE23007D205C /* UIComponents.swift */; };
 /* End PBXBuildFile section */
 
@@ -38,13 +38,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		54B5111C216C3B300033A6F3 /* Embed Frameworks */ = {
+		549D23CD233C7779008EF4D7 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				54B5113D216C40670033A6F3 /* FloatingPanel.framework in Embed Frameworks */,
+				549D23CC233C7779008EF4D7 /* FloatingPanel.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -65,8 +65,8 @@
 		545DBA0921511E6400CA77B8 /* SamplesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SamplesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		545DBA0D21511E6400CA77B8 /* SampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleUITests.swift; sourceTree = "<group>"; };
 		545DBA0F21511E6400CA77B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		549D23CA233C7779008EF4D7 /* FloatingPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FloatingPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		54B51115216AFE5F0033A6F3 /* UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIExtensions.swift; sourceTree = "<group>"; };
-		54B5113B216C40670033A6F3 /* FloatingPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FloatingPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		54CDC5D7215BBE23007D205C /* UIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIComponents.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -75,7 +75,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				54B5113C216C40670033A6F3 /* FloatingPanel.framework in Frameworks */,
+				549D23CB233C7779008EF4D7 /* FloatingPanel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,12 +99,11 @@
 		545DB9E121511E6300CA77B8 = {
 			isa = PBXGroup;
 			children = (
-				54B5113B216C40670033A6F3 /* FloatingPanel.framework */,
+				549D23CA233C7779008EF4D7 /* FloatingPanel.framework */,
 				545DB9EC21511E6300CA77B8 /* Sources */,
 				545DBA0121511E6400CA77B8 /* Tests */,
 				545DBA0C21511E6400CA77B8 /* UITests */,
 				545DB9EB21511E6300CA77B8 /* Products */,
-				545DBA1B2151CC1000CA77B8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -151,13 +150,6 @@
 			path = UITests;
 			sourceTree = "<group>";
 		};
-		545DBA1B2151CC1000CA77B8 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -169,7 +161,7 @@
 				545DB9E621511E6300CA77B8 /* Sources */,
 				545DB9E721511E6300CA77B8 /* Frameworks */,
 				545DB9E821511E6300CA77B8 /* Resources */,
-				54B5111C216C3B300033A6F3 /* Embed Frameworks */,
+				549D23CD233C7779008EF4D7 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
