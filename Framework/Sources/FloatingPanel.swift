@@ -203,7 +203,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         default:
             // Should recognize tap/long press gestures in parallel when the surface view is at an anchor position.
             let surfaceFrame = surfaceView.layer.presentation()?.frame ?? surfaceView.frame
-            return surfaceFrame.minY == layoutAdapter.positionY(for: state)
+            let surfaceY = surfaceFrame.minY
+            let adapterY = layoutAdapter.positionY(for: state)
+            
+            return Int(surfaceY) == Int(adapterY)
         }
     }
 
@@ -228,6 +231,16 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         if let scrollView = scrollView {
             // On short contents scroll, `_UISwipeActionPanGestureRecognizer` blocks
             // the panel's pan gesture if not returns false
+            
+            if layoutAdapter.supportFullScrollToTop() {
+                if scrollView.contentOffset.y <= CGFloat.zero {
+                    return false
+                } else if let scrollGestureRecognizers = scrollView.gestureRecognizers,
+                    scrollGestureRecognizers.contains(otherGestureRecognizer) {
+                    return true
+                }
+            }
+            
             if let scrollGestureRecognizers = scrollView.gestureRecognizers,
                 scrollGestureRecognizers.contains(otherGestureRecognizer) {
                 return false
@@ -279,7 +292,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
             let location = panGesture.location(in: surfaceView)
 
-            let belowTop = surfaceView.presentationFrame.minY > layoutAdapter.topY
+            let surfaceMinY = surfaceView.presentationFrame.minY
+            let adapterTopY = layoutAdapter.topY
+            let belowTop = Int(surfaceMinY) > Int(adapterTopY)
             let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
 
             log.debug("scroll gesture(\(state):\(panGesture.state)) --",
@@ -565,7 +580,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
             return
         }
 
-        stopScrollDeceleration = (surfaceView.frame.minY > layoutAdapter.topY) // Projecting the dragging to the scroll dragging or not
+        stopScrollDeceleration = (Int(surfaceView.frame.minY) > Int(layoutAdapter.topY)) // Projecting the dragging to the scroll dragging or not
         if stopScrollDeceleration {
             DispatchQueue.main.async { [weak self] in
                 guard let `self` = self else { return }
@@ -575,6 +590,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
         let currentY = surfaceView.frame.minY
         let targetPosition = self.targetPosition(from: currentY, with: velocity)
+       
         let distance = self.distance(to: targetPosition)
 
         endInteraction(for: targetPosition)
@@ -591,7 +607,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                 return
             }
         }
-
+        
         if let vc = viewcontroller {
             vc.delegate?.floatingPanelDidEndDragging(vc, withVelocity: velocity, targetPosition: targetPosition)
         }

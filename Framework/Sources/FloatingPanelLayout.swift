@@ -94,6 +94,9 @@ public protocol FloatingPanelLayout: class {
     func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat
 
     var positionReference: FloatingPanelLayoutReference { get }
+    
+    func supportFullScrollToTop() -> Bool
+    
 }
 
 public extension FloatingPanelLayout {
@@ -118,6 +121,11 @@ public extension FloatingPanelLayout {
     var positionReference: FloatingPanelLayoutReference {
         return .fromSafeArea
     }
+    
+    func supportFullScrollToTop() -> Bool {
+        return false
+    }
+    
 }
 
 public class FloatingPanelDefaultLayout: FloatingPanelLayout {
@@ -611,5 +619,9 @@ class FloatingPanelLayoutAdapter {
         default:
             return LayoutSegment(lower: sortedPositions[sortedPositions.endIndex - 1], upper: nil)
         }
+    }
+    
+    func supportFullScrollToTop() -> Bool {
+        return layout.supportFullScrollToTop()
     }
 }
