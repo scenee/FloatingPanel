@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5433F24B21717EA300BDAA5D /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5433F24A21717EA300BDAA5D /* FloatingPanel.framework */; };
-		5433F24C21717EA300BDAA5D /* FloatingPanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5433F24A21717EA300BDAA5D /* FloatingPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		548DF95421705BE00041922A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548DF95321705BE00041922A /* AppDelegate.swift */; };
 		548DF95621705BE00041922A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548DF95521705BE00041922A /* ViewController.swift */; };
 		548DF95921705BE00041922A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 548DF95721705BE00041922A /* Main.storyboard */; };
 		548DF95B21705BE10041922A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 548DF95A21705BE10041922A /* Assets.xcassets */; };
 		548DF95E21705BE10041922A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 548DF95C21705BE10041922A /* LaunchScreen.storyboard */; };
+		549D23CF233C77CF008EF4D7 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23CE233C77CF008EF4D7 /* FloatingPanel.framework */; };
+		549D23D0233C77CF008EF4D7 /* FloatingPanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23CE233C77CF008EF4D7 /* FloatingPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,7 +23,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5433F24C21717EA300BDAA5D /* FloatingPanel.framework in Embed Frameworks */,
+				549D23D0233C77CF008EF4D7 /* FloatingPanel.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -31,7 +31,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5433F24A21717EA300BDAA5D /* FloatingPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FloatingPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		548DF95021705BE00041922A /* Stocks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stocks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		548DF95321705BE00041922A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		548DF95521705BE00041922A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -39,6 +38,7 @@
 		548DF95A21705BE10041922A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		548DF95D21705BE10041922A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		548DF95F21705BE10041922A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		549D23CE233C77CF008EF4D7 /* FloatingPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FloatingPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,7 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5433F24B21717EA300BDAA5D /* FloatingPanel.framework in Frameworks */,
+				549D23CF233C77CF008EF4D7 /* FloatingPanel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,7 +56,7 @@
 		548DF94721705BE00041922A = {
 			isa = PBXGroup;
 			children = (
-				5433F24A21717EA300BDAA5D /* FloatingPanel.framework */,
+				549D23CE233C77CF008EF4D7 /* FloatingPanel.framework */,
 				548DF95221705BE00041922A /* Stocks */,
 				548DF95121705BE00041922A /* Products */,
 			);
