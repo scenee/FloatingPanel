@@ -7,8 +7,7 @@
 [![Swift 5.0](https://img.shields.io/badge/Swift-5.0-orange.svg?style=flat)](https://swift.org/)
 [![Swift 5.1](https://img.shields.io/badge/Swift-5.1-orange.svg?style=flat)](https://swift.org/)
 
-#  FloatingPanel
-
+# FloatingPanel
 
 FloatingPanel is a simple and easy-to-use UI component for a new interface introduced in Apple Maps, Shortcuts and Stocks app.
 The new interface displays the related contents and utilities in parallel as a user wants.
@@ -40,10 +39,16 @@ The new interface displays the related contents and utilities in parallel as a u
     - [Specify position insets from the frame of `FloatingPanelContrller.view`, not the SafeArea](#specify-position-insets-from-the-frame-of-floatingpanelcontrllerview-not-the-safearea)
   - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
     - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
-    - [Activate the rubberband effect on the top/bottom edges](#activate-the-rubberband-effect-on-the-topbottom-edges)
+    - [Activate the rubber-band effect on the top/bottom edges](#activate-the-rubber-band-effect-on-the-topbottom-edges)
     - [Manage the projection of a pan gesture momentum](#manage-the-projection-of-a-pan-gesture-momentum)
-  - [Use a custom grabber handle](#use-a-custom-grabber-handle)
-  - [Add tap gestures to the surface or backdrop views](#add-tap-gestures-to-the-surface-or-backdrop-views)
+  - [Customize the surface design](#customize-the-surface-design)
+    - [Use a custom grabber handle](#use-a-custom-grabber-handle)
+    - [Customize layout of the grabber handle](#customize-layout-of-the-grabber-handle)
+    - [Customize content padding from surface edges](#customize-content-padding-from-surface-edges)
+    - [Customize margins of the surface edges](#customize-margins-of-the-surface-edges)
+  - [Customize gestures](#customize-gestures)
+    - [Suppress the panel interaction](#suppress-the-panel-interaction)
+    - [Add tap gestures to the surface or backdrop views](#add-tap-gestures-to-the-surface-or-backdrop-views)
   - [Create an additional floating panel for a detail](#create-an-additional-floating-panel-for-a-detail)
   - [Move a position with an animation](#move-a-position-with-an-animation)
   - [Work your contents together with a floating panel behavior](#work-your-contents-together-with-a-floating-panel-behavior)
@@ -90,7 +95,7 @@ it, simply add the following line to your Podfile:
 pod 'FloatingPanel'
 ```
 
-✏️ To suppress "Swift Conversion" warnings in Xcode, please set a Swift version to `SWIFT_VERSION` for the project in your Podfile. It will be resolved in CocoaPods v1.7.0.
+✏️FloatingPanel v1.7.0 or later requires CocoaPods v1.7.0+ for `swift_versions` support.
 
 ### Carthage
 
@@ -355,7 +360,7 @@ class FloatingPanelStocksBehavior: FloatingPanelBehavior {
 }
 ```
 
-#### Activate the rubberband effect on the top/bottom edges
+#### Activate the rubber-band effect on the top/bottom edges
 
 ```swift
 class FloatingPanelBehavior: FloatingPanelBehavior {
@@ -379,7 +384,9 @@ class FloatingPanelBehavior: FloatingPanelBehavior {
 }
 ```
 
-### Use a custom grabber handle
+### Customize the surface design
+
+#### Use a custom grabber handle
 
 ```swift
 let myGrabberHandleView = MyGrabberHandleView()
@@ -387,7 +394,50 @@ fpc.surfaceView.grabberHandle.isHidden = true
 fpc.surfaceView.addSubview(myGrabberHandleView)
 ```
 
-### Add tap gestures to the surface or backdrop views
+#### Customize layout of the grabber handle
+
+```swift
+fpc.surfaceView.grabberTopPadding = 10.0
+fpc.surfaceView.grabberHandleWidth = 44.0
+fpc.surfaceView.grabberHandleHeight = 12.0
+```
+
+#### Customize content padding from surface edges
+
+```swift
+fpc.surfaceView.contentInsets = .init(top: 20, left: 20, bottom: 20, right: 20)
+```
+
+#### Customize margins of the surface edges
+
+```swift
+fpc.surfaceView.containerMargins = .init(top: 20.0, left: 16.0, bottom: 16.0, right: 16.0)
+```
+
+The feature can be used for these 2 kind panels
+
+* Facebook/Slack-like panel whose surface top edge is separated from the grabber handle.
+* iOS native panel to display AirPods information, for example.
+
+### Customize gestures
+
+#### Suppress the panel interaction
+
+You can disable the pan gesture recognizer directly
+
+```swift
+fpc.panGestureRecognizer.isEnable = false
+```
+
+Or use this `FloatingPanelControllerDelegate` method.
+
+```swift
+func floatingPanelShouldBeginDragging(_ vc: FloatingPanelController) -> Bool {
+    return aCondition ?  false : true
+}
+```
+
+#### Add tap gestures to the surface or backdrop views
 
 ```swift
 override func viewDidLoad() {
