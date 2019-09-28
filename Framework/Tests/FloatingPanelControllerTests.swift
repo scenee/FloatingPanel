@@ -82,25 +82,21 @@ class FloatingPanelControllerTests: XCTestCase {
         XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .hidden))
 
         fpc.move(to: .full, animated: true)
-        waitRunLoop(secs: 0.3)
         XCTAssertEqual(fpc.position, .full)
         XCTAssertEqual(delegate.position, .full)
         XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .full))
 
         fpc.move(to: .half, animated: true)
-        waitRunLoop(secs: 0.3)
         XCTAssertEqual(fpc.position, .half)
         XCTAssertEqual(delegate.position, .half)
         XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .half))
 
         fpc.move(to: .tip, animated: true)
-        waitRunLoop(secs: 0.3)
         XCTAssertEqual(fpc.position, .tip)
         XCTAssertEqual(delegate.position, .tip)
         XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .tip))
 
         fpc.move(to: .hidden, animated: true)
-        waitRunLoop(secs: 0.3)
         XCTAssertEqual(fpc.position, .hidden)
         XCTAssertEqual(delegate.position, .hidden)
         XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .hidden))
