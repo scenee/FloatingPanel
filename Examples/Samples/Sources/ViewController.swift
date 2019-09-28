@@ -24,6 +24,7 @@ class SampleListViewController: UIViewController {
         case showRemovablePanel
         case showIntrinsicView
         case showContentInset
+        case showContainerMargins
 
         var name: String {
             switch self {
@@ -38,6 +39,7 @@ class SampleListViewController: UIViewController {
             case .showRemovablePanel: return "Show Removable Panel"
             case .showIntrinsicView: return "Show Intrinsic View"
             case .showContentInset: return "Show with ContentInset"
+            case .showContainerMargins: return "Show with ContainerMargins"
             }
         }
 
@@ -54,6 +56,7 @@ class SampleListViewController: UIViewController {
             case .showRemovablePanel: return "DetailViewController"
             case .showIntrinsicView: return "IntrinsicViewController"
             case .showContentInset: return nil
+            case .showContainerMargins: return nil
             }
         }
     }
@@ -315,6 +318,21 @@ extension SampleListViewController: UITableViewDelegate {
             let fpc = FloatingPanelController()
             fpc.set(contentViewController: contentViewController)
             fpc.surfaceView.contentInsets = .init(top: 20, left: 20, bottom: 20, right: 20)
+
+            fpc.delegate = self
+            fpc.isRemovalInteractionEnabled = true
+            self.present(fpc, animated: true, completion: nil)
+
+        case .showContainerMargins:
+            let fpc = FloatingPanelController()
+            fpc.surfaceView.cornerRadius = 38.5
+            fpc.surfaceView.backgroundColor = .red
+            fpc.surfaceView.containerMargins = .init(top: 24.0, left: 8.0, bottom: layoutInsets.bottom, right: 8.0)
+            #if swift(>=5.1) // Actually Xcode 11 or later
+            if #available(iOS 13.0, *) {
+                fpc.surfaceView.layer.cornerCurve = .continuous
+            }
+            #endif
 
             fpc.delegate = self
             fpc.isRemovalInteractionEnabled = true
@@ -1147,8 +1165,8 @@ class TwoTabBarPanelLayout: FloatingPanelLayout {
 }
 
 class TwoTabBarPanelBehavior: FloatingPanelBehavior {
-    func allowsRubberBanding(for edge: UIRectEdge) -> Bool {
-        return (edge == .bottom || edge == .top)
+    func allowsRubberBanding(for edges: UIRectEdge) -> Bool {
+        return [UIRectEdge.top, UIRectEdge.bottom].contains(edges)
     }
 }
 
