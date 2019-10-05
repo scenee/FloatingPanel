@@ -20,6 +20,7 @@ class SampleListViewController: UIViewController {
         case showPanelModal
         case showTabBar
         case showPageView
+        case showPageContentView
         case showNestedScrollView
         case showRemovablePanel
         case showIntrinsicView
@@ -35,6 +36,7 @@ class SampleListViewController: UIViewController {
             case .showPanelModal: return "Show Panel Modal"
             case .showTabBar: return "Show Tab Bar"
             case .showPageView: return "Show Page View"
+            case .showPageContentView: return "Show Page Content View"
             case .showNestedScrollView: return "Show Nested ScrollView"
             case .showRemovablePanel: return "Show Removable Panel"
             case .showIntrinsicView: return "Show Intrinsic View"
@@ -52,6 +54,7 @@ class SampleListViewController: UIViewController {
             case .showPanelModal: return nil
             case .showTabBar: return "TabBarViewController"
             case .showPageView: return nil
+            case .showPageContentView: return nil
             case .showNestedScrollView: return "NestedScrollViewController"
             case .showRemovablePanel: return "DetailViewController"
             case .showIntrinsicView: return "IntrinsicViewController"
@@ -70,18 +73,7 @@ class SampleListViewController: UIViewController {
     var mainPanelObserves: [NSKeyValueObservation] = []
     var settingsObserves: [NSKeyValueObservation] = []
 
-    lazy var pages: [UIViewController] = {
-        let page1 = FloatingPanelController(delegate: self)
-        page1.view.backgroundColor = .blue
-        page1.show()
-        let page2 = FloatingPanelController(delegate: self)
-        page2.view.backgroundColor = .red
-        page2.show()
-        let page3 = FloatingPanelController(delegate: self)
-        page3.view.backgroundColor = .green
-        page3.show()
-        return [page1, page2, page3]
-    }()
+    var pages: [UIViewController] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -122,6 +114,8 @@ class SampleListViewController: UIViewController {
     func addMainPanel(with contentVC: UIViewController) {
         mainPanelObserves.removeAll()
 
+        let oldMainPanelVC = mainPanelVC
+
         // Initialize FloatingPanelController
         mainPanelVC = FloatingPanelController()
         mainPanelVC.delegate = self
@@ -140,6 +134,10 @@ class SampleListViewController: UIViewController {
             tapGesture.cancelsTouchesInView = false
             tapGesture.numberOfTapsRequired = 2
             mainPanelVC.surfaceView.addGestureRecognizer(tapGesture)
+        case .showPageContentView:
+            if let page = (mainPanelVC.contentViewController as? UIPageViewController)?.viewControllers?.first {
+                mainPanelVC.track(scrollView: (page as! DebugTableViewController).tableView)
+            }
         case .showRemovablePanel, .showIntrinsicView:
             mainPanelVC.isRemovalInteractionEnabled = true
 
@@ -167,7 +165,13 @@ class SampleListViewController: UIViewController {
         }
 
         //  Add FloatingPanel to self.view
-        mainPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
+        if let oldMainPanelVC = oldMainPanelVC {
+            oldMainPanelVC.removePanelFromParent(animated: true, completion: {
+                self.mainPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
+            })
+        } else {
+            mainPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
+        }
     }
 
     @objc
@@ -254,6 +258,8 @@ extension SampleListViewController: UITableViewDelegate {
         }()
 
         self.currentMenu = menu
+        detailPanelVC?.removePanelFromParent(animated: true, completion: nil)
+        detailPanelVC = nil
 
         switch menu {
         case .showDetail:
@@ -281,6 +287,13 @@ extension SampleListViewController: UITableViewDelegate {
             present(modalVC, animated: true, completion: nil)
 
         case .showPageView:
+            pages = [UIColor.blue, .red, .green].compactMap({ (color) -> UIViewController in
+                let page = FloatingPanelController(delegate: self)
+                page.view.backgroundColor = color
+                page.show()
+                return page
+            })
+
             let pageVC = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
             let closeButton = UIButton(type: .custom)
             pageVC.view.addSubview(closeButton)
@@ -296,6 +309,13 @@ extension SampleListViewController: UITableViewDelegate {
             pageVC.modalPresentationStyle = .fullScreen
             present(pageVC, animated: true, completion: nil)
 
+        case .showPageContentView:
+            pages = [DebugTableViewController(), DebugTableViewController(), DebugTableViewController()]
+            let pageVC = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
+            pageVC.dataSource = self
+            pageVC.delegate = self
+            pageVC.setViewControllers([pages[0]], direction: .forward, animated: false, completion: nil)
+            self.addMainPanel(with: pageVC)
         case .showPanelModal:
             let fpc = FloatingPanelController()
             let contentVC = self.storyboard!.instantiateViewController(withIdentifier: "DetailViewController")
@@ -310,11 +330,11 @@ extension SampleListViewController: UITableViewDelegate {
             fpc.isRemovalInteractionEnabled = true
 
             self.present(fpc, animated: true, completion: nil)
-            
+
         case .showContentInset:
             let contentViewController = UIViewController()
             contentViewController.view.backgroundColor = .green
-            
+
             let fpc = FloatingPanelController()
             fpc.set(contentViewController: contentViewController)
             fpc.surfaceView.contentInsets = .init(top: 20, left: 20, bottom: 20, right: 20)
@@ -338,10 +358,7 @@ extension SampleListViewController: UITableViewDelegate {
             fpc.isRemovalInteractionEnabled = true
             self.present(fpc, animated: true, completion: nil)
         default:
-            detailPanelVC?.removePanelFromParent(animated: true, completion: nil)
-            mainPanelVC?.removePanelFromParent(animated: true) {
-                self.addMainPanel(with: contentVC)
-            }
+            self.addMainPanel(with: contentVC)
         }
     }
 
@@ -429,6 +446,14 @@ extension SampleListViewController: UIPageViewControllerDataSource {
             index - 1 >= 0
             else { return nil }
         return pages[index - 1]
+    }
+}
+extension SampleListViewController: UIPageViewControllerDelegate {
+    // For showPageContent
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        if completed, let page = pageViewController.viewControllers?.first {
+            (pageViewController.parent as! FloatingPanelController).track(scrollView: (page as! DebugTableViewController).tableView)
+        }
     }
 }
 
