@@ -227,6 +227,8 @@ fpc.contentMode = .fitToBounds
 
 Otherwise, `FloatingPanelController` fixes the content by the height of the top most position.
 
+✏️ In `.fitToBounds` mode, the surface height changes as following a user interaction so that you have a responsibility to configure Auto Layout constrains not to break the layout of a content view by the elastic surface height.
+
 ### Customize the layout with `FloatingPanelLayout` protocol
 
 #### Change the initial position and height
