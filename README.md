@@ -380,7 +380,7 @@ This allows full projectional panel behavior. For example, a user can swipe up a
 ```swift
 class FloatingPanelBehavior: FloatingPanelBehavior {
     ...
-    func shouldProjectMomentum(_ fpc: FloatingPanelController, for proposedTargetPosition: FloatingPanelPosition) -> Bool
+    func shouldProjectMomentum(_ fpc: FloatingPanelController, for proposedTargetPosition: FloatingPanelPosition) -> Bool {
         return true
     }
 }
