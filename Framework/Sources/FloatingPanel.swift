@@ -294,7 +294,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
             let surfaceMinY = surfaceView.presentationFrame.minY
             let adapterTopY = layoutAdapter.topY
-            let belowTop = surfaceMinY > (adapterTopY - (1.0 / surfaceView.traitCollection.displayScale))
+            let belowTop = Int(surfaceMinY) > Int(adapterTopY)
             let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
 
             log.debug("scroll gesture(\(state):\(panGesture.state)) --",
