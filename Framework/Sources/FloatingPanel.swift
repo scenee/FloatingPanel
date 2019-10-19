@@ -206,7 +206,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
             let surfaceY = surfaceFrame.minY
             let adapterY = layoutAdapter.positionY(for: state)
             
-            return Int(surfaceY) == Int(adapterY)
+            return abs(surfaceY - adapterY) < (1.0 / surfaceView.traitCollection.displayScale)
         }
     }
 
@@ -294,7 +294,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
             let surfaceMinY = surfaceView.presentationFrame.minY
             let adapterTopY = layoutAdapter.topY
-            let belowTop = Int(surfaceMinY) > Int(adapterTopY)
+            let belowTop = surfaceMinY > adapterTopY
             let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
 
             log.debug("scroll gesture(\(state):\(panGesture.state)) --",
@@ -580,7 +580,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
             return
         }
 
-        stopScrollDeceleration = (Int(surfaceView.frame.minY) > Int(layoutAdapter.topY)) // Projecting the dragging to the scroll dragging or not
+        stopScrollDeceleration = surfaceView.frame.minY > (layoutAdapter.topY + (1.0 / surfaceView.traitCollection.displayScale)) // Projecting the dragging to the scroll dragging or not
         if stopScrollDeceleration {
             DispatchQueue.main.async { [weak self] in
                 guard let `self` = self else { return }
