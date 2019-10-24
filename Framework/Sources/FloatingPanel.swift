@@ -294,7 +294,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
             let surfaceMinY = surfaceView.presentationFrame.minY
             let adapterTopY = layoutAdapter.topY
-            let belowTop = Int(surfaceMinY) > Int(adapterTopY)
+            let belowTop = surfaceMinY > (adapterTopY + (1.0 / surfaceView.traitCollection.displayScale))
             let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
 
             log.debug("scroll gesture(\(state):\(panGesture.state)) --",
@@ -313,6 +313,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                     } else {
                         if grabberAreaFrame.contains(location) {
                             // Preserve the current content offset in moving from full.
+                            print(" interactionInProgress : false and conditions wrong grabber")
                             scrollView.setContentOffset(initialScrollOffset, animated: false)
                         }
                     }
