@@ -604,7 +604,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                 return
             }
         }
-        
+
         if let vc = viewcontroller {
             vc.delegate?.floatingPanelDidEndDragging(vc, withVelocity: velocity, targetPosition: targetPosition)
         }
