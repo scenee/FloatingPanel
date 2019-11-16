@@ -62,7 +62,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
         surfaceView = FloatingPanelSurfaceView()
         surfaceView.backgroundColor = .white
-
+        
         backdropView = FloatingPanelBackdropView()
         backdropView.backgroundColor = .black
         backdropView.alpha = 0.0
@@ -81,7 +81,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         super.init()
 
         panGestureRecognizer.floatingPanel = self
-
         surfaceView.addGestureRecognizer(panGestureRecognizer)
         panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
         panGestureRecognizer.delegate = self
@@ -309,7 +308,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
                     } else {
                         if grabberAreaFrame.contains(location) {
                             // Preserve the current content offset in moving from full.
-                            print(" interactionInProgress : false and conditions wrong grabber")
                             scrollView.setContentOffset(initialScrollOffset, animated: false)
                         }
                     }
@@ -587,11 +585,10 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
         let currentY = surfaceView.frame.minY
         let targetPosition = self.targetPosition(from: currentY, with: velocity)
-       
         let distance = self.distance(to: targetPosition)
-
+        
         endInteraction(for: targetPosition)
-
+        
         if isRemovalInteractionEnabled, isBottomState {
             let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: min(velocity.y/distance, behavior.removalVelocity)) : .zero
             // `velocityVector` will be replaced by just a velocity(not vector) when FloatingPanelRemovalInteraction will be added.
