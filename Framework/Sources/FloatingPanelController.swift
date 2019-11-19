@@ -229,7 +229,7 @@ open class FloatingPanelController: UIViewController {
         floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
         floatingPanel.behavior = fetchBehavior(for: self.traitCollection)
     }
-    
+
     // MARK:- Overrides
 
     /// Creates the view that the controller manages.
