@@ -197,7 +197,7 @@ open class FloatingPanelController: UIViewController {
 
     private var _contentViewController: UIViewController?
 
-    private(set) var floatingPanel: FloatingPanel!
+    private(set) var floatingPanel: FloatingPanelCore!
     private var preSafeAreaInsets: UIEdgeInsets = .zero // Capture the latest one
     private var safeAreaInsetsObservation: NSKeyValueObservation?
     private let modalTransition = FloatingPanelModalTransition()
@@ -220,7 +220,7 @@ open class FloatingPanelController: UIViewController {
         modalPresentationStyle = .custom
         transitioningDelegate = modalTransition
 
-        floatingPanel = FloatingPanel(self,
+        floatingPanel = FloatingPanelCore(self,
                                       layout: fetchLayout(for: self.traitCollection),
                                       behavior: fetchBehavior(for: self.traitCollection))
     }
@@ -229,7 +229,7 @@ open class FloatingPanelController: UIViewController {
         floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
         floatingPanel.behavior = fetchBehavior(for: self.traitCollection)
     }
-    
+
     // MARK:- Overrides
 
     /// Creates the view that the controller manages.
