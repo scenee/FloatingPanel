@@ -94,7 +94,7 @@ public protocol FloatingPanelLayout: class {
     func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat
 
     var positionReference: FloatingPanelLayoutReference { get }
-    
+
 }
 
 public extension FloatingPanelLayout {

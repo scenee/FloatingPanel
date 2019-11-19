@@ -238,7 +238,7 @@ class FloatingPanelLayoutTests: XCTestCase {
 }
 
 private typealias LayoutSegmentTestParameter = (UInt, pos: CGFloat, forwardY: Bool, lower: FloatingPanelPosition?, upper: FloatingPanelPosition?)
-private func assertLayoutSegment(_ floatingPanel: FloatingPanel, with params: [LayoutSegmentTestParameter]) {
+private func assertLayoutSegment(_ floatingPanel: FloatingPanelCore, with params: [LayoutSegmentTestParameter]) {
     params.forEach { (line, pos, forwardY, lowr, upper) in
         let segument = floatingPanel.layoutAdapter.segument(at: pos, forward: forwardY)
         XCTAssertEqual(segument.lower, lowr, line: line)

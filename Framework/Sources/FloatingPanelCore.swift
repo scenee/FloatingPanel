@@ -8,7 +8,7 @@ import UIKit.UIGestureRecognizerSubclass // For Xcode 9.4.1
 ///
 /// FloatingPanel presentation model
 ///
-class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
+class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
     // MUST be a weak reference to prevent UI freeze on the presentation modally
     weak var viewcontroller: FloatingPanelController?
 
@@ -62,7 +62,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 
         surfaceView = FloatingPanelSurfaceView()
         surfaceView.backgroundColor = .white
-        
+
         backdropView = FloatingPanelBackdropView()
         backdropView.backgroundColor = .black
         backdropView.alpha = 0.0
@@ -204,7 +204,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
             let surfaceFrame = surfaceView.layer.presentation()?.frame ?? surfaceView.frame
             let surfaceY = surfaceFrame.minY
             let adapterY = layoutAdapter.positionY(for: state)
-            
+
             return abs(surfaceY - adapterY) < (1.0 / surfaceView.traitCollection.displayScale)
         }
     }
@@ -586,9 +586,9 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
         let currentY = surfaceView.frame.minY
         let targetPosition = self.targetPosition(from: currentY, with: velocity)
         let distance = self.distance(to: targetPosition)
-        
+
         endInteraction(for: targetPosition)
-        
+
         if isRemovalInteractionEnabled, isBottomState {
             let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: min(velocity.y/distance, behavior.removalVelocity)) : .zero
             // `velocityVector` will be replaced by just a velocity(not vector) when FloatingPanelRemovalInteraction will be added.
@@ -890,7 +890,7 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate {
 }
 
 class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
-    fileprivate weak var floatingPanel: FloatingPanel?
+    fileprivate weak var floatingPanel: FloatingPanelCore?
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
         super.touchesBegan(touches, with: event)
         if floatingPanel?.animator != nil {
@@ -902,7 +902,7 @@ class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
             return super.delegate
         }
         set {
-            guard newValue is FloatingPanel else {
+            guard newValue is FloatingPanelCore else {
                 let exception = NSException(name: .invalidArgumentException,
                                             reason: "FloatingPanelController's built-in pan gesture recognizer must have its controller as its delegate.",
                                             userInfo: nil)
