@@ -34,7 +34,7 @@ public class FloatingPanelSurfaceView: UIView {
 
     /// A root view of a content view controller
     public weak var contentView: UIView!
-    
+
     /// The content insets specifying the insets around the content view.
     public var contentInsets: UIEdgeInsets = .zero {
         didSet {
@@ -101,7 +101,7 @@ public class FloatingPanelSurfaceView: UIView {
     private lazy var containerViewHeightConstraint = containerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1.0)
     private lazy var containerViewLeftConstraint = containerView.leftAnchor.constraint(equalTo: leftAnchor, constant: 0.0)
     private lazy var containerViewRightConstraint = containerView.rightAnchor.constraint(equalTo: rightAnchor, constant: 0.0)
-    
+
     /// The content view top constraint
     private var contentViewTopConstraint: NSLayoutConstraint?
     /// The content view left constraint

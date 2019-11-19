@@ -62,7 +62,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 
         surfaceView = FloatingPanelSurfaceView()
         surfaceView.backgroundColor = .white
-        
+
         backdropView = FloatingPanelBackdropView()
         backdropView.backgroundColor = .black
         backdropView.alpha = 0.0
@@ -204,7 +204,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             let surfaceFrame = surfaceView.layer.presentation()?.frame ?? surfaceView.frame
             let surfaceY = surfaceFrame.minY
             let adapterY = layoutAdapter.positionY(for: state)
-            
+
             return abs(surfaceY - adapterY) < (1.0 / surfaceView.traitCollection.displayScale)
         }
     }
@@ -586,9 +586,9 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         let currentY = surfaceView.frame.minY
         let targetPosition = self.targetPosition(from: currentY, with: velocity)
         let distance = self.distance(to: targetPosition)
-        
+
         endInteraction(for: targetPosition)
-        
+
         if isRemovalInteractionEnabled, isBottomState {
             let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: min(velocity.y/distance, behavior.removalVelocity)) : .zero
             // `velocityVector` will be replaced by just a velocity(not vector) when FloatingPanelRemovalInteraction will be added.
