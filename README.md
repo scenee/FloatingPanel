@@ -181,41 +181,60 @@ FloatingPanelController.view (FloatingPanelPassThroughView)
 
 ### Show/Hide a floating panel in a view with your view hierarchy
 
+If you need more control over showing and hiding the floating panel, you can forgo the `addPanel` and `removePanelFromParent` methods. These methods are a convenience wrapper for **FloatingPanel**'s `show` and `hide` methods along with some required setup.
+
+There are two ways to work with the `FloatingPanelController`:
+1. Add it to the hierarchy once and then call `show` and `hide` methods to make it appear/disappear.
+2. Add it to the hierarchy when needed and remove afterwards.
+
+The following example shows how to add the controller to your `UIViewController` and how to remove it. Make sure that you never add the same `FloatingPanelController` to the hierarchy before removing it.
+
+**NOTE**: `self.` prefix is not required, nor recommended. It's used here to make it clearer where do the functions used come from. `self` is an instance of a custom UIViewController in your code.
+
 ```swift
-// Add the controller and the managed views to a view controller.
-// From the second time, just call `show(animated:completion)`.
-view.addSubview(fpc.view)
+// Add the floating panel view to the controller's view on top of other views.
+self.view.addSubview(fpc.view)
 
-fpc.view.frame = view.bounds // MUST
+// REQUIRED. It makes the floating panel view have the same size as the controller's view.
+fpc.view.frame = self.view.bounds
+
 // In addition, Auto Layout constraints are highly recommended.
-// Because it makes the layout more robust on trait collection change.
-//
-//     fpc.view.translatesAutoresizingMaskIntoConstraints = false
-//     NSLayoutConstraint.activate([...])
-// 
+// Constraint the fpc.view to all four edges of your controller's view.
+// It makes the layout more robust on trait collection change.
+fpc.view.translatesAutoresizingMaskIntoConstraints = false
+NSLayoutConstraint.activate([
+  fpc.view.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 0.0),
+  fpc.view.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0.0),
+  fpc.view.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0.0),
+  fpc.view.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0.0),
+])
 
-parent.addChild(fpc)
+// Add the floating panel controller to the controller hierarchy.
+self.addChild(fpc)
 
-// Show a floating panel to the initial position defined in your `FloatingPanelLayout` object.
+// Show the floating panel at the initial position defined in your `FloatingPanelLayout` object.
 fpc.show(animated: true) {
-
-    // Only for the first time
-    self.didMove(toParent: self)
-}
-
-...
-
-// Hide it
-fpc.hide(animated: true) {
-
-    // Remove it if needed
-    self.willMove(toParent: nil)
-    self.view.removeFromSuperview()
-    self.removeFromParent()
+    // Inform the floating panel controller that the transition to the controller hierarchy has completed.
+    fpc.didMove(toParent: self)
 }
 ```
 
-NOTE: `FloatingPanelController` wraps `show`/`hide` with `addPanel`/`removePanelFromParent` for easy-to-use. But `show`/`hide` are more convenience for your app.
+After you add the `FloatingPanelController` as seen above, you can call `fpc.show(animated: true) { }` to show the panel and `fpc.hide(animated: true) { }` to hide it.
+
+To remove the `FloatingPanelController` from the hierarchy, follow the example below.
+
+```swift
+// Inform the panel controller that it will be removed from the hierarchy.
+fpc.willMove(toParent: nil)
+    
+// Hide the floating panel.
+fpc.hide(animated: true) {
+    // Remove the floating panel view from your controller's view.
+    fpc.view.removeFromSuperview()
+    // Remove the floating panel controller from the controller hierarchy.
+    fpc.removeFromParent()
+}
+```
 
 ### Scale the content view when the surface position changes
 
