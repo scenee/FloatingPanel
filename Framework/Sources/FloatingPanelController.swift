@@ -425,9 +425,9 @@ open class FloatingPanelController: UIViewController {
         show(animated: animated) { [weak self] in
             guard let `self` = self else { return }
             #if swift(>=4.2)
-            self.didMove(toParent: self)
+            self.didMove(toParent: parent)
             #else
-            self.didMove(toParentViewController: self)
+            self.didMove(toParentViewController: parent)
             #endif
         }
     }
