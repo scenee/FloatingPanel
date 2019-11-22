@@ -19,7 +19,7 @@ public protocol FloatingPanelControllerDelegate: class {
     /// Asks the delegate if dragging should begin by the pan gesture recognizer.
     func floatingPanelShouldBeginDragging(_ vc: FloatingPanelController) -> Bool
 
-    func floatingPanelDidMove(_ vc: FloatingPanelController) // any surface frame changes in dragging
+    func floatingPanelDidMove(_ vc: FloatingPanelController,movingPosition: FloatingPanelPosition?) // any surface frame changes in dragging
 
     // called on start of dragging (may require some time and or distance to move)
     func floatingPanelWillBeginDragging(_ vc: FloatingPanelController)
@@ -50,7 +50,7 @@ public extension FloatingPanelControllerDelegate {
     func floatingPanelShouldBeginDragging(_ vc: FloatingPanelController) -> Bool {
         return true
     }
-    func floatingPanelDidMove(_ vc: FloatingPanelController) {}
+    func floatingPanelDidMove(_ vc: FloatingPanelController,movingPosition: FloatingPanelPosition?) {}
     func floatingPanelWillBeginDragging(_ vc: FloatingPanelController) {}
     func floatingPanelDidEndDragging(_ vc: FloatingPanelController, withVelocity velocity: CGPoint, targetPosition: FloatingPanelPosition) {}
     func floatingPanelWillBeginDecelerating(_ vc: FloatingPanelController) {}
