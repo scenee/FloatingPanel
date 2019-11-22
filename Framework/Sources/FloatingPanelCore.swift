@@ -398,7 +398,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
                 if interactionInProgress == false {
                     startInteraction(with: translation, at: location)
                 }
-                panningChange(with: translation)
+                panningChange(with: translation,velocity: velocity)
             case .ended, .cancelled, .failed:
                 if interactionInProgress == false {
                     startInteraction(with: translation, at: location)
@@ -487,8 +487,8 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         }
     }
 
-    private func panningChange(with translation: CGPoint) {
-        log.debug("panningChange -- translation = \(translation.y)")
+    private func panningChange(with translation: CGPoint,velocity: CGPoint = CGPoint.zero) {
+        log.debug("panningChange -- translation = \(translation.y) -- velocity = \(velocity.y)")
         let preY = surfaceView.frame.minY
         let dy = translation.y - initialTranslationY
 
@@ -499,12 +499,14 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         let currentY = surfaceView.frame.minY
         backdropView.alpha = getBackdropAlpha(at: currentY, with: translation)
         preserveContentVCLayoutIfNeeded()
-
+        // Getting the postion where the panning happed
+        let targetPosition = self.targetPosition(from: currentY, with: velocity)
+        
         let didMove = (preY != currentY)
         guard didMove else { return }
 
         if let vc = viewcontroller {
-            vc.delegate?.floatingPanelDidMove(vc)
+            vc.delegate?.floatingPanelDidMove(vc,movingPosition:targetPosition)
         }
     }
 
