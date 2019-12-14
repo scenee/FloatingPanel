@@ -680,9 +680,12 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             if grabberAreaFrame.contains(location) {
                 initialScrollOffset = scrollView.contentOffset
             } else {
-                // Fit the surface bounds to a scroll offset content by startInteraction(at:offset:)
-                offset = CGPoint(x: -scrollView.contentOffset.x, y: -scrollView.contentOffset.y)
                 initialScrollOffset = scrollView.contentOffsetZero
+                // Fit the surface bounds to a scroll offset content by startInteraction(at:offset:)
+                let scrollOffsetY = (scrollView.contentOffset.y - scrollView.contentOffsetZero.y)
+                if scrollOffsetY < 0 {
+                    offset = CGPoint(x: -scrollView.contentOffset.x, y: -scrollOffsetY)
+                }
             }
             log.debug("initial scroll offset --", initialScrollOffset)
         }
