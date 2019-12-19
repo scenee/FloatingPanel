@@ -17,10 +17,15 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
     var layoutAdapter: FloatingPanelLayoutAdapter
     var behavior: FloatingPanelBehavior
 
+    var scrollObserver: ScrollObserver?
     weak var scrollView: UIScrollView? {
         didSet {
             oldValue?.panGestureRecognizer.removeTarget(self, action: nil)
-            scrollView?.panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
+            scrollObserver = nil
+            if let scrollView = scrollView {
+                scrollView.panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
+                scrollObserver = ScrollObserver(scrollView: scrollView)
+            }
         }
     }
 
@@ -698,6 +703,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         interactionInProgress = true
 
         lockScrollView()
+        scrollObserver?.reset()
     }
 
     private func endInteraction(for targetPosition: FloatingPanelPosition) {
@@ -883,7 +889,10 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 
     private func allowScrollPanGesture(at contentOffset: CGPoint) -> Bool {
         if state == layoutAdapter.topMostState {
-            return contentOffset.y <= -30.0 || contentOffset.y > 0
+            if let scrollObserver = scrollObserver, scrollObserver.isActiveScrolling == false {
+                return false
+            }
+            return true
         }
         return false
     }
@@ -911,5 +920,59 @@ class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
             }
             super.delegate = newValue
         }
+    }
+}
+
+class ScrollObserver {
+    struct ScrollState {
+        let offset: CGPoint
+        let velocity: CGPoint
+        init() {
+            self.offset = .zero
+            self.velocity = .zero
+        }
+        init(scrollView: UIScrollView) {
+            self.offset = scrollView.contentOffset - scrollView.contentOffsetZero
+            self.velocity = scrollView.panGestureRecognizer.location(in: scrollView.superview)
+        }
+    }
+
+    private unowned let scrollView: UIScrollView
+    private var observation: NSKeyValueObservation?
+    private var preState: ScrollState = ScrollState()
+    private var offsetMinY: CGFloat = 0.0
+
+    /**
+     - Note:
+     The getter function uses a minimum scroll offset to detect a user interaction after
+     a top scroll bounce since checking a change of `UIScrollView.isDecelerating` isn't working.
+     This is because `UIScrollView.isDecelerating` isn't set to true when `FloatingPanel.allowScrollPanGesture(at:)`
+     is called in `gestureRecognizer(_:shouldRequireFailureOf:)` delegate method.
+     */
+    var isActiveScrolling: Bool {
+        if offsetMinY < 0, offsetMinY < preState.offset.y, preState.velocity.y > 0 {
+            return false
+        }
+        return true
+    }
+
+    init(scrollView: UIScrollView) {
+        self.scrollView = scrollView
+        self.setupObseration()
+    }
+
+    func setupObseration() {
+        observation = scrollView.observe(\.contentOffset) { [weak self] (scrollView, change) in
+            guard let self = self else { return }
+            //log.debug("scroll offset", scrollView.contentOffset)
+            let newState = ScrollState(scrollView: scrollView)
+            self.offsetMinY = min(self.offsetMinY, newState.offset.y)
+            self.preState = newState
+        }
+    }
+
+    func reset() {
+        preState = ScrollState()
+        offsetMinY = 0.0
     }
 }
