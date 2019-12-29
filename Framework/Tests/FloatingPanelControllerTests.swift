@@ -101,6 +101,22 @@ class FloatingPanelControllerTests: XCTestCase {
         XCTAssertEqual(delegate.position, .hidden)
         XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .hidden))
     }
+    
+    func test_moveWithNearbyPosition() {
+        let delegate = FloatingPanelTestDelegate()
+        let fpc = FloatingPanelController(delegate: delegate)
+        XCTAssertEqual(delegate.position, .hidden)
+        fpc.showForTest()
+        
+        XCTAssertEqual(fpc.nearbyPosition, .half)
+        
+        fpc.hide()
+        XCTAssertEqual(fpc.nearbyPosition, .tip)
+        
+        fpc.move(to: .full, animated: false)
+        XCTAssertEqual(fpc.nearbyPosition, .full)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .full))
+    }
 
     func test_originSurfaceY() {
         let fpc = FloatingPanelController(delegate: nil)
