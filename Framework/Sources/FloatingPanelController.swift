@@ -187,7 +187,13 @@ open class FloatingPanelController: UIViewController {
         set { set(contentViewController: newValue) }
         get { return _contentViewController }
     }
-
+    
+    /// The NearbyPosition determines that finger's nearby position.
+    public var nearbyPosition: FloatingPanelPosition {
+        let currentY = surfaceView.frame.minY
+        return floatingPanel.targetPosition(from: currentY, with: .zero)
+    }
+    
     public var contentMode: ContentMode = .static {
         didSet {
             guard position != .hidden else { return }
