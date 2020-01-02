@@ -12,7 +12,9 @@ public protocol FloatingPanelControllerDelegate: class {
     // if it returns nil, FloatingPanelController uses the default behavior
     func floatingPanel(_ vc: FloatingPanelController, behaviorFor newCollection: UITraitCollection) -> FloatingPanelBehavior?
 
-    func floatingPanelDidChangePosition(_ vc: FloatingPanelController) // changed the settled position in the model layer
+    /// Called when the floating panel has changed to a new position. Can be called inside an animation block, so any
+    /// view properties set inside this function will be automatically animated alongside the panel.
+    func floatingPanelDidChangePosition(_ vc: FloatingPanelController)
 
     /// Asks the delegate if dragging should begin by the pan gesture recognizer.
     func floatingPanelShouldBeginDragging(_ vc: FloatingPanelController) -> Bool
@@ -107,11 +109,19 @@ public enum FloatingPanelPosition: Int {
 ///
 /// A container view controller to display a floating panel to present contents in parallel as a user wants.
 ///
-open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
+open class FloatingPanelController: UIViewController {
     /// Constants indicating how safe area insets are added to the adjusted content inset.
     public enum ContentInsetAdjustmentBehavior: Int {
         case always
         case never
+    }
+
+    /// A flag used to determine how the controller object lays out the content view when the surface position changes.
+    public enum ContentMode: Int {
+        /// The option to fix the content to keep the height of the top most position.
+        case `static`
+        /// The option to scale the content to fit the bounds of the root view by changing the surface position.
+        case fitToBounds
     }
 
     /// The delegate of the floating panel controller object.
@@ -177,9 +187,17 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         set { set(contentViewController: newValue) }
         get { return _contentViewController }
     }
+
+    public var contentMode: ContentMode = .static {
+        didSet {
+            guard position != .hidden else { return }
+            activateLayout()
+        }
+    }
+
     private var _contentViewController: UIViewController?
 
-    private(set) var floatingPanel: FloatingPanel!
+    private(set) var floatingPanel: FloatingPanelCore!
     private var preSafeAreaInsets: UIEdgeInsets = .zero // Capture the latest one
     private var safeAreaInsetsObservation: NSKeyValueObservation?
     private let modalTransition = FloatingPanelModalTransition()
@@ -202,7 +220,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         modalPresentationStyle = .custom
         transitioningDelegate = modalTransition
 
-        floatingPanel = FloatingPanel(self,
+        floatingPanel = FloatingPanelCore(self,
                                       layout: fetchLayout(for: self.traitCollection),
                                       behavior: fetchBehavior(for: self.traitCollection))
     }
@@ -211,7 +229,7 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
         floatingPanel.behavior = fetchBehavior(for: self.traitCollection)
     }
-    
+
     // MARK:- Overrides
 
     /// Creates the view that the controller manages.
@@ -308,7 +326,6 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
 
     private func reloadLayout(for traitCollection: UITraitCollection) {
         floatingPanel.layoutAdapter.layout = fetchLayout(for: traitCollection)
-        floatingPanel.layoutAdapter.prepareLayout(in: self)
 
         if let parent = self.parent {
             if let layout = layout as? UIViewController, layout == parent {
@@ -321,6 +338,8 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
     }
 
     private func activateLayout() {
+        floatingPanel.layoutAdapter.prepareLayout(in: self)
+
         // preserve the current content offset
         let contentOffset = scrollView?.contentOffset
 
@@ -361,7 +380,6 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
 
     /// Hides the surface view to the hidden position
     public func hide(animated: Bool = false, completion: (() -> Void)? = nil) {
-        safeAreaInsetsObservation = nil
         move(to: .hidden,
              animated: animated,
              completion: completion)
@@ -407,9 +425,9 @@ open class FloatingPanelController: UIViewController, UIScrollViewDelegate, UIGe
         show(animated: animated) { [weak self] in
             guard let `self` = self else { return }
             #if swift(>=4.2)
-            self.didMove(toParent: self)
+            self.didMove(toParent: parent)
             #else
-            self.didMove(toParentViewController: self)
+            self.didMove(toParentViewController: parent)
             #endif
         }
     }

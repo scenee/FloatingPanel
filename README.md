@@ -5,9 +5,9 @@
 [![Swift 4.1](https://img.shields.io/badge/Swift-4.1-orange.svg?style=flat)](https://swift.org/)
 [![Swift 4.2](https://img.shields.io/badge/Swift-4.2-orange.svg?style=flat)](https://swift.org/)
 [![Swift 5.0](https://img.shields.io/badge/Swift-5.0-orange.svg?style=flat)](https://swift.org/)
+[![Swift 5.1](https://img.shields.io/badge/Swift-5.1-orange.svg?style=flat)](https://swift.org/)
 
-#  FloatingPanel
-
+# FloatingPanel
 
 FloatingPanel is a simple and easy-to-use UI component for a new interface introduced in Apple Maps, Shortcuts and Stocks app.
 The new interface displays the related contents and utilities in parallel as a user wants.
@@ -31,6 +31,7 @@ The new interface displays the related contents and utilities in parallel as a u
 - [View hierarchy](#view-hierarchy)
 - [Usage](#usage)
   - [Show/Hide a floating panel in a view with your view hierarchy](#showhide-a-floating-panel-in-a-view-with-your-view-hierarchy)
+  - [Scale the content view when the surface position changes](#scale-the-content-view-when-the-surface-position-changes)
   - [Customize the layout with `FloatingPanelLayout` protocol](#customize-the-layout-with-floatingpanellayout-protocol)
     - [Change the initial position and height](#change-the-initial-position-and-height)
     - [Support your landscape layout](#support-your-landscape-layout)
@@ -38,15 +39,22 @@ The new interface displays the related contents and utilities in parallel as a u
     - [Specify position insets from the frame of `FloatingPanelContrller.view`, not the SafeArea](#specify-position-insets-from-the-frame-of-floatingpanelcontrllerview-not-the-safearea)
   - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
     - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
-    - [Activate the rubberband effect on the top/bottom edges](#activate-the-rubberband-effect-on-the-topbottom-edges)
+    - [Activate the rubber-band effect on the top/bottom edges](#activate-the-rubber-band-effect-on-the-topbottom-edges)
     - [Manage the projection of a pan gesture momentum](#manage-the-projection-of-a-pan-gesture-momentum)
-  - [Use a custom grabber handle](#use-a-custom-grabber-handle)
-  - [Add tap gestures to the surface or backdrop views](#add-tap-gestures-to-the-surface-or-backdrop-views)
+  - [Customize the surface design](#customize-the-surface-design)
+    - [Use a custom grabber handle](#use-a-custom-grabber-handle)
+    - [Customize layout of the grabber handle](#customize-layout-of-the-grabber-handle)
+    - [Customize content padding from surface edges](#customize-content-padding-from-surface-edges)
+    - [Customize margins of the surface edges](#customize-margins-of-the-surface-edges)
+  - [Customize gestures](#customize-gestures)
+    - [Suppress the panel interaction](#suppress-the-panel-interaction)
+    - [Add tap gestures to the surface or backdrop views](#add-tap-gestures-to-the-surface-or-backdrop-views)
   - [Create an additional floating panel for a detail](#create-an-additional-floating-panel-for-a-detail)
   - [Move a position with an animation](#move-a-position-with-an-animation)
   - [Work your contents together with a floating panel behavior](#work-your-contents-together-with-a-floating-panel-behavior)
 - [Notes](#notes)
   - ['Show' or 'Show Detail' Segues from `FloatingPanelController`'s content view controller](#show-or-show-detail-segues-from-floatingpanelcontrollers-content-view-controller)
+  - [UISearchController issue](#uisearchcontroller-issue)
   - [FloatingPanelSurfaceView's issue on iOS 10](#floatingpanelsurfaceviews-issue-on-ios-10)
 - [Author](#author)
 - [License](#license)
@@ -87,7 +95,7 @@ it, simply add the following line to your Podfile:
 pod 'FloatingPanel'
 ```
 
-✏️ To suppress "Swift Conversion" warnings in Xcode, please set a Swift version to `SWIFT_VERSION` for the project in your Podfile. It will be resolved in CocoaPods v1.7.0.
+✏️FloatingPanel v1.7.0 or later requires CocoaPods v1.7.0+ for `swift_versions` support.
 
 ### Carthage
 
@@ -173,41 +181,72 @@ FloatingPanelController.view (FloatingPanelPassThroughView)
 
 ### Show/Hide a floating panel in a view with your view hierarchy
 
+If you need more control over showing and hiding the floating panel, you can forgo the `addPanel` and `removePanelFromParent` methods. These methods are a convenience wrapper for **FloatingPanel**'s `show` and `hide` methods along with some required setup.
+
+There are two ways to work with the `FloatingPanelController`:
+1. Add it to the hierarchy once and then call `show` and `hide` methods to make it appear/disappear.
+2. Add it to the hierarchy when needed and remove afterwards.
+
+The following example shows how to add the controller to your `UIViewController` and how to remove it. Make sure that you never add the same `FloatingPanelController` to the hierarchy before removing it.
+
+**NOTE**: `self.` prefix is not required, nor recommended. It's used here to make it clearer where do the functions used come from. `self` is an instance of a custom UIViewController in your code.
+
 ```swift
-// Add the controller and the managed views to a view controller.
-// From the second time, just call `show(animated:completion)`.
-view.addSubview(fpc.view)
+// Add the floating panel view to the controller's view on top of other views.
+self.view.addSubview(fpc.view)
 
-fpc.view.frame = view.bounds // MUST
+// REQUIRED. It makes the floating panel view have the same size as the controller's view.
+fpc.view.frame = self.view.bounds
+
 // In addition, Auto Layout constraints are highly recommended.
-// Because it makes the layout more robust on trait collection change.
-//
-//     fpc.view.translatesAutoresizingMaskIntoConstraints = false
-//     NSLayoutConstraint.activate([...])
-// 
+// Constraint the fpc.view to all four edges of your controller's view.
+// It makes the layout more robust on trait collection change.
+fpc.view.translatesAutoresizingMaskIntoConstraints = false
+NSLayoutConstraint.activate([
+  fpc.view.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 0.0),
+  fpc.view.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0.0),
+  fpc.view.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0.0),
+  fpc.view.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0.0),
+])
 
-parent.addChild(fpc)
+// Add the floating panel controller to the controller hierarchy.
+self.addChild(fpc)
 
-// Show a floating panel to the initial position defined in your `FloatingPanelLayout` object.
+// Show the floating panel at the initial position defined in your `FloatingPanelLayout` object.
 fpc.show(animated: true) {
-
-    // Only for the first time
-    self.didMove(toParent: self)
-}
-
-...
-
-// Hide it
-fpc.hide(animated: true) {
-
-    // Remove it if needed
-    self.willMove(toParent: nil)
-    self.view.removeFromSuperview()
-    self.removeFromParent()
+    // Inform the floating panel controller that the transition to the controller hierarchy has completed.
+    fpc.didMove(toParent: self)
 }
 ```
 
-NOTE: `FloatingPanelController` wraps `show`/`hide` with `addPanel`/`removePanelFromParent` for easy-to-use. But `show`/`hide` are more convenience for your app.
+After you add the `FloatingPanelController` as seen above, you can call `fpc.show(animated: true) { }` to show the panel and `fpc.hide(animated: true) { }` to hide it.
+
+To remove the `FloatingPanelController` from the hierarchy, follow the example below.
+
+```swift
+// Inform the panel controller that it will be removed from the hierarchy.
+fpc.willMove(toParent: nil)
+    
+// Hide the floating panel.
+fpc.hide(animated: true) {
+    // Remove the floating panel view from your controller's view.
+    fpc.view.removeFromSuperview()
+    // Remove the floating panel controller from the controller hierarchy.
+    fpc.removeFromParent()
+}
+```
+
+### Scale the content view when the surface position changes
+
+Specify the `contentMode` to `.fitToBounds` if the surface height fits the bounds of `FloatingPanelController.view` when the surface position changes
+
+```swift
+fpc.contentMode = .fitToBounds
+```
+
+Otherwise, `FloatingPanelController` fixes the content by the height of the top most position.
+
+✏️ In `.fitToBounds` mode, the surface height changes as following a user interaction so that you have a responsibility to configure Auto Layout constrains not to break the layout of a content view by the elastic surface height.
 
 ### Customize the layout with `FloatingPanelLayout` protocol
 
@@ -342,7 +381,7 @@ class FloatingPanelStocksBehavior: FloatingPanelBehavior {
 }
 ```
 
-#### Activate the rubberband effect on the top/bottom edges
+#### Activate the rubber-band effect on the top/bottom edges
 
 ```swift
 class FloatingPanelBehavior: FloatingPanelBehavior {
@@ -360,13 +399,15 @@ This allows full projectional panel behavior. For example, a user can swipe up a
 ```swift
 class FloatingPanelBehavior: FloatingPanelBehavior {
     ...
-    func shouldProjectMomentum(_ fpc: FloatingPanelController, for proposedTargetPosition: FloatingPanelPosition) -> Bool
+    func shouldProjectMomentum(_ fpc: FloatingPanelController, for proposedTargetPosition: FloatingPanelPosition) -> Bool {
         return true
     }
 }
 ```
 
-### Use a custom grabber handle
+### Customize the surface design
+
+#### Use a custom grabber handle
 
 ```swift
 let myGrabberHandleView = MyGrabberHandleView()
@@ -374,7 +415,50 @@ fpc.surfaceView.grabberHandle.isHidden = true
 fpc.surfaceView.addSubview(myGrabberHandleView)
 ```
 
-### Add tap gestures to the surface or backdrop views
+#### Customize layout of the grabber handle
+
+```swift
+fpc.surfaceView.grabberTopPadding = 10.0
+fpc.surfaceView.grabberHandleWidth = 44.0
+fpc.surfaceView.grabberHandleHeight = 12.0
+```
+
+#### Customize content padding from surface edges
+
+```swift
+fpc.surfaceView.contentInsets = .init(top: 20, left: 20, bottom: 20, right: 20)
+```
+
+#### Customize margins of the surface edges
+
+```swift
+fpc.surfaceView.containerMargins = .init(top: 20.0, left: 16.0, bottom: 16.0, right: 16.0)
+```
+
+The feature can be used for these 2 kind panels
+
+* Facebook/Slack-like panel whose surface top edge is separated from the grabber handle.
+* iOS native panel to display AirPods information, for example.
+
+### Customize gestures
+
+#### Suppress the panel interaction
+
+You can disable the pan gesture recognizer directly
+
+```swift
+fpc.panGestureRecognizer.isEnable = false
+```
+
+Or use this `FloatingPanelControllerDelegate` method.
+
+```swift
+func floatingPanelShouldBeginDragging(_ vc: FloatingPanelController) -> Bool {
+    return aCondition ?  false : true
+}
+```
+
+#### Add tap gestures to the surface or backdrop views
 
 ```swift
 override func viewDidLoad() {
@@ -487,6 +571,12 @@ class ViewController: UIViewController {
 A `FloatingPanelController` object proxies an action for `show(_:sender)` to the master VC. That's why the master VC can handle a destination view controller of a 'Show' or 'Show Detail' segue and you can hook `show(_:sender)` to show a secondary floating panel set the destination view controller to the content.
 
 It's a great way to decouple between a floating panel and the content VC.
+
+### UISearchController issue
+
+`UISearchController` isn't able to be used with `FloatingPanelController` by the system design.
+
+Because `UISearchController` automatically presents itself modally when a user interacts with the search bar, and then it swaps the superview of the search bar to the view managed by itself while it displays. As a result, `FloatingPanelController` can't control the search bar when it's active, as you can see from [the screen shot](https://github.com/SCENEE/FloatingPanel/issues/248#issuecomment-521263831).
 
 ### FloatingPanelSurfaceView's issue on iOS 10
 

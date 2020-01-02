@@ -22,33 +22,40 @@ jobs:
     osx_image: xcode10
     name: "Swift 4.2"
   - script: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.0 clean build
-    osx_image: xcode10.2
+    osx_image: xcode10.3
     name: "Swift 5.0"
+  - script: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.1 SUPPORTS_MACCATALYST=NO clean build
+    # SUPPORTS_MACCATALYST=NO because Xcode 11 runs on macOS 10.14 in Travis CI
+    osx_image: xcode11
+    name: "Swift 5.1"
 
   - stage: "Tests"
-    osx_image: xcode10.2
+    osx_image: xcode10.3
     script: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=10.3.1,name=iPhone SE'
     name: "iPhone SE (iOS 10.3)"
   - script: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=11.4,name=iPhone 7'
-    osx_image: xcode10.2
+    osx_image: xcode10.3
     name: "iPhone 7 (iOS 11.4)"
   - script: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=12.2,name=iPhone X'
-    osx_image: xcode10.2
+    osx_image: xcode10.3
     name: "iPhone X (iOS 12.2)"
+  - script: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=13.0,name=iPhone 11'
+    osx_image: xcode11
+    name: "iPhone X (iOS 13.0)"
 
   - stage: Build examples
-    osx_image: xcode10.2
+    osx_image: xcode11
     script: xcodebuild -scheme Maps -sdk iphonesimulator clean build
     name: "Maps"
   - script: xcodebuild -scheme Stocks -sdk iphonesimulator clean build
-    osx_image: xcode10.2
+    osx_image: xcode11
     name: "Stocks"
   - script: xcodebuild -scheme Samples -sdk iphonesimulator clean build
-    osx_image: xcode10.2
+    osx_image: xcode11
     name: "Samples"
 
   - stage: Carthage
-    osx_image: xcode10.2
+    osx_image: xcode11
     before_install:
     - brew update
     - brew outdated carthage || brew upgrade carthage
@@ -56,7 +63,9 @@ jobs:
     - carthage build --no-skip-current
 
   - stage: CocoaPods
-    osx_image: xcode10.2
+    osx_image: xcode11
+    before_install: 
+    - gem install cocoapods
     script:
     - pod spec lint --allow-warnings
     - pod lib lint --allow-warnings
