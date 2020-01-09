@@ -107,6 +107,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate, 
             let progress = max(0.0, min((tipY  - y) / 44.0, 1.0))
             self.searchVC.tableView.alpha = progress
         }
+        debugPrint("NearbyPosition : ",vc.nearbyPosition)
     }
 
     func floatingPanelWillBeginDragging(_ vc: FloatingPanelController) {
