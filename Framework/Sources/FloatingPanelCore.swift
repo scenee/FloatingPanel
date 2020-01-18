@@ -234,6 +234,9 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
                 scrollGestureRecognizers.contains(otherGestureRecognizer) {
                 switch otherGestureRecognizer {
                 case scrollView.panGestureRecognizer:
+                    if grabberAreaFrame.contains(gestureRecognizer.location(in: gestureRecognizer.view)) {
+                        return false
+                    }
                     let offset = scrollView.contentOffset.y - scrollView.contentOffsetZero.y
                     return allowScrollPanGesture(at: CGPoint(x: 0.0, y: offset))
                 default:
@@ -677,7 +680,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 
         initialFrame = surfaceView.frame
         if state == layoutAdapter.topMostState, let scrollView = scrollView {
-            if grabberAreaFrame.contains(location) {
+            if grabberAreaFrame.contains(location) || scrollView.isTracking == false {
                 initialScrollOffset = scrollView.contentOffset
             } else {
                 initialScrollOffset = scrollView.contentOffsetZero
