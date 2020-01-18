@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		543844BD23D2BE2000D5EDE4 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 543844BC23D2BE2000D5EDE4 /* MapKit.framework */; };
 		549D23D2233C77D5008EF4D7 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23D1233C77D5008EF4D7 /* FloatingPanel.framework */; };
 		549D23D3233C77D5008EF4D7 /* FloatingPanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23D1233C77D5008EF4D7 /* FloatingPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B5112A216C3D840033A6F3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B51129216C3D840033A6F3 /* AppDelegate.swift */; };
@@ -31,6 +32,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		543844BC23D2BE2000D5EDE4 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		549D23D1233C77D5008EF4D7 /* FloatingPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FloatingPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		54B51126216C3D840033A6F3 /* Maps.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Maps.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		54B51129216C3D840033A6F3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -46,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				543844BD23D2BE2000D5EDE4 /* MapKit.framework in Frameworks */,
 				549D23D2233C77D5008EF4D7 /* FloatingPanel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -53,12 +56,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		543844BB23D2BE1F00D5EDE4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				543844BC23D2BE2000D5EDE4 /* MapKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		54B5111D216C3D840033A6F3 = {
 			isa = PBXGroup;
 			children = (
 				549D23D1233C77D5008EF4D7 /* FloatingPanel.framework */,
 				54B51128216C3D840033A6F3 /* Maps */,
 				54B51127216C3D840033A6F3 /* Products */,
+				543844BB23D2BE1F00D5EDE4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
