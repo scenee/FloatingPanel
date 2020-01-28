@@ -383,7 +383,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
                     }
                     animator.finishAnimation(at: .current)
                 } else {
-                    self.animator = nil
+                    self.endAnimation(false) // Must call it manually
                 }
             }
 
@@ -605,17 +605,20 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             }
         }
 
-        if let vc = viewcontroller {
-            vc.delegate?.floatingPanelDidEndDragging(vc, withVelocity: velocity, targetPosition: targetPosition)
-        }
-
         if scrollView != nil, !stopScrollDeceleration,
             surfaceView.frame.minY == layoutAdapter.topY,
             targetPosition == layoutAdapter.topMostState {
             self.state = targetPosition
             self.updateLayout(to: targetPosition)
             self.unlockScrollView()
+            if let vc = viewcontroller {
+                vc.delegate?.floatingPanelDidEndDragging(vc, withVelocity: .zero, targetPosition: targetPosition)
+            }
             return
+        }
+
+        if let vc = viewcontroller {
+            vc.delegate?.floatingPanelDidEndDragging(vc, withVelocity: velocity, targetPosition: targetPosition)
         }
 
         // Workaround: Disable a tracking scroll to prevent bouncing a scroll content in a panel animating
@@ -761,15 +764,14 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             // Prevent calling `finishAnimation(at:)` by the old animator whose `isInterruptive` is false
             // when a new animator has been started after the old one is interrupted.
             guard let `self` = self, self.animator == animator else { return }
-            self.finishAnimation(at: targetPosition)
+            log.debug("finishAnimation to \(targetPosition)")
+            self.endAnimation(pos == .end)
         }
         self.animator = animator
         animator.startAnimation()
     }
 
-    private func finishAnimation(at targetPosition: FloatingPanelPosition) {
-        log.debug("finishAnimation to \(targetPosition)")
-
+    private func endAnimation(_ finished: Bool) {
         self.isDecelerating = false
         self.animator = nil
 
@@ -784,7 +786,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         stopScrollDeceleration = false
 
         log.debug("finishAnimation -- state = \(state) surface.minY = \(surfaceView.presentationFrame.minY) topY = \(layoutAdapter.topY)")
-        if state == layoutAdapter.topMostState, abs(surfaceView.presentationFrame.minY - layoutAdapter.topY) <= 1.0 {
+        if finished, state == layoutAdapter.topMostState, abs(surfaceView.presentationFrame.minY - layoutAdapter.topY) <= 1.0 {
             unlockScrollView()
         }
     }
