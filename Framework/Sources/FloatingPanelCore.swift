@@ -605,17 +605,20 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             }
         }
 
-        if let vc = viewcontroller {
-            vc.delegate?.floatingPanelDidEndDragging(vc, withVelocity: velocity, targetPosition: targetPosition)
-        }
-
         if scrollView != nil, !stopScrollDeceleration,
             surfaceView.frame.minY == layoutAdapter.topY,
             targetPosition == layoutAdapter.topMostState {
             self.state = targetPosition
             self.updateLayout(to: targetPosition)
             self.unlockScrollView()
+            if let vc = viewcontroller {
+                vc.delegate?.floatingPanelDidEndDragging(vc, withVelocity: .zero, targetPosition: targetPosition)
+            }
             return
+        }
+
+        if let vc = viewcontroller {
+            vc.delegate?.floatingPanelDidEndDragging(vc, withVelocity: velocity, targetPosition: targetPosition)
         }
 
         // Workaround: Disable a tracking scroll to prevent bouncing a scroll content in a panel animating
