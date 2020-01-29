@@ -285,6 +285,41 @@ open class FloatingPanelController: UIViewController {
         safeAreaInsetsObservation = nil
     }
 
+    // MARK:- Child view controller to consult
+    #if swift(>=4.2)
+    open override var childForStatusBarStyle: UIViewController? {
+        return contentViewController
+    }
+
+    open override var childForStatusBarHidden: UIViewController? {
+        return contentViewController
+    }
+
+    open override var childForScreenEdgesDeferringSystemGestures: UIViewController? {
+        return contentViewController
+    }
+
+    open override var childForHomeIndicatorAutoHidden: UIViewController? {
+        return contentViewController
+    }
+    #else
+    open override var childViewControllerForStatusBarStyle: UIViewController? {
+        return contentViewController
+    }
+
+    open override var childViewControllerForStatusBarHidden: UIViewController? {
+        return contentViewController
+    }
+
+    open override func childViewControllerForScreenEdgesDeferringSystemGestures() -> UIViewController? {
+        return contentViewController
+    }
+
+    open override func childViewControllerForHomeIndicatorAutoHidden() -> UIViewController? {
+        return contentViewController
+    }
+    #endif
+
     // MARK:- Internals
     func prepare(for newCollection: UITraitCollection) {
         guard newCollection.shouldUpdateLayout(from: traitCollection) else { return }
