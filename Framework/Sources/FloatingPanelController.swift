@@ -37,6 +37,8 @@ public protocol FloatingPanelControllerDelegate: class {
     ///
     /// By default, any tap and long gesture recognizers are allowed to recognize gestures simultaneously.
     func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool
+
+    func foatingPanel(_ vc: FloatingPanelController, contentOffsetForPinning trackedScrollView: UIScrollView) -> CGPoint
 }
 
 public extension FloatingPanelControllerDelegate {
@@ -61,6 +63,9 @@ public extension FloatingPanelControllerDelegate {
 
     func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith gestureRecognizer: UIGestureRecognizer) -> Bool {
         return false
+    }
+    func foatingPanel(_ vc: FloatingPanelController, contentOffsetForPinning trackedScrollView: UIScrollView) -> CGPoint {
+        return CGPoint(x: 0.0, y: 0.0 - trackedScrollView.contentInset.top)
     }
 }
 
