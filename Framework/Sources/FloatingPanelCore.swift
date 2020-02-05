@@ -210,7 +210,6 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
     }
 
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        guard gestureRecognizer == panGestureRecognizer else { return false }
         /* log.debug("shouldBeRequiredToFailBy", otherGestureRecognizer) */
         return false
     }
