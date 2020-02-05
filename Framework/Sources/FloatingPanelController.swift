@@ -38,6 +38,13 @@ public protocol FloatingPanelControllerDelegate: class {
     /// By default, any tap and long gesture recognizers are allowed to recognize gestures simultaneously.
     func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool
 
+    /// Asks the delegate for the content offset of a tracked scroll view pinned when a panel moves
+    ///
+    /// If you do not implement this method, the controller uses a value of the content offset plus the content insets
+    /// of a tracked scroll view. Your implementation of this method can return a value for a navigation bar with a large
+    /// title.
+    ///
+    /// This method will not be called if the controller doesn't track any scroll view.
     func foatingPanel(_ vc: FloatingPanelController, contentOffsetForPinning trackedScrollView: UIScrollView) -> CGPoint
 }
 
