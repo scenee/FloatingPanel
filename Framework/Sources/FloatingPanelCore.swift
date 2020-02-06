@@ -683,7 +683,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 
         initialFrame = surfaceView.frame
         if state == layoutAdapter.topMostState, let scrollView = scrollView {
-            if grabberAreaFrame.contains(location) || scrollView.isTracking == false {
+            if grabberAreaFrame.contains(location) {
                 initialScrollOffset = scrollView.contentOffset
             } else {
                 initialScrollOffset = scrollView.contentOffsetZero
