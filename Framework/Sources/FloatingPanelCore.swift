@@ -450,8 +450,9 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             return true
         }
 
+        let scrollViewFrame = scrollView.convert(scrollView.bounds, to: surfaceView)
         guard
-            scrollView.frame.contains(initialLocation), // When initialLocation not in scrollView, don't scroll.
+            scrollViewFrame.contains(initialLocation), // When initialLocation not in scrollView, don't scroll.
             !grabberAreaFrame.contains(point)           // When point within grabber area, don't scroll.
         else {
             return false
