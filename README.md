@@ -36,7 +36,7 @@ The new interface displays the related contents and utilities in parallel as a u
     - [Change the initial position and height](#change-the-initial-position-and-height)
     - [Support your landscape layout](#support-your-landscape-layout)
     - [Use Intrinsic height layout](#use-intrinsic-height-layout)
-    - [Specify position insets from the frame of `FloatingPanelContrller.view`, not the SafeArea](#specify-position-insets-from-the-frame-of-floatingpanelcontrllerview-not-the-safearea)
+    - [Specify position insets from the frame of `FloatingPanelController.view`, not the SafeArea](#specify-position-insets-from-the-frame-of-floatingpanelcontrollerview-not-the-safearea)
   - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
     - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
     - [Activate the rubber-band effect on the top/bottom edges](#activate-the-rubber-band-effect-on-the-topbottom-edges)
@@ -338,7 +338,7 @@ class RemovablePanelLayout: FloatingPanelIntrinsicLayout {
 }
 ```
 
-#### Specify position insets from the frame of `FloatingPanelContrller.view`, not the SafeArea
+#### Specify position insets from the frame of `FloatingPanelController.view`, not the SafeArea
 
 There are 2 ways. One is returning `.fromSuperview` for `FloatingPanelLayout.positionReference` in your layout.
 
