@@ -383,12 +383,9 @@ extension SampleListViewController: UITableViewDelegate {
 
 extension SampleListViewController: FloatingPanelControllerDelegate {
     func foatingPanel(_ vc: FloatingPanelController, contentOffsetForPinning trackedScrollView: UIScrollView) -> CGPoint {
-        if currentMenu == .showNavigationController {
-            if #available(iOSApplicationExtension 11.0, *) {
-                return CGPoint(x: 0.0, y: 0.0 - trackedScrollView.contentInset.top - 148.0)
-            } else {
-                return CGPoint(x: 0.0, y: 0.0 - trackedScrollView.contentInset.top)
-            }
+        if currentMenu == .showNavigationController, #available(iOSApplicationExtension 11.0, *) {
+            // 148.0 is the SafeArea's top value for a navigation bar with a large title.
+            return CGPoint(x: 0.0, y: 0.0 - trackedScrollView.contentInset.top - 148.0)
         }
         return CGPoint(x: 0.0, y: 0.0 - trackedScrollView.contentInset.top)
     }
