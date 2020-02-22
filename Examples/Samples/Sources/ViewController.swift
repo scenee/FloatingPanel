@@ -126,6 +126,7 @@ class SampleListViewController: UIViewController {
         // Initialize FloatingPanelController
         mainPanelVC = FloatingPanelController()
         mainPanelVC.delegate = self
+        mainPanelVC.contentInsetAdjustmentBehavior = .always
 
         // Initialize FloatingPanelController and add the view
         mainPanelVC.surfaceView.cornerRadius = 6.0

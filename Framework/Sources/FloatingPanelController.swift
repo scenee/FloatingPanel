@@ -393,13 +393,18 @@ open class FloatingPanelController: UIViewController {
     private func activateLayout() {
         floatingPanel.layoutAdapter.prepareLayout(in: self)
 
-        // preserve the current content offset
-        let contentOffset = scrollView?.contentOffset
+        // preserve the current content offset if contentInsetAdjustmentBehavior is `.always`
+        var contentOffset: CGPoint?
+        if contentInsetAdjustmentBehavior == .always {
+            contentOffset = scrollView?.contentOffset
+        }
 
         floatingPanel.layoutAdapter.updateHeight()
         floatingPanel.layoutAdapter.activateLayout(of: floatingPanel.state)
 
-        scrollView?.contentOffset = contentOffset ?? .zero
+        if let contentOffset = contentOffset {
+            scrollView?.contentOffset = contentOffset
+        }
     }
 
     // MARK: - Container view controller interface
