@@ -27,6 +27,7 @@ class SampleListViewController: UIViewController {
         case showIntrinsicView
         case showContentInset
         case showContainerMargins
+        case showNavigationController
 
         var name: String {
             switch self {
@@ -44,6 +45,7 @@ class SampleListViewController: UIViewController {
             case .showIntrinsicView: return "Show Intrinsic View"
             case .showContentInset: return "Show with ContentInset"
             case .showContainerMargins: return "Show with ContainerMargins"
+            case .showNavigationController: return "Show Navigation Controller"
             }
         }
 
@@ -63,6 +65,7 @@ class SampleListViewController: UIViewController {
             case .showIntrinsicView: return "IntrinsicViewController"
             case .showContentInset: return nil
             case .showContainerMargins: return nil
+            case .showNavigationController: return "RootNavigationController"
             }
         }
     }
@@ -83,6 +86,7 @@ class SampleListViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        automaticallyAdjustsScrollViewInsets = false
 
         let searchController = UISearchController(searchResultsController: nil)
         if #available(iOS 11.0, *) {
@@ -95,11 +99,14 @@ class SampleListViewController: UIViewController {
 
         let contentVC = DebugTableViewController()
         addMainPanel(with: contentVC)
+
+        var insets = UIEdgeInsets.zero
+        insets.bottom += 69.0
+        tableView.contentInset = insets
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
         if #available(iOS 11.0, *) {
             if let observation = navigationController?.navigationBar.observe(\.prefersLargeTitles, changeHandler: { (bar, _) in
                 self.tableView.reloadData()
@@ -121,6 +128,7 @@ class SampleListViewController: UIViewController {
 
         mainPanelVC = FloatingPanelController()
         mainPanelVC.delegate = self
+        mainPanelVC.contentInsetAdjustmentBehavior = .always
 
         mainPanelVC.surfaceView.cornerRadius = 6.0
         mainPanelVC.surfaceView.shadowHidden = false
@@ -143,6 +151,8 @@ class SampleListViewController: UIViewController {
 
             let backdropTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
             mainPanelVC.backdropView.addGestureRecognizer(backdropTapGesture)
+        case .showNavigationController:
+            mainPanelVC.contentInsetAdjustmentBehavior = .never
         default:
             break
         }
@@ -160,6 +170,11 @@ class SampleListViewController: UIViewController {
             mainPanelVC.track(scrollView: contentVC.tableView)
         case let contentVC as NestedScrollViewController:
             mainPanelVC.track(scrollView: contentVC.scrollView)
+        case let navVC as UINavigationController:
+            if let rootVC = (navVC.topViewController as? SampleListViewController) {
+                rootVC.loadViewIfNeeded()
+                mainPanelVC.track(scrollView: rootVC.tableView)
+            }
         default:
             break
         }
@@ -372,6 +387,14 @@ extension SampleListViewController: UITableViewDelegate {
 }
 
 extension SampleListViewController: FloatingPanelControllerDelegate {
+    func foatingPanel(_ vc: FloatingPanelController, contentOffsetForPinning trackedScrollView: UIScrollView) -> CGPoint {
+        if currentMenu == .showNavigationController, #available(iOSApplicationExtension 11.0, *) {
+            // 148.0 is the SafeArea's top value for a navigation bar with a large title.
+            return CGPoint(x: 0.0, y: 0.0 - trackedScrollView.contentInset.top - 148.0)
+        }
+        return CGPoint(x: 0.0, y: 0.0 - trackedScrollView.contentInset.top)
+    }
+
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
         if vc == settingsPanelVC {
             return IntrinsicPanelLayout()
@@ -666,6 +689,9 @@ class DebugTableViewController: InspectableViewController {
             ])
         tableView.dataSource = self
         tableView.delegate = self
+        if #available(iOS 11.0, *) {
+            tableView.contentInsetAdjustmentBehavior = .never
+        }
         self.tableView = tableView
 
         let stackView = UIStackView()
