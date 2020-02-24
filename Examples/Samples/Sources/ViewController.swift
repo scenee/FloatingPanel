@@ -663,7 +663,8 @@ class InspectableViewController: UIViewController {
 }
 
 class DebugTableViewController: InspectableViewController {
-    weak var tableView: UITableView!
+    lazy var tableView = UITableView(frame: .zero, style: .plain)
+    lazy var buttonStackView = UIStackView()
     var items: [String] = []
     var itemHeight: CGFloat = 66.0
 
@@ -677,8 +678,6 @@ class DebugTableViewController: InspectableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let tableView = UITableView(frame: .zero,
-                                    style: .plain)
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -689,21 +688,17 @@ class DebugTableViewController: InspectableViewController {
             ])
         tableView.dataSource = self
         tableView.delegate = self
-        if #available(iOS 11.0, *) {
-            tableView.contentInsetAdjustmentBehavior = .never
-        }
-        self.tableView = tableView
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
 
-        let stackView = UIStackView()
-        view.addSubview(stackView)
-        stackView.axis = .vertical
-        stackView.distribution = .fillEqually
-        stackView.alignment = .trailing
-        stackView.spacing = 10.0
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(buttonStackView)
+        buttonStackView.axis = .vertical
+        buttonStackView.distribution = .fillEqually
+        buttonStackView.alignment = .trailing
+        buttonStackView.spacing = 10.0
+        buttonStackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 22.0),
-            stackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -22.0),
+            buttonStackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 22.0),
+            buttonStackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -22.0),
             ])
 
         for menu in Menu.allCases {
@@ -719,13 +714,12 @@ class DebugTableViewController: InspectableViewController {
                 button.addTarget(self, action: #selector(reorderItems), for: .touchUpInside)
                 reorderButton = button
             }
-            stackView.addArrangedSubview(button)
+            buttonStackView.addArrangedSubview(button)
         }
 
         for i in 0...100 {
             items.append("Items \(i)")
         }
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
     }
 
     @objc func animateScroll() {
@@ -1328,9 +1322,11 @@ final class MultiPanelController: FloatingPanelController, FloatingPanelControll
         private final class SecondPanelContentViewController: DebugTableViewController {}
 
         func setUpContent() {
+            contentInsetAdjustmentBehavior = .never
             let vc = SecondPanelContentViewController()
             vc.loadViewIfNeeded()
             vc.title = "Second Panel"
+            vc.buttonStackView.isHidden = true
             let navigationController = UINavigationController(rootViewController: vc)
             navigationController.navigationBar.barTintColor = .white
             navigationController.navigationBar.titleTextAttributes = [
