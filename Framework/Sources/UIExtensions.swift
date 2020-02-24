@@ -114,9 +114,6 @@ extension UIGestureRecognizerState: CustomDebugStringConvertible {
 #endif
 
 extension UIScrollView {
-    var contentOffsetZero: CGPoint {
-        return CGPoint(x: 0.0, y: 0.0 - contentInset.top)
-    }
     var isLocked: Bool {
         return !showsVerticalScrollIndicator && !bounces &&  isDirectionalLockEnabled
     }
@@ -133,8 +130,10 @@ extension UISpringTimingParameters {
 
 extension CGPoint {
     static var nan: CGPoint {
-        return CGPoint(x: CGFloat.nan,
-                       y: CGFloat.nan)
+        return CGPoint(x: CGFloat.nan, y: CGFloat.nan)
+    }
+    static func - (left: CGPoint, right: CGPoint) -> CGPoint {
+        return CGPoint(x: left.x - right.x, y: left.y - right.y)
     }
 }
 
