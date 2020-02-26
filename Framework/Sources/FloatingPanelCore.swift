@@ -191,6 +191,9 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         }
 
         switch otherGestureRecognizer {
+        case is FloatingPanelPanGestureRecognizer:
+            // All visiable panels' pan gesture should be recognized simultaneously.
+            return true
         case is UIPanGestureRecognizer,
              is UISwipeGestureRecognizer,
              is UIRotationGestureRecognizer,
@@ -211,6 +214,13 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         /* log.debug("shouldBeRequiredToFailBy", otherGestureRecognizer) */
+        if otherGestureRecognizer is FloatingPanelPanGestureRecognizer {
+            // If this panel is the farthest descendant of visiable panels,
+            // its ancestors' pan gesture must wait for its pan gesture to fail
+            if let view = otherGestureRecognizer.view, surfaceView.isDescendant(of: view) {
+                return true
+            }
+        }
         return false
     }
 
@@ -249,6 +259,13 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         }
 
         switch otherGestureRecognizer {
+        case is FloatingPanelPanGestureRecognizer:
+            // If this panel is the farthest descendant of visiable panels,
+            // its pan gesture does not require its ancestors' pan gesture to fail
+            if let view = otherGestureRecognizer.view, surfaceView.isDescendant(of: view) {
+                return false
+            }
+            return true
         case is UIPanGestureRecognizer,
              is UISwipeGestureRecognizer,
              is UIRotationGestureRecognizer,
