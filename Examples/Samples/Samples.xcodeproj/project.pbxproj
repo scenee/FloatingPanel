@@ -294,7 +294,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $(git rev-parse --abbrev-ref HEAD)($(git rev-parse --short HEAD))\" $SRCROOT/$INFOPLIST_FILE\n";
+			shellScript = "/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $(git rev-parse --abbrev-ref HEAD)($(git rev-parse --short HEAD))\" \"$SRCROOT/$INFOPLIST_FILE\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
