@@ -18,6 +18,7 @@ class SampleListViewController: UIViewController {
         case showDetail
         case showModal
         case showPanelModal
+        case showMultiPanelModal
         case showTabBar
         case showPageView
         case showPageContentView
@@ -35,6 +36,7 @@ class SampleListViewController: UIViewController {
             case .showDetail: return "Show Detail Panel"
             case .showModal: return "Show Modal"
             case .showPanelModal: return "Show Panel Modal"
+            case .showMultiPanelModal: return "Show Multi Panel Modal"
             case .showTabBar: return "Show Tab Bar"
             case .showPageView: return "Show Page View"
             case .showPageContentView: return "Show Page Content View"
@@ -53,6 +55,7 @@ class SampleListViewController: UIViewController {
             case .trackingTextView: return "ConsoleViewController"
             case .showDetail: return "DetailViewController"
             case .showModal: return "ModalViewController"
+            case .showMultiPanelModal: return nil
             case .showPanelModal: return nil
             case .showTabBar: return "TabBarViewController"
             case .showPageView: return nil
@@ -123,16 +126,13 @@ class SampleListViewController: UIViewController {
 
         let oldMainPanelVC = mainPanelVC
 
-        // Initialize FloatingPanelController
         mainPanelVC = FloatingPanelController()
         mainPanelVC.delegate = self
         mainPanelVC.contentInsetAdjustmentBehavior = .always
 
-        // Initialize FloatingPanelController and add the view
         mainPanelVC.surfaceView.cornerRadius = 6.0
         mainPanelVC.surfaceView.shadowHidden = false
 
-        // Set a content view controller
         mainPanelVC.set(contentViewController: contentVC)
 
         // Enable tap-to-hide and removal interaction
@@ -344,6 +344,10 @@ extension SampleListViewController: UITableViewDelegate {
 
             fpc.isRemovalInteractionEnabled = true
 
+            self.present(fpc, animated: true, completion: nil)
+
+        case .showMultiPanelModal:
+            let fpc = MultiPanelController()
             self.present(fpc, animated: true, completion: nil)
 
         case .showContentInset:
@@ -659,7 +663,8 @@ class InspectableViewController: UIViewController {
 }
 
 class DebugTableViewController: InspectableViewController {
-    weak var tableView: UITableView!
+    lazy var tableView = UITableView(frame: .zero, style: .plain)
+    lazy var buttonStackView = UIStackView()
     var items: [String] = []
     var itemHeight: CGFloat = 66.0
 
@@ -673,8 +678,6 @@ class DebugTableViewController: InspectableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let tableView = UITableView(frame: .zero,
-                                    style: .plain)
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -685,21 +688,17 @@ class DebugTableViewController: InspectableViewController {
             ])
         tableView.dataSource = self
         tableView.delegate = self
-        if #available(iOS 11.0, *) {
-            tableView.contentInsetAdjustmentBehavior = .never
-        }
-        self.tableView = tableView
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
 
-        let stackView = UIStackView()
-        view.addSubview(stackView)
-        stackView.axis = .vertical
-        stackView.distribution = .fillEqually
-        stackView.alignment = .trailing
-        stackView.spacing = 10.0
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(buttonStackView)
+        buttonStackView.axis = .vertical
+        buttonStackView.distribution = .fillEqually
+        buttonStackView.alignment = .trailing
+        buttonStackView.spacing = 10.0
+        buttonStackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 22.0),
-            stackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -22.0),
+            buttonStackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 22.0),
+            buttonStackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -22.0),
             ])
 
         for menu in Menu.allCases {
@@ -715,13 +714,12 @@ class DebugTableViewController: InspectableViewController {
                 button.addTarget(self, action: #selector(reorderItems), for: .touchUpInside)
                 reorderButton = button
             }
-            stackView.addArrangedSubview(button)
+            buttonStackView.addArrangedSubview(button)
         }
 
         for i in 0...100 {
             items.append("Items \(i)")
         }
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
     }
 
     @objc func animateScroll() {
@@ -1294,5 +1292,74 @@ class SettingsViewController: InspectableViewController {
     }
     @IBAction func toggleTranslucent(_ sender: UISwitch) {
         navigationController?.navigationBar.isTranslucent = sender.isOn
+    }
+}
+
+// MARK -: Multi Panel
+
+import WebKit
+final class MultiPanelController: FloatingPanelController, FloatingPanelControllerDelegate {
+
+    private final class FirstPanelContentViewController: UIViewController {
+
+        lazy var webView: WKWebView = WKWebView()
+
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            view.addSubview(webView)
+            webView.frame = view.bounds
+            webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            webView.load(URLRequest(url: URL(string: "https://www.apple.com")!))
+
+            let vc = MultiSecondPanelController()
+            vc.setUpContent()
+            vc.addPanel(toParent: self)
+        }
+    }
+
+    private final class MultiSecondPanelController: FloatingPanelController {
+
+        private final class SecondPanelContentViewController: DebugTableViewController {}
+
+        func setUpContent() {
+            contentInsetAdjustmentBehavior = .never
+            let vc = SecondPanelContentViewController()
+            vc.loadViewIfNeeded()
+            vc.title = "Second Panel"
+            vc.buttonStackView.isHidden = true
+            let navigationController = UINavigationController(rootViewController: vc)
+            navigationController.navigationBar.barTintColor = .white
+            navigationController.navigationBar.titleTextAttributes = [
+                .foregroundColor: UIColor.black
+            ]
+            set(contentViewController: navigationController)
+            self.track(scrollView: vc.tableView)
+            surfaceView.containerMargins = .init(top: 24.0, left: 0.0, bottom: layoutInsets.bottom, right: 0.0)
+        }
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        delegate = self
+        isRemovalInteractionEnabled = true
+
+        let vc = FirstPanelContentViewController()
+        set(contentViewController: vc)
+        track(scrollView: vc.webView.scrollView)
+    }
+
+    private final class FirstViewLayout: FloatingPanelLayout {
+        let initialPosition: FloatingPanelPosition = .full
+        let supportedPositions: Set<FloatingPanelPosition> = [.full]
+        func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+            switch position {
+            case .full: return 40.0
+            default: return nil
+            }
+        }
+    }
+
+    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
+        return FirstViewLayout()
     }
 }
