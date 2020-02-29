@@ -30,6 +30,9 @@ xcuserdata/
 *.dSYM.zip
 *.dSYM
 
+## Swift Package Manager Specific
+.swiftpm/
+
 ## Playgrounds
 timeline.xctimeline
 playground.xcworkspace
