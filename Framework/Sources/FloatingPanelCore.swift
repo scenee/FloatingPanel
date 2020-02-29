@@ -905,7 +905,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
     }
 
     private func contentOrigin(of scrollView: UIScrollView) -> CGPoint {
-        if let vc = viewcontroller, let origin = vc.delegate?.foatingPanel(vc, contentOffsetForPinning: scrollView) {
+        if let vc = viewcontroller, let origin = vc.delegate?.floatingPanel(vc, contentOffsetForPinning: scrollView) {
             return origin
         }
         return CGPoint(x: 0.0, y: 0.0 - scrollView.contentInset.top)
