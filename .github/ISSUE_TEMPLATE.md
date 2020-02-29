@@ -2,7 +2,7 @@
 >
 > Please remove this line and everything above it before submitting.
 
-### Short description
+### Description
 
 ### Expected behavior
 
@@ -12,16 +12,29 @@
 
 **Code example that reproduces the issue**
 
+
+**How do you display panel(s)?**
+
+* Add as child view controllers
+* Present modally
+
+**How many panels do you displays?**
+
+* 1 
+* 2+
+
 ### Environment
 
 **Library version**
 
 **Installation method**
 
-- [ ] CocoaPods
-- [ ] Carthage
-- [ ] Git submodules
-
+* CocoaPods
+* Carthage
+* Swift Package Manager
+ 
 **iOS version(s)**
 
+
 **Xcode version**
+
