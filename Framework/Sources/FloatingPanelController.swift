@@ -219,6 +219,7 @@ open class FloatingPanelController: UIViewController {
     private var preSafeAreaInsets: UIEdgeInsets = .zero // Capture the latest one
     private var safeAreaInsetsObservation: NSKeyValueObservation?
     private let modalTransition = FloatingPanelModalTransition()
+    private var positionBeforeHiding: FloatingPanelPosition?
 
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -410,7 +411,7 @@ open class FloatingPanelController: UIViewController {
     // MARK: - Container view controller interface
 
     /// Shows the surface view at the initial position defined by the current layout
-    public func show(to position: FloatingPanelPosition? = nil, animated: Bool = false, completion: (() -> Void)? = nil) {
+    public func show(animated: Bool = false, completion: (() -> Void)? = nil) {
         // Must apply the current layout here
         reloadLayout(for: traitCollection)
         activateLayout()
@@ -430,12 +431,13 @@ open class FloatingPanelController: UIViewController {
             // KVOs for topLayoutGuide & bottomLayoutGuide are not effective.
             // Instead, update(safeAreaInsets:) is called at `viewDidLayoutSubviews()`
         }
-
-        let layout = floatingPanel.layoutAdapter.layout
-        var showingPosition = layout.initialPosition
-        if let position = position {
-            precondition(layout.supportedPositions.contains(position))
-            showingPosition = position
+        
+        var showingPosition = self.layout.initialPosition
+        if self.behavior.showToLastPositionIfPossible,
+            let lastPosition = self.positionBeforeHiding,
+            self.floatingPanel.layoutAdapter.isValid(lastPosition)
+        {
+            showingPosition = lastPosition
         }
         
         move(to: showingPosition, animated: animated, completion: completion)
@@ -443,6 +445,7 @@ open class FloatingPanelController: UIViewController {
 
     /// Hides the surface view to the hidden position
     public func hide(animated: Bool = false, completion: (() -> Void)? = nil) {
+        self.positionBeforeHiding = self.position
         move(to: .hidden,
              animated: animated,
              completion: completion)

@@ -68,6 +68,12 @@ public protocol FloatingPanelBehavior {
     ///
     /// This method allows the behavior to activate the rubber band effect to a given edge of the surface view. By default, the effect is disabled.
     func allowsRubberBanding(for edge: UIRectEdge) -> Bool
+    
+    /// Decide if showing the panel should use the last position before hiding if possible.
+    /// If false, it will always use the layout initial position.
+    ///
+    /// Default is false, which will always use the initial position.
+    var showToLastPositionIfPossible: Bool { get }
 }
 
 public extension FloatingPanelBehavior {
@@ -120,6 +126,10 @@ public extension FloatingPanelBehavior {
     }
 
     func allowsRubberBanding(for edge: UIRectEdge) -> Bool {
+        return false
+    }
+    
+    var showToLastPositionIfPossible: Bool {
         return false
     }
 }
