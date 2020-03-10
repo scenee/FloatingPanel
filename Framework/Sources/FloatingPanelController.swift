@@ -410,7 +410,7 @@ open class FloatingPanelController: UIViewController {
     // MARK: - Container view controller interface
 
     /// Shows the surface view at the initial position defined by the current layout
-    public func show(animated: Bool = false, completion: (() -> Void)? = nil) {
+    public func show(to position: FloatingPanelPosition? = nil, animated: Bool = false, completion: (() -> Void)? = nil) {
         // Must apply the current layout here
         reloadLayout(for: traitCollection)
         activateLayout()
@@ -431,9 +431,14 @@ open class FloatingPanelController: UIViewController {
             // Instead, update(safeAreaInsets:) is called at `viewDidLayoutSubviews()`
         }
 
-        move(to: floatingPanel.layoutAdapter.layout.initialPosition,
-             animated: animated,
-             completion: completion)
+        let layout = floatingPanel.layoutAdapter.layout
+        var showingPosition = layout.initialPosition
+        if let position = position {
+            precondition(layout.supportedPositions.contains(position))
+            showingPosition = position
+        }
+        
+        move(to: showingPosition, animated: animated, completion: completion)
     }
 
     /// Hides the surface view to the hidden position
