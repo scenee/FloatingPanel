@@ -1355,13 +1355,24 @@ final class MultiPanelController: FloatingPanelController, FloatingPanelControll
 
     private final class FirstViewLayout: FloatingPanelLayout {
         let initialPosition: FloatingPanelPosition = .full
-        let supportedPositions: Set<FloatingPanelPosition> = [.full]
+        let supportedPositions: Set<FloatingPanelPosition> = [.full, .half]
         func insetFor(position: FloatingPanelPosition) -> CGFloat? {
             switch position {
             case .full: return 40.0
+            case .half: return 200.0
             default: return nil
             }
         }
+    }
+
+    private final class FirstViewBehavior: FloatingPanelBehavior {
+        func shouldProjectMomentum(_ fpc: FloatingPanelController, for proposedTargetPosition: FloatingPanelPosition) -> Bool {
+            return true
+        }
+    }
+
+    func floatingPanel(_ vc: FloatingPanelController, behaviorFor newCollection: UITraitCollection) -> FloatingPanelBehavior? {
+        return FirstViewBehavior()
     }
 
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
