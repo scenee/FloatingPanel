@@ -755,7 +755,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 
         vc.delegate?.floatingPanelWillBeginDecelerating(vc)
 
-        let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: abs(velocity.y)/distance) : .zero
+        let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: velocity.y / distance) : .zero
         let animator = behavior.interactionAnimator(vc, to: targetPosition, with: velocityVector)
         animator.addAnimations { [weak self] in
             guard let `self` = self, let vc = self.viewcontroller else { return }
@@ -809,7 +809,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
     private func distance(to targetPosition: FloatingPanelPosition) -> CGFloat {
         let currentY = surfaceView.frame.minY
         let targetY = layoutAdapter.positionY(for: targetPosition)
-        return CGFloat(abs(currentY - targetY))
+        return CGFloat(targetY - currentY)
     }
 
     // Distance travelled after decelerating to zero velocity at a constant rate.
