@@ -274,12 +274,12 @@ class SearchHeaderView: UIView {
 
 extension UISearchBar {
     func setSearchText(fontSize: CGFloat) {
-        #if swift(>=5.1) // Xcode 11 or later
+        if #available(iOS 13, *) {
             let font = searchTextField.font
             searchTextField.font = font?.withSize(fontSize)
-        #else
+        } else {
             let textField = value(forKey: "_searchField") as! UITextField
             textField.font = textField.font?.withSize(fontSize)
-        #endif
+        }
     }
 }
