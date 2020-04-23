@@ -526,7 +526,6 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 
         let currentY = surfaceView.frame.minY
         backdropView.alpha = getBackdropAlpha(at: currentY, with: translation)
-        preserveContentVCLayoutIfNeeded()
 
         let didMove = (preY != currentY)
         guard didMove else { return }
@@ -544,54 +543,6 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             return false
         } else {
             return true
-        }
-    }
-
-    private var disabledBottomAutoLayout = false
-    private var disabledAutoLayoutItems: Set<NSLayoutConstraint> = []
-    // Prevent stretching a view having a constraint to SafeArea.bottom in an overflow
-    // from the full position because SafeArea is global in a screen.
-    private func preserveContentVCLayoutIfNeeded() {
-        guard let vc = viewcontroller else { return }
-        guard vc.contentMode != .fitToBounds else { return }
-
-        // Must include topY
-        if (surfaceView.frame.minY <= layoutAdapter.topY) {
-            if !disabledBottomAutoLayout {
-                disabledAutoLayoutItems.removeAll()
-                vc.contentViewController?.view?.constraints.forEach({ (const) in
-                    switch vc.contentViewController?.layoutGuide.bottomAnchor {
-                    case const.firstAnchor:
-                        (const.secondItem as? UIView)?.disableAutoLayout()
-                        const.isActive = false
-                        disabledAutoLayoutItems.insert(const)
-                    case const.secondAnchor:
-                        (const.firstItem as? UIView)?.disableAutoLayout()
-                        const.isActive = false
-                        disabledAutoLayoutItems.insert(const)
-                    default:
-                        break
-                    }
-                })
-            }
-            disabledBottomAutoLayout = true
-        } else {
-            if disabledBottomAutoLayout {
-                disabledAutoLayoutItems.forEach({ (const) in
-                    switch vc.contentViewController?.layoutGuide.bottomAnchor {
-                    case const.firstAnchor:
-                        (const.secondItem as? UIView)?.enableAutoLayout()
-                        const.isActive = true
-                    case const.secondAnchor:
-                        (const.firstItem as? UIView)?.enableAutoLayout()
-                        const.isActive = true
-                    default:
-                        break
-                    }
-                })
-                disabledAutoLayoutItems.removeAll()
-            }
-            disabledBottomAutoLayout = false
         }
     }
 
