@@ -97,7 +97,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
     }
 
     private func move(from: FloatingPanelPosition, to: FloatingPanelPosition, animated: Bool, completion: (() -> Void)? = nil) {
-        assert(layoutAdapter.isValid(to), "Can't move to '\(to)' position because it's not valid in the layout")
+        assert(layoutAdapter.validPositions.contains(to), "Can't move to '\(to)' position because it's not valid in the layout")
         guard let vc = viewcontroller else {
             completion?()
             return
