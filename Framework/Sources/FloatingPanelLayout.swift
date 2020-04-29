@@ -211,6 +211,10 @@ class FloatingPanelLayoutAdapter {
         return layout.supportedPositions
     }
 
+    var validPositions: Set<FloatingPanelPosition> {
+        return supportedPositions.union([.hidden])
+    }
+
     var topMostState: FloatingPanelPosition {
         return supportedPositions.sorted(by: { $0.rawValue < $1.rawValue }).first ?? .hidden
     }
@@ -516,7 +520,7 @@ class FloatingPanelLayoutAdapter {
 
         setBackdropAlpha(of: state)
 
-        if isValid(state) == false {
+        if validPositions.contains(state) == false {
             state = layout.initialPosition
         }
 
@@ -538,10 +542,6 @@ class FloatingPanelLayoutAdapter {
         activateInteractiveLayout(of: state)
     }
 
-    func isValid(_ state: FloatingPanelPosition) -> Bool {
-        return supportedPositions.union([.hidden]).contains(state)
-    }
-
     private func layoutSurfaceIfNeeded() {
         #if !TEST
         guard surfaceView.window != nil else { return }
@@ -560,8 +560,8 @@ class FloatingPanelLayoutAdapter {
     private func checkLayoutConsistance() {
         // Verify layout configurations
         assert(supportedPositions.count > 0)
-        assert(supportedPositions.contains(layout.initialPosition),
-               "Does not include an initial position (\(layout.initialPosition)) in supportedPositions (\(supportedPositions))")
+        assert(validPositions.contains(layout.initialPosition),
+               "Does not include an initial position (\(layout.initialPosition)) in (\(validPositions))")
 
         if layout is FloatingPanelIntrinsicLayout {
             assert(layout.insetFor(position: .full) == nil, "Return `nil` for full position on FloatingPanelIntrinsicLayout")
