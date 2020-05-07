@@ -5,8 +5,35 @@
 
 import UIKit
 
-@objc
+@objcMembers
 public class FloatingPanelSurfaceAppearance: NSObject {
+    @objc(FloatingPanelSurfaceAppearanceShadow)
+    public class Shadow: NSObject {
+        /// A Boolean indicating whether the surface shadow is displayed.
+        @objc
+        public var hidden: Bool = false
+
+        /// The color of the surface shadow.
+        @objc
+        public var color: UIColor = .black
+
+        /// The offset (in points) of the surface shadow.
+        @objc
+        public var offset: CGSize = CGSize(width: 0.0, height: 1.0)
+
+        /// The opacity of the surface shadow.
+        @objc
+        public var opacity: Float = 0.2
+
+        /// The blur radius (in points) used to render the surface shadow.
+        @objc
+        public var radius: CGFloat = 3
+
+        /// TODO: doc comment
+        @objc
+        public var spread: CGFloat = 0
+
+    }
     /// The background color.
     public var backgroundColor: UIColor? = {
         if #available(iOS 13, *) {
@@ -22,20 +49,7 @@ public class FloatingPanelSurfaceAppearance: NSObject {
     /// On iOS 10, they are not automatically masked because of a UIVisualEffectView issue. See https://forums.developer.apple.com/thread/50854
     public var cornerRadius: CGFloat = 0.0
 
-    /// A Boolean indicating whether the surface shadow is displayed.
-    public var shadowHidden: Bool = false
-
-    /// The color of the surface shadow.
-    public var shadowColor: UIColor = .black
-
-    /// The offset (in points) of the surface shadow.
-    public var shadowOffset: CGSize = CGSize(width: 0.0, height: 1.0)
-
-    /// The opacity of the surface shadow.
-    public var shadowOpacity: Float = 0.2
-
-    /// The blur radius (in points) used to render the surface shadow.
-    public var shadowRadius: CGFloat = 3
+    public var shadows: [Shadow] = [Shadow()]
 
     /// The width of the surface border.
     public var borderColor: UIColor?
@@ -45,6 +59,7 @@ public class FloatingPanelSurfaceAppearance: NSObject {
 }
 
 /// A view that presents a surface interface in a floating panel.
+@objcMembers
 public class FloatingPanelSurfaceView: UIView {
     /// A FloatingPanelGrabberView object displayed at the top of the surface view.
     ///
@@ -84,6 +99,7 @@ public class FloatingPanelSurfaceView: UIView {
     }
 
     public var appearance = FloatingPanelSurfaceAppearance() { didSet {
+        shadowLayers = appearance.shadows.map { _ in CAShapeLayer() }
         setNeedsLayout()
     }}
 
@@ -183,6 +199,19 @@ public class FloatingPanelSurfaceView: UIView {
     private lazy var grabberHandleCenterConstraint =  grabberHandle.centerXAnchor.constraint(equalTo: centerXAnchor)
     private lazy var grabberHandleEdgePaddingConstraint = grabberHandle.topAnchor.constraint(equalTo: topAnchor, constant: grabberHandlePadding)
 
+    private var shadowLayers: [CALayer] = [] {
+        willSet {
+            for shadowLayer in shadowLayers {
+                shadowLayer.removeFromSuperlayer()
+            }
+        }
+        didSet {
+            for shadowLayer in shadowLayers {
+                layer.insertSublayer(shadowLayer, at: 0)
+            }
+        }
+    }
+
     public override class var requiresConstraintBasedLayout: Bool { return true }
 
     override init(frame: CGRect) {
@@ -216,6 +245,8 @@ public class FloatingPanelSurfaceView: UIView {
             grabberHandleWidthConstraint,
             grabberHandleHeightConstraint,
         ])
+
+        shadowLayers = appearance.shadows.map { _ in CALayer() }
     }
 
     public override func updateConstraints() {
@@ -285,17 +316,37 @@ public class FloatingPanelSurfaceView: UIView {
     }
 
     private func updateShadow() {
-        if appearance.shadowHidden == false {
-            if #available(iOS 11, *) {
-                // For clear background. See also, https://github.com/SCENEE/FloatingPanel/pull/51.
-                layer.shadowColor = appearance.shadowColor.cgColor
-                layer.shadowOffset = appearance.shadowOffset
-                layer.shadowOpacity = appearance.shadowOpacity
-                layer.shadowRadius = appearance.shadowRadius
-            } else {
-                // Can't update `layer.shadow*` directly because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
-                // Instead, a user should display shadow appropriately.
+        for (i, shadow) in appearance.shadows.enumerated() {
+            let shadowLayer = shadowLayers[i]
+
+            shadowLayer.backgroundColor = UIColor.clear.cgColor
+            shadowLayer.frame = layer.bounds
+
+            let spread = shadow.spread
+            let shadowPath = UIBezierPath(roundedRect: containerView.frame.insetBy(dx: -spread,
+                                                                                   dy: -spread),
+                                          byRoundingCorners: [.allCorners],
+                                          cornerRadii: CGSize(width: appearance.cornerRadius, height: 0))
+            shadowLayer.shadowPath = shadowPath.cgPath
+            shadowLayer.shadowColor = shadow.color.cgColor
+            shadowLayer.shadowOffset = shadow.offset
+            // A shadow.radius value isn't manipulated by a scale(i.e. the display scale). It should be applied to the value by itself.
+            shadowLayer.shadowRadius = shadow.radius
+            shadowLayer.shadowOpacity = shadow.opacity
+
+            let mask = CAShapeLayer()
+            let path = UIBezierPath(roundedRect: containerView.frame,
+                                    byRoundingCorners: [.allCorners],
+                                    cornerRadii: CGSize(width: appearance.cornerRadius, height: 0))
+            let size = window?.bounds.size ?? CGSize(width: 1000.0, height: 1000.0)
+            path.append(UIBezierPath(rect: layer.bounds.insetBy(dx: -size.width,
+                                                                dy: -size.height)))
+            mask.fillRule = .evenOdd
+            mask.path = path.cgPath
+            if #available(iOSApplicationExtension 13.0, *) {
+                mask.cornerCurve = containerView.layer.cornerCurve
             }
+            shadowLayer.mask = mask
         }
     }
 
