@@ -421,9 +421,9 @@ open class FloatingPanelController: UIViewController {
             // inset's update expectedly.
             // 2. The safe area top inset can be variable on the large title navigation bar(iOS11+).
             // That's why it needs the observation to keep `adjustedContentInsets` correct.
-            safeAreaInsetsObservation = self.observe(\.view.safeAreaInsets, options: [.initial, .new, .old]) { [weak self] (vc, change) in
-                guard change.oldValue != change.newValue else { return }
-                self?.update(safeAreaInsets: vc.layoutInsets)
+            safeAreaInsetsObservation = self.view.observe(\.safeAreaInsets, options: [.initial, .new, .old]) { [weak self] (_, change) in
+                guard change.oldValue != change.newValue, let newValue = change.newValue else { return }
+                self?.update(safeAreaInsets: newValue)
             }
         } else {
             // KVOs for topLayoutGuide & bottomLayoutGuide are not effective.
