@@ -457,7 +457,7 @@ class FloatingPanelLayoutAdapter {
             case .fromSuperview:
                 ret = topY
             }
-            return max(ret, 0.0) // The top boundary is equal to the related topAnchor.
+            return ret
         }()
         let bottomMostConst: CGFloat = {
             var ret: CGFloat = 0.0
@@ -468,7 +468,7 @@ class FloatingPanelLayoutAdapter {
             case .fromSuperview:
                 ret = _bottomY
             }
-            return min(ret, surfaceView.superview!.bounds.height)
+            return ret
         }()
         let minConst = allowsTopBuffer ? topMostConst - layout.topInteractionBuffer : topMostConst
         let maxConst = bottomMostConst + layout.bottomInteractionBuffer
