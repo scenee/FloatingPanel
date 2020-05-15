@@ -100,7 +100,14 @@ public class FloatingPanelSurfaceView: UIView {
     /// content view.
     public let containerView: UIView = UIView()
 
-    var containerOverflow: CGFloat = 0.0 // Must not call setNeedsLayout()
+    var containerOverflow: CGFloat = 0.0 { // Must not call setNeedsLayout()
+        didSet {
+            // Calling setNeedsUpdateConstraints() is necessary to fix a layout break
+            // when the contentMode is changed after laying out a floating panel, for instance,
+            // after calling viewDidAppear(_:) of the parent view controller.
+            setNeedsUpdateConstraints()
+        }
+    }
 
     var anchorPosition: FloatingPanelPosition = .bottom {
         didSet {
