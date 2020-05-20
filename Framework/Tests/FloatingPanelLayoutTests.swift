@@ -195,6 +195,43 @@ class FloatingPanelLayoutTests: XCTestCase {
         fpc.floatingPanel.layoutAdapter.endInteraction(at: fpc.position)
     }
 
+    func test_updateInteractiveTopConstraintWithMinusInsets() {
+        class FloatingPanelLayoutMinusInsets: FloatingPanelTestLayout {
+            let initialPosition: FloatingPanelPosition = .full
+            let supportedPositions: Set<FloatingPanelPosition> = [.tip, .full]
+            func insetFor(position: FloatingPanelPosition) -> CGFloat? {
+                switch position {
+                case .full, .tip: return -200
+                default: return nil
+                }
+            }
+        }
+        let delegate = FloatingPanelTestDelegate()
+        delegate.layout = FloatingPanelLayoutMinusInsets()
+        fpc.delegate = delegate
+        fpc.showForTest()
+        fpc.floatingPanel.layoutAdapter.startInteraction(at: fpc.position)
+
+        let fullPos = fpc.originYOfSurface(for: .full)
+        let tipPos = fpc.originYOfSurface(for: .tip)
+        let current = fpc.surfaceView.frame.minY
+
+        var next: CGFloat
+        fpc.floatingPanel.layoutAdapter.updateInteractiveTopConstraint(diff: -100.0, allowsTopBuffer: false, with: fpc.behavior)
+        next = fpc.surfaceView.frame.minY
+        XCTAssertEqual(next, current)
+
+        fpc.floatingPanel.layoutAdapter.updateInteractiveTopConstraint(diff: -100.0, allowsTopBuffer: true, with: fpc.behavior)
+        next = fpc.surfaceView.frame.minY
+        XCTAssertEqual(next, fullPos - fpc.layout.topInteractionBuffer)
+
+        fpc.floatingPanel.layoutAdapter.updateInteractiveTopConstraint(diff: tipPos - fullPos + 100.0, allowsTopBuffer: true, with: fpc.behavior)
+        next = fpc.surfaceView.frame.minY
+        XCTAssertEqual(next, tipPos + fpc.layout.bottomInteractionBuffer)
+
+        fpc.floatingPanel.layoutAdapter.endInteraction(at: fpc.position)
+    }
+
     func test_positionReference() {
         fpc = CustomSafeAreaFloatingPanelController()
         fpc.loadViewIfNeeded()
