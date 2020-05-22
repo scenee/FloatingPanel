@@ -670,7 +670,8 @@ public extension UIViewController {
         }
         // Call dismiss(animated:completion:) to FloatingPanelController directly
         if let fpc = self as? FloatingPanelController {
-            if fpc.presentingViewController != nil {
+            // When a panel is presented modally and it's not a child view controller of the presented view controller.
+            if fpc.presentingViewController != nil, fpc.parent == nil {
                 self.fp_original_dismiss(animated: flag, completion: completion)
             } else {
                 fpc.removePanelFromParent(animated: flag, completion: completion)
