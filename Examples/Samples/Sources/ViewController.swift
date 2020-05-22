@@ -882,8 +882,7 @@ class ModalViewController: UIViewController, FloatingPanelControllerDelegate {
 
     var isNewlayout: Bool = false
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidLoad() {
         // Initialize FloatingPanelController
         fpc = FloatingPanelController()
         fpc.delegate = self
@@ -903,8 +902,8 @@ class ModalViewController: UIViewController, FloatingPanelControllerDelegate {
         fpc.addPanel(toParent: self, belowView: safeAreaView)
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         //  Remove FloatingPanel from a view
         fpc.removePanelFromParent(animated: false)
     }
@@ -965,20 +964,15 @@ class TabBarContentViewController: UIViewController {
             }
         }
     }
-    var fpc: FloatingPanelController!
+    lazy var fpc = FloatingPanelController()
     var consoleVC: DebugTextViewController!
 
     var threeLayout: ThreeTabBarPanelLayout!
     var tab3Mode: Tab3Mode = .changeAutoLayout
     var switcherLabel: UILabel!
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        // Initialize FloatingPanelController
-        fpc = FloatingPanelController()
+    override func viewDidLoad() {
         fpc.delegate = self
-
-        // Initialize FloatingPanelController and add the view
         fpc.surfaceView.cornerRadius = 6.0
         fpc.surfaceView.shadowHidden = false
 
@@ -1026,12 +1020,6 @@ class TabBarContentViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         fpc.updateLayout()
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        //  Remove FloatingPanel from a view
-        fpc.removePanelFromParent(animated: false)
     }
 
     // MARK: - Action
