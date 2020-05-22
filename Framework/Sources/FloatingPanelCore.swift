@@ -199,6 +199,11 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
              is UIRotationGestureRecognizer,
              is UIScreenEdgePanGestureRecognizer,
              is UIPinchGestureRecognizer:
+            if #available(iOS 11.0, *),
+                otherGestureRecognizer.name == "_UISheetInteractionBackgroundDismissRecognizer" {
+                // The pan gesture should recognize the dismiss gesture of a sheet modal simultaneously.
+                return true
+            }
             // all gestures of the tracking scroll view should be recognized in parallel
             // and handle them in self.handle(panGesture:)
             return scrollView?.gestureRecognizers?.contains(otherGestureRecognizer) ?? false
@@ -220,6 +225,11 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             if let view = otherGestureRecognizer.view, surfaceView.isDescendant(of: view) {
                 return true
             }
+        }
+        if #available(iOS 11.0, *),
+            otherGestureRecognizer.name == "_UISheetInteractionBackgroundDismissRecognizer" {
+            // The dismiss gesture of a sheet modal should not begin until the pan gesture fails.
+            return true
         }
         return false
     }
@@ -271,6 +281,11 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
              is UIRotationGestureRecognizer,
              is UIScreenEdgePanGestureRecognizer,
              is UIPinchGestureRecognizer:
+            if #available(iOS 11.0, *),
+                otherGestureRecognizer.name == "_UISheetInteractionBackgroundDismissRecognizer" {
+                // Should begin the pan gesture without waiting the dismiss gesture of a sheet modal.
+                return false
+            }
             // Do not begin the pan gesture until these gestures fail
             return true
         default:
