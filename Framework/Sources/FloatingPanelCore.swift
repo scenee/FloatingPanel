@@ -199,11 +199,6 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
              is UIRotationGestureRecognizer,
              is UIScreenEdgePanGestureRecognizer,
              is UIPinchGestureRecognizer:
-            if #available(iOS 11.0, *),
-                otherGestureRecognizer.name == "_UISheetInteractionBackgroundDismissRecognizer" {
-                // The pan gesture should recognize the dismiss gesture of a sheet modal simultaneously.
-                return true
-            }
             // all gestures of the tracking scroll view should be recognized in parallel
             // and handle them in self.handle(panGesture:)
             return scrollView?.gestureRecognizers?.contains(otherGestureRecognizer) ?? false
