@@ -228,6 +228,7 @@ public class FloatingPanelSurfaceView: UIView {
         let rightConstraint = rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: containerMargins.right + contentInsets.right)
         let heightPadding = containerMargins.top + containerMargins.bottom + contentInsets.top + contentInsets.bottom
         let heightConstraint = contentView.heightAnchor.constraint(equalTo: heightAnchor, constant: -heightPadding)
+        heightConstraint.priority = UILayoutPriority(999)
         NSLayoutConstraint.activate([
             topConstraint,
             leftConstraint,
