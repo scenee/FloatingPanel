@@ -221,6 +221,11 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
                 return true
             }
         }
+        if #available(iOS 11.0, *),
+            otherGestureRecognizer.name == "_UISheetInteractionBackgroundDismissRecognizer" {
+            // The dismiss gesture of a sheet modal should not begin until the pan gesture fails.
+            return true
+        }
         return false
     }
 
@@ -271,6 +276,11 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
              is UIRotationGestureRecognizer,
              is UIScreenEdgePanGestureRecognizer,
              is UIPinchGestureRecognizer:
+            if #available(iOS 11.0, *),
+                otherGestureRecognizer.name == "_UISheetInteractionBackgroundDismissRecognizer" {
+                // Should begin the pan gesture without waiting the dismiss gesture of a sheet modal.
+                return false
+            }
             // Do not begin the pan gesture until these gestures fail
             return true
         default:
