@@ -19,6 +19,7 @@ class SampleListViewController: UIViewController {
         case showModal
         case showPanelModal
         case showMultiPanelModal
+        case showPanelInSheetModal
         case showTabBar
         case showPageView
         case showPageContentView
@@ -37,6 +38,7 @@ class SampleListViewController: UIViewController {
             case .showModal: return "Show Modal"
             case .showPanelModal: return "Show Panel Modal"
             case .showMultiPanelModal: return "Show Multi Panel Modal"
+            case .showPanelInSheetModal: return "Show Panel in Sheet Modal"
             case .showTabBar: return "Show Tab Bar"
             case .showPageView: return "Show Page View"
             case .showPageContentView: return "Show Page Content View"
@@ -56,6 +58,7 @@ class SampleListViewController: UIViewController {
             case .showDetail: return "DetailViewController"
             case .showModal: return "ModalViewController"
             case .showMultiPanelModal: return nil
+            case .showPanelInSheetModal: return nil
             case .showPanelModal: return nil
             case .showTabBar: return "TabBarViewController"
             case .showPageView: return nil
@@ -350,6 +353,20 @@ extension SampleListViewController: UITableViewDelegate {
             let fpc = MultiPanelController()
             self.present(fpc, animated: true, completion: nil)
 
+        case .showPanelInSheetModal:
+            let fpc = FloatingPanelController()
+            let contentVC = UIViewController()
+            fpc.set(contentViewController: contentVC)
+            fpc.delegate = self
+
+            fpc.surfaceView.cornerRadius = 38.5
+            fpc.surfaceView.shadowHidden = false
+            fpc.isRemovalInteractionEnabled = true
+
+            let mvc = UIViewController()
+            mvc.view.backgroundColor = UIColor(displayP3Red: 2/255, green: 184/255, blue: 117/255, alpha: 1.0)
+            fpc.addPanel(toParent: mvc)
+            self.present(mvc, animated: true, completion: nil)
         case .showContentInset:
             let contentViewController = UIViewController()
             contentViewController.view.backgroundColor = .green
@@ -865,8 +882,7 @@ class ModalViewController: UIViewController, FloatingPanelControllerDelegate {
 
     var isNewlayout: Bool = false
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidLoad() {
         // Initialize FloatingPanelController
         fpc = FloatingPanelController()
         fpc.delegate = self
@@ -886,8 +902,8 @@ class ModalViewController: UIViewController, FloatingPanelControllerDelegate {
         fpc.addPanel(toParent: self, belowView: safeAreaView)
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         //  Remove FloatingPanel from a view
         fpc.removePanelFromParent(animated: false)
     }
@@ -948,20 +964,15 @@ class TabBarContentViewController: UIViewController {
             }
         }
     }
-    var fpc: FloatingPanelController!
+    lazy var fpc = FloatingPanelController()
     var consoleVC: DebugTextViewController!
 
     var threeLayout: ThreeTabBarPanelLayout!
     var tab3Mode: Tab3Mode = .changeAutoLayout
     var switcherLabel: UILabel!
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        // Initialize FloatingPanelController
-        fpc = FloatingPanelController()
+    override func viewDidLoad() {
         fpc.delegate = self
-
-        // Initialize FloatingPanelController and add the view
         fpc.surfaceView.cornerRadius = 6.0
         fpc.surfaceView.shadowHidden = false
 
@@ -1009,12 +1020,6 @@ class TabBarContentViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         fpc.updateLayout()
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        //  Remove FloatingPanel from a view
-        fpc.removePanelFromParent(animated: false)
     }
 
     // MARK: - Action
