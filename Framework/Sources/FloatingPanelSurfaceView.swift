@@ -316,6 +316,9 @@ public class FloatingPanelSurfaceView: UIView {
     }
 
     private func updateShadow() {
+        // Disable shadow animation when the surface's frame jumps to a new value.
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
         for (i, shadow) in appearance.shadows.enumerated() {
             let shadowLayer = shadowLayers[i]
 
@@ -348,6 +351,7 @@ public class FloatingPanelSurfaceView: UIView {
             }
             shadowLayer.mask = mask
         }
+        CATransaction.commit()
     }
 
     private func updateCornerRadius() {
