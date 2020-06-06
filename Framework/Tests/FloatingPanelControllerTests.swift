@@ -11,7 +11,6 @@ class FloatingPanelControllerTests: XCTestCase {
     override func tearDown() {}
 
     func test_warningRetainCycle() {
-        let myVC = MyZombieViewController(nibName: nil, bundle: nil)
         let exp = expectation(description: "Warning retain cycle")
         exp.expectedFulfillmentCount = 2 // For layout & behavior logs
         log.hook = {(log, level) in
@@ -20,6 +19,7 @@ class FloatingPanelControllerTests: XCTestCase {
                 exp.fulfill()
             }
         }
+        let myVC = MyZombieViewController(nibName: nil, bundle: nil)
         myVC.loadViewIfNeeded()
         wait(for: [exp], timeout: 10)
     }
@@ -28,19 +28,19 @@ class FloatingPanelControllerTests: XCTestCase {
         guard let rootVC = UIApplication.shared.keyWindow?.rootViewController else { fatalError() }
         let fpc = FloatingPanelController()
         fpc.addPanel(toParent: rootVC)
-        XCTAssert(fpc.surfaceView.frame.minY ==  (fpc.view.bounds.height - fpc.layoutInsets.bottom) - fpc.layout.insetFor(position: .half)!)
+        XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .half).y)
         fpc.move(to: .tip, animated: false)
-        XCTAssert(fpc.surfaceView.frame.minY == (fpc.view.bounds.height - fpc.layoutInsets.bottom) - fpc.layout.insetFor(position: .tip)!)
+        XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .tip).y)
     }
 
     @available(iOS 12.0, *)
     func test_updateLayout_willTransition() {
         class MyDelegate: FloatingPanelControllerDelegate {
-            func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
+            func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout {
                 if newCollection.userInterfaceStyle == .dark {
                     XCTFail()
                 }
-                return nil
+                return FloatingPanelBottomLayout()
             }
         }
         let myDelegate = MyDelegate()
@@ -48,7 +48,6 @@ class FloatingPanelControllerTests: XCTestCase {
         let traitCollection = UITraitCollection(traitsFrom: [fpc.traitCollection,
                                                              UITraitCollection(userInterfaceStyle: .dark)])
         XCTAssertEqual(traitCollection.userInterfaceStyle, .dark)
-        fpc.prepare(for: traitCollection)
     }
 
     func test_moveTo() {
@@ -62,44 +61,136 @@ class FloatingPanelControllerTests: XCTestCase {
         XCTAssertEqual(delegate.position, .hidden)
         
         fpc.move(to: .full, animated: false)
-        XCTAssertEqual(fpc.position, .full)
+        XCTAssertEqual(fpc.state, .full)
         XCTAssertEqual(delegate.position, .full)
-        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .full))
+        XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .full).y)
 
         fpc.move(to: .half, animated: false)
-        XCTAssertEqual(fpc.position, .half)
+        XCTAssertEqual(fpc.state, .half)
         XCTAssertEqual(delegate.position, .half)
-        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .half))
+
+        XCTAssertEqual(fpc.surfaceLocation, fpc.surfaceLocation(for: .half))
 
         fpc.move(to: .tip, animated: false)
-        XCTAssertEqual(fpc.position, .tip)
+        XCTAssertEqual(fpc.state, .tip)
         XCTAssertEqual(delegate.position, .tip)
-        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .tip))
+        XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .tip).y)
 
         fpc.move(to: .hidden, animated: false)
-        XCTAssertEqual(fpc.position, .hidden)
+        XCTAssertEqual(fpc.state, .hidden)
         XCTAssertEqual(delegate.position, .hidden)
-        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .hidden))
+        XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .hidden).y)
 
-        fpc.move(to: .full, animated: true)
-        XCTAssertEqual(fpc.position, .full)
-        XCTAssertEqual(delegate.position, .full)
-        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .full))
+        XCTContext.runActivity(named: "move to full(animated)") { act in
+            let exp = expectation(description: act.name)
+            fpc.move(to: .full, animated: true) {
+                XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .full).y)
+                exp.fulfill()
+            }
+            XCTAssertEqual(fpc.state, .full)
+            XCTAssertEqual(delegate.position, .full)
+            wait(for: [exp], timeout: 0.5)
+        }
 
-        fpc.move(to: .half, animated: true)
-        XCTAssertEqual(fpc.position, .half)
-        XCTAssertEqual(delegate.position, .half)
-        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .half))
+        XCTContext.runActivity(named: "move to half(animated)") { act in
+            let exp = expectation(description: act.name)
+            fpc.move(to: .half, animated: true) {
+                XCTAssertEqual(fpc.surfaceLocation, fpc.surfaceLocation(for: .half))
+                exp.fulfill()
+            }
+            XCTAssertEqual(fpc.state, .half)
+            XCTAssertEqual(delegate.position, .half)
+            wait(for: [exp], timeout: 0.8)
+        }
 
-        fpc.move(to: .tip, animated: true)
-        XCTAssertEqual(fpc.position, .tip)
-        XCTAssertEqual(delegate.position, .tip)
-        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .tip))
+        XCTContext.runActivity(named: "move to tip(animated)") { act in
+            let exp = expectation(description: act.name)
+            fpc.move(to: .tip, animated: true) {
+                XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .tip).y)
+                exp.fulfill()
+            }
+            XCTAssertEqual(fpc.state, .tip)
+            XCTAssertEqual(delegate.position, .tip)
+            wait(for: [exp], timeout: 0.8)
+        }
 
         fpc.move(to: .hidden, animated: true)
-        XCTAssertEqual(fpc.position, .hidden)
+        XCTAssertEqual(fpc.state, .hidden)
         XCTAssertEqual(delegate.position, .hidden)
-        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .hidden))
+        XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .hidden).y)
+    }
+
+    func test_moveTo_bottomEdge() {
+        class MyFloatingPanelTop2BottomLayout: FloatingPanelTop2BottomTestLayout {
+            override var initialState: FloatingPanelState { return .half }
+        }
+        let delegate = FloatingPanelTestDelegate()
+        let fpc = FloatingPanelController(delegate: delegate)
+        fpc.layout = MyFloatingPanelTop2BottomLayout()
+        XCTAssertEqual(delegate.position, .hidden)
+        fpc.showForTest()
+        XCTAssertEqual(delegate.position, .half)
+
+        fpc.hide()
+        XCTAssertEqual(delegate.position, .hidden)
+
+        fpc.move(to: .full, animated: false)
+        XCTAssertEqual(fpc.state, .full)
+        XCTAssertEqual(delegate.position, .full)
+        XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .full).y)
+
+        fpc.move(to: .half, animated: false)
+        XCTAssertEqual(fpc.state, .half)
+        XCTAssertEqual(delegate.position, .half)
+        XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .half).y)
+
+        fpc.move(to: .tip, animated: false)
+        XCTAssertEqual(fpc.state, .tip)
+        XCTAssertEqual(delegate.position, .tip)
+        XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .tip).y)
+
+        fpc.move(to: .hidden, animated: false)
+        XCTAssertEqual(fpc.state, .hidden)
+        XCTAssertEqual(delegate.position, .hidden)
+        XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .hidden).y)
+
+        XCTContext.runActivity(named: "move to full(animated)") { act in
+            let exp = expectation(description: act.name)
+            fpc.move(to: .full, animated: true) {
+                XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .full).y)
+                exp.fulfill()
+            }
+            XCTAssertEqual(fpc.state, .full)
+            XCTAssertEqual(delegate.position, .full)
+            wait(for: [exp], timeout: 0.5)
+        }
+
+        XCTContext.runActivity(named: "move to half(animated)") { act in
+            let exp = expectation(description: act.name)
+            fpc.move(to: .half, animated: true) {
+                XCTAssertEqual(fpc.surfaceLocation, fpc.surfaceLocation(for: .half))
+                exp.fulfill()
+            }
+            XCTAssertEqual(fpc.state, .half)
+            XCTAssertEqual(delegate.position, .half)
+            wait(for: [exp], timeout: 0.8)
+        }
+
+        XCTContext.runActivity(named: "move to tip(animated)") { act in
+            let exp = expectation(description: act.name)
+            fpc.move(to: .tip, animated: true) {
+                XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .tip).y)
+                exp.fulfill()
+            }
+            XCTAssertEqual(fpc.state, .tip)
+            XCTAssertEqual(delegate.position, .tip)
+            wait(for: [exp], timeout: 0.8)
+        }
+
+        fpc.move(to: .hidden, animated: true)
+        XCTAssertEqual(fpc.state, .hidden)
+        XCTAssertEqual(delegate.position, .hidden)
+        XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .hidden).y)
     }
     
     func test_moveWithNearbyPosition() {
@@ -108,14 +199,86 @@ class FloatingPanelControllerTests: XCTestCase {
         XCTAssertEqual(delegate.position, .hidden)
         fpc.showForTest()
         
-        XCTAssertEqual(fpc.nearbyPosition, .half)
+        XCTAssertEqual(fpc.nearbyState, .half)
         
         fpc.hide()
-        XCTAssertEqual(fpc.nearbyPosition, .tip)
+        XCTAssertEqual(fpc.nearbyState, .tip)
         
         fpc.move(to: .full, animated: false)
-        XCTAssertEqual(fpc.nearbyPosition, .full)
-        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .full))
+        XCTAssertEqual(fpc.nearbyState, .full)
+        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.surfaceLocation(for: .full).y)
+    }
+
+    func test_moveTo_didMoveDelegate() {
+        let delegate = FloatingPanelTestDelegate()
+        let fpc = FloatingPanelController(delegate: delegate)
+        XCTAssertEqual(delegate.position, .hidden)
+        fpc.showForTest()
+
+        XCTContext.runActivity(named: "move(to:animated:false") { act in
+            let exp = expectation(description: act.name)
+            exp.expectedFulfillmentCount = 1
+            var count = 0
+            delegate.didMoveCallback = { _ in
+                count += 1
+                exp.fulfill()
+            }
+            fpc.move(to: .full, animated: false)
+            wait(for: [exp], timeout: 1.0)
+
+            XCTAssertEqual(count, 1)
+        }
+
+        XCTContext.runActivity(named: "move(to:animated:true)") { act in
+            let exp = expectation(description: act.name)
+            exp.assertForOverFulfill = false
+            exp.expectedFulfillmentCount = 1
+            var count = 0
+            delegate.didMoveCallback = { _ in
+                count += 1
+            }
+            fpc.move(to: .half, animated: true) {
+                exp.fulfill()
+            }
+            wait(for: [exp], timeout: 1.0)
+
+            XCTAssertGreaterThan(count, 1)
+        }
+
+        XCTContext.runActivity(named: "move(to:animated:false) with animation") { act in
+            let exp = expectation(description: act.name)
+            exp.expectedFulfillmentCount = 1
+            var count = 0
+            delegate.didMoveCallback = { _ in
+                count += 1
+            }
+            UIView.animate(withDuration: 0.3) {
+                fpc.move(to: .full, animated: false) {
+                    exp.fulfill()
+                }
+            }
+            wait(for: [exp], timeout: 1.0)
+
+            XCTAssertEqual(count, 1)
+        }
+
+        XCTContext.runActivity(named: "move(to:animated:true) with animation") { act in
+            let exp = expectation(description: act.name)
+            exp.assertForOverFulfill = false
+            exp.expectedFulfillmentCount = 1
+            var count = 0
+            delegate.didMoveCallback = { _ in
+                count += 1
+            }
+            UIView.animate(withDuration: 0.3) {
+                fpc.move(to: .half, animated: true) {
+                    exp.fulfill()
+                }
+            }
+            wait(for: [exp], timeout: 1.0)
+
+            XCTAssertGreaterThan(count, 1)
+        }
     }
 
     func test_originSurfaceY() {
@@ -125,13 +288,13 @@ class FloatingPanelControllerTests: XCTestCase {
         fpc.show(animated: false, completion: nil)
 
         fpc.move(to: .full, animated: false)
-        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .full))
+        XCTAssertEqual(fpc.surfaceLocation, fpc.surfaceLocation(for: .full))
         fpc.move(to: .half, animated: false)
-        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .half))
+        XCTAssertEqual(fpc.surfaceLocation, fpc.surfaceLocation(for: .half))
         fpc.move(to: .tip, animated: false)
-        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .tip))
+        XCTAssertEqual(fpc.surfaceLocation, fpc.surfaceLocation(for: .tip))
         fpc.move(to: .hidden, animated: false)
-        XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.originYOfSurface(for: .hidden))
+        XCTAssertEqual(fpc.surfaceLocation, fpc.surfaceLocation(for: .hidden))
     }
 
     func test_contentMode() {
@@ -143,20 +306,21 @@ class FloatingPanelControllerTests: XCTestCase {
         fpc.contentMode = .static
 
         fpc.move(to: .full, animated: false)
-        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.originYOfSurface(for: .full))
+        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.surfaceLocation(for: .full).y)
         fpc.move(to: .half, animated: false)
-        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.originYOfSurface(for: .full))
+        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.surfaceLocation(for: .full).y)
         fpc.move(to: .tip, animated: false)
-        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.originYOfSurface(for: .full))
+        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.surfaceLocation(for: .full).y)
 
         fpc.contentMode = .fitToBounds
 
         fpc.move(to: .full, animated: false)
-        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.originYOfSurface(for: .full))
+        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.surfaceLocation(for: .full).y)
         fpc.move(to: .half, animated: false)
-        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.originYOfSurface(for: .half))
+        print(1 / fpc.surfaceView.traitCollection.displayScale)
+        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.surfaceLocation(for: .half).y)
         fpc.move(to: .tip, animated: false)
-        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.originYOfSurface(for: .tip))
+        XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.surfaceLocation(for: .tip).y)
     }
 }
 
@@ -165,24 +329,27 @@ private class MyZombieViewController: UIViewController, FloatingPanelLayout, Flo
     override func viewDidLoad() {
         fpc = FloatingPanelController(delegate: self)
         fpc?.addPanel(toParent: self)
+        fpc?.layout = self
+        fpc?.behavior = self
     }
-    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
-        return self
+    var anchorPosition: FloatingPanelPosition {
+        return .bottom
     }
-
-    func floatingPanel(_ vc: FloatingPanelController, behaviorFor newCollection: UITraitCollection) -> FloatingPanelBehavior? {
-        return self
-    }
-    var initialPosition: FloatingPanelPosition {
+    var initialState: FloatingPanelState {
         return .half
     }
 
-    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        switch position {
-        case .full: return UIScreen.main.bounds.height == 667.0 ? 18.0 : 16.0
-        case .half: return 262.0
-        case .tip: return 69.0
-        case .hidden: return nil
-        }
+    var stateAnchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+        return [
+            .full: FloatingPanelLayoutAnchor(absoluteInset: UIScreen.main.bounds.height == 667.0 ? 18.0 : 16.0,
+                                             edge: .top,
+                                             referenceGuide: .superview),
+            .half: FloatingPanelLayoutAnchor(absoluteInset: 250.0,
+                                             edge: .bottom,
+                                             referenceGuide: .superview),
+            .tip: FloatingPanelLayoutAnchor(absoluteInset: 60.0,
+                                            edge: .bottom,
+                                            referenceGuide: .superview),
+        ]
     }
 }

@@ -167,7 +167,7 @@ FloatingPanelController.view (FloatingPanelPassThroughView)
  └─ .surfaceView (FloatingPanelSurfaceView)
     ├─ .containerView (UIView)
     │  └─ .contentView (FloatingPanelController.contentViewController.view)
-    └─ .grabberHandle (GrabberHandleView)
+    └─ .grabber (FloatingPanelGrabberView)
 ```
 
 ## Usage
@@ -392,7 +392,7 @@ This allows full projectional panel behavior. For example, a user can swipe up a
 ```swift
 class FloatingPanelBehavior: FloatingPanelBehavior {
     ...
-    func shouldProjectMomentum(_ fpc: FloatingPanelController, for proposedTargetPosition: FloatingPanelPosition) -> Bool {
+    func shouldProjectMomentum(_ fpc: FloatingPanelController, to proposedTargetPosition: FloatingPanelPosition) -> Bool {
         return true
     }
 }
@@ -523,8 +523,8 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
         }
     }
 
-    func floatingPanelDidEndDragging(_ vc: FloatingPanelController, withVelocity velocity: CGPoint, targetPosition: FloatingPanelPosition) {
-        if targetPosition != .full {
+    func floatingPanelWillEndDragging(_ vc: FloatingPanelController, withVelocity velocity: CGPoint, targetState: UnsafeMutablePointer<FloatingPanelState>) {
+        if targetState.pointee != .full {
             searchVC.hideHeader()
         }
     }
