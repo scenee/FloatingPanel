@@ -43,6 +43,13 @@ extension FloatingPanelPosition {
         }
     }
 
+    func mainDimensionAnchor(_ layoutGuide: LayoutGuideProvider) -> NSLayoutDimension {
+        switch self {
+        case .top, .bottom: return layoutGuide.heightAnchor
+        case .left, .right: return layoutGuide.widthAnchor
+        }
+    }
+
     func crossDimension(_ size: CGSize) -> CGFloat {
         switch self {
         case .top, .bottom: return size.width
@@ -801,38 +808,17 @@ class FloatingPanelLayoutAdapter {
         let anchor = layout.stateAnchors[self.edgeMostState]!
         if anchor is FloatingPanelIntrinsicLayoutAnchor {
             var constant = layout.anchorPosition.mainDimension(surfaceView.intrinsicContentSize)
-            switch layout.anchorPosition {
-            case .top:
-                if anchor.referenceGuide == .safeArea {
-                    constant += safeAreaInsets.top
-                }
-                staticConstraint = surfaceView.heightAnchor.constraint(equalToConstant: constant)
-            case .left:
-                if anchor.referenceGuide == .safeArea {
-                    constant += safeAreaInsets.left
-                }
-                staticConstraint = surfaceView.widthAnchor.constraint(equalToConstant: constant)
-            case .bottom:
-                if anchor.referenceGuide == .safeArea {
-                    constant += safeAreaInsets.bottom
-                }
-                staticConstraint = surfaceView.heightAnchor.constraint(equalToConstant: constant)
-            case .right:
-                if anchor.referenceGuide == .safeArea {
-                    constant += safeAreaInsets.right
-                }
-                staticConstraint = surfaceView.widthAnchor.constraint(equalToConstant: constant)
+            if anchor.referenceGuide == .safeArea {
+                constant += anchorPosition.inset(safeAreaInsets)
             }
+            staticConstraint = anchorPosition.mainDimensionAnchor(surfaceView).constraint(equalToConstant: constant)
         } else {
             switch layout.anchorPosition {
-            case .top:
-                staticConstraint = surfaceView.heightAnchor.constraint(equalToConstant: position(for: self.directionalMostState))
-            case .left:
-                staticConstraint = surfaceView.widthAnchor.constraint(equalToConstant: position(for: self.directionalMostState))
-            case .bottom:
-                staticConstraint = vc.view.heightAnchor.constraint(equalTo: surfaceView.heightAnchor, constant: position(for: self.directionalLeastState))
-            case .right:
-                staticConstraint = vc.view.heightAnchor.constraint(equalTo: surfaceView.widthAnchor, constant: position(for: self.directionalLeastState))
+            case .top, .left:
+                staticConstraint = anchorPosition.mainDimensionAnchor(surfaceView).constraint(equalToConstant: position(for: self.directionalMostState))
+            case .bottom, .right:
+                staticConstraint = anchorPosition.mainDimensionAnchor(vc.view).constraint(equalTo: anchorPosition.mainDimensionAnchor(surfaceView),
+                                                                                              constant: position(for: self.directionalLeastState))
             }
         }
         NSLayoutConstraint.activate(constraint: staticConstraint)
