@@ -45,7 +45,7 @@ public protocol FloatingPanelControllerDelegate: class {
     /// title, for example.
     ///
     /// This method will not be called if the controller doesn't track any scroll view.
-    func floatingPanel(_ vc: FloatingPanelController, contentOffsetForPinning trackedScrollView: UIScrollView) -> CGPoint
+    func floatingPanel(_ fpc: FloatingPanelController, contentOffsetForPinning trackingScrollView: UIScrollView) -> CGPoint
 }
 
 public extension FloatingPanelControllerDelegate {
