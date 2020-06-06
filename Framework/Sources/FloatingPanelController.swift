@@ -518,20 +518,6 @@ open class FloatingPanelController: UIViewController {
         _contentViewController = contentViewController
     }
 
-    @available(*, unavailable, renamed: "set(contentViewController:)")
-    open  override func show(_ vc: UIViewController, sender: Any?) {
-        if let target = self.parent?.targetViewController(forAction: #selector(UIViewController.show(_:sender:)), sender: sender) {
-            target.show(vc, sender: sender)
-        }
-    }
-
-    @available(*, unavailable, renamed: "set(contentViewController:)")
-    open  override func showDetailViewController(_ vc: UIViewController, sender: Any?) {
-        if let target = self.parent?.targetViewController(forAction: #selector(UIViewController.showDetailViewController(_:sender:)), sender: sender) {
-            target.showDetailViewController(vc, sender: sender)
-        }
-    }
-
     // MARK: - Scroll view tracking
 
     /// Tracks the specified scroll view to correspond with the scroll.
