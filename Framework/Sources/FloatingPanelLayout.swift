@@ -5,176 +5,274 @@
 
 import UIKit
 
-/// FloatingPanelFullScreenLayout
-///
-/// Use the layout protocol if you configure full, half and tip insets from the superview, not the safe area.
-/// It can't be used with FloatingPanelIntrinsicLayout.
-public protocol FloatingPanelFullScreenLayout: FloatingPanelLayout { }
+@objc public enum FloatingPanelLayoutReferenceGuide: Int {
+    case superview = 0
+    case safeArea = 1
+}
 
-public extension FloatingPanelFullScreenLayout {
-    var positionReference: FloatingPanelLayoutReference {
-        return .fromSuperview
+private extension FloatingPanelLayoutReferenceGuide {
+    func layoutGuide(vc: UIViewController) -> LayoutGuideProvider {
+        switch self {
+        case .safeArea:
+            return vc.fp_safeAreaLayoutGuide
+        case .superview:
+            return vc.view
+        }
     }
 }
 
-/// FloatingPanelIntrinsicLayout
-///
-/// Use the layout protocol if you want to layout a panel using the intrinsic height.
-/// It can't be used with `FloatingPanelFullScreenLayout`.
-///
-/// - Attention:
-///     `insetFor(position:)` must return `nil` for the full position. Because
-///     the inset is determined automatically by the intrinsic height.
-///     You can customize insets only for the half, tip and hidden positions.
-///
-/// - Note:
-///     By default, the `positionReference` is set to `.fromSafeArea`.
-public protocol FloatingPanelIntrinsicLayout: FloatingPanelLayout { }
+@objc public enum FloatingPanelPosition: Int {
+    case top
+    case left
+    case bottom
+    case right
+}
 
-public extension FloatingPanelIntrinsicLayout {
-    var initialPosition: FloatingPanelPosition {
-        return .full
+extension FloatingPanelPosition {
+    func mainLocation(_ point: CGPoint) -> CGFloat {
+        switch self {
+        case .top, .bottom: return point.y
+        case .left, .right: return point.x
+        }
     }
 
-    var supportedPositions: Set<FloatingPanelPosition> {
-        return [.full]
+    func mainDimension(_ size: CGSize) -> CGFloat {
+        switch self {
+        case .top, .bottom: return size.height
+        case .left, .right: return size.width
+        }
     }
 
-    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        return nil
+    func crossDimension(_ size: CGSize) -> CGFloat {
+        switch self {
+        case .top, .bottom: return size.width
+        case .left, .right: return size.height
+        }
     }
 
-    var positionReference: FloatingPanelLayoutReference {
-        return .fromSafeArea
+    func inset(_ insets: UIEdgeInsets) -> CGFloat {
+        switch self {
+        case .top: return insets.top
+        case .left: return insets.left
+        case .bottom: return insets.bottom
+        case .right: return insets.right
+        }
     }
 }
 
-public enum FloatingPanelLayoutReference: Int {
-    case fromSafeArea = 0
-    case fromSuperview = 1
+@objc public enum FloatingPanelReferenceEdge: Int {
+    case top
+    case left
+    case bottom
+    case right
 }
 
-public protocol FloatingPanelLayout: class {
-    /// Returns the initial position of a floating panel.
-    var initialPosition: FloatingPanelPosition { get }
+private extension FloatingPanelReferenceEdge {
+    func inset(of insets: UIEdgeInsets) -> CGFloat {
+        switch self {
+        case .top: return insets.top
+        case .left: return insets.left
+        case .bottom: return insets.bottom
+        case .right: return insets.right
+        }
+    }
+    func mainDimension(_ size: CGSize) -> CGFloat {
+        switch self {
+        case .top, .bottom: return size.height
+        case .left, .right: return size.width
+        }
+    }
+}
 
-    /// Returns a set of FloatingPanelPosition objects to tell the applicable
-    /// positions of the floating panel controller.
-    ///
-    /// By default, it returns full, half and tip positions.
-    var supportedPositions: Set<FloatingPanelPosition> { get }
+@objc public protocol FloatingPanelLayoutAnchoring {
+    var referenceGuide: FloatingPanelLayoutReferenceGuide { get }
+    func layoutConstraints(_ fpc: FloatingPanelController, for position: FloatingPanelPosition) -> [NSLayoutConstraint]
+}
 
-    /// Return the interaction buffer to the top from the top position. Default is 6.0.
-    var topInteractionBuffer: CGFloat { get }
+@objc final public class FloatingPanelLayoutAnchor: NSObject, FloatingPanelLayoutAnchoring /*, NSCopying */ {
+    @objc public init(absoluteInset: CGFloat, edge: FloatingPanelReferenceEdge, referenceGuide: FloatingPanelLayoutReferenceGuide) {
+        self.inset = absoluteInset
+        self.referenceGuide = referenceGuide
+        self.referenceEdge = edge
+        self.isAbsolute = true
+    }
 
-    /// Return the interaction buffer to the bottom from the bottom position. Default is 6.0.
-    ///
-    /// - Important:
-    /// The specified buffer is ignored when `FloatingPanelController.isRemovalInteractionEnabled` is set to true.
-    var bottomInteractionBuffer: CGFloat { get }
+    @objc public init(fractionalInset: CGFloat, edge: FloatingPanelReferenceEdge, referenceGuide: FloatingPanelLayoutReferenceGuide) {
+        self.inset = fractionalInset
+        self.referenceGuide = referenceGuide
+        self.referenceEdge = edge
+        self.isAbsolute = false
+    }
+    fileprivate let inset: CGFloat
+    fileprivate let isAbsolute: Bool
+    @objc public let referenceGuide: FloatingPanelLayoutReferenceGuide
+    @objc public let referenceEdge: FloatingPanelReferenceEdge
+}
 
-    /// Returns a CGFloat value to determine a Y coordinate of a floating panel for each position(full, half, tip and hidden).
-    ///
-    /// Its returning value indicates a different inset for each position.
-    /// For full position, a top inset from a safe area in `FloatingPanelController.view`.
-    /// For half or tip position, a bottom inset from the safe area.
-    /// For hidden position, a bottom inset from `FloatingPanelController.view`.
-    /// If a position isn't supported or the default value is used, return nil.
-    func insetFor(position: FloatingPanelPosition) -> CGFloat?
+public extension FloatingPanelLayoutAnchor {
+    func layoutConstraints(_ vc: FloatingPanelController, for position: FloatingPanelPosition) -> [NSLayoutConstraint] {
+        let layoutGuide = referenceGuide.layoutGuide(vc: vc)
+        switch position {
+        case .top:
+            return layoutConstraints(layoutGuide, for: vc.surfaceView.bottomAnchor)
+        case .left:
+            return layoutConstraints(layoutGuide, for: vc.surfaceView.rightAnchor)
+        case .bottom:
+            return layoutConstraints(layoutGuide, for:  vc.surfaceView.topAnchor)
+        case .right:
+            return layoutConstraints(layoutGuide, for: vc.surfaceView.leftAnchor)
+        }
+    }
+
+    private func layoutConstraints(_ layoutGuide: LayoutGuideProvider, for edgeAnchor: NSLayoutYAxisAnchor) -> [NSLayoutConstraint] {
+        switch referenceEdge {
+        case .top:
+            if isAbsolute {
+                return [edgeAnchor.constraint(equalTo: layoutGuide.topAnchor, constant: inset)]
+            }
+            let offsetAnchor = layoutGuide.topAnchor.anchorWithOffset(to: edgeAnchor)
+            return [offsetAnchor.constraint(equalTo:layoutGuide.heightAnchor, multiplier: inset)]
+        case .bottom:
+            if isAbsolute {
+                return [layoutGuide.bottomAnchor.constraint(equalTo: edgeAnchor, constant: inset)]
+            }
+            let offsetAnchor = edgeAnchor.anchorWithOffset(to: layoutGuide.bottomAnchor)
+            return [offsetAnchor.constraint(equalTo: layoutGuide.heightAnchor, multiplier: inset)]
+        default:
+            fatalError("Unsupported reference edges")
+        }
+    }
+
+    private func layoutConstraints(_ layoutGuide: LayoutGuideProvider, for edgeAnchor: NSLayoutXAxisAnchor) -> [NSLayoutConstraint] {
+        switch referenceEdge {
+        case .left:
+            if isAbsolute {
+                return [edgeAnchor.constraint(equalTo: layoutGuide.leftAnchor, constant: inset)]
+            }
+            let offsetAnchor = layoutGuide.leftAnchor.anchorWithOffset(to: edgeAnchor)
+            return [offsetAnchor.constraint(equalTo: layoutGuide.widthAnchor, multiplier: inset)]
+        case .right:
+            if isAbsolute {
+                return [layoutGuide.rightAnchor.constraint(equalTo: edgeAnchor, constant: inset)]
+            }
+            let offsetAnchor = edgeAnchor.anchorWithOffset(to: layoutGuide.rightAnchor)
+            return [offsetAnchor.constraint(equalTo: layoutGuide.widthAnchor, multiplier: inset)]
+        default:
+            fatalError("Unsupported reference edges")
+        }
+    }
+}
+
+@objc final public class FloatingPanelIntrinsicLayoutAnchor: NSObject, FloatingPanelLayoutAnchoring /*, NSCopying */ {
+    @objc public init(absoluteOffset offset: CGFloat, referenceGuide: FloatingPanelLayoutReferenceGuide = .safeArea) {
+        self.offset = offset
+        self.referenceGuide = referenceGuide
+        self.isAbsolute = true
+    }
+    // offset = 0.0 -> All content visible
+    // offset = 1.0 -> All content invisible
+    @objc public init(fractionalOffset offset: CGFloat, referenceGuide: FloatingPanelLayoutReferenceGuide = .safeArea) {
+        self.offset = offset
+        self.referenceGuide = referenceGuide
+        self.isAbsolute = false
+    }
+    fileprivate let offset: CGFloat
+    fileprivate let isAbsolute: Bool
+    @objc public let referenceGuide: FloatingPanelLayoutReferenceGuide
+}
+
+public extension FloatingPanelIntrinsicLayoutAnchor {
+    func layoutConstraints(_ vc: FloatingPanelController, for position: FloatingPanelPosition) -> [NSLayoutConstraint] {
+        let surfaceIntrinsicLength = position.mainDimension(vc.surfaceView.intrinsicContentSize)
+        let constant = isAbsolute ? surfaceIntrinsicLength - offset : surfaceIntrinsicLength * (1 - offset)
+        let layoutGuide = referenceGuide.layoutGuide(vc: vc)
+        switch position {
+        case .top:
+            return [vc.surfaceView.bottomAnchor.constraint(equalTo: layoutGuide.topAnchor, constant: constant)]
+        case .left:
+            return [vc.surfaceView.rightAnchor.constraint(equalTo: layoutGuide.leftAnchor, constant: constant)]
+        case .bottom:
+            return [vc.surfaceView.topAnchor.constraint(equalTo: layoutGuide.bottomAnchor, constant: -constant)]
+        case .right:
+            return [vc.surfaceView.leftAnchor.constraint(equalTo: layoutGuide.rightAnchor, constant: -constant)]
+        }
+    }
+}
+
+@objc public protocol FloatingPanelLayout {
+    /// TODO: Write doc comment
+    @objc var anchorPosition: FloatingPanelPosition { get }
+
+    /// TODO: Write doc comment
+    @objc var initialState: FloatingPanelState { get }
+
+    /// TODO: Write doc comment
+    @objc var stateAnchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] { get }
 
     /// Returns X-axis and width layout constraints of the surface view of a floating panel.
     /// You must not include any Y-axis and height layout constraints of the surface view
     /// because their constraints will be configured by the floating panel controller.
     /// By default, the width of a surface view fits a safe area.
-    func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint]
+    @objc optional func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint]
 
-    /// Returns a CGFloat value to determine the backdrop view's alpha for a position.
+    /// Returns a CGFloat value to determine the backdrop view's alpha for a state.
     ///
-    /// Default is 0.3 at full position, otherwise 0.0.
-    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat
-
-    var positionReference: FloatingPanelLayoutReference { get }
-
+    /// Default is 0.3 at full state, otherwise 0.0.
+    @objc optional func backdropAlpha(for state: FloatingPanelState) -> CGFloat
 }
 
-public extension FloatingPanelLayout {
-    var topInteractionBuffer: CGFloat { return 6.0 }
-    var bottomInteractionBuffer: CGFloat { return 6.0 }
-
-    var supportedPositions: Set<FloatingPanelPosition> {
-        return Set([.full, .half, .tip])
+@objcMembers
+open class FloatingPanelBottomLayout: NSObject, FloatingPanelLayout {
+    public override init() {
+        super.init()
     }
-
-    func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
-        return [
-            surfaceView.leftAnchor.constraint(equalTo: view.sideLayoutGuide.leftAnchor, constant: 0.0),
-            surfaceView.rightAnchor.constraint(equalTo: view.sideLayoutGuide.rightAnchor, constant: 0.0),
-        ]
-    }
-
-    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
-        return position == .full ? 0.3 : 0.0
-    }
-
-    var positionReference: FloatingPanelLayoutReference {
-        return .fromSafeArea
-    }
-}
-
-public class FloatingPanelDefaultLayout: FloatingPanelLayout {
-    public init() { }
-
-    public var initialPosition: FloatingPanelPosition {
+    open var initialState: FloatingPanelState {
         return .half
     }
 
-    public func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        switch position {
-        case .full: return 18.0
-        case .half: return 262.0
-        case .tip: return 69.0
-        case .hidden: return nil
-        }
-    }
-}
-
-public class FloatingPanelDefaultLandscapeLayout: FloatingPanelLayout {
-    public init() { }
-
-    public var initialPosition: FloatingPanelPosition {
-        return .tip
-    }
-    public var supportedPositions: Set<FloatingPanelPosition> {
-        return [.full, .tip]
+    open var stateAnchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
+        return [
+            .full: FloatingPanelLayoutAnchor(absoluteInset: 18.0, edge: .top, referenceGuide: .safeArea),
+            .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
+            .tip: FloatingPanelLayoutAnchor(absoluteInset: 69.0, edge: .bottom, referenceGuide: .safeArea),
+        ]
     }
 
-    public func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        switch position {
-        case .full: return 16.0
-        case .tip: return 69.0
-        default: return nil
-        }
+    open var anchorPosition: FloatingPanelPosition {
+        return .bottom
+    }
+
+    open func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
+        return [
+            surfaceView.leftAnchor.constraint(equalTo: view.fp_safeAreaLayoutGuide.leftAnchor, constant: 0.0),
+            surfaceView.rightAnchor.constraint(equalTo: view.fp_safeAreaLayoutGuide.rightAnchor, constant: 0.0),
+        ]
+    }
+
+    open func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
+        return state == .full ? 0.3 : 0.0
     }
 }
 
 struct LayoutSegment {
-    let lower: FloatingPanelPosition?
-    let upper: FloatingPanelPosition?
+    let lower: FloatingPanelState?
+    let upper: FloatingPanelState?
 }
 
 class FloatingPanelLayoutAdapter {
     weak var vc: FloatingPanelController!
     private weak var surfaceView: FloatingPanelSurfaceView!
     private weak var backdropView: FloatingPanelBackdropView!
+    private let defaultLayout = FloatingPanelBottomLayout()
 
-    var layout: FloatingPanelLayout {
+    fileprivate var layout: FloatingPanelLayout {
         didSet {
-            checkLayoutConsistance()
+            surfaceView.anchorPosition = layout.anchorPosition
         }
     }
 
     private var safeAreaInsets: UIEdgeInsets {
-        return vc?.layoutInsets ?? .zero
+        return vc?.fp_safeAreaInsets ?? .zero
     }
 
     private var initialConst: CGFloat = 0.0
@@ -184,143 +282,309 @@ class FloatingPanelLayoutAdapter {
     private var halfConstraints: [NSLayoutConstraint] = []
     private var tipConstraints: [NSLayoutConstraint] = []
     private var offConstraints: [NSLayoutConstraint] = []
-    private var interactiveTopConstraint: NSLayoutConstraint?
-    private var bottomConstraint: NSLayoutConstraint?
+    private var fitToBoundsConstraint: NSLayoutConstraint?
 
+    private(set) var interactionEdgeConstraint: NSLayoutConstraint?
+    private(set) var animationEdgeConstraint: NSLayoutConstraint?
 
     private var heightConstraint: NSLayoutConstraint?
 
-    private var fullInset: CGFloat {
-        if layout is FloatingPanelIntrinsicLayout {
-            return intrinsicHeight
-        } else {
-            return layout.insetFor(position: .full) ?? 0.0
-        }
-    }
-    private var halfInset: CGFloat {
-        return layout.insetFor(position: .half) ?? 0.0
-    }
-    private var tipInset: CGFloat {
-        return layout.insetFor(position: .tip) ?? 0.0
-    }
-    private var hiddenInset: CGFloat {
-        return layout.insetFor(position: .hidden) ?? 0.0
+    private var activeStates: Set<FloatingPanelState> {
+        return Set(layout.stateAnchors.keys)
     }
 
-    var supportedPositions: Set<FloatingPanelPosition> {
-        return layout.supportedPositions
+    var initialState: FloatingPanelState {
+        layout.initialState
     }
 
-    var validPositions: Set<FloatingPanelPosition> {
-        return supportedPositions.union([.hidden])
+    var anchorPosition: FloatingPanelPosition {
+        layout.anchorPosition
     }
 
-    var topMostState: FloatingPanelPosition {
-        return supportedPositions.sorted(by: { $0.rawValue < $1.rawValue }).first ?? .hidden
+    var orderedStates: [FloatingPanelState] {
+        return activeStates.sorted(by: {
+            return $0.order < $1.order
+        })
     }
 
-    var bottomMostState: FloatingPanelPosition {
-        return supportedPositions.sorted(by: { $0.rawValue < $1.rawValue }).last ?? .hidden
+    var validStates: Set<FloatingPanelState> {
+        return activeStates.union([.hidden])
     }
 
-    var topY: CGFloat {
-        return positionY(for: topMostState)
+    var sortedDirectionalStates: [FloatingPanelState] {
+        return activeStates.sorted(by: {
+            switch layout.anchorPosition {
+            case .top, .left:
+                return $0.order < $1.order
+            case .bottom, .right:
+                return $0.order > $1.order
+            }
+        })
     }
 
-    var bottomY: CGFloat {
-        return positionY(for: bottomMostState)
+    private var directionalLeastState: FloatingPanelState {
+        return sortedDirectionalStates.first ?? .hidden
     }
 
-    var topMaxY: CGFloat {
-        return topY - layout.topInteractionBuffer
+    private var directionalMostState: FloatingPanelState {
+        return sortedDirectionalStates.last ?? .hidden
     }
 
-    var bottomMaxY: CGFloat {
-        return bottomY + layout.bottomInteractionBuffer
+    var edgeLeastState: FloatingPanelState {
+        return orderedStates.first ?? .hidden
+    }
+    
+    var edgeMostState: FloatingPanelState {
+        return orderedStates.last ?? .hidden
+    }
+
+    var edgeMostY: CGFloat {
+        return position(for: edgeMostState)
     }
 
     var adjustedContentInsets: UIEdgeInsets {
-        return UIEdgeInsets(top: 0.0,
-                            left: 0.0,
-                            bottom: safeAreaInsets.bottom,
-                            right: 0.0)
-    }
-
-    func positionY(for pos: FloatingPanelPosition) -> CGFloat {
-        switch pos {
-        case .full:
-            if layout is FloatingPanelIntrinsicLayout {
-                return surfaceView.superview!.bounds.height - surfaceView.bounds.height
-            }
-            switch layout.positionReference {
-            case .fromSafeArea:
-                return (safeAreaInsets.top + fullInset)
-            case .fromSuperview:
-                return fullInset
-            }
-        case .half:
-            switch layout.positionReference {
-            case .fromSafeArea:
-                return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + halfInset)
-            case .fromSuperview:
-                return surfaceView.superview!.bounds.height - halfInset
-            }
-        case .tip:
-            switch layout.positionReference {
-            case .fromSafeArea:
-                return surfaceView.superview!.bounds.height - (safeAreaInsets.bottom + tipInset)
-            case .fromSuperview:
-                return surfaceView.superview!.bounds.height - tipInset
-            }
-        case .hidden:
-            return surfaceView.superview!.bounds.height - hiddenInset
+        switch layout.anchorPosition {
+        case .top:
+            return UIEdgeInsets(top: safeAreaInsets.top,
+                                left: 0.0,
+                                bottom: 0.0,
+                                right: 0.0)
+        case .left:
+            return UIEdgeInsets(top: 0.0,
+                                left: safeAreaInsets.left,
+                                bottom: 0.0,
+                                right: 0.0)
+        case .bottom:
+            return UIEdgeInsets(top: 0.0,
+                                left: 0.0,
+                                bottom: safeAreaInsets.bottom,
+                                right: 0.0)
+        case .right:
+            return UIEdgeInsets(top: 0.0,
+                                left: 0.0,
+                                bottom: 0.0,
+                                right: safeAreaInsets.right)
         }
     }
 
-    var intrinsicHeight: CGFloat = 0.0
+    /*
+    Returns a constraint based value in the interaction and animation.
 
-    init(surfaceView: FloatingPanelSurfaceView, backdropView: FloatingPanelBackdropView, layout: FloatingPanelLayout) {
+    So that it doesn't need to call `surfaceView.layoutIfNeeded()`
+    after every interaction and animation update. It has an effect on
+    the smooth interaction because the content view doesn't need to update
+    its layout frequently.
+    */
+    var surfaceLocation: CGPoint {
+        get {
+            var pos: CGFloat
+            if let interactionConstraint = interactionEdgeConstraint {
+                pos = interactionConstraint.constant
+            } else if let animationConstraint = animationEdgeConstraint, let anchor = layout.stateAnchors[vc.state] {
+                switch layout.anchorPosition {
+                case .top, .bottom:
+                    switch referenceEdge(of: anchor) {
+                    case .top:
+                        pos = animationConstraint.constant
+                        if anchor.referenceGuide == .safeArea {
+                            pos += safeAreaInsets.top
+                        }
+                    case .bottom:
+                        pos = vc.view.bounds.height + animationConstraint.constant
+                        if anchor.referenceGuide == .safeArea {
+                            pos -= safeAreaInsets.bottom
+                        }
+                    default:
+                        fatalError("Unsupported reference edges")
+                    }
+                case .left, .right:
+                    switch referenceEdge(of: anchor) {
+                    case .left:
+                        pos = animationConstraint.constant
+                        if anchor.referenceGuide == .safeArea {
+                            pos += safeAreaInsets.left
+                        }
+                    case .right:
+                        pos = vc.view.bounds.width + animationConstraint.constant
+                        if anchor.referenceGuide == .safeArea {
+                            pos -= safeAreaInsets.right
+                        }
+                    default:
+                        fatalError("Unsupported reference edges")
+                    }
+                }
+            } else {
+                let displayScale = surfaceView.traitCollection.displayScale
+                pos = displayTrunc(edgeY(surfaceView.frame), by: displayScale)
+            }
+            switch layout.anchorPosition {
+            case .top, .bottom:
+                return CGPoint(x: 0.0, y: pos)
+            case .left, .right:
+                return CGPoint(x: pos, y: 0.0)
+            }
+        }
+        set {
+            let pos = layout.anchorPosition.mainLocation(newValue)
+            if let interactionConstraint = interactionEdgeConstraint {
+                interactionConstraint.constant = pos
+            } else if let animationConstraint = animationEdgeConstraint, let anchor = layout.stateAnchors[vc.state] {
+                let refEdge = referenceEdge(of: anchor)
+                switch refEdge {
+                case .top, .left:
+                    animationConstraint.constant = pos
+                    if anchor.referenceGuide == .safeArea {
+                        animationConstraint.constant -= refEdge.inset(of: safeAreaInsets)
+                    }
+                case .bottom, .right:
+                    animationConstraint.constant = pos - layout.anchorPosition.mainDimension(vc.view.bounds.size)
+                    if anchor.referenceGuide == .safeArea {
+                        animationConstraint.constant += refEdge.inset(of: safeAreaInsets)
+                    }
+                }
+            } else {
+                switch layout.anchorPosition {
+                case .top:
+                    return surfaceView.frame.origin.y = pos - surfaceView.bounds.height
+                case .left:
+                    return surfaceView.frame.origin.x = pos - surfaceView.bounds.width
+                case .bottom:
+                    return surfaceView.frame.origin.y = pos
+                case .right:
+                    return surfaceView.frame.origin.x = pos
+                }
+            }
+        }
+    }
+
+    var offsetFromEdgeMost: CGFloat {
+        switch layout.anchorPosition {
+        case .top, .left:
+            return edgeY(surfaceView.presentationFrame) - position(for: directionalMostState)
+        case .bottom, .right:
+            return position(for: directionalLeastState) - edgeY(surfaceView.presentationFrame)
+        }
+    }
+
+    private var hiddenAnchor: FloatingPanelLayoutAnchoring {
+        switch layout.anchorPosition {
+        case .top:
+            return FloatingPanelLayoutAnchor(absoluteInset: -100, edge: .top, referenceGuide: .superview)
+        case .left:
+            return FloatingPanelLayoutAnchor(absoluteInset: -100, edge: .left, referenceGuide: .superview)
+        case .bottom:
+            return FloatingPanelLayoutAnchor(absoluteInset: -100, edge: .bottom, referenceGuide: .superview)
+        case .right:
+            return FloatingPanelLayoutAnchor(absoluteInset: -100, edge: .right, referenceGuide: .superview)
+        }
+    }
+
+    init(vc: FloatingPanelController,
+         surfaceView: FloatingPanelSurfaceView,
+         backdropView: FloatingPanelBackdropView,
+         layout: FloatingPanelLayout) {
+        self.vc = vc
         self.layout = layout
         self.surfaceView = surfaceView
         self.backdropView = backdropView
     }
 
-    func updateIntrinsicHeight() {
-        #if swift(>=4.2)
-        let fittingSize = UIView.layoutFittingCompressedSize
-        #else
-        let fittingSize = UILayoutFittingCompressedSize
-        #endif
-        var intrinsicHeight = surfaceView.contentView?.systemLayoutSizeFitting(fittingSize).height ?? 0.0
-        var safeAreaBottom: CGFloat = 0.0
-        if #available(iOS 11.0, *) {
-            safeAreaBottom = surfaceView.contentView?.safeAreaInsets.bottom ?? 0.0
-            if safeAreaBottom > 0 {
-                intrinsicHeight -= safeAreaInsets.bottom
-            }
+    func surfaceLocation(for state: FloatingPanelState) -> CGPoint {
+        let pos = displayTrunc(position(for: state), by: surfaceView.traitCollection.displayScale)
+        switch layout.anchorPosition {
+        case .top, .bottom:
+            return CGPoint(x: 0.0, y: pos)
+        case .left, .right:
+            return CGPoint(x: pos, y: 0.0)
         }
-        self.intrinsicHeight = max(intrinsicHeight, 0.0)
-
-        log.debug("Update intrinsic height =", intrinsicHeight,
-                  ", surface(height) =", surfaceView.frame.height,
-                  ", content(height) =", surfaceView.contentView?.frame.height ?? 0.0,
-                  ", content safe area(bottom) =", safeAreaBottom)
     }
 
-    func prepareLayout(in vc: FloatingPanelController) {
-        self.vc = vc
+    func position(for state: FloatingPanelState) -> CGFloat {
+        let bounds = vc.view.bounds
+        let anchor = layout.stateAnchors[state] ?? self.hiddenAnchor
 
-        NSLayoutConstraint.deactivate(fixedConstraints + fullConstraints + halfConstraints + tipConstraints + offConstraints)
-        NSLayoutConstraint.deactivate(constraint: self.heightConstraint)
-        self.heightConstraint = nil
-        NSLayoutConstraint.deactivate(constraint: self.bottomConstraint)
-        self.bottomConstraint = nil
+        switch anchor {
+        case let ianchor as FloatingPanelIntrinsicLayoutAnchor:
+            let surfaceIntrinsicLength = layout.anchorPosition.mainDimension(surfaceView.intrinsicContentSize)
+            let diff = ianchor.isAbsolute ? ianchor.offset : surfaceIntrinsicLength * ianchor.offset
+
+            var referenceBoundsLength = layout.anchorPosition.mainDimension(bounds.size)
+            switch layout.anchorPosition {
+            case .top, .left:
+                return referenceBoundsLength - surfaceIntrinsicLength - diff
+            case .bottom, .right:
+                if anchor.referenceGuide == .safeArea {
+                    referenceBoundsLength -= anchorPosition.inset(safeAreaInsets)
+                }
+                return referenceBoundsLength - surfaceIntrinsicLength + diff
+            }
+        case let anchor as FloatingPanelLayoutAnchor:
+            let referenceBounds = anchor.referenceGuide == .safeArea ? bounds.inset(by: safeAreaInsets) : bounds
+            let diff = anchor.isAbsolute ? anchor.inset : layout.anchorPosition.mainDimension(referenceBounds.size) * anchor.inset
+            switch anchor.referenceEdge {
+            case .top, .left:
+                return referenceBounds.minY + diff
+            case .bottom, .right:
+                return referenceBounds.maxY - diff
+            }
+        default:
+            fatalError("Unsupported a FloatingPanelLayoutAnchoring object")
+        }
+     }
+
+    private func edgeY(_ frame: CGRect) -> CGFloat {
+        switch layout.anchorPosition {
+        case .top:
+            return frame.maxY
+        case .left:
+            return frame.maxX
+        case .bottom:
+            return frame.minY
+        case .right:
+            return frame.minX
+        }
+    }
+
+    private func referenceEdge(of anchor: FloatingPanelLayoutAnchoring) -> FloatingPanelReferenceEdge {
+        switch anchor {
+        case is FloatingPanelIntrinsicLayoutAnchor:
+            switch layout.anchorPosition {
+            case .top: return .top
+            case .left: return .left
+            case .bottom: return .bottom
+            case .right: return .right
+            }
+        case let anchor as FloatingPanelLayoutAnchor:
+            return anchor.referenceEdge
+        default:
+            fatalError("Unsupported a FloatingPanelLayoutAnchoring object")
+        }
+    }
+
+    func prepareLayout() {
+        NSLayoutConstraint.deactivate(fixedConstraints)
 
         surfaceView.translatesAutoresizingMaskIntoConstraints = false
         backdropView.translatesAutoresizingMaskIntoConstraints = false
 
         // Fixed constraints of surface and backdrop views
-        let surfaceConstraints = layout.prepareLayout(surfaceView: surfaceView, in: vc.view!)
+        let surfaceConstraints: [NSLayoutConstraint]
+        if let constraints = layout.prepareLayout?(surfaceView: surfaceView, in: vc.view) {
+            surfaceConstraints = constraints
+        } else {
+            switch layout.anchorPosition {
+            case .top, .bottom:
+                surfaceConstraints = [
+                    surfaceView.leftAnchor.constraint(equalTo: vc.fp_safeAreaLayoutGuide.leftAnchor, constant: 0.0),
+                    surfaceView.rightAnchor.constraint(equalTo: vc.fp_safeAreaLayoutGuide.rightAnchor, constant: 0.0),
+                ]
+            case .left, .right:
+                surfaceConstraints = [
+                    surfaceView.topAnchor.constraint(equalTo: vc.fp_safeAreaLayoutGuide.topAnchor, constant: 0.0),
+                    surfaceView.bottomAnchor.constraint(equalTo: vc.fp_safeAreaLayoutGuide.bottomAnchor, constant: 0.0),
+                ]
+            }
+        }
         let backdropConstraints = [
             backdropView.topAnchor.constraint(equalTo: vc.view.topAnchor, constant: 0.0),
             backdropView.leftAnchor.constraint(equalTo: vc.view.leftAnchor,constant: 0.0),
@@ -330,83 +594,196 @@ class FloatingPanelLayoutAdapter {
 
         fixedConstraints = surfaceConstraints + backdropConstraints
 
+        NSLayoutConstraint.deactivate(constraint: self.fitToBoundsConstraint)
+        self.fitToBoundsConstraint = nil
+
         if vc.contentMode == .fitToBounds {
-            bottomConstraint = surfaceView.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor,
-                                                                   constant: 0.0)
+            fitToBoundsConstraint = {
+                switch layout.anchorPosition {
+                case .top:
+                    return surfaceView.topAnchor.constraint(equalTo: vc.view.topAnchor, constant: 0.0)
+                case .left:
+                    return surfaceView.leftAnchor.constraint(equalTo: vc.view.leftAnchor, constant: 0.0)
+                case .bottom:
+                    return surfaceView.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: 0.0)
+                case .right:
+                    return surfaceView.rightAnchor.constraint(equalTo: vc.view.rightAnchor, constant: 0.0)
+                }
+            }()
         }
 
-        // Flexible surface constraints for full, half, tip and off
-        let topAnchor: NSLayoutYAxisAnchor = {
-            if layout.positionReference == .fromSuperview {
-                return vc.view.topAnchor
-            } else {
-                return vc.layoutGuide.topAnchor
-            }
-        }()
-
-        switch layout {
-        case is FloatingPanelIntrinsicLayout:
-            // Set up on updateHeight()
-            break
-        default:
-            fullConstraints = [
-                surfaceView.topAnchor.constraint(equalTo: topAnchor,
-                                                 constant: fullInset),
-            ]
-        }
-
-        let bottomAnchor: NSLayoutYAxisAnchor = {
-            if layout.positionReference == .fromSuperview {
-                return vc.view.bottomAnchor
-            } else {
-                return vc.layoutGuide.bottomAnchor
-            }
-        }()
-
-        halfConstraints = [
-            surfaceView.topAnchor.constraint(equalTo: bottomAnchor,
-                                             constant: -halfInset),
-        ]
-        tipConstraints = [
-            surfaceView.topAnchor.constraint(equalTo: bottomAnchor,
-                                             constant: -tipInset),
-        ]
-
-        offConstraints = [
-            surfaceView.topAnchor.constraint(equalTo:vc.view.bottomAnchor,
-                                             constant: -hiddenInset),
-        ]
-    }
-
-    func startInteraction(at state: FloatingPanelPosition, offset: CGPoint = .zero) {
-        guard self.interactiveTopConstraint == nil else { return }
         NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
 
-        let interactiveTopConstraint: NSLayoutConstraint
-        switch layout.positionReference {
-        case .fromSafeArea:
-            initialConst = surfaceView.frame.minY - safeAreaInsets.top + offset.y
-            interactiveTopConstraint = surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.topAnchor,
-                                                                        constant: initialConst)
-        case .fromSuperview:
-            initialConst = surfaceView.frame.minY + offset.y
-            interactiveTopConstraint = surfaceView.topAnchor.constraint(equalTo: vc.view.topAnchor,
-                                                                        constant: initialConst)
+        if let fullAnchor = layout.stateAnchors[.full] {
+            fullConstraints = fullAnchor.layoutConstraints(vc, for: layout.anchorPosition)
         }
-        NSLayoutConstraint.activate([interactiveTopConstraint])
-        self.interactiveTopConstraint = interactiveTopConstraint
+        if let halfAnchor = layout.stateAnchors[.half] {
+            halfConstraints = halfAnchor.layoutConstraints(vc, for: layout.anchorPosition)
+        }
+        if let tipAnchors = layout.stateAnchors[.tip] {
+            tipConstraints = tipAnchors.layoutConstraints(vc, for: layout.anchorPosition)
+        }
+        let hiddenAnchor = layout.stateAnchors[.hidden] ?? self.hiddenAnchor
+        offConstraints = hiddenAnchor.layoutConstraints(vc, for: layout.anchorPosition)
     }
 
-    func endInteraction(at state: FloatingPanelPosition) {
+    func startInteraction(at state: FloatingPanelState, offset: CGPoint = .zero) {
+        if let edgeConstraint = self.interactionEdgeConstraint {
+            initialConst = edgeConstraint.constant
+            return
+        }
+
+        tearDownAnimationEdgeConstraint()
+
+        NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
+
+        initialConst = edgeY(surfaceView.frame) + offset.y
+
+        let constraint: NSLayoutConstraint
+        switch layout.anchorPosition {
+        case .top:
+            constraint = surfaceView.bottomAnchor.constraint(equalTo: vc.view.topAnchor, constant: initialConst)
+        case .left:
+            constraint = surfaceView.rightAnchor.constraint(equalTo: vc.view.leftAnchor, constant: initialConst)
+        case .bottom:
+            constraint = surfaceView.topAnchor.constraint(equalTo: vc.view.topAnchor, constant: initialConst)
+        case .right:
+            constraint = surfaceView.leftAnchor.constraint(equalTo: vc.view.leftAnchor, constant: initialConst)
+        }
+
+        NSLayoutConstraint.activate([constraint])
+        self.interactionEdgeConstraint = constraint
+    }
+
+    func endInteraction(at state: FloatingPanelState) {
         // Don't deactivate `interactiveTopConstraint` here because it leads to
         // unsatisfiable constraints
 
-        if self.interactiveTopConstraint == nil {
+        if self.interactionEdgeConstraint == nil {
             // Actiavate `interactiveTopConstraint` for `fitToBounds` mode.
             // It goes throught this path when the pan gesture state jumps
             // from .begin to .end.
             startInteraction(at: state)
         }
+    }
+
+    func setUpAnimationEdgeConstraint(to state: FloatingPanelState) -> (NSLayoutConstraint, CGFloat) {
+        NSLayoutConstraint.deactivate(constraint: animationEdgeConstraint)
+
+        let anchor = layout.stateAnchors[state] ?? self.hiddenAnchor
+
+        NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
+        NSLayoutConstraint.deactivate(constraint: interactionEdgeConstraint)
+        interactionEdgeConstraint = nil
+
+        let layoutGuideProvider: LayoutGuideProvider
+        switch anchor.referenceGuide {
+        case .safeArea:
+            layoutGuideProvider = vc.fp_safeAreaLayoutGuide
+        case .superview:
+            layoutGuideProvider = vc.view
+        }
+        let currentY = layout.anchorPosition.mainLocation(surfaceLocation)
+        let animationConstraint: NSLayoutConstraint
+        var targetY = position(for: state)
+
+        switch layout.anchorPosition {
+        case .top:
+            switch referenceEdge(of: anchor) {
+            case .top:
+                animationConstraint = surfaceView.bottomAnchor.constraint(equalTo: layoutGuideProvider.topAnchor,
+                                                                          constant: currentY)
+                if anchor.referenceGuide == .safeArea {
+                    animationConstraint.constant -= safeAreaInsets.top
+                    targetY -= safeAreaInsets.top
+                }
+            case .bottom:
+                let baseHeight = vc.view.bounds.height
+                targetY = -(baseHeight - targetY)
+                animationConstraint = surfaceView.bottomAnchor.constraint(equalTo: layoutGuideProvider.bottomAnchor,
+                                                                          constant: -(baseHeight - currentY))
+                if anchor.referenceGuide == .safeArea {
+                    animationConstraint.constant += safeAreaInsets.bottom
+                    targetY += safeAreaInsets.bottom
+
+                }
+            default:
+                fatalError("Unsupported reference edges")
+            }
+        case .left:
+            switch referenceEdge(of: anchor) {
+            case .left:
+                animationConstraint = surfaceView.rightAnchor.constraint(equalTo: layoutGuideProvider.leftAnchor,
+                                                                          constant: currentY)
+                if anchor.referenceGuide == .safeArea {
+                    animationConstraint.constant -= safeAreaInsets.right
+                    targetY -= safeAreaInsets.right
+                }
+            case .right:
+                let baseHeight = vc.view.bounds.height
+                targetY = -(baseHeight - targetY)
+                animationConstraint = surfaceView.rightAnchor.constraint(equalTo: layoutGuideProvider.rightAnchor,
+                                                                          constant: -(baseHeight - currentY))
+                if anchor.referenceGuide == .safeArea {
+                    animationConstraint.constant += safeAreaInsets.left
+                    targetY += safeAreaInsets.left
+                }
+            default:
+                fatalError("Unsupported reference edges")
+            }
+        case .bottom:
+            switch referenceEdge(of: anchor) {
+            case .top:
+                animationConstraint = surfaceView.topAnchor.constraint(equalTo: layoutGuideProvider.topAnchor,
+                                                                       constant: currentY)
+                if anchor.referenceGuide == .safeArea {
+                    animationConstraint.constant -= safeAreaInsets.top
+                    targetY -= safeAreaInsets.top
+                }
+            case .bottom:
+                let baseHeight = vc.view.bounds.height
+                targetY = -(baseHeight - targetY)
+                animationConstraint = surfaceView.topAnchor.constraint(equalTo: layoutGuideProvider.bottomAnchor,
+                                                                       constant: -(baseHeight - currentY))
+                if anchor.referenceGuide == .safeArea {
+                    animationConstraint.constant += safeAreaInsets.bottom
+                    targetY += safeAreaInsets.bottom
+
+                }
+            default:
+                fatalError("Unsupported reference edges")
+            }
+        case .right:
+            switch referenceEdge(of: anchor) {
+            case .left:
+                animationConstraint = surfaceView.leftAnchor.constraint(equalTo: layoutGuideProvider.leftAnchor,
+                                                                         constant: currentY)
+                if anchor.referenceGuide == .safeArea {
+                    animationConstraint.constant -= safeAreaInsets.left
+                    targetY -= safeAreaInsets.left
+                }
+            case .right:
+                let baseHeight = vc.view.bounds.height
+                targetY = -(baseHeight - targetY)
+                animationConstraint = surfaceView.leftAnchor.constraint(equalTo: layoutGuideProvider.rightAnchor,
+                                                                         constant: -(baseHeight - currentY))
+                if anchor.referenceGuide == .safeArea {
+                    animationConstraint.constant += safeAreaInsets.right
+                    targetY += safeAreaInsets.right
+                }
+            default:
+                fatalError("Unsupported reference edges")
+            }
+        }
+
+        NSLayoutConstraint.activate([animationConstraint])
+        self.animationEdgeConstraint = animationConstraint
+        return (animationConstraint, targetY)
+    }
+
+    private func tearDownAnimationEdgeConstraint() {
+        NSLayoutConstraint.deactivate(constraint: animationEdgeConstraint)
+        animationEdgeConstraint = nil
     }
 
     // The method is separated from prepareLayout(to:) for the rotation support
@@ -416,78 +793,68 @@ class FloatingPanelLayoutAdapter {
         NSLayoutConstraint.deactivate(constraint: heightConstraint)
         heightConstraint = nil
 
-        if layout is FloatingPanelIntrinsicLayout {
-            updateIntrinsicHeight()
+        if vc.contentMode == .fitToBounds {
+            return
         }
-        defer {
-            if layout is FloatingPanelIntrinsicLayout {
-                NSLayoutConstraint.deactivate(fullConstraints)
-                fullConstraints = [
-                    surfaceView.topAnchor.constraint(equalTo: vc.layoutGuide.bottomAnchor,
-                                                     constant: -fullInset),
-                ]
+
+        let anchor = layout.stateAnchors[self.edgeMostState]!
+        if anchor is FloatingPanelIntrinsicLayoutAnchor {
+            let heightMargin: CGFloat
+            switch layout.anchorPosition {
+            case .bottom:
+                heightMargin = safeAreaInsets.bottom
+            case .top:
+                heightMargin = safeAreaInsets.top
             }
-        }
-
-        guard vc.contentMode != .fitToBounds else { return }
-
-        switch layout {
-        case is FloatingPanelIntrinsicLayout:
-            heightConstraint = surfaceView.heightAnchor.constraint(equalToConstant: intrinsicHeight + safeAreaInsets.bottom)
-        default:
-            let const = -(positionY(for: topMostState))
-            heightConstraint =  surfaceView.heightAnchor.constraint(equalTo: vc.view.heightAnchor,
-                                                                    constant: const)
+            let constant: CGFloat
+            switch anchor.referenceGuide {
+            case .safeArea:
+                constant = surfaceView.intrinsicContentSize.height + heightMargin
+            case .superview:
+                constant = surfaceView.intrinsicContentSize.height
+            }
+            heightConstraint = surfaceView.heightAnchor.constraint(equalToConstant: constant)
+        } else {
+            switch layout.anchorPosition {
+            case .top:
+                heightConstraint = surfaceView.heightAnchor.constraint(equalToConstant: positionY(for: self.directionalMostState))
+            case .bottom:
+                heightConstraint = vc.view.heightAnchor.constraint(equalTo: surfaceView.heightAnchor, constant: positionY(for: self.directionalLeastState))
+            }
         }
         NSLayoutConstraint.activate(constraint: heightConstraint)
 
-        surfaceView.bottomOverflow = vc.view.bounds.height + layout.topInteractionBuffer
+        surfaceView.containerOverflow = vc.view.bounds.height
     }
 
-    func updateInteractiveTopConstraint(diff: CGFloat, allowsTopBuffer: Bool, with behavior: FloatingPanelBehavior) {
+    func updateInteractiveEdgeConstraint(diff: CGFloat, overflow: Bool, allowsRubberBanding: (UIRectEdge) -> Bool) {
         defer {
-            layoutSurfaceIfNeeded() // MUST be called to update `surfaceView.frame`
+            log.debug("update surface location = \(surfaceLocation)")
         }
 
-        let topMostConst: CGFloat = {
-            var ret: CGFloat = 0.0
-            switch layout.positionReference {
-            case .fromSafeArea:
-                ret = topY - safeAreaInsets.top
-            case .fromSuperview:
-                ret = topY
-            }
-            return ret
-        }()
-        let bottomMostConst: CGFloat = {
-            var ret: CGFloat = 0.0
-            let _bottomY = vc.isRemovalInteractionEnabled ? positionY(for: .hidden) : bottomY
-            switch layout.positionReference {
-            case .fromSafeArea:
-                ret = _bottomY - safeAreaInsets.top
-            case .fromSuperview:
-                ret = _bottomY
-            }
-            return ret
-        }()
-        let minConst = allowsTopBuffer ? topMostConst - layout.topInteractionBuffer : topMostConst
-        let maxConst = bottomMostConst + layout.bottomInteractionBuffer
+        let minConst: CGFloat = position(for: directionalLeastState)
+        let maxConst: CGFloat = position(for: directionalMostState)
 
         var const = initialConst + diff
 
+        let base = anchorPosition.mainDimension(vc.view.bounds.size)
         // Rubberbanding top buffer
-        if behavior.allowsRubberBanding(for: .top), const < topMostConst {
-            let buffer = topMostConst - const
-            const = topMostConst - rubberbandEffect(for: buffer, base: vc.view.bounds.height)
+        if allowsRubberBanding(.top), const < minConst {
+            let buffer = minConst - const
+            const = minConst - rubberbandEffect(for: buffer, base: base)
         }
 
         // Rubberbanding bottom buffer
-        if behavior.allowsRubberBanding(for: .bottom), const > bottomMostConst {
-            let buffer = const - bottomMostConst
-            const = bottomMostConst + rubberbandEffect(for: buffer, base: vc.view.bounds.height)
+        if allowsRubberBanding(.bottom), const > maxConst {
+            let buffer = const - maxConst
+            const = maxConst + rubberbandEffect(for: buffer, base: base)
         }
 
-        interactiveTopConstraint?.constant = max(minConst, min(maxConst, const))
+        if overflow == false {
+            const = min(max(const, minConst), maxConst)
+        }
+
+        interactionEdgeConstraint?.constant = const
     }
 
     // According to @chpwn's tweet: https://twitter.com/chpwn/status/285540192096497664
@@ -498,30 +865,34 @@ class FloatingPanelLayoutAdapter {
         return (1.0 - (1.0 / ((buffer * 0.55 / base) + 1.0))) * base
     }
 
-    func activateFixedLayout() {
+    func activateLayout(for state: FloatingPanelState, forceLayout: Bool = false) {
+        defer {
+            if forceLayout {
+                layoutSurfaceIfNeeded()
+                log.debug("activateLayout for \(state) -- surface.presentation = \(self.surfaceView.presentationFrame) surface.frame = \(self.surfaceView.frame)")
+            } else {
+                log.debug("activateLayout for \(state)")
+            }
+        }
+
         // Must deactivate `interactiveTopConstraint` here
-        NSLayoutConstraint.deactivate(constraint: self.interactiveTopConstraint)
-        self.interactiveTopConstraint = nil
+        NSLayoutConstraint.deactivate(constraint: self.interactionEdgeConstraint)
+        self.interactionEdgeConstraint = nil
+
+        tearDownAnimationEdgeConstraint()
 
         NSLayoutConstraint.activate(fixedConstraints)
 
         if vc.contentMode == .fitToBounds {
-            NSLayoutConstraint.activate(constraint: self.bottomConstraint)
-        }
-    }
-
-    func activateInteractiveLayout(of state: FloatingPanelPosition) {
-        defer {
-            layoutSurfaceIfNeeded()
-            log.debug("activateLayout -- surface.presentation = \(self.surfaceView.presentationFrame) surface.frame = \(self.surfaceView.frame)")
+            NSLayoutConstraint.activate(constraint: self.fitToBoundsConstraint)
         }
 
         var state = state
 
         setBackdropAlpha(of: state)
 
-        if validPositions.contains(state) == false {
-            state = layout.initialPosition
+        if validStates.contains(state) == false {
+            state = layout.initialState
         }
 
         NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
@@ -534,12 +905,9 @@ class FloatingPanelLayoutAdapter {
             NSLayoutConstraint.activate(tipConstraints)
         case .hidden:
             NSLayoutConstraint.activate(offConstraints)
+        default:
+            break
         }
-    }
-
-    func activateLayout(of state: FloatingPanelPosition) {
-        activateFixedLayout()
-        activateInteractiveLayout(of: state)
     }
 
     private func layoutSurfaceIfNeeded() {
@@ -549,60 +917,61 @@ class FloatingPanelLayoutAdapter {
         surfaceView.superview?.layoutIfNeeded()
     }
 
-    private func setBackdropAlpha(of target: FloatingPanelPosition) {
+    private func setBackdropAlpha(of target: FloatingPanelState) {
         if target == .hidden {
             self.backdropView.alpha = 0.0
         } else {
-            self.backdropView.alpha = layout.backdropAlphaFor(position: target)
+            self.backdropView.alpha = backdropAlpha(for: target)
         }
     }
 
-    private func checkLayoutConsistance() {
+    func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
+        return layout.backdropAlpha?(for: state) ?? defaultLayout.backdropAlpha(for: state)
+    }
+
+    func checkLayout() {
         // Verify layout configurations
-        assert(supportedPositions.count > 0)
-        assert(validPositions.contains(layout.initialPosition),
-               "Does not include an initial position (\(layout.initialPosition)) in (\(validPositions))")
-
-        if layout is FloatingPanelIntrinsicLayout {
-            assert(layout.insetFor(position: .full) == nil, "Return `nil` for full position on FloatingPanelIntrinsicLayout")
-        }
-
-        if halfInset > 0 {
-            assert(halfInset > tipInset, "Invalid half and tip insets")
-        }
-        // The verification isn't working on orientation change(portrait -> landscape)
-        // of a floating panel in tab bar. Because the `safeAreaInsets.bottom` is
-        // updated in delay so that it can be 83.0(not 53.0) even after the surface
-        // and the super view's frame is fit to landscape already.
-        /*if fullInset > 0 {
-            assert(middleY > topY, "Invalid insets { topY: \(topY), middleY: \(middleY) }")
-            assert(bottomY > topY, "Invalid insets { topY: \(topY), bottomY: \(bottomY) }")
-         }*/
+        assert(activeStates.count > 0)
+        assert(validStates.contains(layout.initialState),
+               "Does not include an initial state (\(layout.initialState)) in (\(validStates))")
+        let statePosOrder = activeStates.sorted(by: { position(for: $0) < position(for: $1) })
+        assert(sortedDirectionalStates == statePosOrder,
+               "Check your layout anchors because the state order(\(statePosOrder)) must be (\(sortedDirectionalStates))).")
     }
+}
 
-    func segument(at posY: CGFloat, forward: Bool) -> LayoutSegment {
+extension FloatingPanelLayoutAdapter {
+    func segument(at pos: CGFloat, forward: Bool) -> LayoutSegment {
         /// ----------------------->Y
         /// --> forward                <-- backward
         /// |-------|===o===|-------|  |-------|-------|===o===|
         /// |-------|-------x=======|  |-------|=======x-------|
         /// |-------|-------|===o===|  |-------|===o===|-------|
         /// pos: o/x, seguement: =
-        let sortedPositions = supportedPositions.sorted(by: { $0.rawValue < $1.rawValue })
+
+        let sortedStates = sortedDirectionalStates
 
         let upperIndex: Int?
         if forward {
-            upperIndex = sortedPositions.firstIndex(where: { posY < positionY(for: $0) })
+            upperIndex = sortedStates.firstIndex(where: { pos < position(for: $0) })
         } else {
-            upperIndex = sortedPositions.firstIndex(where: { posY <= positionY(for: $0) })
+            upperIndex = sortedStates.firstIndex(where: { pos <= position(for: $0) })
         }
 
         switch upperIndex {
         case 0:
-            return LayoutSegment(lower: nil, upper: sortedPositions.first)
+            return LayoutSegment(lower: nil, upper: sortedStates.first)
         case let upperIndex?:
-            return LayoutSegment(lower: sortedPositions[upperIndex - 1], upper: sortedPositions[upperIndex])
+            return LayoutSegment(lower: sortedStates[upperIndex - 1], upper: sortedStates[upperIndex])
         default:
-            return LayoutSegment(lower: sortedPositions[sortedPositions.endIndex - 1], upper: nil)
+            return LayoutSegment(lower: sortedStates[sortedStates.endIndex - 1], upper: nil)
         }
+    }
+}
+
+extension FloatingPanelController {
+    var _layout: FloatingPanelLayout {
+        get { floatingPanel.layoutAdapter.layout }
+        set { floatingPanel.layoutAdapter.layout = newValue}
     }
 }

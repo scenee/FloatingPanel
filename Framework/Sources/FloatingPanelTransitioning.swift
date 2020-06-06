@@ -30,7 +30,7 @@ class FloatingPanelPresentationController: UIPresentationController {
 
     override func presentationTransitionDidEnd(_ completed: Bool) {
         // For non-animated presentation
-        if let fpc = presentedViewController as? FloatingPanelController, fpc.position == .hidden {
+        if let fpc = presentedViewController as? FloatingPanelController, fpc.state == .hidden {
             fpc.show(animated: false, completion: nil)
         }
     }
@@ -38,7 +38,7 @@ class FloatingPanelPresentationController: UIPresentationController {
     override func dismissalTransitionDidEnd(_ completed: Bool) {
         if let fpc = presentedViewController as? FloatingPanelController {
             // For non-animated dismissal
-            if fpc.position != .hidden {
+            if fpc.state != .hidden {
                 fpc.hide(animated: false, completion: nil)
             }
             fpc.view.removeFromSuperview()
@@ -82,7 +82,8 @@ class FloatingPanelModalPresentTransition: NSObject, UIViewControllerAnimatedTra
             let fpc = transitionContext?.viewController(forKey: .to) as? FloatingPanelController
         else { fatalError()}
 
-        let animator = fpc.behavior.addAnimator(fpc, to: fpc.layout.initialPosition)
+        let animator = fpc.delegate?.floatingPanel?(fpc, animatorForPresentingTo: fpc.layout.initialState)
+            ?? FloatingPanelDefaultBehavior().addPanelAnimator(fpc, to: fpc.layout.initialState)
         return TimeInterval(animator.duration)
     }
 
@@ -103,7 +104,8 @@ class FloatingPanelModalDismissTransition: NSObject, UIViewControllerAnimatedTra
             let fpc = transitionContext?.viewController(forKey: .from) as? FloatingPanelController
         else { fatalError()}
 
-        let animator = fpc.behavior.removeAnimator(fpc, from: fpc.position)
+        let animator = fpc.delegate?.floatingPanel?(fpc, animatorForDismissingWith: .zero)
+            ?? FloatingPanelDefaultBehavior().removePanelAnimator(fpc, from: fpc.state, with: .zero)
         return TimeInterval(animator.duration)
     }
 

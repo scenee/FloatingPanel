@@ -5,7 +5,7 @@
 
 import UIKit
 
-public class GrabberHandleView: UIView {
+public class FloatingPanelGrabberView: UIView {
 
     public var barColor = UIColor(displayP3Red: 0.76, green: 0.77, blue: 0.76, alpha: 1.0) { didSet { backgroundColor = barColor } }
 
@@ -30,6 +30,5 @@ public class GrabberHandleView: UIView {
 
     private func render() {
         self.layer.masksToBounds = true
-        self.layer.cornerRadius = frame.size.height * 0.5
     }
 }
