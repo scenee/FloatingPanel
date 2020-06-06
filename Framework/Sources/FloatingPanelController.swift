@@ -185,7 +185,7 @@ open class FloatingPanelController: UIViewController {
 
     /// Returns the scroll view that the controller tracks.
     @objc
-    public weak var scrollView: UIScrollView? {
+    public weak var trackingScrollView: UIScrollView? {
         return floatingPanel.scrollView
     }
 
@@ -429,18 +429,18 @@ open class FloatingPanelController: UIViewController {
         // preserve the current content offset if contentInsetAdjustmentBehavior is `.always`
         var contentOffset: CGPoint?
         if contentInsetAdjustmentBehavior == .always {
-            contentOffset = scrollView?.contentOffset
+            contentOffset = trackingScrollView?.contentOffset
         }
 
         floatingPanel.layoutAdapter.updateStaticConstraint()
 
         if let contentOffset = contentOffset {
-            scrollView?.contentOffset = contentOffset
+            trackingScrollView?.contentOffset = contentOffset
         }
 
         switch contentInsetAdjustmentBehavior {
         case .always:
-            scrollView?.contentInset = adjustedContentInsets
+            trackingScrollView?.contentInset = adjustedContentInsets
         default:
             break
         }
@@ -452,14 +452,14 @@ open class FloatingPanelController: UIViewController {
         // preserve the current content offset if contentInsetAdjustmentBehavior is `.always`
         var contentOffset: CGPoint?
         if contentInsetAdjustmentBehavior == .always {
-            contentOffset = scrollView?.contentOffset
+            contentOffset = trackingScrollView?.contentOffset
         }
 
         floatingPanel.layoutAdapter.updateStaticConstraint()
         floatingPanel.layoutAdapter.activateLayout(for: floatingPanel.state, forceLayout: forceLayout)
 
         if let contentOffset = contentOffset {
-            scrollView?.contentOffset = contentOffset
+            trackingScrollView?.contentOffset = contentOffset
         }
     }
 
