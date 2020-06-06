@@ -341,7 +341,7 @@ open class FloatingPanelController: UIViewController {
         if #available(iOS 11.0, *) {
             // Ensure the panel's static constraint after rotating a device in static mode
             if contentMode == .static {
-                floatingPanel.layoutAdapter.updateHeight()
+                floatingPanel.layoutAdapter.updateStaticConstraint()
             }
         } else {
             // Because {top,bottom}LayoutGuide is managed as a view
@@ -432,7 +432,7 @@ open class FloatingPanelController: UIViewController {
             contentOffset = scrollView?.contentOffset
         }
 
-        floatingPanel.layoutAdapter.updateHeight()
+        floatingPanel.layoutAdapter.updateStaticConstraint()
 
         if let contentOffset = contentOffset {
             scrollView?.contentOffset = contentOffset
@@ -455,7 +455,7 @@ open class FloatingPanelController: UIViewController {
             contentOffset = scrollView?.contentOffset
         }
 
-        floatingPanel.layoutAdapter.updateHeight()
+        floatingPanel.layoutAdapter.updateStaticConstraint()
         floatingPanel.layoutAdapter.activateLayout(for: floatingPanel.state, forceLayout: forceLayout)
 
         if let contentOffset = contentOffset {

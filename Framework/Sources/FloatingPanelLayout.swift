@@ -287,7 +287,7 @@ class FloatingPanelLayoutAdapter {
     private(set) var interactionEdgeConstraint: NSLayoutConstraint?
     private(set) var animationEdgeConstraint: NSLayoutConstraint?
 
-    private var heightConstraint: NSLayoutConstraint?
+    private var staticConstraint: NSLayoutConstraint?
 
     private var activeStates: Set<FloatingPanelState> {
         return Set(layout.stateAnchors.keys)
@@ -788,10 +788,10 @@ class FloatingPanelLayoutAdapter {
 
     // The method is separated from prepareLayout(to:) for the rotation support
     // It must be called in FloatingPanelController.traitCollectionDidChange(_:)
-    func updateHeight() {
+    func updateStaticConstraint() {
         guard let vc = vc else { return }
-        NSLayoutConstraint.deactivate(constraint: heightConstraint)
-        heightConstraint = nil
+        NSLayoutConstraint.deactivate(constraint: staticConstraint)
+        staticConstraint = nil
 
         if vc.contentMode == .fitToBounds {
             surfaceView.containerOverflow = 0
@@ -800,30 +800,42 @@ class FloatingPanelLayoutAdapter {
 
         let anchor = layout.stateAnchors[self.edgeMostState]!
         if anchor is FloatingPanelIntrinsicLayoutAnchor {
-            let heightMargin: CGFloat
+            var constant = layout.anchorPosition.mainDimension(surfaceView.intrinsicContentSize)
             switch layout.anchorPosition {
-            case .bottom:
-                heightMargin = safeAreaInsets.bottom
             case .top:
-                heightMargin = safeAreaInsets.top
+                if anchor.referenceGuide == .safeArea {
+                    constant += safeAreaInsets.top
+                }
+                staticConstraint = surfaceView.heightAnchor.constraint(equalToConstant: constant)
+            case .left:
+                if anchor.referenceGuide == .safeArea {
+                    constant += safeAreaInsets.left
+                }
+                staticConstraint = surfaceView.widthAnchor.constraint(equalToConstant: constant)
+            case .bottom:
+                if anchor.referenceGuide == .safeArea {
+                    constant += safeAreaInsets.bottom
+                }
+                staticConstraint = surfaceView.heightAnchor.constraint(equalToConstant: constant)
+            case .right:
+                if anchor.referenceGuide == .safeArea {
+                    constant += safeAreaInsets.right
+                }
+                staticConstraint = surfaceView.widthAnchor.constraint(equalToConstant: constant)
             }
-            let constant: CGFloat
-            switch anchor.referenceGuide {
-            case .safeArea:
-                constant = surfaceView.intrinsicContentSize.height + heightMargin
-            case .superview:
-                constant = surfaceView.intrinsicContentSize.height
-            }
-            heightConstraint = surfaceView.heightAnchor.constraint(equalToConstant: constant)
         } else {
             switch layout.anchorPosition {
             case .top:
-                heightConstraint = surfaceView.heightAnchor.constraint(equalToConstant: positionY(for: self.directionalMostState))
+                staticConstraint = surfaceView.heightAnchor.constraint(equalToConstant: position(for: self.directionalMostState))
+            case .left:
+                staticConstraint = surfaceView.widthAnchor.constraint(equalToConstant: position(for: self.directionalMostState))
             case .bottom:
-                heightConstraint = vc.view.heightAnchor.constraint(equalTo: surfaceView.heightAnchor, constant: positionY(for: self.directionalLeastState))
+                staticConstraint = vc.view.heightAnchor.constraint(equalTo: surfaceView.heightAnchor, constant: position(for: self.directionalLeastState))
+            case .right:
+                staticConstraint = vc.view.heightAnchor.constraint(equalTo: surfaceView.widthAnchor, constant: position(for: self.directionalLeastState))
             }
         }
-        NSLayoutConstraint.activate(constraint: heightConstraint)
+        NSLayoutConstraint.activate(constraint: staticConstraint)
 
         surfaceView.containerOverflow = vc.view.bounds.height
     }
