@@ -176,17 +176,18 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         let forwardY = (translation >= 0)
 
         let segment = layoutAdapter.segument(at: cur, forward: forwardY)
-        let lowerPos = segment.lower ?? layoutAdapter.edgeMostState
-        let upperPos = segment.upper ?? layoutAdapter.edgeLeastState
 
-        let preStata = forwardY ? lowerPos : upperPos
-        let nextState = forwardY ? upperPos : lowerPos
+        let lowerState = segment.lower ?? layoutAdapter.edgeMostState
+        let upperState = segment.upper ?? layoutAdapter.edgeLeastState
+
+        let preState = forwardY ? lowerState : upperState
+        let nextState = forwardY ? upperState : lowerState
 
         let next = value(of: layoutAdapter.surfaceLocation(for: nextState))
-        let pre = value(of: layoutAdapter.surfaceLocation(for: preStata))
+        let pre = value(of: layoutAdapter.surfaceLocation(for: preState))
 
         let nextAlpha = layoutAdapter.backdropAlpha(for: nextState)
-        let preAlpha = layoutAdapter.backdropAlpha(for: preStata)
+        let preAlpha = layoutAdapter.backdropAlpha(for: preState)
 
         if pre == next {
             return preAlpha
@@ -580,8 +581,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 
         backdropView.alpha = getBackdropAlpha(at: cur, with: value(of: translation))
 
-        let didMove = (pre != cur)
-        guard didMove else { return }
+        guard (pre != cur) else { return }
 
         if let vc = viewcontroller {
             vc.delegate?.floatingPanelDidMove?(vc)
@@ -1125,8 +1125,8 @@ class NumericSpringAnimator: NSObject {
         guard lock.tryLock() else { return }
         defer { lock.unlock() }
 
-        var cur = data.value
-        let pre = cur
+        let pre = data.value
+        var cur = pre
         var velocity = data.velocity
         spring(x: &cur,
                v: &velocity,
