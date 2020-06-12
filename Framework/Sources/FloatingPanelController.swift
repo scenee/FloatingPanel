@@ -69,13 +69,6 @@ import UIKit
     @objc optional
     func floatingPanelDidRemove(_ fpc: FloatingPanelController)
 
-    /// Asks the delegate if the other gesture recognizer should be allowed to recognize the gesture in parallel.
-    ///
-    /// By default, any tap and long gesture recognizers are allowed to recognize gestures simultaneously.
-    @objc(floatingPanel:shouldRecognizeSimultaneouslyWithGestureRecognizer:)
-    optional
-    func floatingPanel(_ fpc: FloatingPanelController, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool
-
     /// Asks the delegate for a content offset of the tracked scroll view to be pinned when a floating panel moves
     ///
     /// If you do not implement this method, the controller uses a value of the content offset plus the content insets
@@ -191,7 +184,7 @@ open class FloatingPanelController: UIViewController {
 
     // The underlying gesture recognizer for pan gestures
     @objc
-    public var panGestureRecognizer: UIPanGestureRecognizer {
+    public var panGestureRecognizer: FloatingPanelPanGestureRecognizer {
         return floatingPanel.panGestureRecognizer
     }
 
