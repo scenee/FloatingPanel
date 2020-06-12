@@ -200,14 +200,13 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                                   shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if let result = panGestureRecognizer.delegateProxy?.gestureRecognizer?(gestureRecognizer, shouldRecognizeSimultaneouslyWith: otherGestureRecognizer) {
+            return result
+        }
+
         guard gestureRecognizer == panGestureRecognizer else { return false }
 
         /* log.debug("shouldRecognizeSimultaneouslyWith", otherGestureRecognizer) */
-
-        if let vc = viewcontroller,
-            vc.delegate?.floatingPanel?(vc, shouldRecognizeSimultaneouslyWith: otherGestureRecognizer) ?? false {
-            return true
-        }
 
         switch otherGestureRecognizer {
         case is FloatingPanelPanGestureRecognizer:
@@ -229,6 +228,10 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
     }
 
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if let result = panGestureRecognizer.delegateProxy?.gestureRecognizer?(gestureRecognizer, shouldBeRequiredToFailBy: otherGestureRecognizer) {
+            return result
+        }
+
         /* log.debug("shouldBeRequiredToFailBy", otherGestureRecognizer) */
         if otherGestureRecognizer is FloatingPanelPanGestureRecognizer {
             // If this panel is the farthest descendant of visiable panels,
@@ -242,10 +245,15 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             // The dismiss gesture of a sheet modal should not begin until the pan gesture fails.
             return true
         }
+
         return false
     }
 
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if let result = panGestureRecognizer.delegateProxy?.gestureRecognizer?(gestureRecognizer, shouldRequireFailureOf: otherGestureRecognizer) {
+            return result
+        }
+
         guard gestureRecognizer == panGestureRecognizer else { return false }
 
         /* log.debug("shouldRequireFailureOf", otherGestureRecognizer) */
@@ -272,11 +280,6 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
                     return false
                 }
             }
-        }
-
-        if let vc = viewcontroller,
-            vc.delegate?.floatingPanel?(vc, shouldRecognizeSimultaneouslyWith: otherGestureRecognizer) ?? false {
-            return false
         }
 
         switch otherGestureRecognizer {
@@ -1005,31 +1008,48 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         }
         return offsetY <= -30.0 || offsetY > 0
     }
+
+    // MARK: - UIPanGestureRecognizer Intermediation
+    override func responds(to aSelector: Selector!) -> Bool {
+        return super.responds(to: aSelector) || panGestureRecognizer.delegateProxy?.responds(to: aSelector) == true
+    }
+
+    override func forwardingTarget(for aSelector: Selector!) -> Any? {
+        if panGestureRecognizer.delegateProxy?.responds(to: aSelector) == true {
+            return panGestureRecognizer.delegateProxy
+        }
+        return super.forwardingTarget(for: aSelector)
+    }
 }
 
-class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
+public class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
     fileprivate weak var floatingPanel: FloatingPanelCore?
     fileprivate var initialLocation: CGPoint = .zero
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
+    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
         super.touchesBegan(touches, with: event)
         initialLocation = touches.first?.location(in: view) ?? .zero
         if floatingPanel?.animator != nil || floatingPanel?.moveAnimator != nil {
             self.state = .began
         }
     }
-    override weak var delegate: UIGestureRecognizerDelegate? {
+    public override weak var delegate: UIGestureRecognizerDelegate? {
         get {
             return super.delegate
         }
         set {
             guard newValue is FloatingPanelCore else {
                 let exception = NSException(name: .invalidArgumentException,
-                                            reason: "FloatingPanelController's built-in pan gesture recognizer must have its controller as its delegate.",
+                                            reason: "FloatingPanelController's built-in pan gesture recognizer must have its controller as its delegate. Use 'delegateProxy' property.",
                                             userInfo: nil)
                 exception.raise()
                 return
             }
             super.delegate = newValue
+        }
+    }
+    public weak var delegateProxy: UIGestureRecognizerDelegate? {
+        didSet {
+            self.delegate = floatingPanel // Update the cached IMP
         }
     }
 }
