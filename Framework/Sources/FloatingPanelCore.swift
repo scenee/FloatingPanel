@@ -217,6 +217,9 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
              is UIRotationGestureRecognizer,
              is UIScreenEdgePanGestureRecognizer,
              is UIPinchGestureRecognizer:
+            if grabberAreaFrame.contains(gestureRecognizer.location(in: gestureRecognizer.view)) {
+                return true
+            }
             // all gestures of the tracking scroll view should be recognized in parallel
             // and handle them in self.handle(panGesture:)
             return scrollView?.gestureRecognizers?.contains(otherGestureRecognizer) ?? false
@@ -232,7 +235,6 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             return result
         }
 
-        /* log.debug("shouldBeRequiredToFailBy", otherGestureRecognizer) */
         if otherGestureRecognizer is FloatingPanelPanGestureRecognizer {
             // If this panel is the farthest descendant of visiable panels,
             // its ancestors' pan gesture must wait for its pan gesture to fail
@@ -246,6 +248,10 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             return true
         }
 
+        if grabberAreaFrame.contains(gestureRecognizer.location(in: gestureRecognizer.view)) {
+            return true
+        }
+
         return false
     }
 
@@ -255,8 +261,6 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         }
 
         guard gestureRecognizer == panGestureRecognizer else { return false }
-
-        /* log.debug("shouldRequireFailureOf", otherGestureRecognizer) */
 
         // Should begin the pan gesture without waiting for the tracking scroll view's gestures.
         // `scrollView.gestureRecognizers` can contains the following gestures
@@ -298,6 +302,9 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             if #available(iOS 11.0, *),
                 otherGestureRecognizer.name == "_UISheetInteractionBackgroundDismissRecognizer" {
                 // Should begin the pan gesture without waiting the dismiss gesture of a sheet modal.
+                return false
+            }
+            if grabberAreaFrame.contains(gestureRecognizer.location(in: gestureRecognizer.view)) {
                 return false
             }
             // Do not begin the pan gesture until these gestures fail
