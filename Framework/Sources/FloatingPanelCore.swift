@@ -77,7 +77,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         panGestureRecognizer = FloatingPanelPanGestureRecognizer()
 
         if #available(iOS 11.0, *) {
-            panGestureRecognizer.name = "FloatingPanelSurface"
+            panGestureRecognizer.name = "FloatingPanelPanGestureRecognizer"
         }
 
         super.init()
@@ -1029,9 +1029,10 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
     }
 }
 
-public class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
+public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
     fileprivate weak var floatingPanel: FloatingPanelCore?
     fileprivate var initialLocation: CGPoint = .zero
+
     public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
         super.touchesBegan(touches, with: event)
         initialLocation = touches.first?.location(in: view) ?? .zero
