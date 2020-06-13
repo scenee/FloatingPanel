@@ -1,6 +1,4 @@
-//
-//  Copyright © 2018 Shin Yamamoto. All rights reserved.
-//
+// Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
 
 import UIKit
 

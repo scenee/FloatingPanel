@@ -1,10 +1,4 @@
-//
-//  UtilTests.swift
-//  FloatingPanelTests
-//
-//  Created by Shin Yamamoto on 2019/10/24.
-//  Copyright © 2019 scenee. All rights reserved.
-//
+// Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
 
 import XCTest
 @testable import FloatingPanel

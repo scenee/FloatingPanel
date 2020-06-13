@@ -1,7 +1,4 @@
-//
-//  Created by Shin Yamamoto on 2019/07/05.
-//  Copyright © 2019 scenee. All rights reserved.
-//
+// Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
 
 import XCTest
 @testable import FloatingPanel
