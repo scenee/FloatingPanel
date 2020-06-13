@@ -1,10 +1,4 @@
-//
-//  AppDelegate.swift
-//  Maps
-//
-//  Created by Shin Yamamoto on 2018/10/09.
-//  Copyright © 2018 Shin Yamamoto. All rights reserved.
-//
+// Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
 
 import UIKit
 

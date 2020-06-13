@@ -1,7 +1,4 @@
-//
-//  Created by Shin Yamamoto on 2019/05/23.
-//  Copyright © 2019 Shin Yamamoto. All rights reserved.
-//
+// Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
 
 import XCTest
 @testable import FloatingPanel
