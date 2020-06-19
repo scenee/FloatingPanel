@@ -338,10 +338,16 @@ class FloatingPanelLayoutAdapter {
     }
 
     var edgeLeastState: FloatingPanelState {
+        if orderedStates.count == 1 {
+            return .hidden
+        }
         return orderedStates.first ?? .hidden
     }
     
     var edgeMostState: FloatingPanelState {
+        if orderedStates.count == 1 {
+            return orderedStates[0]
+        }
         return orderedStates.last ?? .hidden
     }
 
