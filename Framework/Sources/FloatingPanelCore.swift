@@ -334,11 +334,13 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 
             let belowEdgeMost = 0 > layoutAdapter.offsetFromEdgeMost + (1.0 / surfaceView.traitCollection.displayScale)
 
-            log.debug("scroll gesture(\(state):\(panGesture.state)) --",
-                "belowTop = \(belowEdgeMost),",
-                "interactionInProgress = \(interactionInProgress),",
-                "scroll offset = \(value(of: scrollView.contentOffset)),",
-                "location = \(value(of: location)), velocity = \(velocity)")
+            log.debug("""
+                scroll gesture(\(state):\(panGesture.state)) -- \
+                belowTop = \(belowEdgeMost), \
+                interactionInProgress = \(interactionInProgress), \
+                scroll offset = \(value(of: scrollView.contentOffset)), \
+                location = \(value(of: location)), velocity = \(velocity)
+                """)
 
             let offsetDiff = value(of: scrollView.contentOffset - contentOffsetForPinning(of: scrollView))
 
@@ -428,8 +430,12 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             let velocity = panGesture.velocity(in: panGesture.view)
             let location = panGesture.location(in: panGesture.view)
 
-            log.debug("panel gesture(\(state):\(panGesture.state)) --",
-                "translation =  \(value(of: translation)), location = \(value(of: location)), velocity = \(value(of: velocity))")
+            log.debug("""
+                panel gesture(\(state):\(panGesture.state)) -- \
+                translation =  \(value(of: translation)), \
+                location = \(value(of: location)), \
+                velocity = \(value(of: velocity))
+                """)
 
             if interactionInProgress == false, isDecelerating == false,
                 let vc = viewcontroller, vc.delegate?.floatingPanelShouldBeginDragging?(vc) == false {
