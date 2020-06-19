@@ -79,7 +79,30 @@ class FloatingPanelTests: XCTestCase {
 
         XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos - 100.0, with: -100.0), 0.3)
         XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos, with: 0), 0.3)
-        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos + 100.0, with: 100.0), 0.3) // ok??
+        XCTAssertLessThan(fpc.floatingPanel.getBackdropAlpha(at: fullPos + 100.0, with: 100.0), 0.3)
+    }
+
+    func test_getBackdropAlpha_1positionsWithInitialHidden() {
+        class FloatingPanelLayout2Positions: FloatingPanelTestLayout {
+            override var initialState: FloatingPanelState { .hidden }
+            override var stateAnchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+                return [
+                    .full: FloatingPanelLayoutAnchor(absoluteInset: fullInset, edge: .top, referenceGuide: referenceGuide),
+                ]
+            }
+        }
+        let delegate = FloatingPanelTestDelegate()
+        let fpc = FloatingPanelController(delegate: delegate)
+        fpc.layout = FloatingPanelLayout2Positions()
+
+        fpc.showForTest()
+
+        let fullPos = fpc.surfaceLocation(for: .full).y
+        let hiddenPos = fpc.surfaceLocation(for: .hidden).y
+
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos - 100.0, with:  -100.0), 0.3)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos, with: 0.0), 0.3)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: hiddenPos, with: 100.0), 0.0)
     }
 
     func test_getBackdropAlpha_2positions() {
@@ -117,8 +140,13 @@ class FloatingPanelTests: XCTestCase {
 
     func test_getBackdropAlpha_2positionsWithHidden() {
         class FloatingPanelLayout2Positions: FloatingPanelTestLayout {
-            let initialPosition: FloatingPanelState = .hidden
-            let supportedPositions: Set<FloatingPanelState> = [.hidden, .full]
+            override var initialState: FloatingPanelState { .hidden }
+            override var stateAnchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+                return [
+                    .full: FloatingPanelLayoutAnchor(absoluteInset: fullInset, edge: .top, referenceGuide: referenceGuide),
+                    .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0.0, edge: .bottom, referenceGuide: referenceGuide),
+                ]
+            }
         }
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
