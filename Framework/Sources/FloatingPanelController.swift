@@ -598,12 +598,11 @@ open class FloatingPanelController: UIViewController {
     /// Tracks the specified scroll view to correspond with the scroll.
     ///
     /// - Parameters:
-    ///     - scrollView: Specify a scroll view to continuously and seamlessly work in concert with interactions of the surface view or nil to cancel it.
+    ///     - scrollView: Specify a scroll view to continuously and seamlessly work in concert with interactions of the surface view
     @objc(trackScrollView:)
-    public func track(scrollView: UIScrollView?) {
-        guard let scrollView = scrollView else {
-            floatingPanel.scrollView = nil
-            return
+    public func track(scrollView: UIScrollView) {
+        if let scrollView = floatingPanel.scrollView {
+            untrack(scrollView: scrollView)
         }
 
         floatingPanel.scrollView = scrollView
@@ -619,6 +618,15 @@ open class FloatingPanelController: UIViewController {
             }
         default:
             break
+        }
+    }
+
+    /// Cancel tracking the specifiy scroll view.
+    ///
+    @objc(untrackScrollView:)
+    public func untrack(scrollView: UIScrollView) {
+        if floatingPanel.scrollView == scrollView {
+            floatingPanel.scrollView = nil
         }
     }
 
