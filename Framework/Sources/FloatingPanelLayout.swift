@@ -623,6 +623,7 @@ class FloatingPanelLayoutAdapter {
                     return surfaceView.rightAnchor.constraint(equalTo: vc.view.rightAnchor, constant: 0.0)
                 }
             }()
+            fitToBoundsConstraint?.priority = .defaultHigh
         }
 
         NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
