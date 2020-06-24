@@ -665,6 +665,8 @@ class FloatingPanelLayoutAdapter {
             constraint = surfaceView.leftAnchor.constraint(equalTo: vc.view.leftAnchor, constant: initialConst)
         }
 
+        constraint.priority = .defaultHigh
+
         NSLayoutConstraint.activate([constraint])
         self.interactionEdgeConstraint = constraint
     }
@@ -789,6 +791,8 @@ class FloatingPanelLayoutAdapter {
                 fatalError("Unsupported reference edges")
             }
         }
+
+        animationEdgeConstraint?.priority = .defaultHigh
 
         NSLayoutConstraint.activate([animationConstraint])
         self.animationEdgeConstraint = animationConstraint
