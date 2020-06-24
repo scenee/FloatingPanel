@@ -362,6 +362,10 @@ public class FloatingPanelSurfaceView: UIView {
         }
         containerView.layer.masksToBounds = true
         if anchorPosition.inset(containerMargins) != 0 {
+            if #available(iOS 11, *) {
+                containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,
+                                                     .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            }
             return
         }
         if #available(iOS 11, *) {
