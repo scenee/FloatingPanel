@@ -1139,7 +1139,7 @@ class NumericSpringAnimator: NSObject {
                xt: target,
                zeta: zeta,
                omega: omega,
-               h: CGFloat(displayLink.duration))
+               h: CGFloat(displayLink.targetTimestamp - displayLink.timestamp))
         data = Data(value: cur, velocity: velocity)
         update(data)
         if abs(target - data.value) <= (1 / displayScale),
