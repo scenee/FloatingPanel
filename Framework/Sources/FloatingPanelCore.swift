@@ -47,6 +47,9 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
     var interactionInProgress: Bool = false
     var isDecelerating: Bool = false
 
+    // Removal interaction
+    var removalVector: CGVector = .zero
+
     // Scroll handling
     private var initialScrollOffset: CGPoint = .zero
     private var stopScrollDeceleration: Bool = false
@@ -126,8 +129,9 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
                 animator = vc.delegate?.floatingPanel?(vc, animatorForPresentingTo: to)
                     ?? FloatingPanelDefaultBehavior().addPanelAnimator(vc, to: to)
             case (let from, .hidden):
+                let animationVector = CGVector(dx: abs(removalVector.dx), dy: abs(removalVector.dy))
                 animator = vc.delegate?.floatingPanel?(vc, animatorForDismissingWith: .zero)
-                    ?? FloatingPanelDefaultBehavior().removePanelAnimator(vc, from: from, with: .zero)
+                    ?? FloatingPanelDefaultBehavior().removePanelAnimator(vc, from: from, with: animationVector)
             default:
                 move(to: to, with: 0) {
                     updateScrollView()
@@ -318,10 +322,8 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
     // MARK: - Gesture handling
 
     @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
-        viewcontroller?.dismiss(animated: true) { [weak self] in
-            guard let vc = self?.viewcontroller else { return }
-            vc.delegate?.floatingPanelDidRemove?(vc)
-        }
+        removalVector = .zero
+        viewcontroller?.remove()
     }
 
     @objc func handle(panGesture: UIPanGestureRecognizer) {
@@ -656,21 +658,14 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 
         if isRemovalInteractionEnabled {
             let distToHidden = CGFloat(abs(currentPos - layoutAdapter.position(for: .hidden)))
-            let removalVector: CGVector
             switch layoutAdapter.anchorPosition {
             case .top, .bottom:
                 removalVector = (distToHidden != 0) ? CGVector(dx: 0.0, dy: velocity.y/distToHidden) : .zero
             case .left, .right:
                 removalVector = (distToHidden != 0) ? CGVector(dx: velocity.x/distToHidden, dy: 0.0) : .zero
             }
-            if shouldStartRemovalAnimation(with: removalVector), let vc = viewcontroller {
-
-                vc.delegate?.floatingPanelWillRemove?(vc, with: velocity)
-
-                let animationVector = CGVector(dx: abs(removalVector.dx), dy: abs(removalVector.dy))
-                startRemovalAnimation(vc, with: animationVector) { [weak self] in
-                    self?.finishRemovalAnimation()
-                }
+            if shoulRemove(with: removalVector) {
+                viewcontroller?.remove()
                 return
             }
         }
@@ -709,7 +704,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         }
     }
 
-    private func shouldStartRemovalAnimation(with velocityVector: CGVector) -> Bool {
+    private func shoulRemove(with velocityVector: CGVector) -> Bool {
         guard let vc = viewcontroller else { return false }
         if let result = vc.delegate?.floatingPanel?(vc, shouldRemoveAt: vc.surfaceLocation, with: velocityVector) {
             return result
@@ -723,29 +718,6 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             return (velocityVector.dy >= 10.0)
         case .right:
             return (velocityVector.dx >= 10.0)
-        }
-    }
-
-    private func startRemovalAnimation(_ vc: FloatingPanelController, with velocityVector: CGVector, completion: (() -> Void)?) {
-        let animator = vc.delegate?.floatingPanel?(vc, animatorForDismissingWith: velocityVector)
-            ?? FloatingPanelDefaultBehavior().removePanelAnimator(vc, from: self.state, with: velocityVector)
-
-        animator.addAnimations { [weak self] in
-            self?.state = .hidden
-            self?.updateLayout(to: .hidden)
-        }
-        animator.addCompletion({ _ in
-            self.animator = nil
-            completion?()
-        })
-        self.animator = animator
-        animator.startAnimation()
-    }
-
-    private func finishRemovalAnimation() {
-        viewcontroller?.dismiss(animated: false) { [weak self] in
-            guard let vc = self?.viewcontroller else { return }
-            vc.delegate?.floatingPanelDidRemove?(vc)
         }
     }
 
