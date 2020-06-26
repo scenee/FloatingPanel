@@ -60,12 +60,12 @@ import UIKit
     optional
     func floatingPanel(_ fpc: FloatingPanelController, shouldRemoveAt location: CGPoint, with velocity: CGVector) -> Bool
 
-    // called on start of dragging to remove its views from a parent view controller
-    @objc(floatingPanelWillRemove:withVelocity:)
+    // called on start to remove its view controller from the parent view controller.
+    @objc(floatingPanelWillRemove:)
     optional
-    func floatingPanelWillRemove(_ fpc: FloatingPanelController, with velocity: CGPoint)
+    func floatingPanelWillRemove(_ fpc: FloatingPanelController)
 
-    // called when its views are removed from a parent view controller
+    // called when its view controller are removed from the parent view controller.
     @objc optional
     func floatingPanelDidRemove(_ fpc: FloatingPanelController)
 
@@ -456,6 +456,18 @@ open class FloatingPanelController: UIViewController {
         }
     }
 
+    func remove() {
+        if presentingViewController != nil, parent == nil {
+            delegate?.floatingPanelWillRemove?(self)
+            dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.floatingPanelDidRemove?(self)
+            }
+        } else {
+            removePanelFromParent(animated: true)
+        }
+    }
+
     // MARK: - Container view controller interface
 
     /// Shows the surface view at the initial position defined by the current layout
@@ -546,7 +558,7 @@ open class FloatingPanelController: UIViewController {
             return
         }
 
-        delegate?.floatingPanelWillRemove?(self, with: .zero)
+        delegate?.floatingPanelWillRemove?(self)
 
         hide(animated: animated) { [weak self] in
             guard let `self` = self else { return }

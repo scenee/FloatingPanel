@@ -156,9 +156,6 @@ extension UISpringTimingParameters {
 }
 
 extension CGPoint {
-    static var nan: CGPoint {
-        return CGPoint(x: CGFloat.nan, y: CGFloat.nan)
-    }
     static var leastNonzeroMagnitude: CGPoint {
         return CGPoint(x: CGFloat.leastNonzeroMagnitude, y: CGFloat.leastNonzeroMagnitude)
     }
