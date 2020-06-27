@@ -28,7 +28,7 @@ class FloatingPanelLayoutTests: XCTestCase {
                 ]
             }
             let initialState: FloatingPanelState = .hidden
-            let anchorPosition: FloatingPanelPosition = .bottom
+            let position: FloatingPanelPosition = .bottom
         }
         class FloatingPanelLayout2Positions: FloatingPanelLayout {
             var stateAnchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
@@ -38,7 +38,7 @@ class FloatingPanelLayoutTests: XCTestCase {
                 ]
             }
             let initialState: FloatingPanelState = .tip
-            let anchorPosition: FloatingPanelPosition = .bottom
+            let position: FloatingPanelPosition = .bottom
         }
         fpc.layout = FloatingPanelLayoutWithHidden()
         XCTAssertEqual(fpc.floatingPanel.layoutAdapter.edgeMostState, .full)
@@ -234,7 +234,7 @@ class FloatingPanelLayoutTests: XCTestCase {
                 ]
             }
             let initialState: FloatingPanelState = .hidden
-            let anchorPosition: FloatingPanelPosition = .bottom
+            let position: FloatingPanelPosition = .bottom
         }
         fpc.layout = FloatingPanelLayout2Positions()
         fpc.showForTest()
@@ -277,7 +277,7 @@ class FloatingPanelLayoutTests: XCTestCase {
                 ]
             }
             let initialState: FloatingPanelState = .hidden
-            let anchorPosition: FloatingPanelPosition = .top
+            let position: FloatingPanelPosition = .top
         }
         fpc.layout = FloatingPanelLayout2Positions()
         fpc.showForTest()
@@ -320,7 +320,7 @@ class FloatingPanelLayoutTests: XCTestCase {
                 ]
             }
             let initialState: FloatingPanelState = .full
-            let anchorPosition: FloatingPanelPosition = .bottom
+            let position: FloatingPanelPosition = .bottom
         }
         fpc.layout = FloatingPanelLayoutMinusInsets()
         fpc.showForTest()

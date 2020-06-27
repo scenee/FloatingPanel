@@ -125,14 +125,14 @@ public class FloatingPanelSurfaceView: UIView {
         }
     }
 
-    var anchorPosition: FloatingPanelPosition = .bottom {
+    var position: FloatingPanelPosition = .bottom {
         didSet {
-            guard anchorPosition != oldValue else { return }
+            guard position != oldValue else { return }
             NSLayoutConstraint.deactivate([grabberHandleEdgePaddingConstraint,
                                            grabberHandleCenterConstraint,
                                            grabberHandleWidthConstraint,
                                            grabberHandleHeightConstraint])
-            switch anchorPosition {
+            switch position {
             case .top:
                 grabberHandleEdgePaddingConstraint = grabberHandle.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -grabberHandlePadding)
                 grabberHandleCenterConstraint = grabberHandle.centerXAnchor.constraint(equalTo: centerXAnchor)
@@ -163,7 +163,7 @@ public class FloatingPanelSurfaceView: UIView {
     }
 
     var grabberAreaFrame: CGRect {
-        switch anchorPosition {
+        switch position {
         case .top:
             return CGRect(origin: .init(x: bounds.minX, y: bounds.maxY - grabberAreaOffset),
                           size: .init(width: bounds.width, height: grabberAreaOffset))
@@ -249,7 +249,7 @@ public class FloatingPanelSurfaceView: UIView {
     }
 
     public override func updateConstraints() {
-        switch anchorPosition {
+        switch position {
         case .top:
             containerViewTopConstraint.constant = (containerMargins.top == 0) ? -containerOverflow : containerMargins.top
             containerViewLeftConstraint.constant = containerMargins.left
@@ -277,14 +277,14 @@ public class FloatingPanelSurfaceView: UIView {
         contentViewRightConstraint?.constant = containerMargins.right + contentPadding.right
         contentViewBottomConstraint?.constant = containerMargins.bottom + contentPadding.bottom
 
-        switch anchorPosition {
+        switch position {
         case .top, .left:
             grabberHandleEdgePaddingConstraint.constant = -grabberHandlePadding
         case .bottom, .right:
             grabberHandleEdgePaddingConstraint.constant = grabberHandlePadding
         }
 
-        switch anchorPosition {
+        switch position {
         case .top, .bottom:
             grabberHandleWidthConstraint.constant = grabberHandleSize.width
             grabberHandleHeightConstraint.constant = grabberHandleSize.height
@@ -362,7 +362,7 @@ public class FloatingPanelSurfaceView: UIView {
             return
         }
         containerView.layer.masksToBounds = true
-        if anchorPosition.inset(containerMargins) != 0 {
+        if position.inset(containerMargins) != 0 {
             if #available(iOS 11, *) {
                 containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,
                                                      .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
@@ -373,7 +373,7 @@ public class FloatingPanelSurfaceView: UIView {
             // Don't use `contentView.clipToBounds` because it prevents content view from expanding the height of a subview of it
             // for the bottom overflow like Auto Layout settings of UIVisualEffectView in Main.storyboard of Example/Maps.
             // Because the bottom of contentView must be fit to the bottom of a screen to work the `safeLayoutGuide` of a content VC.
-            switch anchorPosition {
+            switch position {
             case .top:
                 containerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             case .left:

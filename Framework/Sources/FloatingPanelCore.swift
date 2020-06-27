@@ -367,7 +367,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
                     lockScrollView()
                 } else {
                     if state == layoutAdapter.edgeMostState, self.animator == nil {
-                        switch layoutAdapter.anchorPosition {
+                        switch layoutAdapter.position {
                         case .top, .left:
                             if offsetDiff < 0 && velocity > 0 {
                                 unlockScrollView()
@@ -382,7 +382,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             } else {
                 if interactionInProgress {
                     // Show a scroll indicator at the top in dragging.
-                    switch layoutAdapter.anchorPosition {
+                    switch layoutAdapter.position {
                     case .top, .left:
                         if offsetDiff <= 0 && velocity >= 0 {
                             unlockScrollView()
@@ -402,7 +402,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
                     }
                 } else {
                     if state == layoutAdapter.edgeMostState {
-                        switch layoutAdapter.anchorPosition {
+                        switch layoutAdapter.position {
                         case .top, .left:
                             if velocity < 0, !allowScrollPanGesture(for: scrollView) {
                                 lockScrollView()
@@ -544,7 +544,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         let offset = value(of: scrollView.contentOffset - contentOffsetForPinning(of: scrollView))
         // The zero offset must be excluded because the offset is usually zero
         // after a panel moves from half/tip to full.
-        switch layoutAdapter.anchorPosition {
+        switch layoutAdapter.position {
         case .top, .left:
             if  offset < 0.0 {
                 return true
@@ -608,7 +608,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 
     private func shouldOverflow(from pre: CGFloat, to next: CGFloat) -> Bool {
         if let scrollView = scrollView, scrollView.panGestureRecognizer.state == .changed {
-            switch layoutAdapter.anchorPosition {
+            switch layoutAdapter.position {
             case .top:
                 if pre > .zero, pre < next,
                     scrollView.contentSize.height > scrollView.bounds.height || scrollView.alwaysBounceVertical {
@@ -658,7 +658,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 
         if isRemovalInteractionEnabled {
             let distToHidden = CGFloat(abs(currentPos - layoutAdapter.position(for: .hidden)))
-            switch layoutAdapter.anchorPosition {
+            switch layoutAdapter.position {
             case .top, .bottom:
                 removalVector = (distToHidden != 0) ? CGVector(dx: 0.0, dy: velocity.y/distToHidden) : .zero
             case .left, .right:
@@ -709,7 +709,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         if let result = vc.delegate?.floatingPanel?(vc, shouldRemoveAt: vc.surfaceLocation, with: velocityVector) {
             return result
         }
-        switch layoutAdapter.anchorPosition {
+        switch layoutAdapter.position {
         case .top:
             return (velocityVector.dy <= -10.0)
         case .left:
@@ -735,7 +735,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             } else {
                 initialScrollOffset = contentOffsetForPinning(of: scrollView)
                 let offsetDiff = scrollView.contentOffset - contentOffsetForPinning(of: scrollView)
-                switch layoutAdapter.anchorPosition {
+                switch layoutAdapter.position {
                 case .top, .left:
                     // Fit the surface bounds to a scroll offset content by startInteraction(at:offset:)
                     if value(of: offsetDiff) > 0 {
@@ -858,11 +858,11 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
     }
 
     func value(of point: CGPoint) -> CGFloat {
-        return layoutAdapter.anchorPosition.mainLocation(point)
+        return layoutAdapter.position.mainLocation(point)
     }
 
     func setValue(_ newValue: CGPoint, to point: inout CGPoint) {
-        switch layoutAdapter.anchorPosition {
+        switch layoutAdapter.position {
         case .top, .bottom:
             point.y = newValue.y
         case .left, .right:
@@ -970,7 +970,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         if let vc = viewcontroller, let origin = vc.delegate?.floatingPanel?(vc, contentOffsetForPinning: scrollView) {
             return origin
         }
-        switch layoutAdapter.anchorPosition {
+        switch layoutAdapter.position {
         case .top:
             return CGPoint(x: 0.0, y: scrollView.fp_contentOffsetMax.y)
         case .left:
@@ -985,7 +985,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
     private func allowScrollPanGesture(for scrollView: UIScrollView) -> Bool {
         guard state == layoutAdapter.edgeMostState else { return false }
         var offsetY: CGFloat = 0
-        switch layoutAdapter.anchorPosition {
+        switch layoutAdapter.position {
         case .top, .left:
             offsetY = value(of: scrollView.fp_contentOffsetMax - scrollView.contentOffset)
         case .bottom, .right:

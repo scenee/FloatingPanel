@@ -37,7 +37,7 @@ class FloatingPanelTestLayout: FloatingPanelLayout {
     var initialState: FloatingPanelState {
         return .half
     }
-    var anchorPosition: FloatingPanelPosition {
+    var position: FloatingPanelPosition {
         return .bottom
     }
     var referenceGuide: FloatingPanelLayoutReferenceGuide {
@@ -60,7 +60,7 @@ class FloatingPanelTop2BottomTestLayout: FloatingPanelLayout {
     var initialState: FloatingPanelState {
         return .half
     }
-    var anchorPosition: FloatingPanelPosition {
+    var position: FloatingPanelPosition {
         return .top
     }
     var referenceGuide: FloatingPanelLayoutReferenceGuide {
