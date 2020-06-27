@@ -20,7 +20,7 @@ class FloatingPanelLayoutTests: XCTestCase {
         XCTAssertEqual(fpc.floatingPanel.layoutAdapter.edgeLeastState, .tip)
 
         class FloatingPanelLayoutWithHidden: FloatingPanelLayout {
-            var stateAnchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
+            var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
                 return [
                     .full: FloatingPanelLayoutAnchor(absoluteInset: 18.0, edge: .top, referenceGuide: .safeArea),
                     .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
@@ -31,7 +31,7 @@ class FloatingPanelLayoutTests: XCTestCase {
             let position: FloatingPanelPosition = .bottom
         }
         class FloatingPanelLayout2Positions: FloatingPanelLayout {
-            var stateAnchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
+            var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
                 return [
                     .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
                     .tip: FloatingPanelLayoutAnchor(absoluteInset: 69.0, edge: .bottom, referenceGuide: .safeArea),
@@ -80,8 +80,8 @@ class FloatingPanelLayoutTests: XCTestCase {
     func test_layoutSegment_2positions() {
         class FloatingPanelLayout2Positions: FloatingPanelTestLayout {
             override var initialState: FloatingPanelState  { .half }
-            override var stateAnchors: [FloatingPanelState : FloatingPanelLayoutAnchoring]
-                { super.stateAnchors.filter { (key, _) in key != .tip } }
+            override var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring]
+                { super.anchors.filter { (key, _) in key != .tip } }
         }
 
         fpc.layout = FloatingPanelLayout2Positions()
@@ -107,8 +107,8 @@ class FloatingPanelLayoutTests: XCTestCase {
     func test_layoutSegment_1positions() {
         class FloatingPanelLayout1Positions: FloatingPanelTestLayout {
             override var initialState: FloatingPanelState  { .full }
-            override var stateAnchors: [FloatingPanelState : FloatingPanelLayoutAnchoring]
-                { super.stateAnchors.filter { (key, _) in key == .full } }
+            override var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring]
+                { super.anchors.filter { (key, _) in key == .full } }
         }
 
         fpc.layout = FloatingPanelLayout1Positions()
@@ -227,7 +227,7 @@ class FloatingPanelLayoutTests: XCTestCase {
 
     func test_updateInteractiveEdgeConstraintWithHidden() {
         class FloatingPanelLayout2Positions: FloatingPanelLayout {
-            var stateAnchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
+            var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
                 return [
                     .full: FloatingPanelLayoutAnchor(absoluteInset: 18.0, edge: .bottom, referenceGuide: .safeArea),
                     .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .bottom, referenceGuide: .superview),
@@ -270,7 +270,7 @@ class FloatingPanelLayoutTests: XCTestCase {
 
     func test_updateInteractiveEdgeConstraintWithHidden_bottomEdge() {
         class FloatingPanelLayout2Positions: FloatingPanelLayout {
-            var stateAnchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
+            var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
                 [
                     .full: FloatingPanelLayoutAnchor(absoluteInset: 18.0, edge: .bottom, referenceGuide: .safeArea),
                     .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .top, referenceGuide: .superview),
@@ -313,7 +313,7 @@ class FloatingPanelLayoutTests: XCTestCase {
 
     func test_updateInteractiveTopConstraintWithMinusInsets() {
         class FloatingPanelLayoutMinusInsets: FloatingPanelLayout {
-            var stateAnchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
+            var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
                 [
                     .full: FloatingPanelLayoutAnchor(absoluteInset: -200, edge: .top, referenceGuide: .safeArea),
                     .tip: FloatingPanelLayoutAnchor(absoluteInset: -200, edge: .bottom, referenceGuide: .safeArea),
@@ -368,7 +368,7 @@ class FloatingPanelLayoutTests: XCTestCase {
         fpc.showForTest()
 
         let bounds = fpc.view!.bounds
-        XCTAssertEqual(fpc.layout.stateAnchors.filter({ $0.value.referenceGuide != .superview }).count, 0)
+        XCTAssertEqual(fpc.layout.anchors.filter({ $0.value.referenceGuide != .superview }).count, 0)
         XCTAssertEqual(fpc.surfaceLocation(for: .full).y, myLayout.fullInset)
         XCTAssertEqual(fpc.surfaceLocation(for: .half).y, bounds.height - myLayout.halfInset)
         XCTAssertEqual(fpc.surfaceLocation(for: .tip).y, bounds.height - myLayout.tipInset)
@@ -376,7 +376,7 @@ class FloatingPanelLayoutTests: XCTestCase {
 
         fpc.layout = MyFloatingPanelSafeAreaLayout()
 
-        XCTAssertEqual(fpc.layout.stateAnchors.filter({ $0.value.referenceGuide != .safeArea }).count, 0)
+        XCTAssertEqual(fpc.layout.anchors.filter({ $0.value.referenceGuide != .safeArea }).count, 0)
         XCTAssertEqual(fpc.surfaceLocation(for: .full).y, myLayout.fullInset + fpc.fp_safeAreaInsets.top)
         XCTAssertEqual(fpc.surfaceLocation(for: .half).y, bounds.height - myLayout.halfInset + fpc.fp_safeAreaInsets.bottom)
         XCTAssertEqual(fpc.surfaceLocation(for: .tip).y, bounds.height - myLayout.tipInset +  fpc.fp_safeAreaInsets.bottom)
@@ -399,7 +399,7 @@ class FloatingPanelLayoutTests: XCTestCase {
         fpc.showForTest()
 
         let bounds = fpc.view!.bounds
-        XCTAssertEqual(fpc.layout.stateAnchors.filter({ $0.value.referenceGuide != .superview }).count, 0)
+        XCTAssertEqual(fpc.layout.anchors.filter({ $0.value.referenceGuide != .superview }).count, 0)
         XCTAssertEqual(fpc.surfaceLocation(for: .full).y, bounds.height - myLayout.fullInset)
         XCTAssertEqual(fpc.surfaceLocation(for: .half).y, myLayout.halfInset)
         XCTAssertEqual(fpc.surfaceLocation(for: .tip).y,  myLayout.tipInset)
@@ -408,7 +408,7 @@ class FloatingPanelLayoutTests: XCTestCase {
 
         fpc.layout = MyFloatingPanelSafeAreaLayout()
 
-        XCTAssertEqual(fpc.layout.stateAnchors.filter({ $0.value.referenceGuide != .safeArea }).count, 0)
+        XCTAssertEqual(fpc.layout.anchors.filter({ $0.value.referenceGuide != .safeArea }).count, 0)
         XCTAssertEqual(fpc.surfaceLocation(for: .full).y, bounds.height - myLayout.fullInset + fpc.fp_safeAreaInsets.bottom)
         XCTAssertEqual(fpc.surfaceLocation(for: .half).y, myLayout.halfInset + fpc.fp_safeAreaInsets.top)
         XCTAssertEqual(fpc.surfaceLocation(for: .tip).y, myLayout.tipInset + fpc.fp_safeAreaInsets.top)

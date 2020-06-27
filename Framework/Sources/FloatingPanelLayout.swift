@@ -214,7 +214,7 @@ public extension FloatingPanelIntrinsicLayoutAnchor {
     @objc var initialState: FloatingPanelState { get }
 
     /// TODO: Write doc comment
-    @objc var stateAnchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] { get }
+    @objc var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] { get }
 
     /// Returns X-axis and width layout constraints of the surface view of a floating panel.
     /// You must not include any Y-axis and height layout constraints of the surface view
@@ -237,7 +237,7 @@ open class FloatingPanelBottomLayout: NSObject, FloatingPanelLayout {
         return .half
     }
 
-    open var stateAnchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
+    open var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
         return [
             .full: FloatingPanelLayoutAnchor(absoluteInset: 18.0, edge: .top, referenceGuide: .safeArea),
             .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
@@ -297,7 +297,7 @@ class FloatingPanelLayoutAdapter {
     private var staticConstraint: NSLayoutConstraint?
 
     private var activeStates: Set<FloatingPanelState> {
-        return Set(layout.stateAnchors.keys)
+        return Set(layout.anchors.keys)
     }
 
     var initialState: FloatingPanelState {
@@ -393,7 +393,7 @@ class FloatingPanelLayoutAdapter {
             var pos: CGFloat
             if let interactionConstraint = interactionEdgeConstraint {
                 pos = interactionConstraint.constant
-            } else if let animationConstraint = animationEdgeConstraint, let anchor = layout.stateAnchors[vc.state] {
+            } else if let animationConstraint = animationEdgeConstraint, let anchor = layout.anchors[vc.state] {
                 switch layout.position {
                 case .top, .bottom:
                     switch referenceEdge(of: anchor) {
@@ -441,7 +441,7 @@ class FloatingPanelLayoutAdapter {
             let pos = layout.position.mainLocation(newValue)
             if let interactionConstraint = interactionEdgeConstraint {
                 interactionConstraint.constant = pos
-            } else if let animationConstraint = animationEdgeConstraint, let anchor = layout.stateAnchors[vc.state] {
+            } else if let animationConstraint = animationEdgeConstraint, let anchor = layout.anchors[vc.state] {
                 let refEdge = referenceEdge(of: anchor)
                 switch refEdge {
                 case .top, .left:
@@ -514,7 +514,7 @@ class FloatingPanelLayoutAdapter {
 
     func position(for state: FloatingPanelState) -> CGFloat {
         let bounds = vc.view.bounds
-        let anchor = layout.stateAnchors[state] ?? self.hiddenAnchor
+        let anchor = layout.anchors[state] ?? self.hiddenAnchor
 
         switch anchor {
         case let ianchor as FloatingPanelIntrinsicLayoutAnchor:
@@ -628,16 +628,16 @@ class FloatingPanelLayoutAdapter {
 
         NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
 
-        if let fullAnchor = layout.stateAnchors[.full] {
+        if let fullAnchor = layout.anchors[.full] {
             fullConstraints = fullAnchor.layoutConstraints(vc, for: layout.position)
         }
-        if let halfAnchor = layout.stateAnchors[.half] {
+        if let halfAnchor = layout.anchors[.half] {
             halfConstraints = halfAnchor.layoutConstraints(vc, for: layout.position)
         }
-        if let tipAnchors = layout.stateAnchors[.tip] {
+        if let tipAnchors = layout.anchors[.tip] {
             tipConstraints = tipAnchors.layoutConstraints(vc, for: layout.position)
         }
-        let hiddenAnchor = layout.stateAnchors[.hidden] ?? self.hiddenAnchor
+        let hiddenAnchor = layout.anchors[.hidden] ?? self.hiddenAnchor
         offConstraints = hiddenAnchor.layoutConstraints(vc, for: layout.position)
     }
 
@@ -686,7 +686,7 @@ class FloatingPanelLayoutAdapter {
     func setUpAnimationEdgeConstraint(to state: FloatingPanelState) -> (NSLayoutConstraint, CGFloat) {
         NSLayoutConstraint.deactivate(constraint: animationEdgeConstraint)
 
-        let anchor = layout.stateAnchors[state] ?? self.hiddenAnchor
+        let anchor = layout.anchors[state] ?? self.hiddenAnchor
 
         NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
         NSLayoutConstraint.deactivate(constraint: interactionEdgeConstraint)
@@ -816,7 +816,7 @@ class FloatingPanelLayoutAdapter {
             return
         }
 
-        let anchor = layout.stateAnchors[self.edgeMostState]!
+        let anchor = layout.anchors[self.edgeMostState]!
         if anchor is FloatingPanelIntrinsicLayoutAnchor {
             var constant = layout.position.mainDimension(surfaceView.intrinsicContentSize)
             if anchor.referenceGuide == .safeArea {
