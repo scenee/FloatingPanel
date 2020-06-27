@@ -38,7 +38,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
 
         XCTContext.runActivity(named: "Top sheet") { _ in
             let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
-            surface.anchorPosition = .top
+            surface.position = .top
             XCTAssertNil(surface.contentView)
             surface.layoutIfNeeded()
 
@@ -67,7 +67,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
 
         XCTContext.runActivity(named: "Top sheet") { _ in
             let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
-            surface.anchorPosition = .top
+            surface.position = .top
             surface.layoutIfNeeded()
 
             let contentView = UIView()
@@ -105,7 +105,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
 
         XCTContext.runActivity(named: "Top sheet") { _ in
             let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
-            surface.anchorPosition = .top
+            surface.position = .top
             XCTAssertNil(surface.contentView)
             surface.layoutIfNeeded()
 
@@ -123,7 +123,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
     func test_surfaceView_contentMargins() {
         XCTContext.runActivity(named: "Top sheet") { _ in
             let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
-            surface.anchorPosition = .top
+            surface.position = .top
             surface.layoutIfNeeded()
             XCTAssertEqual(surface.containerView.frame, surface.bounds)
             surface.containerMargins = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
@@ -145,7 +145,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
     func test_surfaceView_contentInsets() {
         XCTContext.runActivity(named: "Top sheet") { _ in
             let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
-            surface.anchorPosition = .top
+            surface.position = .top
             let contentView = UIView()
             surface.set(contentView: contentView)
             surface.layoutIfNeeded()
