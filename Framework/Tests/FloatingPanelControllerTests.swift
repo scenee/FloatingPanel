@@ -339,7 +339,7 @@ private class MyZombieViewController: UIViewController, FloatingPanelLayout, Flo
         return .half
     }
 
-    var stateAnchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
         return [
             .full: FloatingPanelLayoutAnchor(absoluteInset: UIScreen.main.bounds.height == 667.0 ? 18.0 : 16.0,
                                              edge: .top,
