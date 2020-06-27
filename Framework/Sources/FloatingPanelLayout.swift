@@ -204,13 +204,13 @@ public extension FloatingPanelIntrinsicLayoutAnchor {
 }
 
 @objc public protocol FloatingPanelLayout {
-    /// TODO: Write doc comment
+    /// The position of the panel in the view of `FloatingPanelController`.
     @objc var position: FloatingPanelPosition { get }
 
-    /// TODO: Write doc comment
+    /// The initial state when the layout is applied.
     @objc var initialState: FloatingPanelState { get }
 
-    /// TODO: Write doc comment
+    /// The layout anchors to specify the snapping locations for each state.
     @objc var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] { get }
 
     /// Returns X-axis and width layout constraints of the surface view of a floating panel.

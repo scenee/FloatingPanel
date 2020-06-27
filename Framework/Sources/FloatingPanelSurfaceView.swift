@@ -26,7 +26,7 @@ public class FloatingPanelSurfaceAppearance: NSObject {
         @objc
         public var radius: CGFloat = 3
 
-        /// TODO: doc comment
+        // The inflated amount of the surface shadow prior to applying the blur.
         @objc
         public var spread: CGFloat = 0
 
