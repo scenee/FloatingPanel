@@ -670,6 +670,15 @@ open class FloatingPanelController: UIViewController {
 }
 
 extension FloatingPanelController {
+    func notifyDidMove() {
+        #if !TEST
+        guard self.view.window != nil else { return }
+        #endif
+        delegate?.floatingPanelDidMove?(self)
+    }
+}
+
+extension FloatingPanelController {
     private static let dismissSwizzling: Any? = {
         let aClass: AnyClass! = UIViewController.self //object_getClass(vc)
         if let imp = class_getMethodImplementation(aClass, #selector(dismiss(animated:completion:))),

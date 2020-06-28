@@ -150,6 +150,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
                 guard let `self` = self else { return }
                 self.animator = nil
                 updateScrollView()
+                self.viewcontroller?.notifyDidMove()
                 completion?()
             }
             self.animator = animator
@@ -161,7 +162,9 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
                 self.unlockScrollView()
             } else {
                 self.lockScrollView()
+
             }
+            viewcontroller?.notifyDidMove()
             completion?()
         }
     }
@@ -170,9 +173,6 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 
     private func updateLayout(to target: FloatingPanelState) {
         self.layoutAdapter.activateLayout(for: state, forceLayout: true)
-        if let vc = viewcontroller {
-            vc.delegate?.floatingPanelDidMove?(vc)
-        }
     }
 
     func getBackdropAlpha(at cur: CGFloat, with translation: CGFloat) -> CGFloat {
@@ -820,9 +820,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
                 let current = self.value(of: self.layoutAdapter.surfaceLocation)
                 let translation = data.value - initialData.value
                 self.backdropView.alpha = self.getBackdropAlpha(at: current, with: translation)
-                if let vc = self.viewcontroller {
-                    vc.delegate?.floatingPanelDidMove?(vc)
-                }
+                self.viewcontroller?.notifyDidMove()
         },
             completion: { [weak self] in
                 guard let self = self else { return }
