@@ -535,10 +535,14 @@ class FloatingPanelLayoutAdapter {
             let referenceBounds = anchor.referenceGuide == .safeArea ? bounds.inset(by: safeAreaInsets) : bounds
             let diff = anchor.isAbsolute ? anchor.inset : layout.position.mainDimension(referenceBounds.size) * anchor.inset
             switch anchor.referenceEdge {
-            case .top, .left:
+            case .top:
                 return referenceBounds.minY + diff
-            case .bottom, .right:
+            case .left:
+                return referenceBounds.minX + diff
+            case .bottom:
                 return referenceBounds.maxY - diff
+            case .right:
+                return referenceBounds.maxX - diff
             }
         default:
             fatalError("Unsupported a FloatingPanelLayoutAnchoring object")
