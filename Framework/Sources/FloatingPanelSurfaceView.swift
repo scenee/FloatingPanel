@@ -231,7 +231,10 @@ public class FloatingPanelSurfaceView: UIView {
             containerViewLeftConstraint,
             containerViewBottomConstraint,
             containerViewRightConstraint,
-        ])
+        ].map {
+            $0.identifier = "FloatingPanel-surface-container"
+            return $0;
+        })
 
         addSubview(grabberHandle)
         grabberHandle.translatesAutoresizingMaskIntoConstraints = false
@@ -240,7 +243,10 @@ public class FloatingPanelSurfaceView: UIView {
             grabberHandleCenterConstraint,
             grabberHandleWidthConstraint,
             grabberHandleHeightConstraint,
-        ])
+        ].map {
+            $0.identifier = "FloatingPanel-surface-grabber"
+            return $0;
+        })
 
         shadowLayers = appearance.shadows.map { _ in CALayer() }
     }
@@ -406,7 +412,11 @@ public class FloatingPanelSurfaceView: UIView {
             leftConstraint,
             rightConstraint,
             bottomConstraint,
-            ].map { $0.priority = .defaultHigh; return $0; })
+        ].map {
+            $0.priority = .defaultHigh;
+            $0.identifier = "FloatingPanel-surface-content"
+            return $0;
+        })
         self.contentViewTopConstraint = topConstraint
         self.contentViewLeftConstraint = leftConstraint
         self.contentViewRightConstraint = rightConstraint
