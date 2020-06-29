@@ -274,7 +274,7 @@ class FloatingPanelLayoutAdapter {
 
     fileprivate var layout: FloatingPanelLayout {
         didSet {
-            surfaceView.position = layout.position
+            surfaceView.position = position
         }
     }
 
@@ -320,7 +320,7 @@ class FloatingPanelLayoutAdapter {
 
     var sortedDirectionalStates: [FloatingPanelState] {
         return activeStates.sorted(by: {
-            switch layout.position {
+            switch position {
             case .top, .left:
                 return $0.order < $1.order
             case .bottom, .right:
@@ -356,7 +356,7 @@ class FloatingPanelLayoutAdapter {
     }
 
     var adjustedContentInsets: UIEdgeInsets {
-        switch layout.position {
+        switch position {
         case .top:
             return UIEdgeInsets(top: safeAreaInsets.top,
                                 left: 0.0,
@@ -394,7 +394,7 @@ class FloatingPanelLayoutAdapter {
             if let interactionConstraint = interactionEdgeConstraint {
                 pos = interactionConstraint.constant
             } else if let animationConstraint = animationEdgeConstraint, let anchor = layout.anchors[vc.state] {
-                switch layout.position {
+                switch position {
                 case .top, .bottom:
                     switch referenceEdge(of: anchor) {
                     case .top:
@@ -430,7 +430,7 @@ class FloatingPanelLayoutAdapter {
                 let displayScale = surfaceView.traitCollection.displayScale
                 pos = displayTrunc(edgePosition(surfaceView.frame), by: displayScale)
             }
-            switch layout.position {
+            switch position {
             case .top, .bottom:
                 return CGPoint(x: 0.0, y: pos)
             case .left, .right:
@@ -438,7 +438,7 @@ class FloatingPanelLayoutAdapter {
             }
         }
         set {
-            let pos = layout.position.mainLocation(newValue)
+            let pos = position.mainLocation(newValue)
             if let interactionConstraint = interactionEdgeConstraint {
                 interactionConstraint.constant = pos
             } else if let animationConstraint = animationEdgeConstraint, let anchor = layout.anchors[vc.state] {
@@ -450,13 +450,13 @@ class FloatingPanelLayoutAdapter {
                         animationConstraint.constant -= refEdge.inset(of: safeAreaInsets)
                     }
                 case .bottom, .right:
-                    animationConstraint.constant = pos - layout.position.mainDimension(vc.view.bounds.size)
+                    animationConstraint.constant = pos - position.mainDimension(vc.view.bounds.size)
                     if anchor.referenceGuide == .safeArea {
                         animationConstraint.constant += refEdge.inset(of: safeAreaInsets)
                     }
                 }
             } else {
-                switch layout.position {
+                switch position {
                 case .top:
                     return surfaceView.frame.origin.y = pos - surfaceView.bounds.height
                 case .left:
@@ -471,7 +471,7 @@ class FloatingPanelLayoutAdapter {
     }
 
     var offsetFromEdgeMost: CGFloat {
-        switch layout.position {
+        switch position {
         case .top, .left:
             return edgePosition(surfaceView.presentationFrame) - position(for: directionalMostState)
         case .bottom, .right:
@@ -480,7 +480,7 @@ class FloatingPanelLayoutAdapter {
     }
 
     private var hiddenAnchor: FloatingPanelLayoutAnchoring {
-        switch layout.position {
+        switch position {
         case .top:
             return FloatingPanelLayoutAnchor(absoluteInset: -100, edge: .top, referenceGuide: .superview)
         case .left:
@@ -518,11 +518,11 @@ class FloatingPanelLayoutAdapter {
 
         switch anchor {
         case let ianchor as FloatingPanelIntrinsicLayoutAnchor:
-            let surfaceIntrinsicLength = layout.position.mainDimension(surfaceView.intrinsicContentSize)
+            let surfaceIntrinsicLength = position.mainDimension(surfaceView.intrinsicContentSize)
             let diff = ianchor.isAbsolute ? ianchor.offset : surfaceIntrinsicLength * ianchor.offset
 
-            var referenceBoundsLength = layout.position.mainDimension(bounds.size)
-            switch layout.position {
+            var referenceBoundsLength = position.mainDimension(bounds.size)
+            switch position {
             case .top, .left:
                 return referenceBoundsLength - surfaceIntrinsicLength - diff
             case .bottom, .right:
@@ -533,7 +533,7 @@ class FloatingPanelLayoutAdapter {
             }
         case let anchor as FloatingPanelLayoutAnchor:
             let referenceBounds = anchor.referenceGuide == .safeArea ? bounds.inset(by: safeAreaInsets) : bounds
-            let diff = anchor.isAbsolute ? anchor.inset : layout.position.mainDimension(referenceBounds.size) * anchor.inset
+            let diff = anchor.isAbsolute ? anchor.inset : position.mainDimension(referenceBounds.size) * anchor.inset
             switch anchor.referenceEdge {
             case .top:
                 return referenceBounds.minY + diff
@@ -550,7 +550,7 @@ class FloatingPanelLayoutAdapter {
      }
 
     private func edgePosition(_ frame: CGRect) -> CGFloat {
-        switch layout.position {
+        switch position {
         case .top:
             return frame.maxY
         case .left:
@@ -565,7 +565,7 @@ class FloatingPanelLayoutAdapter {
     private func referenceEdge(of anchor: FloatingPanelLayoutAnchoring) -> FloatingPanelReferenceEdge {
         switch anchor {
         case is FloatingPanelIntrinsicLayoutAnchor:
-            switch layout.position {
+            switch position {
             case .top: return .top
             case .left: return .left
             case .bottom: return .bottom
@@ -589,7 +589,7 @@ class FloatingPanelLayoutAdapter {
         if let constraints = layout.prepareLayout?(surfaceView: surfaceView, in: vc.view) {
             surfaceConstraints = constraints
         } else {
-            switch layout.position {
+            switch position {
             case .top, .bottom:
                 surfaceConstraints = [
                     surfaceView.leftAnchor.constraint(equalTo: vc.fp_safeAreaLayoutGuide.leftAnchor, constant: 0.0),
@@ -616,7 +616,7 @@ class FloatingPanelLayoutAdapter {
 
         if vc.contentMode == .fitToBounds {
             fitToBoundsConstraint = {
-                switch layout.position {
+                switch position {
                 case .top:
                     return surfaceView.topAnchor.constraint(equalTo: vc.view.topAnchor, constant: 0.0)
                 case .left:
@@ -633,16 +633,16 @@ class FloatingPanelLayoutAdapter {
         NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
 
         if let fullAnchor = layout.anchors[.full] {
-            fullConstraints = fullAnchor.layoutConstraints(vc, for: layout.position)
+            fullConstraints = fullAnchor.layoutConstraints(vc, for: position)
         }
         if let halfAnchor = layout.anchors[.half] {
-            halfConstraints = halfAnchor.layoutConstraints(vc, for: layout.position)
+            halfConstraints = halfAnchor.layoutConstraints(vc, for: position)
         }
         if let tipAnchors = layout.anchors[.tip] {
-            tipConstraints = tipAnchors.layoutConstraints(vc, for: layout.position)
+            tipConstraints = tipAnchors.layoutConstraints(vc, for: position)
         }
         let hiddenAnchor = layout.anchors[.hidden] ?? self.hiddenAnchor
-        offConstraints = hiddenAnchor.layoutConstraints(vc, for: layout.position)
+        offConstraints = hiddenAnchor.layoutConstraints(vc, for: position)
     }
 
     func startInteraction(at state: FloatingPanelState, offset: CGPoint = .zero) {
@@ -658,7 +658,7 @@ class FloatingPanelLayoutAdapter {
         initialConst = edgePosition(surfaceView.frame) + offset.y
 
         let constraint: NSLayoutConstraint
-        switch layout.position {
+        switch position {
         case .top:
             constraint = surfaceView.bottomAnchor.constraint(equalTo: vc.view.topAnchor, constant: initialConst)
         case .left:
@@ -703,11 +703,12 @@ class FloatingPanelLayoutAdapter {
         case .superview:
             layoutGuideProvider = vc.view
         }
-        let currentY = layout.position.mainLocation(surfaceLocation)
+        let currentY = position.mainLocation(surfaceLocation)
+
         let animationConstraint: NSLayoutConstraint
         var targetY = position(for: state)
 
-        switch layout.position {
+        switch position {
         case .top:
             switch referenceEdge(of: anchor) {
             case .top:
@@ -828,7 +829,7 @@ class FloatingPanelLayoutAdapter {
             }
             staticConstraint = position.mainDimensionAnchor(surfaceView).constraint(equalToConstant: constant)
         } else {
-            switch layout.position {
+            switch position {
             case .top, .left:
                 staticConstraint = position.mainDimensionAnchor(surfaceView).constraint(equalToConstant: position(for: self.directionalMostState))
             case .bottom, .right:
