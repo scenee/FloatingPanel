@@ -704,6 +704,7 @@ class FloatingPanelLayoutAdapter {
             layoutGuideProvider = vc.view
         }
         let currentY = position.mainLocation(surfaceLocation)
+        let baseHeight = position.mainDimension(vc.view.bounds.size)
 
         let animationConstraint: NSLayoutConstraint
         var targetY = position(for: state)
@@ -741,7 +742,6 @@ class FloatingPanelLayoutAdapter {
                     targetY -= safeAreaInsets.right
                 }
             case .right:
-                let baseHeight = vc.view.bounds.height
                 targetY = -(baseHeight - targetY)
                 animationConstraint = surfaceView.rightAnchor.constraint(equalTo: layoutGuideProvider.rightAnchor,
                                                                           constant: -(baseHeight - currentY))
@@ -762,7 +762,6 @@ class FloatingPanelLayoutAdapter {
                     targetY -= safeAreaInsets.top
                 }
             case .bottom:
-                let baseHeight = vc.view.bounds.height
                 targetY = -(baseHeight - targetY)
                 animationConstraint = surfaceView.topAnchor.constraint(equalTo: layoutGuideProvider.bottomAnchor,
                                                                        constant: -(baseHeight - currentY))
@@ -784,7 +783,6 @@ class FloatingPanelLayoutAdapter {
                     targetY -= safeAreaInsets.left
                 }
             case .right:
-                let baseHeight = vc.view.bounds.height
                 targetY = -(baseHeight - targetY)
                 animationConstraint = surfaceView.leftAnchor.constraint(equalTo: layoutGuideProvider.rightAnchor,
                                                                          constant: -(baseHeight - currentY))
