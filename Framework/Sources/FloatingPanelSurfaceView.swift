@@ -257,7 +257,7 @@ public class FloatingPanelSurfaceView: UIView {
             containerViewBottomConstraint.constant = -containerMargins.bottom
         case .left:
             containerViewTopConstraint.constant = containerMargins.top
-            containerViewLeftConstraint.constant = (containerMargins.left == 0) ? containerOverflow : containerMargins.left
+            containerViewLeftConstraint.constant = (containerMargins.left == 0) ? -containerOverflow : containerMargins.left
             containerViewRightConstraint.constant = -containerMargins.right
             containerViewBottomConstraint.constant = -containerMargins.bottom
         case .bottom:
