@@ -829,12 +829,12 @@ class FloatingPanelLayoutAdapter {
                 staticConstraint = position.mainDimensionAnchor(surfaceView).constraint(equalToConstant: position(for: self.directionalMostState))
             case .bottom, .right:
                 staticConstraint = position.mainDimensionAnchor(vc.view).constraint(equalTo: position.mainDimensionAnchor(surfaceView),
-                                                                                              constant: position(for: self.directionalLeastState))
+                                                                                    constant: position(for: self.directionalLeastState))
             }
         }
         NSLayoutConstraint.activate(constraint: staticConstraint)
 
-        surfaceView.containerOverflow = vc.view.bounds.height
+        surfaceView.containerOverflow = position.mainDimension(vc.view.bounds.size)
     }
 
     func updateInteractiveEdgeConstraint(diff: CGFloat, overflow: Bool, allowsRubberBanding: (UIRectEdge) -> Bool) {
