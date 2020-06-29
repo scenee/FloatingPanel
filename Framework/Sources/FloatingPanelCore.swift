@@ -804,7 +804,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
     }
 
     private func move(to targetPosition: FloatingPanelState, with velocity: CGFloat, completion: @escaping (() -> Void)) {
-        let (animationConstraint, target) = layoutAdapter.setUpAnimationEdgeConstraint(to: targetPosition)
+        let (animationConstraint, target) = layoutAdapter.setUpDecelerationConstraint(to: targetPosition)
         let initialData = NumericSpringAnimator.Data(value: animationConstraint.constant, velocity: velocity)
         moveAnimator = NumericSpringAnimator(
             initialData: initialData,
