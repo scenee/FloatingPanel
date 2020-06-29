@@ -428,7 +428,7 @@ class FloatingPanelLayoutAdapter {
                 }
             } else {
                 let displayScale = surfaceView.traitCollection.displayScale
-                pos = displayTrunc(edgeY(surfaceView.frame), by: displayScale)
+                pos = displayTrunc(edgePosition(surfaceView.frame), by: displayScale)
             }
             switch layout.position {
             case .top, .bottom:
@@ -473,9 +473,9 @@ class FloatingPanelLayoutAdapter {
     var offsetFromEdgeMost: CGFloat {
         switch layout.position {
         case .top, .left:
-            return edgeY(surfaceView.presentationFrame) - position(for: directionalMostState)
+            return edgePosition(surfaceView.presentationFrame) - position(for: directionalMostState)
         case .bottom, .right:
-            return position(for: directionalLeastState) - edgeY(surfaceView.presentationFrame)
+            return position(for: directionalLeastState) - edgePosition(surfaceView.presentationFrame)
         }
     }
 
@@ -545,7 +545,7 @@ class FloatingPanelLayoutAdapter {
         }
      }
 
-    private func edgeY(_ frame: CGRect) -> CGFloat {
+    private func edgePosition(_ frame: CGRect) -> CGFloat {
         switch layout.position {
         case .top:
             return frame.maxY
@@ -651,7 +651,7 @@ class FloatingPanelLayoutAdapter {
 
         NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
 
-        initialConst = edgeY(surfaceView.frame) + offset.y
+        initialConst = edgePosition(surfaceView.frame) + offset.y
 
         let constraint: NSLayoutConstraint
         switch layout.position {
