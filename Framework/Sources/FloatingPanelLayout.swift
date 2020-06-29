@@ -288,8 +288,8 @@ class FloatingPanelLayoutAdapter {
     private var offConstraints: [NSLayoutConstraint] = []
     private var fitToBoundsConstraint: NSLayoutConstraint?
 
-    private(set) var interactionEdgeConstraint: NSLayoutConstraint?
-    private(set) var animationEdgeConstraint: NSLayoutConstraint?
+    private(set) var interactionConstraint: NSLayoutConstraint?
+    private(set) var decelerationConstraint: NSLayoutConstraint?
 
     private var staticConstraint: NSLayoutConstraint?
 
@@ -388,9 +388,9 @@ class FloatingPanelLayoutAdapter {
     var surfaceLocation: CGPoint {
         get {
             var pos: CGFloat
-            if let interactionConstraint = interactionEdgeConstraint {
-                pos = interactionConstraint.constant
-            } else if let animationConstraint = animationEdgeConstraint, let anchor = layout.anchors[vc.state] {
+            if let constraint = interactionConstraint {
+                pos = constraint.constant
+            } else if let animationConstraint = decelerationConstraint, let anchor = layout.anchors[vc.state] {
                 switch position {
                 case .top, .bottom:
                     switch referenceEdge(of: anchor) {
@@ -436,9 +436,9 @@ class FloatingPanelLayoutAdapter {
         }
         set {
             let pos = position.mainLocation(newValue)
-            if let interactionConstraint = interactionEdgeConstraint {
-                interactionConstraint.constant = pos
-            } else if let animationConstraint = animationEdgeConstraint, let anchor = layout.anchors[vc.state] {
+            if let constraint = interactionConstraint {
+                constraint.constant = pos
+            } else if let animationConstraint = decelerationConstraint, let anchor = layout.anchors[vc.state] {
                 let refEdge = referenceEdge(of: anchor)
                 switch refEdge {
                 case .top, .left:
@@ -657,41 +657,41 @@ class FloatingPanelLayoutAdapter {
     }
 
     func startInteraction(at state: FloatingPanelState, offset: CGPoint = .zero) {
-        if let edgeConstraint = self.interactionEdgeConstraint {
-            initialConst = edgeConstraint.constant
+        if let constraint = interactionConstraint {
+            initialConst = constraint.constant
             return
         }
 
-        tearDownAnimationEdgeConstraint()
+        tearDownDecelerationConstraint()
 
         NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
 
         initialConst = edgePosition(surfaceView.frame) + offset.y
 
-        let interactionConstraint: NSLayoutConstraint
+        let constraint: NSLayoutConstraint
         switch position {
         case .top:
-            interactionConstraint = surfaceView.bottomAnchor.constraint(equalTo: vc.view.topAnchor, constant: initialConst)
+            constraint = surfaceView.bottomAnchor.constraint(equalTo: vc.view.topAnchor, constant: initialConst)
         case .left:
-            interactionConstraint = surfaceView.rightAnchor.constraint(equalTo: vc.view.leftAnchor, constant: initialConst)
+            constraint = surfaceView.rightAnchor.constraint(equalTo: vc.view.leftAnchor, constant: initialConst)
         case .bottom:
-            interactionConstraint = surfaceView.topAnchor.constraint(equalTo: vc.view.topAnchor, constant: initialConst)
+            constraint = surfaceView.topAnchor.constraint(equalTo: vc.view.topAnchor, constant: initialConst)
         case .right:
-            interactionConstraint = surfaceView.leftAnchor.constraint(equalTo: vc.view.leftAnchor, constant: initialConst)
+            constraint = surfaceView.leftAnchor.constraint(equalTo: vc.view.leftAnchor, constant: initialConst)
         }
 
-        interactionConstraint.priority = .defaultHigh
-        interactionConstraint.identifier = "FloatingPanel-interaction"
+        constraint.priority = .defaultHigh
+        constraint.identifier = "FloatingPanel-interaction"
 
-        NSLayoutConstraint.activate([interactionConstraint])
-        self.interactionEdgeConstraint = interactionConstraint
+        NSLayoutConstraint.activate([constraint])
+        self.interactionConstraint = constraint
     }
 
     func endInteraction(at state: FloatingPanelState) {
         // Don't deactivate `interactiveTopConstraint` here because it leads to
         // unsatisfiable constraints
 
-        if self.interactionEdgeConstraint == nil {
+        if self.interactionConstraint == nil {
             // Actiavate `interactiveTopConstraint` for `fitToBounds` mode.
             // It goes throught this path when the pan gesture state jumps
             // from .begin to .end.
@@ -699,14 +699,14 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
-    func setUpAnimationEdgeConstraint(to state: FloatingPanelState) -> (NSLayoutConstraint, CGFloat) {
-        NSLayoutConstraint.deactivate(constraint: animationEdgeConstraint)
+    func setUpDecelerationConstraint(to state: FloatingPanelState) -> (NSLayoutConstraint, CGFloat) {
+        NSLayoutConstraint.deactivate(constraint: decelerationConstraint)
 
         let anchor = layout.anchors[state] ?? self.hiddenAnchor
 
         NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
-        NSLayoutConstraint.deactivate(constraint: interactionEdgeConstraint)
-        interactionEdgeConstraint = nil
+        NSLayoutConstraint.deactivate(constraint: interactionConstraint)
+        interactionConstraint = nil
 
         let layoutGuideProvider: LayoutGuideProvider
         switch anchor.referenceGuide {
@@ -811,13 +811,13 @@ class FloatingPanelLayoutAdapter {
         animationConstraint.identifier = "FloatingPanel-deceleration"
 
         NSLayoutConstraint.activate([animationConstraint])
-        self.animationEdgeConstraint = animationConstraint
+        self.decelerationConstraint = animationConstraint
         return (animationConstraint, targetY)
     }
 
-    private func tearDownAnimationEdgeConstraint() {
-        NSLayoutConstraint.deactivate(constraint: animationEdgeConstraint)
-        animationEdgeConstraint = nil
+    private func tearDownDecelerationConstraint() {
+        NSLayoutConstraint.deactivate(constraint: decelerationConstraint)
+        decelerationConstraint = nil
     }
 
     // The method is separated from prepareLayout(to:) for the rotation support
@@ -888,7 +888,7 @@ class FloatingPanelLayoutAdapter {
             const = min(max(const, minConst), maxConst)
         }
 
-        interactionEdgeConstraint?.constant = const
+        interactionConstraint?.constant = const
     }
 
     // According to @chpwn's tweet: https://twitter.com/chpwn/status/285540192096497664
@@ -910,10 +910,10 @@ class FloatingPanelLayoutAdapter {
         }
 
         // Must deactivate `interactiveTopConstraint` here
-        NSLayoutConstraint.deactivate(constraint: self.interactionEdgeConstraint)
-        self.interactionEdgeConstraint = nil
+        NSLayoutConstraint.deactivate(constraint: self.interactionConstraint)
+        self.interactionConstraint = nil
 
-        tearDownAnimationEdgeConstraint()
+        tearDownDecelerationConstraint()
 
         NSLayoutConstraint.activate(fixedConstraints)
 

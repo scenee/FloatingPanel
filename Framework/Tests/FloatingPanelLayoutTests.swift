@@ -181,7 +181,7 @@ class FloatingPanelLayoutTests: XCTestCase {
         fpc.floatingPanel.layoutAdapter.startInteraction(at: fpc.state)
         fpc.floatingPanel.layoutAdapter.startInteraction(at: fpc.state) // Should be ignore
 
-        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.interactionEdgeConstraint?.constant, 60.0)
+        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.interactionConstraint?.constant, 60.0)
 
         let fullPos = fpc.surfaceLocation(for: .full).y
         let tipPos = fpc.surfaceLocation(for: .tip).y
