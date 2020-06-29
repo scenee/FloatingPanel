@@ -612,18 +612,20 @@ class FloatingPanelLayoutAdapter {
         self.fitToBoundsConstraint = nil
 
         if vc.contentMode == .fitToBounds {
-            fitToBoundsConstraint = {
-                switch position {
-                case .top:
-                    return surfaceView.topAnchor.constraint(equalTo: vc.view.topAnchor, constant: 0.0)
-                case .left:
-                    return surfaceView.leftAnchor.constraint(equalTo: vc.view.leftAnchor, constant: 0.0)
-                case .bottom:
-                    return surfaceView.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: 0.0)
-                case .right:
-                    return surfaceView.rightAnchor.constraint(equalTo: vc.view.rightAnchor, constant: 0.0)
-                }
-            }()
+            switch position {
+            case .top:
+                fitToBoundsConstraint = surfaceView.topAnchor.constraint(equalTo: vc.view.topAnchor, constant: 0.0)
+                fitToBoundsConstraint?.identifier = "FloatingPanel-fit-to-top"
+            case .left:
+                fitToBoundsConstraint = surfaceView.leftAnchor.constraint(equalTo: vc.view.leftAnchor, constant: 0.0)
+                fitToBoundsConstraint?.identifier = "FloatingPanel-fit-to-left"
+            case .bottom:
+                fitToBoundsConstraint = surfaceView.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: 0.0)
+                fitToBoundsConstraint?.identifier = "FloatingPanel-fit-to-bottom"
+            case .right:
+                fitToBoundsConstraint = surfaceView.rightAnchor.constraint(equalTo: vc.view.rightAnchor, constant: 0.0)
+                fitToBoundsConstraint?.identifier = "FloatingPanel-fit-to-right"
+            }
             fitToBoundsConstraint?.priority = .defaultHigh
         }
 
@@ -631,15 +633,27 @@ class FloatingPanelLayoutAdapter {
 
         if let fullAnchor = layout.anchors[.full] {
             fullConstraints = fullAnchor.layoutConstraints(vc, for: position)
+            fullConstraints.forEach {
+                $0.identifier = "FloatingPanel-full-constraint"
+            }
         }
         if let halfAnchor = layout.anchors[.half] {
             halfConstraints = halfAnchor.layoutConstraints(vc, for: position)
+            halfConstraints.forEach {
+                $0.identifier = "FloatingPanel-half-constraint"
+            }
         }
         if let tipAnchors = layout.anchors[.tip] {
             tipConstraints = tipAnchors.layoutConstraints(vc, for: position)
+            tipConstraints.forEach {
+                $0.identifier = "FloatingPanel-tip-constraint"
+            }
         }
         let hiddenAnchor = layout.anchors[.hidden] ?? self.hiddenAnchor
         offConstraints = hiddenAnchor.layoutConstraints(vc, for: position)
+        offConstraints.forEach {
+            $0.identifier = "FloatingPanel-hidden-constraint"
+        }
     }
 
     func startInteraction(at state: FloatingPanelState, offset: CGPoint = .zero) {
@@ -654,22 +668,23 @@ class FloatingPanelLayoutAdapter {
 
         initialConst = edgePosition(surfaceView.frame) + offset.y
 
-        let constraint: NSLayoutConstraint
+        let interactionConstraint: NSLayoutConstraint
         switch position {
         case .top:
-            constraint = surfaceView.bottomAnchor.constraint(equalTo: vc.view.topAnchor, constant: initialConst)
+            interactionConstraint = surfaceView.bottomAnchor.constraint(equalTo: vc.view.topAnchor, constant: initialConst)
         case .left:
-            constraint = surfaceView.rightAnchor.constraint(equalTo: vc.view.leftAnchor, constant: initialConst)
+            interactionConstraint = surfaceView.rightAnchor.constraint(equalTo: vc.view.leftAnchor, constant: initialConst)
         case .bottom:
-            constraint = surfaceView.topAnchor.constraint(equalTo: vc.view.topAnchor, constant: initialConst)
+            interactionConstraint = surfaceView.topAnchor.constraint(equalTo: vc.view.topAnchor, constant: initialConst)
         case .right:
-            constraint = surfaceView.leftAnchor.constraint(equalTo: vc.view.leftAnchor, constant: initialConst)
+            interactionConstraint = surfaceView.leftAnchor.constraint(equalTo: vc.view.leftAnchor, constant: initialConst)
         }
 
-        constraint.priority = .defaultHigh
+        interactionConstraint.priority = .defaultHigh
+        interactionConstraint.identifier = "FloatingPanel-interaction"
 
-        NSLayoutConstraint.activate([constraint])
-        self.interactionEdgeConstraint = constraint
+        NSLayoutConstraint.activate([interactionConstraint])
+        self.interactionEdgeConstraint = interactionConstraint
     }
 
     func endInteraction(at state: FloatingPanelState) {
@@ -792,7 +807,8 @@ class FloatingPanelLayoutAdapter {
             }
         }
 
-        animationEdgeConstraint?.priority = .defaultHigh
+        animationConstraint.priority = .defaultHigh
+        animationConstraint.identifier = "FloatingPanel-deceleration"
 
         NSLayoutConstraint.activate([animationConstraint])
         self.animationEdgeConstraint = animationConstraint
@@ -832,6 +848,14 @@ class FloatingPanelLayoutAdapter {
                                                                                     constant: position(for: self.directionalLeastState))
             }
         }
+
+        switch position {
+        case .top, .bottom:
+            staticConstraint?.identifier = "FloatingPanel-static-height"
+        case .left, .right:
+            staticConstraint?.identifier = "FloatingPanel-static-width"
+        }
+
         NSLayoutConstraint.activate(constraint: staticConstraint)
 
         surfaceView.containerOverflow = position.mainDimension(vc.view.bounds.size)
