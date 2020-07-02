@@ -48,9 +48,9 @@ import UIKit
     func floatingPanelDidEndDragging(_ fpc: FloatingPanelController, willDecelerate decelerate: Bool)
 
     @objc optional
-    func floatingPanelWillBeginDecelerating(_ fpc: FloatingPanelController, to state: FloatingPanelState) // called on finger up as we are moving
+    func floatingPanelWillBeginAttracting(_ fpc: FloatingPanelController, to state: FloatingPanelState) // called on finger up as we are moving
     @objc optional
-    func floatingPanelDidEndDecelerating(_ fpc: FloatingPanelController) // called when scroll view grinds to a halt
+    func floatingPanelDidEndAttracting(_ fpc: FloatingPanelController) // called when scroll view grinds to a halt
 
     // TODO: Write doc comment
     @objc(floatingPanel:shouldRemoveAtLocation:withVelocity:)
@@ -192,8 +192,8 @@ open class FloatingPanelController: UIViewController {
     }
 
     @objc
-    public var isDecelerating: Bool {
-        return floatingPanel.isDecelerating
+    public var isAttracting: Bool {
+        return floatingPanel.isAttracting
     }
 
     /// The layout object managed by the controller
@@ -335,7 +335,7 @@ open class FloatingPanelController: UIViewController {
             }
         } else {
             // Because {top,bottom}LayoutGuide is managed as a view
-            if floatingPanel.isDecelerating == false {
+            if floatingPanel.isAttracting == false {
                 self.update(safeAreaInsets: fp_safeAreaInsets)
             }
         }
