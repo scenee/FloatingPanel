@@ -48,11 +48,15 @@ import UIKit
     func floatingPanelDidEndDragging(_ fpc: FloatingPanelController, willDecelerate decelerate: Bool)
 
     @objc optional
-    func floatingPanelWillBeginAttracting(_ fpc: FloatingPanelController, to state: FloatingPanelState) // called on finger up as we are moving
-    @objc optional
-    func floatingPanelDidEndAttracting(_ fpc: FloatingPanelController) // called when scroll view grinds to a halt
+    func floatingPanelWillBeginAttracting(_ fpc: FloatingPanelController, to state: FloatingPanelState) // called on finger up as a panel are moving
 
-    // TODO: Write doc comment
+    @objc optional
+    func floatingPanelDidEndAttracting(_ fpc: FloatingPanelController) // called when a panel stops
+
+    /// Asks the delegate whether the panel should be removed when dragging ended at the specified location
+    ///
+    /// This delegate method is called only when `FloatingPanelController.isRemovalInteractionEnabled` is set to true.
+    /// The velocity vector is calculated from the distance to a point of the hidden state and the pan gesture's velocity.
     @objc(floatingPanel:shouldRemoveAtLocation:withVelocity:)
     optional
     func floatingPanel(_ fpc: FloatingPanelController, shouldRemoveAt location: CGPoint, with velocity: CGVector) -> Bool
