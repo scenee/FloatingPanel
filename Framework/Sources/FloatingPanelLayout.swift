@@ -289,7 +289,7 @@ class FloatingPanelLayoutAdapter {
     private var fitToBoundsConstraint: NSLayoutConstraint?
 
     private(set) var interactionConstraint: NSLayoutConstraint?
-    private(set) var decelerationConstraint: NSLayoutConstraint?
+    private(set) var attractionConstraint: NSLayoutConstraint?
 
     private var staticConstraint: NSLayoutConstraint?
 
@@ -390,7 +390,7 @@ class FloatingPanelLayoutAdapter {
             var pos: CGFloat
             if let constraint = interactionConstraint {
                 pos = constraint.constant
-            } else if let animationConstraint = decelerationConstraint, let anchor = layout.anchors[vc.state] {
+            } else if let animationConstraint = attractionConstraint, let anchor = layout.anchors[vc.state] {
                 switch position {
                 case .top, .bottom:
                     switch referenceEdge(of: anchor) {
@@ -438,7 +438,7 @@ class FloatingPanelLayoutAdapter {
             let pos = position.mainLocation(newValue)
             if let constraint = interactionConstraint {
                 constraint.constant = pos
-            } else if let animationConstraint = decelerationConstraint, let anchor = layout.anchors[vc.state] {
+            } else if let animationConstraint = attractionConstraint, let anchor = layout.anchors[vc.state] {
                 let refEdge = referenceEdge(of: anchor)
                 switch refEdge {
                 case .top, .left:
@@ -662,7 +662,7 @@ class FloatingPanelLayoutAdapter {
             return
         }
 
-        tearDownDecelerationConstraint()
+        tearDownAttraction()
 
         NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
 
@@ -699,8 +699,8 @@ class FloatingPanelLayoutAdapter {
         }
     }
 
-    func setUpDecelerationConstraint(to state: FloatingPanelState) -> (NSLayoutConstraint, CGFloat) {
-        NSLayoutConstraint.deactivate(constraint: decelerationConstraint)
+    func setUpAttraction(to state: FloatingPanelState) -> (NSLayoutConstraint, CGFloat) {
+        NSLayoutConstraint.deactivate(constraint: attractionConstraint)
 
         let anchor = layout.anchors[state] ?? self.hiddenAnchor
 
@@ -808,16 +808,16 @@ class FloatingPanelLayoutAdapter {
         }
 
         animationConstraint.priority = .defaultHigh
-        animationConstraint.identifier = "FloatingPanel-deceleration"
+        animationConstraint.identifier = "FloatingPanel-attraction"
 
         NSLayoutConstraint.activate([animationConstraint])
-        self.decelerationConstraint = animationConstraint
+        self.attractionConstraint = animationConstraint
         return (animationConstraint, targetY)
     }
 
-    private func tearDownDecelerationConstraint() {
-        NSLayoutConstraint.deactivate(constraint: decelerationConstraint)
-        decelerationConstraint = nil
+    private func tearDownAttraction() {
+        NSLayoutConstraint.deactivate(constraint: attractionConstraint)
+        attractionConstraint = nil
     }
 
     // The method is separated from prepareLayout(to:) for the rotation support
@@ -913,7 +913,7 @@ class FloatingPanelLayoutAdapter {
         NSLayoutConstraint.deactivate(constraint: self.interactionConstraint)
         self.interactionConstraint = nil
 
-        tearDownDecelerationConstraint()
+        tearDownAttraction()
 
         NSLayoutConstraint.activate(fixedConstraints)
 

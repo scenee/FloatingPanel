@@ -43,7 +43,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
     }
 
     var interactionInProgress: Bool = false
-    var isDecelerating: Bool = false
+    var isAttracting: Bool = false
 
     // Removal interaction
     var removalVector: CGVector = .zero
@@ -437,7 +437,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
                 velocity = \(value(of: velocity))
                 """)
 
-            if interactionInProgress == false, isDecelerating == false,
+            if interactionInProgress == false, isAttracting == false,
                 let vc = viewcontroller, vc.delegate?.floatingPanelShouldBeginDragging?(vc) == false {
                 return
             }
@@ -480,9 +480,9 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 
     private func interruptAnimationIfNeeded() {
         if let animator = self.moveAnimator, animator.isRunning {
-            log.debug("the deceleration animator interrupted!!!")
+            log.debug("the attraction animator interrupted!!!")
             animator.stopAnimation(true)
-            endDeceleration(false)
+            endAttraction(false)
         }
         if let animator = self.animator {
             guard 0 >= layoutAdapter.offsetFromEdgeMost else { return }
@@ -693,7 +693,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
             scrollView.isScrollEnabled = false
         }
 
-        startDeceleration(to: targetPosition, with: velocity)
+        startAttration(to: targetPosition, with: velocity)
 
         // Workaround: Reset `self.scrollView.isScrollEnabled`
         if let scrollView = scrollView, targetPosition != .full,
@@ -792,19 +792,19 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         return true
     }
 
-    private func startDeceleration(to targetPosition: FloatingPanelState, with velocity: CGPoint) {
+    private func startAttration(to targetPosition: FloatingPanelState, with velocity: CGPoint) {
         log.debug("startAnimation to \(targetPosition) -- velocity = \(value(of: velocity))")
         guard let vc = viewcontroller else { return }
 
-        isDecelerating = true
-        vc.delegate?.floatingPanelWillBeginDecelerating?(vc, to: targetPosition)
+        isAttracting = true
+        vc.delegate?.floatingPanelWillBeginAttracting?(vc, to: targetPosition)
         move(to: targetPosition, with: value(of: velocity)) {
-            self.endDeceleration(true)
+            self.endAttraction(true)
         }
     }
 
     private func move(to targetPosition: FloatingPanelState, with velocity: CGFloat, completion: @escaping (() -> Void)) {
-        let (animationConstraint, target) = layoutAdapter.setUpDecelerationConstraint(to: targetPosition)
+        let (animationConstraint, target) = layoutAdapter.setUpAttraction(to: targetPosition)
         let initialData = NumericSpringAnimator.Data(value: animationConstraint.constant, velocity: velocity)
         moveAnimator = NumericSpringAnimator(
             initialData: initialData,
@@ -829,12 +829,12 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         state = targetPosition
     }
 
-    private func endDeceleration(_ finished: Bool) {
-        self.isDecelerating = false
+    private func endAttraction(_ finished: Bool) {
+        self.isAttracting = false
         self.moveAnimator = nil
 
         if let vc = viewcontroller {
-            vc.delegate?.floatingPanelDidEndDecelerating?(vc)
+            vc.delegate?.floatingPanelDidEndAttracting?(vc)
         }
 
         if let scrollView = scrollView {

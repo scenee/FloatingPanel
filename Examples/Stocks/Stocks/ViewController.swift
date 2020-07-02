@@ -57,7 +57,7 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
     }
 
     func floatingPanelDidMove(_ vc: FloatingPanelController) {
-        if vc.isDecelerating == false {
+        if vc.isAttracting == false {
             let loc = vc.surfaceLocation
             let minY = vc.surfaceLocation(for: .full).y
             let maxY = vc.surfaceLocation(for: .tip).y
