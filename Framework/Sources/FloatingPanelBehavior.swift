@@ -4,12 +4,17 @@ import UIKit
 
 @objc
 public protocol FloatingPanelBehavior {
-    // TODO: doc comment
-    // It's fine-tuned in units of 0.001
+    /// A floating-point value that determines the rate of oscillation magnitude reduction after the user lifts their finger.
+    ///
+    /// The oscillation magnitude to attract a panel to an anchor can be adjusted this value between 0.979 and 1.0
+    /// in increments of 0.001. When this value is around 0.979, the attraction uses a critically damped spring system.
+    /// When this value is between 0.978 and 1.0, it uses a underdamped spring system with a damping ratio computed by
+    /// this value. You shouldn't return less than 0.979 because the system is overdamped. If the pan gesture's velocity
+    /// is less than 300, this value is ignored and a panel applies a critically damped system.
     @objc optional
     var springDecelerationRate: CGFloat { get }
 
-    // TODO: doc comment
+    /// A floating-point value that determines the approximate time until a panel stops to an anchor after the user lifts their finger.
     @objc optional
     var springResponseTime: CGFloat { get }
 
