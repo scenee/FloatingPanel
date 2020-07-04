@@ -1036,6 +1036,8 @@ public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
     }
 }
 
+// MARK: - Animator
+
 class NumericSpringAnimator: NSObject {
     struct Data {
         let value: CGFloat
@@ -1055,7 +1057,7 @@ class NumericSpringAnimator: NSObject {
         }
     }
 
-    var isRunning = false
+    private(set) var isRunning = false
 
     private var lock = UnfairLock()
 
@@ -1121,7 +1123,6 @@ class NumericSpringAnimator: NSObject {
         completion()
     }
 
-    var count: Int = 0
     @objc
     func update(_ displayLink: CADisplayLink) {
         guard lock.tryLock() else { return }
@@ -1143,21 +1144,22 @@ class NumericSpringAnimator: NSObject {
             stopAnimation(false)
         }
     }
+
     /**
      - Parameters:
-         - x: value
-         - v: velocity
-         - xt: target value
-         - zeta: damping ratio
-         - omega: angular frequency
-         - h: time step
-      */
-     private func spring(x: inout CGFloat, v: inout CGFloat, xt: CGFloat, zeta: CGFloat, omega: CGFloat, h: CGFloat) {
+     - x: value
+     - v: velocity
+     - xt: target value
+     - zeta: damping ratio
+     - omega: angular frequency
+     - h: time step
+     */
+    private func spring(x: inout CGFloat, v: inout CGFloat, xt: CGFloat, zeta: CGFloat, omega: CGFloat, h: CGFloat) {
         let f = 1.0 + 2.0 * h * zeta * omega
         let h2 = pow(h, 2)
         let o2 = pow(omega, 2)
         let det = f + h2 * o2
         x = (f * x + h * v + h2 * o2 * xt) / det
         v = (v + h * o2 * (xt - x)) / det
-     }
+    }
 }
