@@ -20,9 +20,9 @@ struct Logger {
         var displayName: String {
             switch self {
             case .debug:
-                return "D/"
+                return "Debug:"
             case .info:
-                return "I/"
+                return "Info:"
             case .warning:
                 return "Warning:"
             case .error:
