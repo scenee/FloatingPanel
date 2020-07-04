@@ -79,7 +79,7 @@ class FloatingPanelDefaultBehavior: FloatingPanelBehavior {
     }
 }
 
-class FloatingPanelBehaviorAdapter {
+class BehaviorAdapter {
     unowned let vc: FloatingPanelController
     fileprivate var behavior: FloatingPanelBehavior
 

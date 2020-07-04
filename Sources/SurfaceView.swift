@@ -2,8 +2,9 @@
 
 import UIKit
 
+@objc(FloatingPanelSurfaceAppearance)
 @objcMembers
-public class FloatingPanelSurfaceAppearance: NSObject {
+public class SurfaceAppearance: NSObject {
     @objc(FloatingPanelSurfaceAppearanceShadow)
     public class Shadow: NSObject {
         /// A Boolean indicating whether the surface shadow is displayed.
@@ -56,13 +57,14 @@ public class FloatingPanelSurfaceAppearance: NSObject {
 }
 
 /// A view that presents a surface interface in a floating panel.
+@objc(FloatingPanelSurfaceView)
 @objcMembers
-public class FloatingPanelSurfaceView: UIView {
+public class SurfaceView: UIView {
     /// A FloatingPanelGrabberView object displayed at the top of the surface view.
     ///
     /// To use a custom grabber handle, hide this and then add the custom one
     /// to the surface view at appropriate coordinates.
-    public let grabberHandle = FloatingPanelGrabberView()
+    public let grabberHandle = GrabberView()
 
     /// Offset of the grabber handle from the interactive edge.
     public var grabberHandlePadding: CGFloat = 6.0 { didSet {
@@ -95,7 +97,7 @@ public class FloatingPanelSurfaceView: UIView {
         set { appearance.backgroundColor = newValue; setNeedsLayout() }
     }
 
-    public var appearance = FloatingPanelSurfaceAppearance() { didSet {
+    public var appearance = SurfaceAppearance() { didSet {
         shadowLayers = appearance.shadows.map { _ in CAShapeLayer() }
         setNeedsLayout()
     }}

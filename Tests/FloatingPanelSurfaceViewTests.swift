@@ -8,8 +8,8 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
     override func tearDown() {}
 
     func test_surfaceView() {
-        let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
-        XCTAssertTrue(FloatingPanelSurfaceView.requiresConstraintBasedLayout)
+        let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+        XCTAssertTrue(SurfaceView.requiresConstraintBasedLayout)
         XCTAssert(surface.contentView == nil)
         surface.layoutIfNeeded()
         XCTAssert(surface.grabberHandle.frame.minY == 6.0)
@@ -22,7 +22,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
 
     func test_surfaceView_containerView() {
         XCTContext.runActivity(named: "Bottom sheet") { _ in
-            let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+            let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
             XCTAssertNil(surface.contentView)
             surface.layoutIfNeeded()
 
@@ -34,7 +34,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
         }
 
         XCTContext.runActivity(named: "Top sheet") { _ in
-            let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+            let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
             surface.position = .top
             XCTAssertNil(surface.contentView)
             surface.layoutIfNeeded()
@@ -49,7 +49,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
 
     func test_surfaceView_contentView() {
         XCTContext.runActivity(named: "Bottom sheet") { _ in
-            let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+            let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
             surface.layoutIfNeeded()
 
             let contentView = UIView()
@@ -63,7 +63,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
         }
 
         XCTContext.runActivity(named: "Top sheet") { _ in
-            let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+            let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
             surface.position = .top
             surface.layoutIfNeeded()
 
@@ -83,7 +83,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
 
     func test_surfaceView_grabberHandle() {
         XCTContext.runActivity(named: "Bottom sheet") { _ in
-            let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+            let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
             XCTAssertNil(surface.contentView)
             surface.layoutIfNeeded()
 
@@ -101,7 +101,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
         }
 
         XCTContext.runActivity(named: "Top sheet") { _ in
-            let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+            let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
             surface.position = .top
             XCTAssertNil(surface.contentView)
             surface.layoutIfNeeded()
@@ -119,7 +119,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
 
     func test_surfaceView_contentMargins() {
         XCTContext.runActivity(named: "Top sheet") { _ in
-            let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+            let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
             surface.position = .top
             surface.layoutIfNeeded()
             XCTAssertEqual(surface.containerView.frame, surface.bounds)
@@ -129,7 +129,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
             XCTAssertEqual(surface.containerView.frame, surface.bounds.inset(by: surface.containerMargins))
         }
         XCTContext.runActivity(named: "Bottom sheet") { _ in
-            let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+            let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
             surface.layoutIfNeeded()
             XCTAssertEqual(surface.containerView.frame, surface.bounds)
             surface.containerMargins = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
@@ -141,7 +141,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
 
     func test_surfaceView_contentInsets() {
         XCTContext.runActivity(named: "Top sheet") { _ in
-            let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+            let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
             surface.position = .top
             let contentView = UIView()
             surface.set(contentView: contentView)
@@ -153,7 +153,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
             XCTAssertEqual(surface.contentView.frame, surface.bounds.inset(by: surface.contentPadding))
         }
         XCTContext.runActivity(named: "Bottom sheet") { _ in
-            let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+            let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
             let contentView = UIView()
             surface.set(contentView: contentView)
             surface.layoutIfNeeded()
@@ -166,7 +166,7 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
     }
 
     func test_surfaceView_containerMargins_and_contentInsets() {
-        let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+        let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
         let contentView = UIView()
         surface.set(contentView: contentView)
         surface.layoutIfNeeded()
@@ -180,11 +180,11 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
     }
 
     func test_surfaceView_cornderRaduis() {
-        let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+        let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
         XCTAssert(surface.containerView.layer.cornerRadius == 0.0)
         XCTAssert(surface.containerView.layer.masksToBounds == false)
 
-        let appearance = FloatingPanelSurfaceAppearance()
+        let appearance = SurfaceAppearance()
 
         appearance.cornerRadius = 10.0
         surface.appearance = appearance
@@ -216,10 +216,10 @@ class FloatingPanelSurfaceViewTests: XCTestCase {
     }
 
     func test_surfaceView_border() {
-        let surface = FloatingPanelSurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+        let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
         XCTAssert(surface.containerView.layer.borderWidth == 0.0)
 
-        let appearance = FloatingPanelSurfaceAppearance()
+        let appearance = SurfaceAppearance()
         appearance.borderColor = .red
         appearance.borderWidth = 3.0
         surface.appearance = appearance

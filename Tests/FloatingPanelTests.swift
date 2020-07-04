@@ -730,7 +730,7 @@ private class FloatingPanelLayout3PositionsBottomEdge: FloatingPanelTop2BottomTe
 }
 
 private typealias TestParameter = (UInt, CGFloat,  CGPoint, FloatingPanelState)
-private func assertTargetPosition(_ floatingPanel: FloatingPanelCore, with params: [TestParameter]) {
+private func assertTargetPosition(_ floatingPanel: Core, with params: [TestParameter]) {
     params.forEach { (line, pos, velocity, result) in
         floatingPanel.surfaceView.frame.origin.y = pos
         XCTAssertEqual(floatingPanel.targetPosition(from: pos, with: velocity.y), result, line: line)

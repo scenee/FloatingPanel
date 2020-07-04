@@ -167,13 +167,13 @@ open class FloatingPanelController: UIViewController {
 
     /// Returns the surface view managed by the controller object. It's the same as `self.view`.
     @objc
-    public var surfaceView: FloatingPanelSurfaceView! {
+    public var surfaceView: SurfaceView! {
         return floatingPanel.surfaceView
     }
 
     /// Returns the backdrop view managed by the controller object.
     @objc
-    public var backdropView: FloatingPanelBackdropView! {
+    public var backdropView: BackdropView! {
         return floatingPanel.backdropView
     }
 
@@ -266,10 +266,10 @@ open class FloatingPanelController: UIViewController {
 
     private var _contentViewController: UIViewController?
 
-    private(set) var floatingPanel: FloatingPanelCore!
+    private(set) var floatingPanel: Core!
     private var preSafeAreaInsets: UIEdgeInsets = .zero // Capture the latest one
     private var safeAreaInsetsObservation: NSKeyValueObservation?
-    private let modalTransition = FloatingPanelModalTransition()
+    private let modalTransition = ModalTransition()
 
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -303,7 +303,7 @@ open class FloatingPanelController: UIViewController {
         }
         let initialBehavior = FloatingPanelDefaultBehavior()
 
-        floatingPanel = FloatingPanelCore(self, layout: initialLayout, behavior: initialBehavior)
+        floatingPanel = Core(self, layout: initialLayout, behavior: initialBehavior)
     }
 
     private func didUpdateDelegate(){
@@ -318,7 +318,7 @@ open class FloatingPanelController: UIViewController {
     open override func loadView() {
         assert(self.storyboard == nil, "Storyboard isn't supported")
 
-        let view = FloatingPanelPassThroughView()
+        let view = PassThroughView()
         view.backgroundColor = .clear
 
         backdropView.frame = view.bounds

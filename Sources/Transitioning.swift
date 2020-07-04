@@ -2,23 +2,23 @@
 
 import UIKit
 
-class FloatingPanelModalTransition: NSObject, UIViewControllerTransitioningDelegate {
+class ModalTransition: NSObject, UIViewControllerTransitioningDelegate {
     func animationController(forPresented presented: UIViewController,
                              presenting: UIViewController,
                              source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return FloatingPanelModalPresentTransition()
+        return ModalPresentTransition()
     }
 
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return FloatingPanelModalDismissTransition()
+        return ModalDismissTransition()
     }
 
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        return FloatingPanelPresentationController(presentedViewController: presented, presenting: presenting)
+        return PresentationController(presentedViewController: presented, presenting: presenting)
     }
 }
 
-class FloatingPanelPresentationController: UIPresentationController {
+class PresentationController: UIPresentationController {
     override func presentationTransitionWillBegin() {
         // Must call here even if duplicating on in containerViewWillLayoutSubviews()
         // Because it let the floating panel present correctly with the presentation animation
@@ -54,7 +54,7 @@ class FloatingPanelPresentationController: UIPresentationController {
         addFloatingPanel()
 
         // Forward touch events to the presenting view controller
-        (fpc.view as? FloatingPanelPassThroughView)?.eventForwardingView = presentingViewController.view
+        (fpc.view as? PassThroughView)?.eventForwardingView = presentingViewController.view
     }
 
     @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
@@ -73,7 +73,7 @@ class FloatingPanelPresentationController: UIPresentationController {
     }
 }
 
-class FloatingPanelModalPresentTransition: NSObject, UIViewControllerAnimatedTransitioning {
+class ModalPresentTransition: NSObject, UIViewControllerAnimatedTransitioning {
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         guard
             let fpc = transitionContext?.viewController(forKey: .to) as? FloatingPanelController
@@ -95,7 +95,7 @@ class FloatingPanelModalPresentTransition: NSObject, UIViewControllerAnimatedTra
     }
 }
 
-class FloatingPanelModalDismissTransition: NSObject, UIViewControllerAnimatedTransitioning {
+class ModalDismissTransition: NSObject, UIViewControllerAnimatedTransitioning {
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         guard
             let fpc = transitionContext?.viewController(forKey: .from) as? FloatingPanelController
