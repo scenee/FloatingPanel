@@ -702,6 +702,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
     }
 
+    // MARK: - Behavior
+
     private func shoulRemove(with velocityVector: CGVector) -> Bool {
         guard let vc = viewcontroller else { return false }
         if let result = vc.delegate?.floatingPanel?(vc, shouldRemoveAt: vc.surfaceLocation, with: velocityVector) {
