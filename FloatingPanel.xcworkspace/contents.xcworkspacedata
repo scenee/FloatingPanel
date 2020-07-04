@@ -4,13 +4,9 @@
    <FileRef
       location = "group:README.md">
    </FileRef>
-   <Group
-      location = "group:Framework"
-      name = "Framework">
-      <FileRef
-         location = "group:FloatingPanel.xcodeproj">
-      </FileRef>
-   </Group>
+   <FileRef
+      location = "group:FloatingPanel.xcodeproj">
+   </FileRef>
    <Group
       location = "group:Examples"
       name = "Examples">
