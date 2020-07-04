@@ -263,10 +263,10 @@ struct LayoutSegment {
     let upper: FloatingPanelState?
 }
 
-class FloatingPanelLayoutAdapter {
+class LayoutAdapter {
     weak var vc: FloatingPanelController!
-    private weak var surfaceView: FloatingPanelSurfaceView!
-    private weak var backdropView: FloatingPanelBackdropView!
+    private weak var surfaceView: SurfaceView!
+    private weak var backdropView: BackdropView!
     private let defaultLayout = FloatingPanelBottomLayout()
 
     fileprivate var layout: FloatingPanelLayout {
@@ -490,8 +490,8 @@ class FloatingPanelLayoutAdapter {
     }
 
     init(vc: FloatingPanelController,
-         surfaceView: FloatingPanelSurfaceView,
-         backdropView: FloatingPanelBackdropView,
+         surfaceView: SurfaceView,
+         backdropView: BackdropView,
          layout: FloatingPanelLayout) {
         self.vc = vc
         self.layout = layout
@@ -974,7 +974,7 @@ class FloatingPanelLayoutAdapter {
     }
 }
 
-extension FloatingPanelLayoutAdapter {
+extension LayoutAdapter {
     func segument(at pos: CGFloat, forward: Bool) -> LayoutSegment {
         /// ----------------------->Y
         /// --> forward                <-- backward

@@ -5,14 +5,14 @@ import UIKit
 ///
 /// FloatingPanel presentation model
 ///
-class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
+class Core: NSObject, UIGestureRecognizerDelegate {
     // MUST be a weak reference to prevent UI freeze on the presentation modally
     weak var viewcontroller: FloatingPanelController?
 
-    let surfaceView: FloatingPanelSurfaceView
-    let backdropView: FloatingPanelBackdropView
-    let layoutAdapter: FloatingPanelLayoutAdapter
-    let behaviorAdapter: FloatingPanelBehaviorAdapter
+    let surfaceView: SurfaceView
+    let backdropView: BackdropView
+    let layoutAdapter: LayoutAdapter
+    let behaviorAdapter: BehaviorAdapter
 
     weak var scrollView: UIScrollView? {
         didSet {
@@ -62,18 +62,18 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
     init(_ vc: FloatingPanelController, layout: FloatingPanelLayout, behavior: FloatingPanelBehavior) {
         viewcontroller = vc
 
-        surfaceView = FloatingPanelSurfaceView()
+        surfaceView = SurfaceView()
         surfaceView.backgroundColor = .white
 
-        backdropView = FloatingPanelBackdropView()
+        backdropView = BackdropView()
         backdropView.backgroundColor = .black
         backdropView.alpha = 0.0
 
-        self.layoutAdapter = FloatingPanelLayoutAdapter(vc: vc,
+        self.layoutAdapter = LayoutAdapter(vc: vc,
                                                         surfaceView: surfaceView,
                                                         backdropView: backdropView,
                                                         layout: layout)
-        self.behaviorAdapter = FloatingPanelBehaviorAdapter(vc: vc, behavior: behavior)
+        self.behaviorAdapter = BehaviorAdapter(vc: vc, behavior: behavior)
 
         panGestureRecognizer = FloatingPanelPanGestureRecognizer()
 
@@ -1004,7 +1004,7 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
 }
 
 public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
-    fileprivate weak var floatingPanel: FloatingPanelCore?
+    fileprivate weak var floatingPanel: Core?
     fileprivate var initialLocation: CGPoint = .zero
 
     public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
@@ -1019,7 +1019,7 @@ public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
             return super.delegate
         }
         set {
-            guard newValue is FloatingPanelCore else {
+            guard newValue is Core else {
                 let exception = NSException(name: .invalidArgumentException,
                                             reason: "FloatingPanelController's built-in pan gesture recognizer must have its controller as its delegate. Use 'delegateProxy' property.",
                                             userInfo: nil)

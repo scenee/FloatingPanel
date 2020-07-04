@@ -90,7 +90,7 @@ class ViewController: UIViewController {
 
 extension FloatingPanelController {
     func setApearanceForPhone() {
-        let appearance = FloatingPanelSurfaceAppearance()
+        let appearance = SurfaceAppearance()
         appearance.cornerRadius = 8.0
         appearance.backgroundColor = .clear
         surfaceView.appearance = appearance
@@ -98,9 +98,9 @@ extension FloatingPanelController {
 
     func setAppearanceForPad() {
         view.clipsToBounds = false
-        let appearance = FloatingPanelSurfaceAppearance()
+        let appearance = SurfaceAppearance()
         appearance.cornerRadius = 8.0
-        let shadow = FloatingPanelSurfaceAppearance.Shadow()
+        let shadow = SurfaceAppearance.Shadow()
         shadow.color = UIColor.black
         shadow.offset = CGSize(width: 0, height: 16)
         shadow.radius = 16

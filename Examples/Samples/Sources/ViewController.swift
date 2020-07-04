@@ -130,7 +130,7 @@ class SampleListViewController: UIViewController {
         mainPanelVC.delegate = self
         mainPanelVC.contentInsetAdjustmentBehavior = .always
 
-        let appearance = FloatingPanelSurfaceAppearance()
+        let appearance = SurfaceAppearance()
         appearance.cornerRadius = 6.0
         mainPanelVC.surfaceView.appearance = appearance
 
@@ -226,7 +226,7 @@ class SampleListViewController: UIViewController {
         // Initialize FloatingPanelController
         settingsPanelVC = FloatingPanelController()
 
-        let appearance = FloatingPanelSurfaceAppearance()
+        let appearance = SurfaceAppearance()
         appearance.cornerRadius = 6.0
         settingsPanelVC.surfaceView.appearance = appearance
 
@@ -294,7 +294,7 @@ extension SampleListViewController: UITableViewDelegate {
             detailPanelVC = FloatingPanelController()
             detailPanelVC.delegate = self
 
-            let appearance = FloatingPanelSurfaceAppearance()
+            let appearance = SurfaceAppearance()
             appearance.cornerRadius = 6.0
             detailPanelVC.surfaceView.appearance = appearance
 
@@ -350,7 +350,7 @@ extension SampleListViewController: UITableViewDelegate {
             fpc.set(contentViewController: contentVC)
             fpc.delegate = self
 
-            let appearance = FloatingPanelSurfaceAppearance()
+            let appearance = SurfaceAppearance()
             appearance.cornerRadius = 38.5
             fpc.surfaceView.appearance = appearance
 
@@ -368,7 +368,7 @@ extension SampleListViewController: UITableViewDelegate {
             fpc.set(contentViewController: contentVC)
             fpc.delegate = self
 
-            let apprearance = FloatingPanelSurfaceAppearance()
+            let apprearance = SurfaceAppearance()
             apprearance.cornerRadius = 38.5
             apprearance.shadows = []
             fpc.surfaceView.appearance = apprearance
@@ -393,7 +393,7 @@ extension SampleListViewController: UITableViewDelegate {
         case .showContainerMargins:
             let fpc = FloatingPanelController()
 
-            let appearance = FloatingPanelSurfaceAppearance()
+            let appearance = SurfaceAppearance()
             appearance.cornerRadius = 38.5
             fpc.surfaceView.appearance = appearance
 
@@ -898,7 +898,7 @@ class ModalViewController: UIViewController, FloatingPanelControllerDelegate {
         fpc = FloatingPanelController()
         fpc.delegate = self
 
-        let appearance = FloatingPanelSurfaceAppearance()
+        let appearance = SurfaceAppearance()
         appearance.cornerRadius = 6.0
         fpc.surfaceView.appearance = appearance
 
@@ -983,7 +983,7 @@ class TabBarContentViewController: UIViewController {
     override func viewDidLoad() {
         fpc.delegate = self
 
-        let appearance = FloatingPanelSurfaceAppearance()
+        let appearance = SurfaceAppearance()
         appearance.cornerRadius = 6.0
         fpc.surfaceView.appearance = appearance
 
