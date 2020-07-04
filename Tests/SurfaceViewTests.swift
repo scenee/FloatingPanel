@@ -3,7 +3,7 @@
 import XCTest
 @testable import FloatingPanel
 
-class FloatingPanelSurfaceViewTests: XCTestCase {
+class SurfaceViewTests: XCTestCase {
     override func setUp() {}
     override func tearDown() {}
 

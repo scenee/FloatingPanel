@@ -3,7 +3,7 @@
 import XCTest
 @testable import FloatingPanel
 
-class FloatingPanelLayoutTests: XCTestCase {
+class LayoutTests: XCTestCase {
     var fpc: FloatingPanelController!
     override func setUp() {
         fpc = FloatingPanelController(delegate: nil)
