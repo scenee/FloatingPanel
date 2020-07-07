@@ -126,10 +126,7 @@
 		545DB9C32151169500CA77B8 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				545DB9C52151169500CA77B8 /* Info.plist */,
-				545DB9C42151169500CA77B8 /* FloatingPanel.h */,
 				545DB9DF21511AC100CA77B8 /* Controller.swift */,
-				54352E9521A51A2500CBCA08 /* Transitioning.swift */,
 				54CFBFC4215CD09C006B5735 /* Core.swift */,
 				54CFBFC2215CD045006B5735 /* Layout.swift */,
 				5450EEE321646DF500135936 /* Behavior.swift */,
@@ -137,8 +134,11 @@
 				54CDC5D2215B6D5A007D205C /* SurfaceView.swift */,
 				54CDC5D4215B6D8D007D205C /* BackdropView.swift */,
 				545DBA2A2152383100CA77B8 /* GrabberView.swift */,
+				54352E9521A51A2500CBCA08 /* Transitioning.swift */,
 				545DB9DD215118C800CA77B8 /* UIExtensions.swift */,
 				54ABD7AE216CCFF7002E6C13 /* Logger.swift */,
+				545DB9C42151169500CA77B8 /* FloatingPanel.h */,
+				545DB9C52151169500CA77B8 /* Info.plist */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
