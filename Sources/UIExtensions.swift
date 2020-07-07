@@ -1,7 +1,6 @@
 // Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
 
 import UIKit
-import simd
 
 internal func displayTrunc(_ v: CGFloat, by s: CGFloat) -> CGFloat {
     let base = (1 / s)
