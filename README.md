@@ -447,7 +447,7 @@ The feature can be used for these 2 kind panels
 You can disable the pan gesture recognizer directly
 
 ```swift
-fpc.panGestureRecognizer.isEnable = false
+fpc.panGestureRecognizer.isEnabled = false
 ```
 
 Or use this `FloatingPanelControllerDelegate` method.
