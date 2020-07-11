@@ -138,13 +138,6 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
         // Add and show the views managed by the `FloatingPanelController` object to self.view.
         fpc.addPanel(toParent: self)
     }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-
-        // Remove the views managed by the `FloatingPanelController` object from self.view.
-        fpc.removePanelFromParent()
-    }
 }
 ```
 
