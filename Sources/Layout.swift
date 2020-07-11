@@ -139,7 +139,7 @@ class LayoutAdapter {
         }
         return orderedStates.first ?? .hidden
     }
-    
+
     var edgeMostState: FloatingPanelState {
         if orderedStates.count == 1 {
             return orderedStates[0]
