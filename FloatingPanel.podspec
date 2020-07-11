@@ -8,16 +8,15 @@ FloatingPanel is a clean and easy-to-use UI component for a new interface introd
 The new interface displays the related contents and utilities in parallel as a user wants.
                    DESC
   s.homepage            = "https://github.com/SCENEE/FloatingPanel"
-  # s.screenshots       = ""
+  s.author              = "Shin Yamamoto"
+  s.social_media_url    = "https://twitter.com/scenee"
 
   s.platform            = :ios, "10.0"
-  s.source              = { :git => "https://github.com/SCENEE/FloatingPanel.git", :tag => "v#{s.version}" }
-  s.source_files        = "Framework/Sources/*.swift"
-  s.swift_versions      = ["4.0", "4.2", "5.0"]
+  s.source              = { :git => "https://github.com/SCENEE/FloatingPanel.git", :tag => s.version.to_s }
+  s.source_files        = "Sources/*.swift"
+  s.swift_versions      = ['5.1', '5.2']
 
   s.framework           = "UIKit"
 
-  s.author              = { "Shin Yamamoto" => "shin@scenee.com" }
   s.license             = { :type => "MIT", :file => "LICENSE" }
-  s.social_media_url    = "https://twitter.com/scenee"
 end
