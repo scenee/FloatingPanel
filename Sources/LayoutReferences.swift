@@ -1,6 +1,6 @@
 // Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
 
-import Foundation
+import UIKit
 
 @objc public enum FloatingPanelReferenceEdge: Int {
     case top
