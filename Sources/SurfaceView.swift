@@ -352,7 +352,7 @@ public class SurfaceView: UIView {
                                                                 dy: -size.height)))
             mask.fillRule = .evenOdd
             mask.path = path.cgPath
-            if #available(iOSApplicationExtension 13.0, *) {
+            if #available(iOS 13.0, *) {
                 mask.cornerCurve = containerView.layer.cornerCurve
             }
             shadowLayer.mask = mask
