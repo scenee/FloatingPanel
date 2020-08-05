@@ -402,8 +402,8 @@ class FloatingPanelLayoutAdapter {
         // unsatisfiable constraints
 
         if self.interactiveTopConstraint == nil {
-            // Actiavate `interactiveTopConstraint` for `fitToBounds` mode.
-            // It goes throught this path when the pan gesture state jumps
+            // Activate `interactiveTopConstraint` for `fitToBounds` mode.
+            // It goes through this path when the pan gesture state jumps
             // from .begin to .end.
             startInteraction(at: state)
         }
