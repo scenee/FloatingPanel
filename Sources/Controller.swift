@@ -13,13 +13,13 @@ import UIKit
 
     /// Returns a UIViewPropertyAnimator object to add/present a floating panel to a position.
     ///
-    /// Default is the spring animator with 0.25 sec duration and `UIScrollView.DecelerationRate.fast` deceleration rate.
+    /// Default is the spring animation with 0.25 secs.
     @objc(floatingPanel:animatorForPresentingToState:) optional
     func floatingPanel(_ fpc: FloatingPanelController, animatorForPresentingTo state: FloatingPanelState) -> UIViewPropertyAnimator
 
     /// Returns a UIViewPropertyAnimator object to remove/dismiss a floating panel from a position.
     ///
-    /// Default is the spring animator with 0.25 sec duration and `UIScrollView.DecelerationRate.fast` deceleration rate.
+    /// Default is the spring animator with 0.25 secs.
     @objc(floatingPanel:animatorForDismissingWithVelocity:) optional
     func floatingPanel(_ fpc: FloatingPanelController, animatorForDismissingWith velocity: CGVector) -> UIViewPropertyAnimator
 
