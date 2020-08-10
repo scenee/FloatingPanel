@@ -1,4 +1,4 @@
-// Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
+// Copyright 2018-Present Shin Yamamoto. All rights reserved. MIT license.
 
 import Foundation
 
