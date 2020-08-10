@@ -431,7 +431,7 @@ open class FloatingPanelController: UIViewController {
             // 2. The safe area top inset can be variable on the large title navigation bar(iOS11+).
             // That's why it needs the observation to keep `adjustedContentInsets` correct.
             safeAreaInsetsObservation = self.view.observe(\.safeAreaInsets, options: [.initial, .new, .old]) { [weak self] (_, change) in
-                // Use `self.view.safeAreaInsets` becauese `change.newValue` can be nil in particular case when
+                // Use `self.view.safeAreaInsets` because `change.newValue` can be nil in particular case when
                 // is reported in https://github.com/SCENEE/FloatingPanel/issues/330
                 guard let self = self, change.oldValue != self.view.safeAreaInsets else { return }
                 self.update(safeAreaInsets: self.view.safeAreaInsets)
@@ -468,8 +468,8 @@ open class FloatingPanelController: UIViewController {
         assert((parent is UINavigationController) == false, "UINavigationController displays only one child view controller at a time.")
         assert((parent is UITabBarController) == false, "UITabBarController displays child view controllers with a radio-style selection interface")
         assert((parent is UISplitViewController) == false, "UISplitViewController manages two child view controllers in a master-detail interface")
-        assert((parent is UITableViewController) == false, "UITableViewController should not be the parent because the view is a table view so that a floating panel doens't work well")
-        assert((parent is UICollectionViewController) == false, "UICollectionViewController should not be the parent because the view is a collection view so that a floating panel doens't work well")
+        assert((parent is UITableViewController) == false, "UITableViewController should not be the parent because the view is a table view so that a floating panel doesn't work well")
+        assert((parent is UICollectionViewController) == false, "UICollectionViewController should not be the parent because the view is a collection view so that a floating panel doesn't work well")
 
         if viewIndex < 0 {
             parent.view.addSubview(self.view)
@@ -580,7 +580,7 @@ open class FloatingPanelController: UIViewController {
         }
     }
 
-    /// Cancel tracking the specifiy scroll view.
+    /// Cancel tracking the specify scroll view.
     ///
     @objc(untrackScrollView:)
     public func untrack(scrollView: UIScrollView) {
