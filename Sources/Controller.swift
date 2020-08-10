@@ -43,9 +43,9 @@ import UIKit
     @objc optional
     func floatingPanelWillEndDragging(_ fpc: FloatingPanelController, withVelocity velocity: CGPoint, targetState: UnsafeMutablePointer<FloatingPanelState>)
 
-    // called on finger up if the user dragged. decelerate is true if it will continue moving afterwards
+    // called on finger up if the user dragged. attract is true if it will continue moving afterwards to a nearby state anchor.
     @objc optional
-    func floatingPanelDidEndDragging(_ fpc: FloatingPanelController, willDecelerate decelerate: Bool)
+    func floatingPanelDidEndDragging(_ fpc: FloatingPanelController, willAttract attract: Bool)
 
     @objc optional
     func floatingPanelWillBeginAttracting(_ fpc: FloatingPanelController, to state: FloatingPanelState) // called on finger up as a panel are moving

@@ -671,16 +671,16 @@ class LayoutAdapter {
         var const = initialConst + diff
 
         let base = position.mainDimension(vc.view.bounds.size)
-        // Rubberbanding top buffer
+        // Rubber-banding top buffer
         if allowsRubberBanding(.top), const < minConst {
             let buffer = minConst - const
-            const = minConst - rubberbandEffect(for: buffer, base: base)
+            const = minConst - rubberBandEffect(for: buffer, base: base)
         }
 
-        // Rubberbanding bottom buffer
+        // Rubber-banding bottom buffer
         if allowsRubberBanding(.bottom), const > maxConst {
             let buffer = const - maxConst
-            const = maxConst + rubberbandEffect(for: buffer, base: base)
+            const = maxConst + rubberBandEffect(for: buffer, base: base)
         }
 
         if overflow == false {
@@ -694,7 +694,7 @@ class LayoutAdapter {
     // x = distance from the edge
     // c = constant value, UIScrollView uses 0.55
     // d = dimension, either width or height
-    private func rubberbandEffect(for buffer: CGFloat, base: CGFloat) -> CGFloat {
+    private func rubberBandEffect(for buffer: CGFloat, base: CGFloat) -> CGFloat {
         return (1.0 - (1.0 / ((buffer * 0.55 / base) + 1.0))) * base
     }
 
@@ -774,13 +774,13 @@ class LayoutAdapter {
 }
 
 extension LayoutAdapter {
-    func segument(at pos: CGFloat, forward: Bool) -> LayoutSegment {
+    func segment(at pos: CGFloat, forward: Bool) -> LayoutSegment {
         /// ----------------------->Y
         /// --> forward                <-- backward
         /// |-------|===o===|-------|  |-------|-------|===o===|
         /// |-------|-------x=======|  |-------|=======x-------|
         /// |-------|-------|===o===|  |-------|===o===|-------|
-        /// pos: o/x, seguement: =
+        /// pos: o/x, segement: =
 
         let sortedStates = sortedDirectionalStates
 

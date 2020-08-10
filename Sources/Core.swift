@@ -51,7 +51,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     // Scroll handling
     private var initialScrollOffset: CGPoint = .zero
     private var stopScrollDeceleration: Bool = false
-    private var scrollBouncable = false
+    private var scrollBounce = false
     private var scrollIndictorVisible = false
     private var grabberAreaFrame: CGRect {
         return surfaceView.grabberAreaFrame
@@ -177,7 +177,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         /* log.debug("currentY: \(currentY) translation: \(translation)") */
         let forwardY = (translation >= 0)
 
-        let segment = layoutAdapter.segument(at: cur, forward: forwardY)
+        let segment = layoutAdapter.segment(at: cur, forward: forwardY)
 
         let lowerState = segment.lower ?? layoutAdapter.edgeMostState
         let upperState = segment.upper ?? layoutAdapter.edgeLeastState
@@ -672,9 +672,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             vc.delegate?.floatingPanelWillEndDragging?(vc, withVelocity: velocity, targetState: &targetPosition)
         }
 
-        guard shouldDecelerate(to: targetPosition) else {
+        guard shouldAttract(to: targetPosition) else {
             if let vc = viewcontroller {
-                vc.delegate?.floatingPanelDidEndDragging?(vc, willDecelerate: false)
+                vc.delegate?.floatingPanelDidEndDragging?(vc, willAttract: false)
             }
 
             self.state = targetPosition
@@ -684,7 +684,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
 
         if let vc = viewcontroller {
-            vc.delegate?.floatingPanelDidEndDragging?(vc, willDecelerate: true)
+            vc.delegate?.floatingPanelDidEndDragging?(vc, willAttract: true)
         }
 
         // Workaround: Disable a tracking scroll to prevent bouncing a scroll content in a panel animating
@@ -693,7 +693,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             scrollView.isScrollEnabled = false
         }
 
-        startAttration(to: targetPosition, with: velocity)
+        startAttraction(to: targetPosition, with: velocity)
 
         // Workaround: Reset `self.scrollView.isScrollEnabled`
         if let scrollView = scrollView, targetPosition != .full,
@@ -787,14 +787,14 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         panGestureRecognizer.isEnabled = true
     }
 
-    private func shouldDecelerate(to targetState: FloatingPanelState) -> Bool {
+    private func shouldAttract(to targetState: FloatingPanelState) -> Bool {
         if layoutAdapter.position(for: targetState) == value(of: layoutAdapter.surfaceLocation) {
             return false
         }
         return true
     }
 
-    private func startAttration(to targetPosition: FloatingPanelState, with velocity: CGPoint) {
+    private func startAttraction(to targetPosition: FloatingPanelState, with velocity: CGPoint) {
         log.debug("startAnimation to \(targetPosition) -- velocity = \(value(of: velocity))")
         guard let vc = viewcontroller else { return }
 
@@ -892,7 +892,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         let distance = (currentY - layoutAdapter.position(for: state))
         let forwardY = velocity == 0 ? distance > 0 : velocity > 0
 
-        let segment = layoutAdapter.segument(at: pY, forward: forwardY)
+        let segment = layoutAdapter.segment(at: pY, forward: forwardY)
 
         var fromPos: FloatingPanelState
         var toPos: FloatingPanelState
@@ -902,7 +902,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
         if behaviorAdapter.shouldProjectMomentum(to: toPos) == false {
             log.debug("targetPosition -- negate projection: distance = \(distance)")
-            let segment = layoutAdapter.segument(at: currentY, forward: forwardY)
+            let segment = layoutAdapter.segment(at: currentY, forward: forwardY)
             var (lowerPos, upperPos) = (segment.lower ?? sortedPositions.first!, segment.upper ?? sortedPositions.last!)
             // Equate the segment out of {top,bottom} most state to the {top,bottom} most segment
             if lowerPos == upperPos {
@@ -939,7 +939,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
         log.debug("lock scroll view")
 
-        scrollBouncable = scrollView.bounces
+        scrollBounce = scrollView.bounces
         scrollIndictorVisible = scrollView.showsVerticalScrollIndicator
 
         scrollView.isDirectionalLockEnabled = true
@@ -952,7 +952,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         log.debug("unlock scroll view")
 
         scrollView.isDirectionalLockEnabled = false
-        scrollView.bounces = scrollBouncable
+        scrollView.bounces = scrollBounce
         scrollView.showsVerticalScrollIndicator = scrollIndictorVisible
     }
 
