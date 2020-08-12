@@ -7,7 +7,7 @@ import UIKit
 ///
 class Core: NSObject, UIGestureRecognizerDelegate {
     // MUST be a weak reference to prevent UI freeze on the presentation modally
-    weak var viewcontroller: FloatingPanelController?
+    private weak var ownerVC: FloatingPanelController?
 
     let surfaceView: SurfaceView
     let backdropView: BackdropView
@@ -24,7 +24,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     private(set) var state: FloatingPanelState = .hidden {
         didSet {
             log.debug("state changed: \(oldValue) -> \(state)")
-            if let vc = viewcontroller {
+            if let vc = ownerVC {
                 vc.delegate?.floatingPanelDidChangePosition?(vc)
             }
         }
@@ -60,7 +60,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     // MARK: - Interface
 
     init(_ vc: FloatingPanelController, layout: FloatingPanelLayout, behavior: FloatingPanelBehavior) {
-        viewcontroller = vc
+        ownerVC = vc
 
         surfaceView = SurfaceView()
         surfaceView.backgroundColor = .white
@@ -70,9 +70,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         backdropView.alpha = 0.0
 
         self.layoutAdapter = LayoutAdapter(vc: vc,
-                                                        surfaceView: surfaceView,
-                                                        backdropView: backdropView,
-                                                        layout: layout)
+                                           surfaceView: surfaceView,
+                                           backdropView: backdropView,
+                                           layout: layout)
         self.behaviorAdapter = BehaviorAdapter(vc: vc, behavior: behavior)
 
         panGestureRecognizer = FloatingPanelPanGestureRecognizer()
@@ -101,7 +101,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
     private func move(from: FloatingPanelState, to: FloatingPanelState, animated: Bool, completion: (() -> Void)? = nil) {
         assert(layoutAdapter.validStates.contains(to), "Can't move to '\(to)' state because it's not valid in the layout")
-        guard let vc = viewcontroller else {
+        guard let vc = ownerVC else {
             completion?()
             return
         }
@@ -148,7 +148,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 guard let `self` = self else { return }
                 self.animator = nil
                 updateScrollView()
-                self.viewcontroller?.notifyDidMove()
+                self.ownerVC?.notifyDidMove()
                 completion?()
             }
             self.animator = animator
@@ -162,7 +162,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 self.lockScrollView()
 
             }
-            viewcontroller?.notifyDidMove()
+            ownerVC?.notifyDidMove()
             completion?()
         }
     }
@@ -321,7 +321,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
     @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
         removalVector = .zero
-        viewcontroller?.remove()
+        ownerVC?.remove()
     }
 
     @objc func handle(panGesture: UIPanGestureRecognizer) {
@@ -438,7 +438,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 """)
 
             if interactionInProgress == false, isAttracting == false,
-                let vc = viewcontroller, vc.delegate?.floatingPanelShouldBeginDragging?(vc) == false {
+                let vc = ownerVC, vc.delegate?.floatingPanelShouldBeginDragging?(vc) == false {
                 return
             }
 
@@ -599,7 +599,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
         guard (pre != cur) else { return }
 
-        if let vc = viewcontroller {
+        if let vc = ownerVC {
             vc.delegate?.floatingPanelDidMove?(vc)
         }
     }
@@ -663,17 +663,17 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 removalVector = (distToHidden != 0) ? CGVector(dx: velocity.x/distToHidden, dy: 0.0) : .zero
             }
             if shoulRemove(with: removalVector) {
-                viewcontroller?.remove()
+                ownerVC?.remove()
                 return
             }
         }
 
-        if let vc = viewcontroller {
+        if let vc = ownerVC {
             vc.delegate?.floatingPanelWillEndDragging?(vc, withVelocity: velocity, targetState: &targetPosition)
         }
 
         guard shouldAttract(to: targetPosition) else {
-            if let vc = viewcontroller {
+            if let vc = ownerVC {
                 vc.delegate?.floatingPanelDidEndDragging?(vc, willAttract: false)
             }
 
@@ -683,7 +683,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             return
         }
 
-        if let vc = viewcontroller {
+        if let vc = ownerVC {
             vc.delegate?.floatingPanelDidEndDragging?(vc, willAttract: true)
         }
 
@@ -705,7 +705,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     // MARK: - Behavior
 
     private func shoulRemove(with velocityVector: CGVector) -> Bool {
-        guard let vc = viewcontroller else { return false }
+        guard let vc = ownerVC else { return false }
         if let result = vc.delegate?.floatingPanel?(vc, shouldRemoveAt: vc.surfaceLocation, with: velocityVector) {
             return result
         }
@@ -753,7 +753,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
         initialTranslation = translation
 
-        if let vc = viewcontroller {
+        if let vc = ownerVC {
             vc.delegate?.floatingPanelWillBeginDragging?(vc)
         }
 
@@ -796,7 +796,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
     private func startAttraction(to targetPosition: FloatingPanelState, with velocity: CGPoint) {
         log.debug("startAnimation to \(targetPosition) -- velocity = \(value(of: velocity))")
-        guard let vc = viewcontroller else { return }
+        guard let vc = ownerVC else { return }
 
         isAttracting = true
         vc.delegate?.floatingPanelWillBeginAttracting?(vc, to: targetPosition)
@@ -820,7 +820,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 let current = self.value(of: self.layoutAdapter.surfaceLocation)
                 let translation = data.value - initialData.value
                 self.backdropView.alpha = self.getBackdropAlpha(at: current, with: translation)
-                self.viewcontroller?.notifyDidMove()
+                self.ownerVC?.notifyDidMove()
         },
             completion: { [weak self] in
                 guard let self = self else { return }
@@ -835,7 +835,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         self.isAttracting = false
         self.moveAnimator = nil
 
-        if let vc = viewcontroller {
+        if let vc = ownerVC {
             vc.delegate?.floatingPanelDidEndAttracting?(vc)
         }
 
@@ -965,7 +965,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     private func contentOffsetForPinning(of scrollView: UIScrollView) -> CGPoint {
-        if let vc = viewcontroller, let origin = vc.delegate?.floatingPanel?(vc, contentOffsetForPinning: scrollView) {
+        if let vc = ownerVC, let origin = vc.delegate?.floatingPanel?(vc, contentOffsetForPinning: scrollView) {
             return origin
         }
         switch layoutAdapter.position {
@@ -1040,7 +1040,7 @@ public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
 
 // MARK: - Animator
 
-class NumericSpringAnimator: NSObject {
+private class NumericSpringAnimator: NSObject {
     struct Data {
         let value: CGFloat
         let velocity: CGFloat
