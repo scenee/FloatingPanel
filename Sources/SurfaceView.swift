@@ -2,37 +2,40 @@
 
 import UIKit
 
+/// An object for customizing the appearance of a surface view
 @objc(FloatingPanelSurfaceAppearance)
 @objcMembers
 public class SurfaceAppearance: NSObject {
+
+    /// An object that represents information to render a shadow
     @objc(FloatingPanelSurfaceAppearanceShadow)
     public class Shadow: NSObject {
-        /// A Boolean indicating whether the surface shadow is displayed.
+        /// A Boolean indicating whether a shadow is displayed.
         @objc
         public var hidden: Bool = false
 
-        /// The color of the surface shadow.
+        /// The color of a shadow.
         @objc
         public var color: UIColor = .black
 
-        /// The offset (in points) of the surface shadow.
+        /// The offset (in points) of a shadow.
         @objc
         public var offset: CGSize = CGSize(width: 0.0, height: 1.0)
 
-        /// The opacity of the surface shadow.
+        /// The opacity of a shadow.
         @objc
         public var opacity: Float = 0.2
 
-        /// The blur radius (in points) used to render the surface shadow.
+        /// The blur radius (in points) used to render a shadow.
         @objc
         public var radius: CGFloat = 3
 
-        // The inflated amount of the surface shadow prior to applying the blur.
+        /// The inflated amount of a shadow prior to applying the blur.
         @objc
         public var spread: CGFloat = 0
 
     }
-    /// The background color.
+    /// The background color of a surface view
     public var backgroundColor: UIColor? = {
         if #available(iOS 13, *) {
             return UIColor.systemBackground
@@ -41,29 +44,29 @@ public class SurfaceAppearance: NSObject {
         }
     }()
 
-    /// The radius to use when drawing top rounded corners.
+    /// The radius to use when drawing the top rounded corners.
     ///
     /// `self.contentView` is masked with the top rounded corners automatically on iOS 11 and later.
     /// On iOS 10, they are not automatically masked because of a UIVisualEffectView issue. See https://forums.developer.apple.com/thread/50854
     public var cornerRadius: CGFloat = 0.0
 
+    /// An array of shadows used to create drop shadows underneath a surface view.
     public var shadows: [Shadow] = [Shadow()]
 
-    /// The width of the surface border.
+    /// The border width of a surface view.
     public var borderColor: UIColor?
 
-    /// The color of the surface border.
+    /// The border color of a surface view.
     public var borderWidth: CGFloat = 0.0
 }
 
-/// A view that presents a surface interface in a floating panel.
+/// A view that presents a surface interface in a panel.
 @objc(FloatingPanelSurfaceView)
 @objcMembers
 public class SurfaceView: UIView {
-    /// A FloatingPanelGrabberView object displayed at the top of the surface view.
+    /// A `FloatingPanelGrabberView` object displayed at the top of the surface view.
     ///
-    /// To use a custom grabber handle, hide this and then add the custom one
-    /// to the surface view at appropriate coordinates.
+    /// To use a custom grabber, hide this and then add it to the surface view at appropriate point.
     public let grabberHandle = GrabberView()
 
     /// Offset of the grabber handle from the interactive edge.
@@ -71,17 +74,17 @@ public class SurfaceView: UIView {
         setNeedsUpdateConstraints()
     } }
 
-    /// The offset from the interactive edge which prevents the conetent scroll
+    /// The offset from the move edge to prevent the content scroll
     public var grabberAreaOffset: CGFloat = 36.0
 
     /// The grabber handle size
     ///
-    /// On left/right position, the width dimension is used as the height of `grabberHandle`, and vice versa.
+    /// On left/right positioned panel the width dimension is used as the height of `grabberHandle`, and vice versa.
     public var grabberHandleSize: CGSize = CGSize(width: 36.0, height: 5.0) { didSet {
         setNeedsUpdateConstraints()
     } }
 
-    /// A root view of a content view controller
+    /// The content view to be assigned a view of the content view controller of `FloatingPanelController`
     public weak var contentView: UIView!
 
     /// The content insets specifying the insets around the content view.
@@ -97,6 +100,7 @@ public class SurfaceView: UIView {
         set { appearance.backgroundColor = newValue; setNeedsLayout() }
     }
 
+    /// The appearance settings for a surface view.
     public var appearance = SurfaceAppearance() { didSet {
         shadowLayers = appearance.shadows.map { _ in CAShapeLayer() }
         setNeedsLayout()
@@ -107,7 +111,7 @@ public class SurfaceView: UIView {
         setNeedsUpdateConstraints()
     } }
 
-    /// The view presents an actual surface shape.
+    /// The view that displays an actual surface shape.
     ///
     /// It renders the background color, border line and top rounded corners,
     /// specified by other properties. The reason why they're not be applied to
@@ -118,7 +122,7 @@ public class SurfaceView: UIView {
     var containerOverflow: CGFloat = 0.0 { // Must not call setNeedsLayout()
         didSet {
             // Calling setNeedsUpdateConstraints() is necessary to fix a layout break
-            // when the contentMode is changed after laying out a floating panel, for instance,
+            // when the contentMode is changed after laying out a panel, for instance,
             // after calling viewDidAppear(_:) of the parent view controller.
             setNeedsUpdateConstraints()
         }

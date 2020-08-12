@@ -2,29 +2,32 @@
 
 import UIKit
 
+/// A set of methods implemented by the delegate of a panel controller allows the adopting delegate to respond to
+/// messages from the FloatingPanelController class and thus respond to, and in some affect, operations such as
+/// dragging, attracting a panel, layout of a panel and the content, and transition animations.
 @objc public protocol FloatingPanelControllerDelegate: class {
-    // Returns a FloatingPanelLayout object. If you use the default one, you can use a `FloatingPanelDefaultLayout` object.
+    /// Returns a FloatingPanelLayout object. If you use the default one, you can use a `FloatingPanelBottomLayout` object.
     @objc(floatingPanel:layoutForTraitCollection:) optional
     func floatingPanel(_ fpc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout
 
-    // Returns a FloatingPanelLayout object. If you use the default one, you can use a `FloatingPanelDefaultLayout` object.
+    /// Returns a FloatingPanelLayout object. If you use the default one, you can use a `FloatingPanelBottomLayout` object.
     @objc(floatingPanel:layoutForSize:) optional
     func floatingPanel(_ fpc: FloatingPanelController, layoutFor size: CGSize) -> FloatingPanelLayout
 
-    /// Returns a UIViewPropertyAnimator object to add/present a floating panel to a position.
+    /// Returns a UIViewPropertyAnimator object to add/present the  panel to a position.
     ///
     /// Default is the spring animation with 0.25 secs.
     @objc(floatingPanel:animatorForPresentingToState:) optional
     func floatingPanel(_ fpc: FloatingPanelController, animatorForPresentingTo state: FloatingPanelState) -> UIViewPropertyAnimator
 
-    /// Returns a UIViewPropertyAnimator object to remove/dismiss a floating panel from a position.
+    /// Returns a UIViewPropertyAnimator object to remove/dismiss a panel from a position.
     ///
     /// Default is the spring animator with 0.25 secs.
     @objc(floatingPanel:animatorForDismissingWithVelocity:) optional
     func floatingPanel(_ fpc: FloatingPanelController, animatorForDismissingWith velocity: CGVector) -> UIViewPropertyAnimator
 
-    /// Called when the floating panel has changed to a new position. Can be called inside an animation block, so any
-    /// view properties set inside this function will be automatically animated alongside the panel.
+    /// Called when a panel has changed to a new position. Can be called inside an animation block, so any
+    /// view properties set inside this function will be automatically animated alongside a panel.
     @objc optional
     func floatingPanelDidChangePosition(_ fpc: FloatingPanelController)
 
@@ -32,45 +35,50 @@ import UIKit
     @objc optional
     func floatingPanelShouldBeginDragging(_ fpc: FloatingPanelController) -> Bool
 
+    /// Called when the user drags the surface or the surface is attracted to a state anchor.
     @objc optional
     func floatingPanelDidMove(_ fpc: FloatingPanelController) // any surface frame changes in dragging
 
-    // called on start of dragging (may require some time and or distance to move)
+    /// Called on start of dragging (may require some time and or distance to move)
     @objc optional
     func floatingPanelWillBeginDragging(_ fpc: FloatingPanelController)
 
-    // called on finger up if the user dragged. velocity is in points/second.
+    /// Called on finger up if the user dragged. velocity is in points/second.
     @objc optional
     func floatingPanelWillEndDragging(_ fpc: FloatingPanelController, withVelocity velocity: CGPoint, targetState: UnsafeMutablePointer<FloatingPanelState>)
 
-    // called on finger up if the user dragged. attract is true if it will continue moving afterwards to a nearby state anchor.
+    /// Called on finger up if the user dragged.
+    ///
+    /// If `attract` is true, it will continue moving afterwards to a nearby state anchor.
     @objc optional
     func floatingPanelDidEndDragging(_ fpc: FloatingPanelController, willAttract attract: Bool)
 
+    /// Called when it is about to be attracted to a state anchor.
     @objc optional
     func floatingPanelWillBeginAttracting(_ fpc: FloatingPanelController, to state: FloatingPanelState) // called on finger up as a panel are moving
 
+    /// Called when attracting it is completed.
     @objc optional
     func floatingPanelDidEndAttracting(_ fpc: FloatingPanelController) // called when a panel stops
 
-    /// Asks the delegate whether the panel should be removed when dragging ended at the specified location
+    /// Asks the delegate whether a panel should be removed when dragging ended at the specified location
     ///
-    /// This delegate method is called only when `FloatingPanelController.isRemovalInteractionEnabled` is set to true.
+    /// This delegate method is called only where `FloatingPanelController.isRemovalInteractionEnabled` is `true`.
     /// The velocity vector is calculated from the distance to a point of the hidden state and the pan gesture's velocity.
     @objc(floatingPanel:shouldRemoveAtLocation:withVelocity:)
     optional
     func floatingPanel(_ fpc: FloatingPanelController, shouldRemoveAt location: CGPoint, with velocity: CGVector) -> Bool
 
-    // called on start to remove its view controller from the parent view controller.
+    /// Called on start to remove its view controller from the parent view controller.
     @objc(floatingPanelWillRemove:)
     optional
     func floatingPanelWillRemove(_ fpc: FloatingPanelController)
 
-    // called when its view controller are removed from the parent view controller.
+    /// Called when a panel is removed from the parent view controller.
     @objc optional
     func floatingPanelDidRemove(_ fpc: FloatingPanelController)
 
-    /// Asks the delegate for a content offset of the tracked scroll view to be pinned when a floating panel moves
+    /// Asks the delegate for a content offset of the tracking scroll view to be pinned when a panel moves
     ///
     /// If you do not implement this method, the controller uses a value of the content offset plus the content insets
     /// of the tracked scroll view. Your implementation of this method can return a value for a navigation bar with a large
@@ -83,7 +91,7 @@ import UIKit
 }
 
 ///
-/// A container view controller to display a floating panel to present contents in parallel as a user wants.
+/// A container view controller to display a panel to present contents in parallel as a user wants.
 ///
 @objc
 open class FloatingPanelController: UIViewController {
@@ -103,7 +111,7 @@ open class FloatingPanelController: UIViewController {
         case fitToBounds
     }
 
-    /// The delegate of the floating panel controller object.
+    /// The delegate of a panel controller object.
     @objc 
     public weak var delegate: FloatingPanelControllerDelegate?{
         didSet{
@@ -135,12 +143,13 @@ open class FloatingPanelController: UIViewController {
         return floatingPanel.panGestureRecognizer
     }
 
-    /// The current position of the floating panel controller's contents.
+    /// The current position of a panel controller's contents.
     @objc
     public var state: FloatingPanelState {
         return floatingPanel.state
     }
 
+    /// A Boolean value indicating whether a panel controller is attracting the surface to a state anchor.
     @objc
     public var isAttracting: Bool {
         return floatingPanel.isAttracting
@@ -189,7 +198,7 @@ open class FloatingPanelController: UIViewController {
         @objc(isRemovalInteractionEnabled) get { return floatingPanel.isRemovalInteractionEnabled }
     }
 
-    /// The view controller responsible for the content portion of the floating panel.
+    /// The view controller responsible for the content portion of a panel.
     @objc
     public var contentViewController: UIViewController? {
         set { set(contentViewController: newValue) }
@@ -202,6 +211,7 @@ open class FloatingPanelController: UIViewController {
         return floatingPanel.targetPosition(from: currentY, with: .zero)
     }
 
+    /// Constants that define how a panel content fills in the surface.
     @objc
     public var contentMode: ContentMode = .static {
         didSet {
@@ -227,7 +237,7 @@ open class FloatingPanelController: UIViewController {
         setUp()
     }
 
-    /// Initialize a newly created floating panel controller.
+    /// Initialize a newly created panel controller.
     @objc
     public init(delegate: FloatingPanelControllerDelegate? = nil) {
         super.init(nibName: nil, bundle: nil)
@@ -279,7 +289,7 @@ open class FloatingPanelController: UIViewController {
     open override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if #available(iOS 11.0, *) {
-            // Ensure the panel's static constraint after rotating a device in static mode
+            // Ensure to update the static constraint of a panel after rotating a device in static mode
             if contentMode == .static {
                 floatingPanel.layoutAdapter.updateStaticConstraint()
             }
@@ -468,8 +478,8 @@ open class FloatingPanelController: UIViewController {
         assert((parent is UINavigationController) == false, "UINavigationController displays only one child view controller at a time.")
         assert((parent is UITabBarController) == false, "UITabBarController displays child view controllers with a radio-style selection interface")
         assert((parent is UISplitViewController) == false, "UISplitViewController manages two child view controllers in a master-detail interface")
-        assert((parent is UITableViewController) == false, "UITableViewController should not be the parent because the view is a table view so that a floating panel doesn't work well")
-        assert((parent is UICollectionViewController) == false, "UICollectionViewController should not be the parent because the view is a collection view so that a floating panel doesn't work well")
+        assert((parent is UITableViewController) == false, "UITableViewController should not be the parent because the view is a table view so that a panel doesn't work well")
+        assert((parent is UICollectionViewController) == false, "UICollectionViewController should not be the parent because the view is a collection view so that a panel doesn't work well")
 
         if viewIndex < 0 {
             parent.view.addSubview(self.view)
@@ -532,7 +542,7 @@ open class FloatingPanelController: UIViewController {
         floatingPanel.move(to: to, animated: animated, completion: completion)
     }
 
-    /// Sets the view controller responsible for the content portion of the floating panel.
+    /// Sets the view controller responsible for the content portion of a panel.
     public func set(contentViewController: UIViewController?) {
         if let vc = _contentViewController {
             vc.willMove(toParent: nil)
@@ -596,19 +606,28 @@ open class FloatingPanelController: UIViewController {
     ///
     /// This method updates the `FloatingPanelLayout` object from the delegate and
     /// then it calls `layoutIfNeeded()` of the root view to force the view
-    /// to update the floating panel's layout immediately. It can be called in an
+    /// to update the layout immediately. It can be called in an
     /// animation block.
     @objc
     public func invalidateLayout() {
         activateLayout(forceLayout: true)
     }
 
-    /// Returns the y-coordinate of the point at the origin of the surface view.
+    /// Returns the surface's position in a panel controller's view for the specified state.
+    ///
+    /// If a panel is top positioned, this returns a point of the bottom-left corner of the surface. If it is left positioned
+    /// this returns a point of top-right corner of the surface. If it is bottom or right positioned, this returns a point
+    /// of the top-left corner of the surface.
     @objc
     public func surfaceLocation(for state: FloatingPanelState) -> CGPoint {
         return floatingPanel.layoutAdapter.surfaceLocation(for: state)
     }
 
+    /// The surface's position in a panel controller's view.
+    ///
+    /// If a panel is top positioned, this returns a point of the bottom-left corner of the surface. If it is left positioned
+    /// this returns a point of top-right corner of the surface. If it is bottom or right positioned, this returns a point
+    /// of the top-left corner of the surface.
     @objc
     public var surfaceLocation: CGPoint {
         get { floatingPanel.layoutAdapter.surfaceLocation }

@@ -3,10 +3,9 @@
 import UIKit
 
 ///
-/// FloatingPanel presentation model
+/// The presentation model of FloatingPanel
 ///
 class Core: NSObject, UIGestureRecognizerDelegate {
-    // MUST be a weak reference to prevent UI freeze on the presentation modally
     private weak var ownerVC: FloatingPanelController?
 
     let surfaceView: SurfaceView
@@ -1005,6 +1004,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 }
 
+/// A gesture recognizer that looks for panning (dragging) gestures in a panel.
 public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
     fileprivate weak var floatingPanel: Core?
     fileprivate var initialLocation: CGPoint = .zero
@@ -1016,6 +1016,10 @@ public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
             self.state = .began
         }
     }
+    /// The delegate of the gesture recognizer.
+    ///
+    /// - Note: The delegate is used by FloatingPanel itself. If you set your own delegate object, an
+    /// exception is raised. If you want to handle the methods of UIGestureRecognizerDelegate, you can use `delegateProxy`.
     public override weak var delegate: UIGestureRecognizerDelegate? {
         get {
             return super.delegate
@@ -1031,6 +1035,10 @@ public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
             super.delegate = newValue
         }
     }
+
+    /// An object to intercept the delegate of the gesture recognizer.
+    ///
+    /// If an object adopting `UIGestureRecognizerDelegate` is set, the delegate methods are proxied to it.
     public weak var delegateProxy: UIGestureRecognizerDelegate? {
         didSet {
             self.delegate = floatingPanel // Update the cached IMP

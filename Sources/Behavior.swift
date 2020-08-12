@@ -2,6 +2,7 @@
 
 import UIKit
 
+/// An interface for generating behavior information to fine-tune the behavior of a panel.
 @objc
 public protocol FloatingPanelBehavior {
     /// A floating-point value that determines the rate of oscillation magnitude reduction after the user lifts their finger.
@@ -24,7 +25,7 @@ public protocol FloatingPanelBehavior {
     @objc optional
     var momentumProjectionRate: CGFloat { get }
 
-    /// Asks the behavior if the floating panel should project a momentum of a user interaction to move the proposed position.
+    /// Asks the behavior if a panel should project a momentum of a user interaction to move the proposed position.
     ///
     /// The default implementation of this method returns true. This method is called for a layout to support all positions(tip, half and full).
     /// Therefore, `proposedTargetPosition` can only be `FloatingPanelState.tip` or `FloatingPanelState.full`.
@@ -33,31 +34,34 @@ public protocol FloatingPanelBehavior {
 
     /// Returns the progress to redirect to the previous position.
     ///
-    /// The progress is represented by a floating-point value between 0.0 and 1.0, inclusive, where 1.0 indicates the floating panel is impossible to move to the next position. The default value is 0.5. Values less than 0.0 and greater than 1.0 are pinned to those limits.
+    /// The progress is represented by a floating-point value between 0.0 and 1.0, inclusive, where 1.0 indicates a panel is impossible to move to the next position. The default value is 0.5. Values less than 0.0 and greater than 1.0 are pinned to those limits.
     @objc optional
     func redirectionalProgress(_ fpc: FloatingPanelController, from: FloatingPanelState, to: FloatingPanelState) -> CGFloat
 
     /// Asks the behavior whether the rubber band effect is enabled in moving over a given edge of the surface view.
     ///
-    /// This method allows the behavior to activate the rubber band effect to a given edge of the surface view. By default, the effect is disabled.
+    /// This method allows a panel to activate the rubber band effect to a given edge of the surface view. By default, the effect is disabled.
     @objc optional
     func allowsRubberBanding(for edge: UIRectEdge) -> Bool
 }
 
-class FloatingPanelDefaultBehavior: FloatingPanelBehavior {
-    var springDecelerationRate: CGFloat {
+/// The default behavior object for a panel
+///
+/// This behavior object is fine-tuned to behave as a search panel(card) in Apple Maps on iPhone portrait orientation.
+public class FloatingPanelDefaultBehavior: FloatingPanelBehavior {
+    public var springDecelerationRate: CGFloat {
         return UIScrollView.DecelerationRate.fast.rawValue + 0.001
     }
 
-    var springResponseTime: CGFloat {
+    public var springResponseTime: CGFloat {
         return 0.4
     }
 
-    var momentumProjectionRate: CGFloat {
+    public var momentumProjectionRate: CGFloat {
         return UIScrollView.DecelerationRate.normal.rawValue
     }
 
-    func redirectionalProgress(_ fpc: FloatingPanelController, from: FloatingPanelState, to: FloatingPanelState) -> CGFloat {
+    public func redirectionalProgress(_ fpc: FloatingPanelController, from: FloatingPanelState, to: FloatingPanelState) -> CGFloat {
         return 0.5
     }
 
@@ -74,7 +78,7 @@ class FloatingPanelDefaultBehavior: FloatingPanelBehavior {
                                                                                  initialVelocity: velocity))
     }
 
-    func allowsRubberBanding(for edge: UIRectEdge) -> Bool {
+    public func allowsRubberBanding(for edge: UIRectEdge) -> Bool {
         return false
     }
 }

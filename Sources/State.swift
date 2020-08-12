@@ -2,6 +2,7 @@
 
 import Foundation
 
+/// An object that represents the display state of a panel in a screen.
 @objc
 public class FloatingPanelState: NSObject, NSCopying, RawRepresentable {
     public typealias RawValue = String
@@ -18,7 +19,9 @@ public class FloatingPanelState: NSObject, NSCopying, RawRepresentable {
         super.init()
     }
 
+    /// The corresponding value of the raw type.
     public let rawValue: RawValue
+    /// The sorting order for states
     public let order: Int
 
     public func copy(with zone: NSZone? = nil) -> Any {
@@ -33,9 +36,13 @@ public class FloatingPanelState: NSObject, NSCopying, RawRepresentable {
         return description
     }
 
+    /// A panel state indicates the entire panel is shown.
     @objc(Full) public static let full: FloatingPanelState = FloatingPanelState(rawValue: "full", order: 1000)
+    /// A panel state indicates the half of a panel is shown.
     @objc(Half) public static let half: FloatingPanelState = FloatingPanelState(rawValue: "half", order: 500)
+    /// A panel state indicates the tip of a panel is shown.
     @objc(Tip) public static let tip: FloatingPanelState = FloatingPanelState(rawValue: "tip", order: 100)
+    /// A panel state indicates it is hidden.
     @objc(Hidden) public static let hidden: FloatingPanelState = FloatingPanelState(rawValue: "hidden", order: 0)
 }
 

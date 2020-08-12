@@ -2,6 +2,7 @@
 
 import UIKit
 
+/// Constants that specify the edge of the container of a panel.
 @objc public enum FloatingPanelReferenceEdge: Int {
     case top
     case left
@@ -26,6 +27,7 @@ extension FloatingPanelReferenceEdge {
     }
 }
 
+/// Constants that specify a layout guide to lay out a panel.
 @objc public enum FloatingPanelLayoutReferenceGuide: Int {
     case superview = 0
     case safeArea = 1
