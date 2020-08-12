@@ -2,28 +2,25 @@
 
 import UIKit
 
+/// An interface for generating layout information for a panel.
 @objc public protocol FloatingPanelLayout {
-    /// The position of the panel in the view of `FloatingPanelController`.
+    /// Returns the position of a panel in a `FloatingPanelController` view .
     @objc var position: FloatingPanelPosition { get }
 
-    /// The initial state when the layout is applied.
+    /// Returns the initial state when a panel is presented.
     @objc var initialState: FloatingPanelState { get }
 
-    /// The layout anchors to specify the snapping locations for each state.
+    /// Returns the layout anchors to specify the snapping locations for each state.
     @objc var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] { get }
 
-    /// Returns X-axis and width layout constraints of the surface view of a floating panel.
-    /// You must not include any Y-axis and height layout constraints of the surface view
-    /// because their constraints will be configured by the floating panel controller.
-    /// By default, the width of a surface view fits a safe area.
+    /// Returns layout constraints to determine the cross dimension of a panel.
     @objc optional func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint]
 
-    /// Returns a CGFloat value to determine the backdrop view's alpha for a state.
-    ///
-    /// Default is 0.3 at full state, otherwise 0.0.
+    /// Returns the alpha value of the backdrop of a panel for each state.
     @objc optional func backdropAlpha(for state: FloatingPanelState) -> CGFloat
 }
 
+/// A layout object that lays out a panel in bottom sheet style.
 @objcMembers
 open class FloatingPanelBottomLayout: NSObject, FloatingPanelLayout {
     public override init() {

@@ -2,6 +2,7 @@
 
 import UIKit
 
+/// Constants describing the position of a panel in a screen
 @objc public enum FloatingPanelPosition: Int {
     case top
     case left

@@ -480,7 +480,7 @@ extension SampleListViewController: UIGestureRecognizerDelegate {
 
 /**
  - Attention: `FloatingPanelLayout` must not be applied by the parent view
- controller of a floating panel. But here `SampleListViewController` adopts it
+ controller of a panel. But here `SampleListViewController` adopts it
  purposely to check if the library prints an appropriate warning.
  */
 extension SampleListViewController: FloatingPanelLayout {

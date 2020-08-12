@@ -21,7 +21,7 @@ class ModalTransition: NSObject, UIViewControllerTransitioningDelegate {
 class PresentationController: UIPresentationController {
     override func presentationTransitionWillBegin() {
         // Must call here even if duplicating on in containerViewWillLayoutSubviews()
-        // Because it let the floating panel present correctly with the presentation animation
+        // Because it let the panel present correctly with the presentation animation
         addFloatingPanel()
     }
 

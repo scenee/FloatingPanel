@@ -2,6 +2,7 @@
 
 import UIKit
 
+/// A view that presents a grabber handle in the surface of a panel.
 @objc(FloatingPanelGrabberView)
 public class GrabberView: UIView {
 
