@@ -302,7 +302,7 @@ extension SampleListViewController: UITableViewDelegate {
             detailPanelVC.set(contentViewController: contentVC)
 
             detailPanelVC.contentMode = .fitToBounds
-            (contentVC as? DetailViewController)?.intrinsicHeightConstraint.priority = .defaultLow
+            (contentVC as? DetailViewController)?.intrinsicHeightConstraint.isActive = false
 
             //  Add FloatingPanel to self.view
             detailPanelVC.addPanel(toParent: self, animated: true)
