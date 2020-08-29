@@ -553,7 +553,7 @@ class RemovablePanelLayout: FloatingPanelLayout {
         ]
     }
 
-    func backdropAlphaFor(position: FloatingPanelState) -> CGFloat {
+    func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.3
     }
 }
@@ -569,7 +569,7 @@ class RemovablePanelLandscapeLayout: FloatingPanelLayout {
         ]
     }
 
-    func backdropAlphaFor(position: FloatingPanelState) -> CGFloat {
+    func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.3
     }
 }
@@ -584,7 +584,7 @@ class ModalPanelLayout: FloatingPanelLayout {
         ]
     }
 
-    func backdropAlphaFor(position: FloatingPanelState) -> CGFloat {
+    func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.3
     }
 }
@@ -1188,9 +1188,10 @@ class ThreeTabBarPanelLayout: FloatingPanelLayout {
         ]
     }
 
-    func backdropAlphaFor(position: FloatingPanelState) -> CGFloat {
+    func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.3
     }
+
     func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
         if #available(iOS 11.0, *) {
             leftConstraint = surfaceView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 0.0)
