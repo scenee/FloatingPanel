@@ -118,8 +118,8 @@ extension ViewController: UISearchBarDelegate {
         searchBar.resignFirstResponder()
         searchBar.showsCancelButton  = false
         searchVC.hideHeader(animated: true)
-        UIView.animate(withDuration: 0.25) { [weak self] in
-            self?.fpc.move(to: .half, animated: false)
+        UIView.animate(withDuration: 0.25) {
+            self.fpc.move(to: .half, animated: false)
         }
     }
 

@@ -21,7 +21,7 @@ The new interface displays the related contents and utilities in parallel as a u
 - [Installation](#installation)
     - [CocoaPods](#cocoapods)
     - [Carthage](#carthage)
-    - [Swift Package Manager with Xcode](#swift-package-manager-with-xcode)
+    - [Swift Package Manager](#swift-package-manager)
 - [Getting Started](#getting-started)
     - [Add a floating panel as a child view controller](#add-a-floating-panel-as-a-child-view-controller)
     - [Present a floating panel as a modality](#present-a-floating-panel-as-a-modality)
@@ -30,7 +30,7 @@ The new interface displays the related contents and utilities in parallel as a u
     - [Show/Hide a floating panel in a view with your view hierarchy](#showhide-a-floating-panel-in-a-view-with-your-view-hierarchy)
     - [Scale the content view when the surface position changes](#scale-the-content-view-when-the-surface-position-changes)
     - [Customize the layout with `FloatingPanelLayout` protocol](#customize-the-layout-with-floatingpanellayout-protocol)
-        - [Change the initial layout.](#change-the-initial-layout)
+        - [Change the initial layout](#change-the-initial-layout)
     - [Update your panel layout](#update-your-panel-layout)
         - [Support your landscape layout](#support-your-landscape-layout)
         - [Use the intrinsic size of a content in your panel layout](#use-the-intrinsic-size-of-a-content-in-your-panel-layout)
@@ -81,12 +81,16 @@ Examples are here.
 
 - [Examples/Maps](https://github.com/SCENEE/FloatingPanel/tree/master/Examples/Maps) like Apple Maps.app.
 - [Examples/Stocks](https://github.com/SCENEE/FloatingPanel/tree/master/Examples/Stocks) like Apple Stocks.app.
+- [Examples/Samples](https://github.com/SCENEE/FloatingPanel/tree/master/Examples/Samples)
+- [Examples/SamplesObjC](https://github.com/SCENEE/FloatingPanel/tree/master/Examples/SamplesObjC)
 
 ## Requirements
 
-FloatingPanel is written in Swift 5.0+. Compatible with iOS 10.0+.
+FloatingPanel is written in Swift 5.0+. Compatible with iOS 11.0+.
 
-:pencil2: You would like to use Swift 4.0. Please use FloatingPanel v1.
+The deployment is still iOS 10, but it is recommended to use this library on iOS 11+.
+
+:pencil2: You would like to use Swift 4.0. Please use FloatingPanel v1. 
 
 ## Installation
 
@@ -109,7 +113,7 @@ For [Carthage](https://github.com/Carthage/Carthage), add the following to your 
 github "scenee/FloatingPanel"
 ```
 
-### Swift Package Manager with Xcode
+### Swift Package Manager
 
 Follow [this doc](https://developer.apple.com/documentation/swift_packages/adding_package_dependencies_to_your_app).
 
@@ -247,7 +251,7 @@ Otherwise, `FloatingPanelController` fixes the content by the height of the top 
 
 ### Customize the layout with `FloatingPanelLayout` protocol
 
-#### Change the initial layout.
+#### Change the initial layout
 
 ```swift
 class ViewController: UIViewController, FloatingPanelControllerDelegate {
@@ -258,8 +262,8 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
 }
 
 class MyFloatingPanelLayout: FloatingPanelLayout {
-    let position = .bottom
-    let initialState = .tip
+    let position: FloatingPanelPosition = .bottom
+    let initialState: FloatingPanelState = .tip
     var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
         return [
             .full: FloatingPanelLayoutAnchor(absoluteInset: 16.0, edge: .top, referenceGuide: .safeArea),
@@ -272,7 +276,7 @@ class MyFloatingPanelLayout: FloatingPanelLayout {
 
 ### Update your panel layout
 
-There are 2 ways to update the panel layout. 
+There are 2 ways to update the panel layout.
 
 1. Manually set `FloatingPanelController.layout` to the new layout object directly.
 
@@ -281,7 +285,7 @@ fpc.layout = MyPanelLayout()
 fpc.invalidateLayout() // If needed
 ```
 
-2. Returns an appropriate layout object in `floatingPanel(_:layoutFor:)` delegate.
+2. Returns an appropriate layout object in one of 2 `floatingPanel(_:layoutFor:)` delegates.
 
 ```swift
 class ViewController: UIViewController, FloatingPanelControllerDelegate {
@@ -289,6 +293,11 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout {
         return MyFloatingPanelLayout()
     }
+
+    // OR
+    func floatingPanel(_ vc: FloatingPanelController, layoutFor size: CGSize) -> FloatingPanelLayout {
+        return MyFloatingPanelLayout()
+    } 
 }
 ```
 
@@ -303,8 +312,8 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
 }
 
 class LandscapePanelLayout: FloatingPanelLayout {
-    let position = .bottom
-    let initialState = .tip
+    let position: FloatingPanelPosition = .bottom
+    let initialState: FloatingPanelState = .tip
     var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
         return [
             .full: FloatingPanelLayoutAnchor(absoluteInset: 16.0, edge: .top, referenceGuide: .safeArea),
@@ -327,19 +336,19 @@ class LandscapePanelLayout: FloatingPanelLayout {
 
 ```swift
 class IntrinsicPanelLayout: FloatingPanelLayout {
-    let position = .bottom
-    let initialState = .full
+    let position: FloatingPanelPosition = .bottom
+    let initialState: FloatingPanelState = .full
     var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
         return [
-            .full: FloatingPanelIntrinsicLayoutAnchor(absoluteInset: 0, referenceGuide: .safeArea),
-            .half: FloatingPanelIntrinsicLayoutAnchor(fractionalInset: 0.5, referenceGuide: .safeArea),
+            .full: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 0, referenceGuide: .safeArea),
+            .half: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.5, referenceGuide: .safeArea),
         ]
     }
     ...
 }
 ```
 
-✏️ `FloatingPanelIntrinsicLayout` is deprecated on v1.
+:pencil2: `FloatingPanelIntrinsicLayout` is deprecated on v1.
 
 #### Specify an anchor for each state by an inset of the `FloatingPanelController.view` frame
 
@@ -359,7 +368,7 @@ class MyFullScreenLayout: FloatingPanelLayout {
 }
 ```
 
-✏️ `FloatingPanelFullScreenLayout` is deprecated on v1.
+:pencil2: `FloatingPanelFullScreenLayout` is deprecated on v1.
 
 ### Customize the behavior with `FloatingPanelBehavior` protocol
 
@@ -383,7 +392,7 @@ class CustomPanelBehavior: FloatingPanelBehavior {
 }
 ```
 
-✏️ `floatingPanel(_ vc:behaviorFor:)` is deprecated on v1.
+:pencil2: `floatingPanel(_ vc:behaviorFor:)` is deprecated on v1.
 
 #### Activate the rubber-band effect on panel edges
 
@@ -521,7 +530,7 @@ func floatingPanelDidChangePosition(_ vc: FloatingPanelController) {
 
 #### Interrupt the delegate methods of `FloatingPanelController.panGestureRecognizer`
 
-`FloatingPanelPanGestureRecognizer.delegateProxy` is able to override the delegate methods by your own delegate object.
+If you are set `FloatingPanelController.panGestureRecognizer.delegateProxy` to an object adopting `UIGestureRecognizerDelegate`, it overrides delegate methods of the pan gesture recognizer.
 
 ```swift
 class MyGestureRecognizerDelegate: UIGestureRecognizerDelegate {
@@ -576,6 +585,14 @@ func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
 func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
     ...
     fpc.move(to: .full, animated: true)
+}
+```
+
+You can also use a view animation to move a panel.
+
+```swift
+UIView.animate(withDuration: 0.25) {
+    self.fpc.move(to: .half, animated: false)
 }
 ```
 
