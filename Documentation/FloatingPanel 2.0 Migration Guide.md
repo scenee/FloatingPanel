@@ -131,7 +131,7 @@ The following objects adopting `FloatingPanelLayoutAnchoring` protocol are added
 
 This class is used to specify a panel layout using insets from a rectangle area of the superview or safe area.
 
-* `FloatingPanelFullScreenLayout` is replaced with anchors uing `.superview` reference guide.
+* `FloatingPanelFullScreenLayout` is replaced with anchors using `.superview` reference guide.
 * `FloatingPanelLayoutAnchor(fractionalInset:edge:referenceGuide:)` lets you lay out a panel at a relative position in a reference rectangle area.
 
 ```swift
@@ -235,7 +235,7 @@ func floatingPanelDidMove(_ fpc: FloatingPanelController) {
 
 ## `SurfaceView`
 
-* `SurfaceAppearnace` class and `SurfaceView.appearance` property are added to specify the rounding corners, shadows and background color.
+* `SurfaceAppearance` class and `SurfaceView.appearance` property are added to specify the rounding corners, shadows and background color.
   * `SurfaceView.appearance` property avoids `Ambiguous use of 'cornerRadius'` error, for instance.
   * `SurfaceAppearance` enables to apply layered box shadows into a surface to materialize it.
 
@@ -288,7 +288,7 @@ func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFa
 }
 ```
 
-## Miscellanea
+## Miscellaneous
 
 * `UISpringTimingParameters(decelerationRate:frequencyResponse:initialVelocity:)` initializer is added.
 * The directory structure and file names in the Xcode project changes.
