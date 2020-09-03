@@ -211,7 +211,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
         switch otherGestureRecognizer {
         case is FloatingPanelPanGestureRecognizer:
-            // All visiable panels' pan gesture should be recognized simultaneously.
+            // All visible panels' pan gesture should be recognized simultaneously.
             return true
         case is UIPanGestureRecognizer,
              is UISwipeGestureRecognizer,
@@ -237,7 +237,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
 
         if otherGestureRecognizer is FloatingPanelPanGestureRecognizer {
-            // If this panel is the farthest descendant of visiable panels,
+            // If this panel is the farthest descendant of visible panels,
             // its ancestors' pan gesture must wait for its pan gesture to fail
             if let view = otherGestureRecognizer.view, surfaceView.isDescendant(of: view) {
                 return true
@@ -289,7 +289,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
         switch otherGestureRecognizer {
         case is FloatingPanelPanGestureRecognizer:
-            // If this panel is the farthest descendant of visiable panels,
+            // If this panel is the farthest descendant of visible panels,
             // its pan gesture does not require its ancestors' pan gesture to fail
             if let view = otherGestureRecognizer.view, surfaceView.isDescendant(of: view) {
                 return false
@@ -661,7 +661,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             case .left, .right:
                 removalVector = (distToHidden != 0) ? CGVector(dx: velocity.x/distToHidden, dy: 0.0) : .zero
             }
-            if shoulRemove(with: removalVector) {
+            if shouldRemove(with: removalVector) {
                 ownerVC?.remove()
                 return
             }
@@ -703,7 +703,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
     // MARK: - Behavior
 
-    private func shoulRemove(with velocityVector: CGVector) -> Bool {
+    private func shouldRemove(with velocityVector: CGVector) -> Bool {
         guard let vc = ownerVC else { return false }
         if let result = vc.delegate?.floatingPanel?(vc, shouldRemoveAt: vc.surfaceLocation, with: velocityVector) {
             return result
