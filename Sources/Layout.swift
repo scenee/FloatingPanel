@@ -488,8 +488,8 @@ class LayoutAdapter {
         // unsatisfiable constraints
 
         if self.interactionConstraint == nil {
-            // Actiavate `interactiveTopConstraint` for `fitToBounds` mode.
-            // It goes throught this path when the pan gesture state jumps
+            // Activate `interactiveTopConstraint` for `fitToBounds` mode.
+            // It goes through this path when the pan gesture state jumps
             // from .begin to .end.
             startInteraction(at: state)
         }
@@ -777,7 +777,7 @@ extension LayoutAdapter {
         /// |-------|===o===|-------|  |-------|-------|===o===|
         /// |-------|-------x=======|  |-------|=======x-------|
         /// |-------|-------|===o===|  |-------|===o===|-------|
-        /// pos: o/x, segement: =
+        /// pos: o/x, segment: =
 
         let sortedStates = sortedDirectionalStates
 

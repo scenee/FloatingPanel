@@ -72,7 +72,7 @@ extension UIViewController {
 }
 
 // The reason why UIView has no extensions of safe area insets and top/bottom guides
-// is for iOS10 compat.
+// is for iOS10 compatibility.
 extension UIView {
     var fp_safeAreaLayoutGuide: LayoutGuideProvider {
         if #available(iOS 11.0, *) {
@@ -112,7 +112,7 @@ extension UIGestureRecognizer.State: CustomDebugStringConvertible {
         case .changed: return "changed"
         case .failed: return "failed"
         case .cancelled: return "cancelled"
-        case .ended: return "endeded"
+        case .ended: return "ended"
         case .possible: return "possible"
         @unknown default: return ""
         }
