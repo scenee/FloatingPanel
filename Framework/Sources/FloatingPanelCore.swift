@@ -618,7 +618,13 @@ class FloatingPanelCore: NSObject, UIGestureRecognizerDelegate {
         endInteraction(for: targetPosition)
 
         if isRemovalInteractionEnabled, isBottomState {
-            let velocityVector = (distance != 0) ? CGVector(dx: 0, dy: min(velocity.y/distance, behavior.removalVelocity)) : .zero
+            let velocityVector: CGVector
+            if distance == 0 {
+                velocityVector = .zero
+            } else {
+                let dy = min(velocity.y / abs(distance), behavior.removalVelocity)
+                velocityVector = CGVector(dx: 0, dy: dy)
+            }
             // `velocityVector` will be replaced by just a velocity(not vector) when FloatingPanelRemovalInteraction will be added.
             if shouldStartRemovalAnimation(with: velocityVector), let vc = viewcontroller {
                 vc.delegate?.floatingPanelDidEndDraggingToRemove(vc, withVelocity: velocity)
