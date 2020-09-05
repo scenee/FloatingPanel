@@ -227,7 +227,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         default:
             // Should recognize tap/long press gestures in parallel when the surface view is at an anchor position.
             let adapterY = layoutAdapter.position(for: state)
-            return abs(value(of: layoutAdapter.surfaceLocation) - adapterY) < (1.0 / surfaceView.traitCollection.displayScale)
+            return abs(value(of: layoutAdapter.surfaceLocation) - adapterY) < (1.0 / surfaceView.fp_displayScale)
         }
     }
 
@@ -331,7 +331,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             let velocity = value(of: panGesture.velocity(in: panGesture.view))
             let location = panGesture.location(in: surfaceView)
 
-            let belowEdgeMost = 0 > layoutAdapter.offsetFromEdgeMost + (1.0 / surfaceView.traitCollection.displayScale)
+            let belowEdgeMost = 0 > layoutAdapter.offsetFromEdgeMost + (1.0 / surfaceView.fp_displayScale)
 
             log.debug("""
                 scroll gesture(\(state):\(panGesture.state)) -- \
@@ -639,7 +639,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             return
         }
 
-        stopScrollDeceleration = (0 > layoutAdapter.offsetFromEdgeMost + (1.0 / surfaceView.traitCollection.displayScale)) // Projecting the dragging to the scroll dragging or not
+        stopScrollDeceleration = (0 > layoutAdapter.offsetFromEdgeMost + (1.0 / surfaceView.fp_displayScale)) // Projecting the dragging to the scroll dragging or not
         if stopScrollDeceleration {
             DispatchQueue.main.async { [weak self] in
                 guard let `self` = self else { return }
@@ -810,7 +810,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         moveAnimator = NumericSpringAnimator(
             initialData: initialData,
             target: target,
-            displayScale: surfaceView.traitCollection.displayScale,
+            displayScale: surfaceView.fp_displayScale,
             decelerationRate: behaviorAdapter.springDecelerationRate,
             responseTime: behaviorAdapter.springResponseTime,
             update: { [weak self] data in

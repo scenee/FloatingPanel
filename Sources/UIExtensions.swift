@@ -85,6 +85,19 @@ extension UIView {
     var presentationFrame: CGRect {
         return layer.presentation()?.frame ?? frame
     }
+
+    /// Returns non-zero displayScale
+    ///
+    /// On iOS 11 or earlier the `traitCollection.displayScale` of a view can be
+    /// 0.0(indicating unspecified) when its view hasn't been added yet into a view tree in a window.
+    /// So this method returns `UIScreen.main` scale if the scale value is zero, for testing mainly.
+    var fp_displayScale: CGFloat {
+        let ret = traitCollection.displayScale
+        if ret == 0.0 {
+            return UIScreen.main.scale
+        }
+        return ret
+    }
 }
 
 extension UIView {

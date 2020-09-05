@@ -314,7 +314,7 @@ class ControllerTests: XCTestCase {
         fpc.move(to: .full, animated: false)
         XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.surfaceLocation(for: .full).y)
         fpc.move(to: .half, animated: false)
-        print(1 / fpc.surfaceView.traitCollection.displayScale)
+        print(1 / fpc.surfaceView.fp_displayScale)
         XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.surfaceLocation(for: .half).y)
         fpc.move(to: .tip, animated: false)
         XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.surfaceLocation(for: .tip).y)
