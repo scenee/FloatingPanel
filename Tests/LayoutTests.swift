@@ -469,7 +469,11 @@ class LayoutTests: XCTestCase {
                 let c = prop.anchor.layoutConstraints(fpc, for: position)[0]
                 XCTAssertEqual(c.multiplier, CGFloat(prop.result.multiplier), line: UInt(prop.result.0))
                 XCTAssertTrue(c.firstAnchor is NSLayoutAnchor<NSLayoutDimension>, line: UInt(prop.result.0))
-                XCTAssertEqual(c.secondAnchor, prop.result.secondAnchor, line: UInt(prop.result.0))
+                // On iOS 10, `c.secondAnchor` can't be equal object to `prop.result.secondAnchor`
+                // because there is no safe area  on iOS 10 and `fp_safeAreaLayoutGuide` emulates it.
+                if #available(iOS 11, *) {
+                    XCTAssertEqual(c.secondAnchor, prop.result.secondAnchor, line: UInt(prop.result.0))
+                }
                 print(c)
         }
     }
@@ -532,7 +536,11 @@ class LayoutTests: XCTestCase {
                 let c = prop.anchor.layoutConstraints(fpc, for: position)[0]
                 XCTAssertEqual(c.multiplier, CGFloat(prop.result.multiplier), line: UInt(prop.result.0))
                 XCTAssertTrue(c.firstAnchor is NSLayoutAnchor<NSLayoutDimension>, line: UInt(prop.result.0))
-                XCTAssertEqual(c.secondAnchor, prop.result.secondAnchor, line: UInt(prop.result.0))
+                // On iOS 10, `c.secondAnchor` can't be equal object to `prop.result.secondAnchor`
+                // because there is no safe area  on iOS 10 and `fp_safeAreaLayoutGuide` emulates it.
+                if #available(iOS 11, *) {
+                    XCTAssertEqual(c.secondAnchor, prop.result.secondAnchor, line: UInt(prop.result.0))
+                }
                 print(c)
         }
     }
