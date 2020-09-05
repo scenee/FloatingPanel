@@ -151,9 +151,7 @@ class SampleListViewController: UIViewController {
             }
         case .showRemovablePanel, .showIntrinsicView:
             mainPanelVC.isRemovalInteractionEnabled = true
-
-            let backdropTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
-            mainPanelVC.backdropView.addGestureRecognizer(backdropTapGesture)
+            mainPanelVC.backdropView.dismissalTapGestureRecognizer.isEnabled = true
         case .showNavigationController:
             mainPanelVC.contentInsetAdjustmentBehavior = .never
         case .showBottomEdgeInteraction: // For debug
@@ -208,18 +206,6 @@ class SampleListViewController: UIViewController {
         }
     }
 
-    @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
-        switch tapGesture.view {
-        case mainPanelVC.backdropView:
-            mainPanelVC.hide(animated: true, completion: nil)
-        case settingsPanelVC.backdropView:
-            settingsPanelVC.removePanelFromParent(animated: true)
-            settingsPanelVC = nil
-        default:
-            break
-        }
-    }
-
     // MARK:- Actions
     @IBAction func showDebugMenu(_ sender: UIBarButtonItem) {
         guard settingsPanelVC == nil else { return }
@@ -231,10 +217,7 @@ class SampleListViewController: UIViewController {
         settingsPanelVC.surfaceView.appearance = appearance
 
         settingsPanelVC.isRemovalInteractionEnabled = true
-
-        let backdropTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
-        settingsPanelVC.backdropView.addGestureRecognizer(backdropTapGesture)
-
+        settingsPanelVC.backdropView.dismissalTapGestureRecognizer.isEnabled = true
         settingsPanelVC.delegate = self
 
         let contentVC = storyboard?.instantiateViewController(withIdentifier: "SettingsViewController")
@@ -353,6 +336,7 @@ extension SampleListViewController: UITableViewDelegate {
             let appearance = SurfaceAppearance()
             appearance.cornerRadius = 38.5
             fpc.surfaceView.appearance = appearance
+            fpc.backdropView.dismissalTapGestureRecognizer.isEnabled = true
 
             fpc.isRemovalInteractionEnabled = true
 
