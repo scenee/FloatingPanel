@@ -159,7 +159,7 @@ class ControllerTests: XCTestCase {
             }
             XCTAssertEqual(fpc.state, .full)
             XCTAssertEqual(delegate.position, .full)
-            wait(for: [exp], timeout: 0.5)
+            wait(for: [exp], timeout: 1.0)
         }
 
         XCTContext.runActivity(named: "move to half(animated)") { act in
@@ -170,7 +170,7 @@ class ControllerTests: XCTestCase {
             }
             XCTAssertEqual(fpc.state, .half)
             XCTAssertEqual(delegate.position, .half)
-            wait(for: [exp], timeout: 0.8)
+            wait(for: [exp], timeout: 1.0)
         }
 
         XCTContext.runActivity(named: "move to tip(animated)") { act in
@@ -181,7 +181,7 @@ class ControllerTests: XCTestCase {
             }
             XCTAssertEqual(fpc.state, .tip)
             XCTAssertEqual(delegate.position, .tip)
-            wait(for: [exp], timeout: 0.8)
+            wait(for: [exp], timeout: 1.0)
         }
 
         fpc.move(to: .hidden, animated: true)
