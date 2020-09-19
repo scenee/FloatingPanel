@@ -44,8 +44,15 @@ class PresentationController: UIPresentationController {
 
     override func containerViewWillLayoutSubviews() {
         guard
-            let fpc = presentedViewController as? FloatingPanelController
-            else { fatalError() }
+            let fpc = presentedViewController as? FloatingPanelController,
+            /**
+             This condition fixes https://github.com/SCENEE/FloatingPanel/issues/369.
+             The issue is that this method is called in presenting a
+             UIImagePickerViewController and then a FloatingPanelController
+             view is added unnecessarily.
+             */
+            fpc.presentedViewController == nil
+            else { return }
 
         /*
          * Layout the views managed by `FloatingPanelController` here for the
