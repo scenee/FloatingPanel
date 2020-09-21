@@ -11,9 +11,6 @@
       location = "group:Examples"
       name = "Examples">
       <FileRef
-         location = "group:SamplesObjC/SamplesObjC.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Maps/Maps.xcodeproj">
       </FileRef>
       <FileRef
@@ -21,6 +18,9 @@
       </FileRef>
       <FileRef
          location = "group:Samples/Samples.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:SamplesObjC/SamplesObjC.xcodeproj">
       </FileRef>
    </Group>
 </Workspace>
