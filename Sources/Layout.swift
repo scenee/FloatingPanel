@@ -428,6 +428,10 @@ class LayoutAdapter {
             fitToBoundsConstraint?.priority = .defaultHigh
         }
 
+        updateStateConstraints()
+    }
+
+    private func updateStateConstraints() {
         NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
 
         if let fullAnchor = layout.anchors[.full] {
@@ -728,7 +732,11 @@ class LayoutAdapter {
             state = layout.initialState
         }
 
-        NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
+        // Recalculate the intrinsic size of a content view. This is because
+        // UIView.systemLayoutSizeFitting() returns a different size between an
+        // on-screen and off-screen view which includes
+        // UIStackView(i.e. Settings view in Samples.app)
+        updateStateConstraints()
         switch state {
         case .full:
             NSLayoutConstraint.activate(fullConstraints)
