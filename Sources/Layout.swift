@@ -309,19 +309,23 @@ class LayoutAdapter {
         let anchor = layout.anchors[state] ?? self.hiddenAnchor
 
         switch anchor {
-        case let ianchor as FloatingPanelIntrinsicLayoutAnchor:
-            let surfaceIntrinsicLength = position.mainDimension(surfaceView.intrinsicContentSize)
-            let diff = ianchor.isAbsolute ? ianchor.offset : surfaceIntrinsicLength * ianchor.offset
+        case let anchor as FloatingPanelIntrinsicLayoutAnchor:
+            let intrinsicLength = position.mainDimension(surfaceView.intrinsicContentSize)
+            let diff = anchor.isAbsolute ? anchor.offset : intrinsicLength * anchor.offset
 
-            var referenceBoundsLength = position.mainDimension(bounds.size)
             switch position {
             case .top, .left:
-                return referenceBoundsLength - surfaceIntrinsicLength - diff
-            case .bottom, .right:
+                var base: CGFloat = 0.0
                 if anchor.referenceGuide == .safeArea {
-                    referenceBoundsLength -= position.inset(safeAreaInsets)
+                    base += position.inset(safeAreaInsets)
                 }
-                return referenceBoundsLength - surfaceIntrinsicLength + diff
+                return base + intrinsicLength - diff
+            case .bottom, .right:
+                var base = position.mainDimension(bounds.size)
+                if anchor.referenceGuide == .safeArea {
+                    base -= position.inset(safeAreaInsets)
+                }
+                return base - intrinsicLength + diff
             }
         case let anchor as FloatingPanelLayoutAnchor:
             let referenceBounds = anchor.referenceGuide == .safeArea ? bounds.inset(by: safeAreaInsets) : bounds
