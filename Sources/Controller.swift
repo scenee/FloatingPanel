@@ -299,7 +299,6 @@ open class FloatingPanelController: UIViewController {
                 self.update(safeAreaInsets: fp_safeAreaInsets)
             }
         }
-        floatingPanel.layoutAdapter.checkLayout()
     }
 
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {

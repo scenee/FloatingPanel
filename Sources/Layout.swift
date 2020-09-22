@@ -770,14 +770,16 @@ class LayoutAdapter {
         return layout.backdropAlpha?(for: state) ?? defaultLayout.backdropAlpha(for: state)
     }
 
-    func checkLayout() {
+    fileprivate func checkLayout() {
         // Verify layout configurations
         assert(activeStates.count > 0)
         assert(validStates.contains(layout.initialState),
                "Does not include an initial state (\(layout.initialState)) in (\(validStates))")
-        let statePosOrder = activeStates.sorted(by: { position(for: $0) < position(for: $1) })
-        assert(sortedDirectionalStates == statePosOrder,
+        /* This assertion does not work in a device rotating
+         let statePosOrder = activeStates.sorted(by: { position(for: $0) < position(for: $1) })
+         assert(sortedDirectionalStates == statePosOrder,
                "Check your layout anchors because the state order(\(statePosOrder)) must be (\(sortedDirectionalStates))).")
+         */
     }
 }
 
@@ -812,7 +814,12 @@ extension LayoutAdapter {
 
 extension FloatingPanelController {
     var _layout: FloatingPanelLayout {
-        get { floatingPanel.layoutAdapter.layout }
-        set { floatingPanel.layoutAdapter.layout = newValue}
+        get {
+            floatingPanel.layoutAdapter.layout
+        }
+        set {
+            floatingPanel.layoutAdapter.layout = newValue
+            floatingPanel.layoutAdapter.checkLayout()
+        }
     }
 }
