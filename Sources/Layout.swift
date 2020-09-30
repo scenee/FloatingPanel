@@ -343,7 +343,11 @@ class LayoutAdapter {
         default:
             fatalError("Unsupported a FloatingPanelLayoutAnchoring object")
         }
-     }
+    }
+
+    func isIntrinsicAnchor(state: FloatingPanelState) -> Bool {
+        return layout.anchors[state] is FloatingPanelIntrinsicLayoutAnchor
+    }
 
     private func edgePosition(_ frame: CGRect) -> CGFloat {
         switch position {

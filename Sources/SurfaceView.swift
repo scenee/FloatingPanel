@@ -428,4 +428,8 @@ public class SurfaceView: UIView {
         self.contentViewRightConstraint = rightConstraint
         self.contentViewBottomConstraint = bottomConstraint
     }
+
+    func hasStackView() -> Bool {
+        return contentView?.subviews.reduce(false) { $0 || ($1 is UIStackView) } ?? false
+    }
 }

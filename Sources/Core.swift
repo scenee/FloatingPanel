@@ -137,11 +137,20 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 return
             }
 
+            let shouldDoubleLayout = from == .hidden
+                && surfaceView.hasStackView()
+                && layoutAdapter.isIntrinsicAnchor(state: to)
+
             animator.addAnimations { [weak self] in
                 guard let `self` = self else { return }
 
                 self.state = to
                 self.updateLayout(to: to)
+
+                if shouldDoubleLayout {
+                    log.info("Lay out the surface again to modify an intrinsic size error according to UIStackView")
+                    self.updateLayout(to: to)
+                }
             }
             animator.addCompletion { [weak self] _ in
                 guard let `self` = self else { return }
