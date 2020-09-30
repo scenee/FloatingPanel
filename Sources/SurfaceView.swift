@@ -85,7 +85,7 @@ public class SurfaceView: UIView {
     } }
 
     /// The content view to be assigned a view of the content view controller of `FloatingPanelController`
-    public weak var contentView: UIView!
+    public weak var contentView: UIView?
 
     /// The content insets specifying the insets around the content view.
     public var contentPadding: UIEdgeInsets = .zero {
