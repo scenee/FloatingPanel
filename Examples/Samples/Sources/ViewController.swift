@@ -1,10 +1,4 @@
-//
-//  ViewController.swift
-//  FloatingModalSample
-//
-//  Created by Shin Yamamoto on 2018/09/18.
-//  Copyright © 2018 Shin Yamamoto. All rights reserved.
-//
+// Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
 
 import UIKit
 import FloatingPanel
@@ -29,6 +23,7 @@ class SampleListViewController: UIViewController {
         case showContentInset
         case showContainerMargins
         case showNavigationController
+        case showBottomEdgeInteraction
 
         var name: String {
             switch self {
@@ -48,6 +43,7 @@ class SampleListViewController: UIViewController {
             case .showContentInset: return "Show with ContentInset"
             case .showContainerMargins: return "Show with ContainerMargins"
             case .showNavigationController: return "Show Navigation Controller"
+            case .showBottomEdgeInteraction: return "Show bottom edge interaction"
             }
         }
 
@@ -69,6 +65,7 @@ class SampleListViewController: UIViewController {
             case .showContentInset: return nil
             case .showContainerMargins: return nil
             case .showNavigationController: return "RootNavigationController"
+            case .showBottomEdgeInteraction: return nil
             }
         }
     }
@@ -133,8 +130,9 @@ class SampleListViewController: UIViewController {
         mainPanelVC.delegate = self
         mainPanelVC.contentInsetAdjustmentBehavior = .always
 
-        mainPanelVC.surfaceView.cornerRadius = 6.0
-        mainPanelVC.surfaceView.shadowHidden = false
+        let appearance = SurfaceAppearance()
+        appearance.cornerRadius = 6.0
+        mainPanelVC.surfaceView.appearance = appearance
 
         mainPanelVC.set(contentViewController: contentVC)
 
@@ -145,17 +143,23 @@ class SampleListViewController: UIViewController {
             tapGesture.cancelsTouchesInView = false
             tapGesture.numberOfTapsRequired = 2
             mainPanelVC.surfaceView.addGestureRecognizer(tapGesture)
+        case .showNestedScrollView:
+            mainPanelVC.panGestureRecognizer.delegateProxy = self
         case .showPageContentView:
             if let page = (mainPanelVC.contentViewController as? UIPageViewController)?.viewControllers?.first {
                 mainPanelVC.track(scrollView: (page as! DebugTableViewController).tableView)
             }
         case .showRemovablePanel, .showIntrinsicView:
             mainPanelVC.isRemovalInteractionEnabled = true
-
-            let backdropTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
-            mainPanelVC.backdropView.addGestureRecognizer(backdropTapGesture)
+            mainPanelVC.backdropView.dismissalTapGestureRecognizer.isEnabled = true
         case .showNavigationController:
             mainPanelVC.contentInsetAdjustmentBehavior = .never
+        case .showBottomEdgeInteraction: // For debug
+            let contentVC = UIViewController()
+            contentVC.view.backgroundColor = .red
+            mainPanelVC.set(contentViewController: contentVC)
+            mainPanelVC.addPanel(toParent: self, animated: true)
+            return
         default:
             break
         }
@@ -185,32 +189,20 @@ class SampleListViewController: UIViewController {
         //  Add FloatingPanel to self.view
         if let oldMainPanelVC = oldMainPanelVC {
             oldMainPanelVC.removePanelFromParent(animated: true, completion: {
-                self.mainPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
+                self.mainPanelVC.addPanel(toParent: self, animated: true)
             })
         } else {
-            mainPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
+            mainPanelVC.addPanel(toParent: self, animated: true)
         }
     }
 
     @objc
     func handleSurface(tapGesture: UITapGestureRecognizer) {
-        switch mainPanelVC.position {
+        switch mainPanelVC.state {
         case .full:
             mainPanelVC.move(to: .half, animated: true)
         default:
             mainPanelVC.move(to: .full, animated: true)
-        }
-    }
-
-    @objc func handleBackdrop(tapGesture: UITapGestureRecognizer) {
-        switch tapGesture.view {
-        case mainPanelVC.backdropView:
-            mainPanelVC.hide(animated: true, completion: nil)
-        case settingsPanelVC.backdropView:
-            settingsPanelVC.removePanelFromParent(animated: true)
-            settingsPanelVC = nil
-        default:
-            break
         }
     }
 
@@ -220,14 +212,12 @@ class SampleListViewController: UIViewController {
         // Initialize FloatingPanelController
         settingsPanelVC = FloatingPanelController()
 
-        // Initialize FloatingPanelController and add the view
-        settingsPanelVC.surfaceView.cornerRadius = 6.0
-        settingsPanelVC.surfaceView.shadowHidden = false
+        let appearance = SurfaceAppearance()
+        appearance.cornerRadius = 6.0
+        settingsPanelVC.surfaceView.appearance = appearance
+
         settingsPanelVC.isRemovalInteractionEnabled = true
-
-        let backdropTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
-        settingsPanelVC.backdropView.addGestureRecognizer(backdropTapGesture)
-
+        settingsPanelVC.backdropView.dismissalTapGestureRecognizer.isEnabled = true
         settingsPanelVC.delegate = self
 
         let contentVC = storyboard?.instantiateViewController(withIdentifier: "SettingsViewController")
@@ -236,7 +226,7 @@ class SampleListViewController: UIViewController {
         settingsPanelVC.set(contentViewController: contentVC)
 
         //  Add FloatingPanel to self.view
-        settingsPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
+        settingsPanelVC.addPanel(toParent: self, animated: true)
     }
 }
 
@@ -287,18 +277,18 @@ extension SampleListViewController: UITableViewDelegate {
             detailPanelVC = FloatingPanelController()
             detailPanelVC.delegate = self
 
-            // Initialize FloatingPanelController and add the view
-            detailPanelVC.surfaceView.cornerRadius = 6.0
-            detailPanelVC.surfaceView.shadowHidden = false
+            let appearance = SurfaceAppearance()
+            appearance.cornerRadius = 6.0
+            detailPanelVC.surfaceView.appearance = appearance
 
             // Set a content view controller
             detailPanelVC.set(contentViewController: contentVC)
 
             detailPanelVC.contentMode = .fitToBounds
-            (contentVC as? DetailViewController)?.intrinsicHeightConstraint.priority = .defaultLow
+            (contentVC as? DetailViewController)?.intrinsicHeightConstraint.isActive = false
 
             //  Add FloatingPanel to self.view
-            detailPanelVC.addPanel(toParent: self, belowView: nil, animated: true)
+            detailPanelVC.addPanel(toParent: self, animated: true)
         case .showModal, .showTabBar:
             let modalVC = contentVC
             modalVC.modalPresentationStyle = .fullScreen
@@ -308,6 +298,7 @@ extension SampleListViewController: UITableViewDelegate {
             pages = [UIColor.blue, .red, .green].compactMap({ (color) -> UIViewController in
                 let page = FloatingPanelController(delegate: self)
                 page.view.backgroundColor = color
+                page.panGestureRecognizer.delegateProxy = self
                 page.show()
                 return page
             })
@@ -342,8 +333,10 @@ extension SampleListViewController: UITableViewDelegate {
             fpc.set(contentViewController: contentVC)
             fpc.delegate = self
 
-            fpc.surfaceView.cornerRadius = 38.5
-            fpc.surfaceView.shadowHidden = false
+            let appearance = SurfaceAppearance()
+            appearance.cornerRadius = 38.5
+            fpc.surfaceView.appearance = appearance
+            fpc.backdropView.dismissalTapGestureRecognizer.isEnabled = true
 
             fpc.isRemovalInteractionEnabled = true
 
@@ -359,8 +352,10 @@ extension SampleListViewController: UITableViewDelegate {
             fpc.set(contentViewController: contentVC)
             fpc.delegate = self
 
-            fpc.surfaceView.cornerRadius = 38.5
-            fpc.surfaceView.shadowHidden = false
+            let apprearance = SurfaceAppearance()
+            apprearance.cornerRadius = 38.5
+            apprearance.shadows = []
+            fpc.surfaceView.appearance = apprearance
             fpc.isRemovalInteractionEnabled = true
 
             let mvc = UIViewController()
@@ -373,7 +368,7 @@ extension SampleListViewController: UITableViewDelegate {
 
             let fpc = FloatingPanelController()
             fpc.set(contentViewController: contentViewController)
-            fpc.surfaceView.contentInsets = .init(top: 20, left: 20, bottom: 20, right: 20)
+            fpc.surfaceView.contentPadding = .init(top: 20, left: 20, bottom: 20, right: 20)
 
             fpc.delegate = self
             fpc.isRemovalInteractionEnabled = true
@@ -381,9 +376,13 @@ extension SampleListViewController: UITableViewDelegate {
 
         case .showContainerMargins:
             let fpc = FloatingPanelController()
-            fpc.surfaceView.cornerRadius = 38.5
+
+            let appearance = SurfaceAppearance()
+            appearance.cornerRadius = 38.5
+            fpc.surfaceView.appearance = appearance
+
             fpc.surfaceView.backgroundColor = .red
-            fpc.surfaceView.containerMargins = .init(top: 24.0, left: 8.0, bottom: layoutInsets.bottom, right: 8.0)
+            fpc.surfaceView.containerMargins = .init(top: 24.0, left: 8.0, bottom: max(layoutInsets.bottom, 8.0), right: 8.0)
             #if swift(>=5.1) // Actually Xcode 11 or later
             if #available(iOS 13.0, *) {
                 fpc.surfaceView.layer.cornerCurve = .continuous
@@ -404,20 +403,22 @@ extension SampleListViewController: UITableViewDelegate {
 }
 
 extension SampleListViewController: FloatingPanelControllerDelegate {
-    func floatingPanel(_ vc: FloatingPanelController, contentOffsetForPinning trackedScrollView: UIScrollView) -> CGPoint {
-        if currentMenu == .showNavigationController, #available(iOSApplicationExtension 11.0, *) {
+    func floatingPanel(_ vc: FloatingPanelController, contentOffsetForPinning trackingScrollView: UIScrollView) -> CGPoint {
+        if currentMenu == .showNavigationController, #available(iOS 11.0, *) {
             // 148.0 is the SafeArea's top value for a navigation bar with a large title.
-            return CGPoint(x: 0.0, y: 0.0 - trackedScrollView.contentInset.top - 148.0)
+            return CGPoint(x: 0.0, y: 0.0 - trackingScrollView.contentInset.top - 148.0)
         }
-        return CGPoint(x: 0.0, y: 0.0 - trackedScrollView.contentInset.top)
+        return CGPoint(x: 0.0, y: 0.0 - trackingScrollView.contentInset.top)
     }
 
-    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
+    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout {
         if vc == settingsPanelVC {
             return IntrinsicPanelLayout()
         }
 
         switch currentMenu {
+        case .showBottomEdgeInteraction:
+            return BottomEdgeInteractionLayout()
         case .showRemovablePanel:
             return newCollection.verticalSizeClass == .compact ? RemovablePanelLandscapeLayout() :  RemovablePanelLayout()
         case .showIntrinsicView:
@@ -428,25 +429,13 @@ extension SampleListViewController: FloatingPanelControllerDelegate {
             }
             fallthrough
         case .showContentInset:
-            return NoInteractionBufferPanelLayout()
+            return FloatingPanelBottomLayout()
         default:
-            return (newCollection.verticalSizeClass == .compact) ? nil : self
+            return (newCollection.verticalSizeClass == .compact) ? FloatingPanelBottomLayout() : self
         }
     }
 
-    func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith gestureRecognizer: UIGestureRecognizer) -> Bool {
-        switch currentMenu {
-        case .showNestedScrollView:
-            return (vc.contentViewController as? NestedScrollViewController)?.nestedScrollView.gestureRecognizers?.contains(gestureRecognizer) ?? false
-        case .showPageView:
-            // Tips: Need to allow recognizing the pan gesture of UIPageViewController simultaneously.
-            return true
-        default:
-            return false
-        }
-    }
-
-    func floatingPanelDidEndRemove(_ vc: FloatingPanelController) {
+    func floatingPanelDidRemove(_ vc: FloatingPanelController) {
         switch vc {
         case settingsPanelVC:
             settingsPanelVC = nil
@@ -456,23 +445,37 @@ extension SampleListViewController: FloatingPanelControllerDelegate {
     }
 }
 
+extension SampleListViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        switch currentMenu {
+        case .showNestedScrollView:
+            return true
+        case .showPageView:
+            // Tips: Need to allow recognizing the pan gesture of UIPageViewController simultaneously.
+            return true
+        default:
+            return false
+        }
+    }
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return false
+    }
+}
+
 /**
  - Attention: `FloatingPanelLayout` must not be applied by the parent view
- controller of a floating panel. But here `SampleListViewController` adopts it
+ controller of a panel. But here `SampleListViewController` adopts it
  purposely to check if the library prints an appropriate warning.
  */
 extension SampleListViewController: FloatingPanelLayout {
-    var initialPosition: FloatingPanelPosition {
-        return .half
-    }
-
-    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        switch position {
-        case .full: return UIScreen.main.bounds.height == 667.0 ? 18.0 : 16.0
-        case .half: return 262.0
-        case .tip: return 69.0
-        case .hidden: return nil
-        }
+    var position: FloatingPanelPosition { .bottom }
+    var initialState: FloatingPanelState { .half }
+    var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
+        return [
+            .full: FloatingPanelLayoutAnchor(absoluteInset: UIScreen.main.bounds.height == 667.0 ? 18.0 : 16.0, edge: .top, referenceGuide: .safeArea),
+            .half: FloatingPanelLayoutAnchor(absoluteInset: 262.0, edge: .bottom, referenceGuide: .safeArea),
+            .tip: FloatingPanelLayoutAnchor(absoluteInset: 69.0, edge: .bottom, referenceGuide: .safeArea)
+        ]
     }
 }
 
@@ -501,79 +504,71 @@ extension SampleListViewController: UIPageViewControllerDelegate {
     }
 }
 
-class IntrinsicPanelLayout: FloatingPanelIntrinsicLayout { }
+class BottomEdgeInteractionLayout: FloatingPanelLayout {
+    let position: FloatingPanelPosition = .top
+    let initialState: FloatingPanelState = .full
 
-class NoInteractionBufferPanelLayout: FloatingPanelLayout {
-    var initialPosition: FloatingPanelPosition {
-        return .full
-    }
-
-    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        switch position {
-        case .full: return 0
-        case .half: return 216
-        case .tip: return 60
-        case .hidden: return nil
-        }
-    }
-
-    var topInteractionBuffer: CGFloat {
-        return 0.0
-    }
-
-    var bottomInteractionBuffer: CGFloat {
-        return 0.0
+    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+        return [
+            .full: FloatingPanelLayoutAnchor(absoluteInset: 88.0, edge: .bottom, referenceGuide: .safeArea),
+            .half: FloatingPanelLayoutAnchor(absoluteInset: 216.0, edge: .top, referenceGuide: .safeArea),
+            .tip: FloatingPanelLayoutAnchor(absoluteInset: 44.0, edge: .top, referenceGuide: .safeArea)
+        ]
     }
 }
 
-class RemovablePanelLayout: FloatingPanelIntrinsicLayout {
-    var supportedPositions: Set<FloatingPanelPosition> {
-        return [.full, .half]
+class IntrinsicPanelLayout: FloatingPanelBottomLayout {
+    override var initialState: FloatingPanelState { .full }
+    override var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+        return [
+            .full: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.0, referenceGuide: .safeArea)
+        ]
     }
-    var initialPosition: FloatingPanelPosition {
-        return .half
-    }
-    var topInteractionBuffer: CGFloat {
-        return 200.0
-    }
-    var bottomInteractionBuffer: CGFloat {
-        return 261.0 - 22.0
+}
+
+class RemovablePanelLayout: FloatingPanelLayout {
+    let position: FloatingPanelPosition = .bottom
+    let initialState: FloatingPanelState = .half
+
+    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+        return [
+            .full: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.0, referenceGuide: .safeArea),
+            .half: FloatingPanelLayoutAnchor(absoluteInset: 130.0, edge: .bottom, referenceGuide: .safeArea)
+        ]
     }
 
-    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        switch position {
-        case .half: return 130.0
-        default: return nil
-        }
-    }
-    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
+    func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.3
     }
 }
 
-class RemovablePanelLandscapeLayout: FloatingPanelIntrinsicLayout {
-    var supportedPositions: Set<FloatingPanelPosition> {
-        return [.full, .half]
+class RemovablePanelLandscapeLayout: FloatingPanelLayout {
+    let position: FloatingPanelPosition = .bottom
+    let initialState: FloatingPanelState = .full
+
+    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+        return [
+            .full: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.0, referenceGuide: .safeArea),
+            .half: FloatingPanelLayoutAnchor(absoluteInset: 216.0, edge: .bottom, referenceGuide: .safeArea)
+        ]
     }
-    var bottomInteractionBuffer: CGFloat {
-        return 261.0 - 22.0
-    }
-    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        switch position {
-        case .half: return 261.0
-        default: return nil
-        }
-    }
-    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
+
+    func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.3
     }
 }
 
-class ModalPanelLayout: FloatingPanelIntrinsicLayout {
-    var topInteractionBuffer: CGFloat {
-        return 100.0
+class ModalPanelLayout: FloatingPanelLayout {
+    let position: FloatingPanelPosition = .bottom
+    let initialState: FloatingPanelState = .full
+
+    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+        return [
+            .full: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 0.0, referenceGuide: .safeArea),
+        ]
     }
-    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
+
+    func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.3
     }
 }
@@ -887,9 +882,9 @@ class ModalViewController: UIViewController, FloatingPanelControllerDelegate {
         fpc = FloatingPanelController()
         fpc.delegate = self
 
-        // Initialize FloatingPanelController and add the view
-        fpc.surfaceView.cornerRadius = 6.0
-        fpc.surfaceView.shadowHidden = false
+        let appearance = SurfaceAppearance()
+        appearance.cornerRadius = 6.0
+        fpc.surfaceView.appearance = appearance
 
         // Set a content view controller and track the scroll view
         let consoleVC = storyboard?.instantiateViewController(withIdentifier: "ConsoleViewController") as! DebugTextViewController
@@ -899,7 +894,7 @@ class ModalViewController: UIViewController, FloatingPanelControllerDelegate {
         self.consoleVC = consoleVC
 
         //  Add FloatingPanel to self.view
-        fpc.addPanel(toParent: self, belowView: safeAreaView)
+        fpc.addPanel(toParent: self, at: view.subviews.firstIndex(of: safeAreaView) ?? -1)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -927,27 +922,25 @@ class ModalViewController: UIViewController, FloatingPanelControllerDelegate {
     @IBAction func updateLayout(_ sender: Any) {
         isNewlayout = !isNewlayout
         UIView.animate(withDuration: 0.5) {
-            self.fpc.updateLayout()
+            self.fpc.layout = (self.isNewlayout) ? ModalSecondLayout() : FloatingPanelBottomLayout()
+            self.fpc.invalidateLayout()
         }
     }
 
-    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
-        return (isNewlayout) ? ModalSecondLayout() : nil
+    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout {
+        return (isNewlayout) ? ModalSecondLayout() : FloatingPanelBottomLayout()
     }
 }
 
 class ModalSecondLayout: FloatingPanelLayout {
-    var initialPosition: FloatingPanelPosition {
-        return .half
-    }
-
-    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        switch position {
-        case .full: return 18.0
-        case .half: return 262.0
-        case .tip: return 44.0
-        case .hidden: return nil
-        }
+    var position: FloatingPanelPosition = .bottom
+    var initialState: FloatingPanelState { .half }
+    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+        return [
+            .full: FloatingPanelLayoutAnchor(absoluteInset: 16.0, edge: .top, referenceGuide: .safeArea),
+            .half: FloatingPanelLayoutAnchor(absoluteInset: 262, edge: .top, referenceGuide: .safeArea),
+            .tip: FloatingPanelLayoutAnchor(absoluteInset: 44.0, edge: .bottom, referenceGuide: .safeArea)
+        ]
     }
 }
 
@@ -973,8 +966,10 @@ class TabBarContentViewController: UIViewController {
 
     override func viewDidLoad() {
         fpc.delegate = self
-        fpc.surfaceView.cornerRadius = 6.0
-        fpc.surfaceView.shadowHidden = false
+
+        let appearance = SurfaceAppearance()
+        appearance.cornerRadius = 6.0
+        fpc.surfaceView.appearance = appearance
 
         // Set a content view controller and track the scroll view
         let consoleVC = storyboard?.instantiateViewController(withIdentifier: "ConsoleViewController") as! DebugTextViewController
@@ -987,7 +982,10 @@ class TabBarContentViewController: UIViewController {
         fpc.addPanel(toParent: self)
 
 
-        if tabBarItem.tag == 2 {
+        switch tabBarItem.tag {
+        case 1:
+            fpc.behavior = TwoTabBarPanelBehavior()
+        case 2:
             let switcher = UISwitch()
             fpc.view.addSubview(switcher)
             switcher.translatesAutoresizingMaskIntoConstraints = false
@@ -1014,12 +1012,14 @@ class TabBarContentViewController: UIViewController {
 
             // Turn off the mask instead of content inset change
             consoleVC.textView.clipsToBounds = false
+        default:
+            break
         }
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        fpc.updateLayout()
+        fpc.invalidateLayout()
     }
 
     // MARK: - Action
@@ -1050,7 +1050,7 @@ extension TabBarContentViewController: UITextViewDelegate {
         // Using KVO of `scrollView.contentOffset`). Because it can lead to an
         // infinite loop if a user also resets a content offset as below and,
         // in the situation, a user has to modify the library.
-        if fpc.position != .full, fpc.surfaceView.frame.minY > fpc.originYOfSurface(for: .full) {
+        if fpc.state != .full, fpc.surfaceLocation.y > fpc.surfaceLocation(for: .full).y {
             scrollView.contentOffset = .zero
         }
     }
@@ -1059,7 +1059,7 @@ extension TabBarContentViewController: UITextViewDelegate {
 extension TabBarContentViewController: FloatingPanelControllerDelegate {
     // MARK: - FloatingPanel
 
-    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
+    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout {
         switch self.tabBarItem.tag {
         case 0:
             return OneTabBarPanelLayout()
@@ -1069,28 +1069,20 @@ extension TabBarContentViewController: FloatingPanelControllerDelegate {
             threeLayout = ThreeTabBarPanelLayout(parent: self)
             return threeLayout
         default:
-            return nil
-        }
-    }
-
-    func floatingPanel(_ vc: FloatingPanelController, behaviorFor newCollection: UITraitCollection) -> FloatingPanelBehavior? {
-        switch self.tabBarItem.tag {
-        case 1:
-            return TwoTabBarPanelBehavior()
-        default:
-            return nil
+            return FloatingPanelBottomLayout()
         }
     }
 
     func floatingPanelDidMove(_ vc: FloatingPanelController) {
         guard self.tabBarItem.tag == 2 else { return }
-
         switch tab3Mode {
         case .changeAutoLayout:
             /* Good solution: Manipulate top constraint */
             assert(consoleVC.textViewTopConstraint != nil)
-            if vc.surfaceView.frame.minY + threeLayout.topPadding < vc.layoutInsets.top {
-                consoleVC.textViewTopConstraint?.constant = vc.layoutInsets.top - vc.surfaceView.frame.minY
+            let safeAreaTop = vc.layoutInsets.top
+            if vc.surfaceLocation.y + threeLayout.topPadding < safeAreaTop {
+                consoleVC.textViewTopConstraint?.constant = min(safeAreaTop - vc.surfaceLocation.y,
+                                                                safeAreaTop)
             } else {
                 consoleVC.textViewTopConstraint?.constant = threeLayout.topPadding
             }
@@ -1116,105 +1108,37 @@ extension TabBarContentViewController: FloatingPanelControllerDelegate {
             }
         }
 
-        if vc.surfaceView.frame.minY > vc.originYOfSurface(for: .half) {
-            let progress = (vc.surfaceView.frame.minY - vc.originYOfSurface(for: .half)) / (vc.originYOfSurface(for: .tip) - vc.originYOfSurface(for: .half))
+        if vc.surfaceLocation.y > vc.surfaceLocation(for: .half).y {
+            let progress = (vc.surfaceLocation.y - vc.surfaceLocation(for: .half).y)
+                / (vc.surfaceLocation(for: .tip).y - vc.surfaceLocation(for: .half).y)
             threeLayout.leftConstraint.constant = max(min(progress, 1.0), 0.0) * threeLayout.sideMargin
             threeLayout.rightConstraint.constant = -max(min(progress, 1.0), 0.0) * threeLayout.sideMargin
         } else {
             threeLayout.leftConstraint.constant = 0.0
             threeLayout.rightConstraint.constant = 0.0
         }
-
-        vc.view.layoutIfNeeded() // MUST
-    }
-
-    func floatingPanelDidChangePosition(_ vc: FloatingPanelController) {
-        guard self.tabBarItem.tag == 2 else { return }
-
-        switch tab3Mode {
-        case .changeAutoLayout:
-            /* Good Solution: Manipulate top constraint */
-            assert(consoleVC.textViewTopConstraint != nil)
-            consoleVC.textViewTopConstraint?.constant = (vc.position == .full) ? vc.layoutInsets.top : 17.0
-
-        case .changeOffset:
-            /* Bad Solution: Manipulate scroll content inset */
-            guard let scrollView = consoleVC.textView else { return }
-            var insets = vc.adjustedContentInsets
-            insets.top = (vc.position == .full) ? vc.layoutInsets.top : 0.0
-            scrollView.contentInset = insets
-            if scrollView.contentOffset.y - scrollView.contentInset.top < 0.0  {
-                scrollView.contentOffset = CGPoint(x: 0.0,
-                                                   y: 0.0 - scrollView.contentInset.top)
-            }
-        }
-
-        if vc.position == .tip {
-            threeLayout.leftConstraint.constant = threeLayout.sideMargin
-            threeLayout.rightConstraint.constant = -threeLayout.sideMargin
-        } else {
-            threeLayout.leftConstraint.constant = 0.0
-            threeLayout.rightConstraint.constant = 0.0
-        }
-        // Can call it, but it's not necessary because it will be also called
-        // by FloatingPanelController after the delegate method
-        vc.view.layoutIfNeeded()
-    }
-}
-
-extension FloatingPanelLayout {
-    func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
-        if #available(iOS 11.0, *) {
-            return [
-                surfaceView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 0.0),
-                surfaceView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: 0.0),
-            ]
-        } else {
-            return [
-                surfaceView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0.0),
-                surfaceView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0.0),
-            ]
-        }
     }
 }
 
 class OneTabBarPanelLayout: FloatingPanelLayout {
-    var initialPosition: FloatingPanelPosition {
-        return .tip
-    }
-    var supportedPositions: Set<FloatingPanelPosition> {
-        return [.full, .tip]
-    }
-
-    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        switch position {
-        case .full: return 16.0
-        case .tip: return 22.0
-        default: return nil
-        }
+    var initialState: FloatingPanelState { .tip }
+    var position: FloatingPanelPosition { .bottom }
+    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+        return [
+            .full: FloatingPanelLayoutAnchor(absoluteInset: 16.0, edge: .top, referenceGuide: .safeArea),
+            .tip: FloatingPanelLayoutAnchor(absoluteInset: 22.0, edge: .bottom, referenceGuide: .safeArea)
+        ]
     }
 }
 
 class TwoTabBarPanelLayout: FloatingPanelLayout {
-    var initialPosition: FloatingPanelPosition {
-        return .half
-    }
-    var supportedPositions: Set<FloatingPanelPosition> {
-        return [.full, .half]
-    }
-    var topInteractionBuffer: CGFloat {
-        return 100.0
-    }
-    var bottomInteractionBuffer: CGFloat {
-        return 261.0 - 22.0
-    }
-
-    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        switch position {
-        case .full: return 100.0
-        case .half: return 261.0
-        default: return nil
-        }
+    var initialState: FloatingPanelState { .half }
+    var position: FloatingPanelPosition { .bottom }
+    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+        return [
+            .full: FloatingPanelLayoutAnchor(absoluteInset: 100.0, edge: .top, referenceGuide: .safeArea),
+            .half: FloatingPanelLayoutAnchor(absoluteInset: 261.0, edge: .bottom, referenceGuide: .safeArea)
+        ]
     }
 }
 
@@ -1225,7 +1149,7 @@ class TwoTabBarPanelBehavior: FloatingPanelBehavior {
 }
 
 
-class ThreeTabBarPanelLayout: FloatingPanelFullScreenLayout {
+class ThreeTabBarPanelLayout: FloatingPanelLayout {
     weak var parentVC: UIViewController!
 
     var leftConstraint: NSLayoutConstraint!
@@ -1238,25 +1162,20 @@ class ThreeTabBarPanelLayout: FloatingPanelFullScreenLayout {
         parentVC = parent
     }
 
-    var bottomInteractionBuffer: CGFloat = 44.0
+    var initialState: FloatingPanelState { .half }
+    var position: FloatingPanelPosition { .bottom }
+    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+        return [
+            .full: FloatingPanelLayoutAnchor(absoluteInset: 0.0, edge: .top, referenceGuide: .superview),
+            .half: FloatingPanelLayoutAnchor(absoluteInset: 261.0 + parentVC.layoutInsets.bottom, edge: .bottom, referenceGuide: .superview),
+            .tip: FloatingPanelLayoutAnchor(absoluteInset: 88.0 + parentVC.layoutInsets.bottom, edge: .bottom, referenceGuide: .superview),
+        ]
+    }
 
-    var initialPosition: FloatingPanelPosition {
-        return .half
-    }
-    var supportedPositions: Set<FloatingPanelPosition> {
-        return [.full, .half, .tip]
-    }
-    func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-        switch position {
-        case .full: return 0.0
-        case .half: return 261.0 + parentVC.layoutInsets.bottom
-        case .tip: return 88.0 + parentVC.layoutInsets.bottom
-        default: return nil
-        }
-    }
-    func backdropAlphaFor(position: FloatingPanelPosition) -> CGFloat {
+    func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.3
     }
+
     func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
         if #available(iOS 11.0, *) {
             leftConstraint = surfaceView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 0.0)
@@ -1345,7 +1264,7 @@ final class MultiPanelController: FloatingPanelController, FloatingPanelControll
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        delegate = self
+        layout = FirstViewLayout()
         isRemovalInteractionEnabled = true
 
         let vc = FirstPanelContentViewController()
@@ -1354,28 +1273,12 @@ final class MultiPanelController: FloatingPanelController, FloatingPanelControll
     }
 
     private final class FirstViewLayout: FloatingPanelLayout {
-        let initialPosition: FloatingPanelPosition = .full
-        let supportedPositions: Set<FloatingPanelPosition> = [.full, .half]
-        func insetFor(position: FloatingPanelPosition) -> CGFloat? {
-            switch position {
-            case .full: return 40.0
-            case .half: return 200.0
-            default: return nil
-            }
+        let position: FloatingPanelPosition = .bottom
+        let initialState: FloatingPanelState = .full
+        var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+            return [
+                .full: FloatingPanelLayoutAnchor(absoluteInset: 40.0, edge: .top, referenceGuide: .superview)
+            ]
         }
-    }
-
-    private final class FirstViewBehavior: FloatingPanelBehavior {
-        func shouldProjectMomentum(_ fpc: FloatingPanelController, for proposedTargetPosition: FloatingPanelPosition) -> Bool {
-            return true
-        }
-    }
-
-    func floatingPanel(_ vc: FloatingPanelController, behaviorFor newCollection: UITraitCollection) -> FloatingPanelBehavior? {
-        return FirstViewBehavior()
-    }
-
-    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout? {
-        return FirstViewLayout()
     }
 }

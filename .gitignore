@@ -17,6 +17,7 @@ DerivedData/
 *.perspectivev3
 !default.perspectivev3
 xcuserdata/
+IDEWorkspaceChecks.plis
 
 ## Other
 *.moved-aside
