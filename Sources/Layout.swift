@@ -326,6 +326,22 @@ class LayoutAdapter {
                 }
                 return base - intrinsicLength + diff
             }
+        case let anchor as FloatingPanelAdaptiveLayoutAnchor:
+            let dimension = layout.position.mainDimension(anchor.contentLayoutGuide.layoutFrame.size)
+            let diff = anchor.distance(from: dimension)
+            var referenceBoundsLength = layout.position.mainDimension(bounds.size)
+            switch layout.position {
+            case .top, .left:
+                if anchor.referenceGuide == .safeArea {
+                    referenceBoundsLength += position.inset(safeAreaInsets)
+                }
+                return dimension - diff
+            case .bottom, .right:
+                if anchor.referenceGuide == .safeArea {
+                    referenceBoundsLength -= position.inset(safeAreaInsets)
+                }
+                return referenceBoundsLength - dimension + diff
+            }
         case let anchor as FloatingPanelLayoutAnchor:
             let referenceBounds = anchor.referenceGuide == .safeArea ? bounds.inset(by: safeAreaInsets) : bounds
             let diff = anchor.isAbsolute ? anchor.inset : position.mainDimension(referenceBounds.size) * anchor.inset
@@ -363,7 +379,8 @@ class LayoutAdapter {
 
     private func referenceEdge(of anchor: FloatingPanelLayoutAnchoring) -> FloatingPanelReferenceEdge {
         switch anchor {
-        case is FloatingPanelIntrinsicLayoutAnchor:
+        case is FloatingPanelIntrinsicLayoutAnchor,
+            is FloatingPanelAdaptiveLayoutAnchor:
             switch position {
             case .top: return .top
             case .left: return .left
@@ -639,13 +656,20 @@ class LayoutAdapter {
         }
 
         let anchor = layout.anchors[self.edgeMostState]!
-        if anchor is FloatingPanelIntrinsicLayoutAnchor {
+        switch anchor {
+        case let anchor as FloatingPanelIntrinsicLayoutAnchor:
             var constant = layout.position.mainDimension(surfaceView.intrinsicContentSize)
             if anchor.referenceGuide == .safeArea {
                 constant += position.inset(safeAreaInsets)
             }
             staticConstraint = position.mainDimensionAnchor(surfaceView).constraint(equalToConstant: constant)
-        } else {
+        case let anchor as FloatingPanelAdaptiveLayoutAnchor:
+            var constant = layout.position.mainDimension(anchor.contentLayoutGuide.layoutFrame.size)
+            if anchor.referenceGuide == .safeArea {
+                constant += position.inset(safeAreaInsets)
+            }
+            staticConstraint = position.mainDimensionAnchor(surfaceView).constraint(equalToConstant: constant)
+        default:
             switch position {
             case .top, .left:
                 staticConstraint = position.mainDimensionAnchor(surfaceView).constraint(equalToConstant: position(for: self.directionalMostState))
