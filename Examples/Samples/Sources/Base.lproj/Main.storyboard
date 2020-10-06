@@ -6,6 +6,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -292,6 +293,49 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DfE-fL-zy5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2753" y="734"/>
+        </scene>
+        <!--Image View Controller-->
+        <scene sceneID="NAI-Rh-ZQ6">
+            <objects>
+                <viewController storyboardIdentifier="ImageViewController" id="VWY-cF-RoY" customClass="ImageViewController" customModule="Samples" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="dAf-gD-ghB">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kRA-qy-GpJ">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" image="IMG_0003" translatesAutoresizingMaskIntoConstraints="NO" id="rGf-jW-WNf">
+                                        <rect key="frame" x="0.0" y="0.0" width="750" height="501"/>
+                                        <color key="backgroundColor" systemColor="systemPurpleColor"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" red="0.0078431372550000003" green="0.72156862749999995" blue="0.45882352939999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="rGf-jW-WNf" secondAttribute="trailing" id="472-Be-cUl"/>
+                                    <constraint firstAttribute="bottom" secondItem="rGf-jW-WNf" secondAttribute="bottom" id="ncs-tN-3Wx"/>
+                                    <constraint firstItem="rGf-jW-WNf" firstAttribute="leading" secondItem="kRA-qy-GpJ" secondAttribute="leading" id="rlv-5Y-utR"/>
+                                    <constraint firstItem="rGf-jW-WNf" firstAttribute="top" secondItem="kRA-qy-GpJ" secondAttribute="top" id="zum-Zl-Wzz"/>
+                                </constraints>
+                            </scrollView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="hCg-v5-nJs"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="kRA-qy-GpJ" firstAttribute="top" secondItem="dAf-gD-ghB" secondAttribute="top" id="2HJ-TY-k7H"/>
+                            <constraint firstItem="kRA-qy-GpJ" firstAttribute="leading" secondItem="dAf-gD-ghB" secondAttribute="leading" id="QeN-V3-BUR"/>
+                            <constraint firstAttribute="bottom" secondItem="kRA-qy-GpJ" secondAttribute="bottom" id="W1R-pf-M1t"/>
+                            <constraint firstAttribute="trailing" secondItem="kRA-qy-GpJ" secondAttribute="trailing" id="nL6-Hk-ZfR"/>
+                        </constraints>
+                    </view>
+                    <size key="freeformSize" width="375" height="778"/>
+                    <connections>
+                        <outlet property="scrollView" destination="kRA-qy-GpJ" id="iWC-o4-APi"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="pnR-69-Ek4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3388" y="734.48275862068965"/>
         </scene>
         <!--Tab Bar View Controller-->
         <scene sceneID="nQ5-PV-qFw">
@@ -725,4 +769,13 @@ Section 1.10.33 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC
     <inferredMetricsTieBreakers>
         <segue reference="r1P-2i-NDe"/>
     </inferredMetricsTieBreakers>
+    <resources>
+        <image name="IMG_0003" width="750" height="501"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemPurpleColor">
+            <color red="0.68627450980392157" green="0.32156862745098042" blue="0.87058823529411766" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
 </document>
