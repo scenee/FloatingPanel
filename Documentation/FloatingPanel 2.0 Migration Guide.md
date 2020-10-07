@@ -194,8 +194,8 @@ class MyPanelIntrinsicLayout: FloatingPanelLayout {
     var initialState: FloatingPanelState { .full }
     var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
         return [
-            .full: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 16.0, referenceGuide: .safeArea)
-            .half: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.5, referenceGuide: .safeArea)
+            .full: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 16.0, referenceGuide: .safeArea),
+            .half: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.5, referenceGuide: .safeArea),
             .tip: FloatingPanelLayoutAnchor(absoluteInset: 44.0, edge: .bottom, referenceGuide: .safeArea)
         ]
     }
