@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		542753C622C49A6E00D17955 /* LayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542753C522C49A6E00D17955 /* LayoutTests.swift */; };
 		54352E9621A51A2500CBCA08 /* Transitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54352E9521A51A2500CBCA08 /* Transitioning.swift */; };
-		54352E9821A521CA00CBCA08 /* PassThroughView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54352E9721A521CA00CBCA08 /* PassThroughView.swift */; };
+		54352E9821A521CA00CBCA08 /* PassthroughView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54352E9721A521CA00CBCA08 /* PassthroughView.swift */; };
 		5450EEE421646DF500135936 /* Behavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5450EEE321646DF500135936 /* Behavior.swift */; };
 		545DB9CB2151169500CA77B8 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 545DB9C12151169500CA77B8 /* FloatingPanel.framework */; };
 		545DB9D02151169500CA77B8 /* ControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9CF2151169500CA77B8 /* ControllerTests.swift */; };
@@ -56,7 +56,7 @@
 		542753C522C49A6E00D17955 /* LayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutTests.swift; sourceTree = "<group>"; };
 		542753C722C49A8F00D17955 /* TestSupports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupports.swift; sourceTree = "<group>"; };
 		54352E9521A51A2500CBCA08 /* Transitioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transitioning.swift; sourceTree = "<group>"; };
-		54352E9721A521CA00CBCA08 /* PassThroughView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassThroughView.swift; sourceTree = "<group>"; };
+		54352E9721A521CA00CBCA08 /* PassthroughView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassthroughView.swift; sourceTree = "<group>"; };
 		5450EEE321646DF500135936 /* Behavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Behavior.swift; sourceTree = "<group>"; };
 		545DB9C12151169500CA77B8 /* FloatingPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FloatingPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		545DB9C42151169500CA77B8 /* FloatingPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FloatingPanel.h; sourceTree = "<group>"; };
@@ -142,7 +142,7 @@
 				5469F4B324B30F3500537F8A /* LayoutReferences.swift */,
 				5469F4AF24B30E1500537F8A /* LayoutAnchoring.swift */,
 				5450EEE321646DF500135936 /* Behavior.swift */,
-				54352E9721A521CA00CBCA08 /* PassThroughView.swift */,
+				54352E9721A521CA00CBCA08 /* PassthroughView.swift */,
 				54CDC5D2215B6D5A007D205C /* SurfaceView.swift */,
 				54CDC5D4215B6D8D007D205C /* BackdropView.swift */,
 				545DBA2A2152383100CA77B8 /* GrabberView.swift */,
@@ -328,7 +328,7 @@
 				54CFBFC3215CD045006B5735 /* Layout.swift in Sources */,
 				5469F4B424B30F3500537F8A /* LayoutReferences.swift in Sources */,
 				54CDC5D5215B6D8D007D205C /* BackdropView.swift in Sources */,
-				54352E9821A521CA00CBCA08 /* PassThroughView.swift in Sources */,
+				54352E9821A521CA00CBCA08 /* PassthroughView.swift in Sources */,
 				54CFBFC5215CD09C006B5735 /* Core.swift in Sources */,
 				54ABD7AF216CCFF7002E6C13 /* Logger.swift in Sources */,
 				545DB9E021511AC100CA77B8 /* Controller.swift in Sources */,
