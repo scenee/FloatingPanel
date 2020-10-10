@@ -61,8 +61,6 @@ struct LayoutSegment {
 
 class LayoutAdapter {
     weak var vc: FloatingPanelController!
-    private weak var surfaceView: SurfaceView!
-    private weak var backdropView: BackdropView!
     private let defaultLayout = FloatingPanelBottomLayout()
 
     fileprivate var layout: FloatingPanelLayout {
@@ -71,6 +69,12 @@ class LayoutAdapter {
         }
     }
 
+    private var surfaceView: SurfaceView {
+        return vc.surfaceView
+    }
+    private var backdropView: BackdropView {
+        return vc.backdropView
+    }
     private var safeAreaInsets: UIEdgeInsets {
         return vc?.fp_safeAreaInsets ?? .zero
     }
@@ -284,14 +288,9 @@ class LayoutAdapter {
         }
     }
 
-    init(vc: FloatingPanelController,
-         surfaceView: SurfaceView,
-         backdropView: BackdropView,
-         layout: FloatingPanelLayout) {
+    init(vc: FloatingPanelController, layout: FloatingPanelLayout) {
         self.vc = vc
         self.layout = layout
-        self.surfaceView = surfaceView
-        self.backdropView = backdropView
     }
 
     func surfaceLocation(for state: FloatingPanelState) -> CGPoint {
