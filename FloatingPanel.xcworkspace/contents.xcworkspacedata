@@ -15,6 +15,9 @@
       location = "group:Examples"
       name = "Examples">
       <FileRef
+         location = "group:FloatingPanelTableView/FloatingPanelTableView.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:ImageGallery/ImageGallery.xcodeproj">
       </FileRef>
       <FileRef

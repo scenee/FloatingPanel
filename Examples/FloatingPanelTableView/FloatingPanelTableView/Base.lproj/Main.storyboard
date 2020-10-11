@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="0Jg-cF-U62">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController storyboardIdentifier="tableviewvc" id="BYZ-38-t0r" customClass="ViewController" customModule="FloatingPanelTableView" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="kBW-9f-0QV">
+                                <rect key="frame" x="0.0" y="108" width="414" height="818"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="kBW-9f-0QV" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="0.10000000000000001" id="EXR-ji-Gk2"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="kBW-9f-0QV" secondAttribute="trailing" constant="0.10000000000000001" id="fwt-Sr-4sK"/>
+                            <constraint firstItem="kBW-9f-0QV" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="0.10000000000000001" id="jCv-JJ-lIv"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="kBW-9f-0QV" secondAttribute="bottom" constant="0.10000000000000001" id="vVh-X4-f6j"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="tableView" destination="kBW-9f-0QV" id="ELN-yM-OVH"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-584" y="104"/>
+        </scene>
+        <!--View Controller2-->
+        <scene sceneID="IL9-dz-lZ8">
+            <objects>
+                <viewController storyboardIdentifier="ViewController2" id="qBA-Fa-afu" customClass="ViewController2" customModule="FloatingPanelTableView" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="7OQ-6L-hmx">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="n5u-bH-iDM" customClass="HitView" customModule="FloatingPanelTableView" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="44" width="414" height="350"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sZN-x2-0ke" userLabel="v0" customClass="PictureAreaView" customModule="FloatingPanelTableView" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="44" width="414" height="350"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Floating" translatesAutoresizingMaskIntoConstraints="NO" id="eV6-73-0r6">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="350"/>
+                                    </imageView>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MjG-qn-nli" userLabel="viewWhiteAlpha">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="350"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemRedColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="MjG-qn-nli" secondAttribute="trailing" constant="0.10000000000000001" id="1E5-wk-8FB"/>
+                                    <constraint firstAttribute="bottom" secondItem="MjG-qn-nli" secondAttribute="bottom" constant="0.10000000000000001" id="BF7-2X-j7I"/>
+                                    <constraint firstItem="MjG-qn-nli" firstAttribute="top" secondItem="sZN-x2-0ke" secondAttribute="top" constant="0.10000000000000001" id="JZB-ky-Qnr"/>
+                                    <constraint firstAttribute="bottom" secondItem="eV6-73-0r6" secondAttribute="bottom" constant="0.10000000000000001" id="Lrq-k5-NVu"/>
+                                    <constraint firstItem="MjG-qn-nli" firstAttribute="leading" secondItem="sZN-x2-0ke" secondAttribute="leading" id="RbJ-gZ-alW"/>
+                                    <constraint firstItem="eV6-73-0r6" firstAttribute="top" secondItem="sZN-x2-0ke" secondAttribute="top" constant="0.10000000000000001" id="dPH-ov-zb6"/>
+                                    <constraint firstItem="eV6-73-0r6" firstAttribute="leading" secondItem="sZN-x2-0ke" secondAttribute="leading" constant="0.10000000000000001" id="dfc-Mz-u8N"/>
+                                    <constraint firstAttribute="height" constant="350" id="nRj-3y-z8D"/>
+                                    <constraint firstAttribute="trailing" secondItem="eV6-73-0r6" secondAttribute="trailing" constant="0.10000000000000001" id="sXt-HE-AhI"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KE3-ji-ght" userLabel="v1">
+                                <rect key="frame" x="0.0" y="394" width="414" height="468"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MPi-Qu-hZ1">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="100"/>
+                                        <color key="backgroundColor" systemColor="systemTealColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="100" id="b9R-X0-4KQ"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="M2J-x8-ewE" customClass="RCSegmentView" customModule="FloatingPanelTableView" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="100" width="414" height="368"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="M2J-x8-ewE" firstAttribute="top" secondItem="MPi-Qu-hZ1" secondAttribute="bottom" id="8VT-9x-TQE"/>
+                                    <constraint firstItem="MPi-Qu-hZ1" firstAttribute="leading" secondItem="KE3-ji-ght" secondAttribute="leading" constant="0.10000000000000001" id="Ard-m8-RLL"/>
+                                    <constraint firstItem="M2J-x8-ewE" firstAttribute="leading" secondItem="KE3-ji-ght" secondAttribute="leading" constant="0.10000000000000001" id="XvM-Ks-4hi"/>
+                                    <constraint firstAttribute="trailing" secondItem="MPi-Qu-hZ1" secondAttribute="trailing" constant="0.10000000000000001" id="YqM-SX-cuz"/>
+                                    <constraint firstItem="MPi-Qu-hZ1" firstAttribute="top" secondItem="KE3-ji-ght" secondAttribute="top" constant="0.10000000000000001" id="cfa-BR-szT"/>
+                                    <constraint firstAttribute="trailing" secondItem="M2J-x8-ewE" secondAttribute="trailing" constant="0.10000000000000001" id="gLF-rH-XVm"/>
+                                    <constraint firstAttribute="bottom" secondItem="M2J-x8-ewE" secondAttribute="bottom" constant="0.10000000000000001" id="yrV-aj-Fzb"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="SUM-Jh-oQJ"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="KE3-ji-ght" firstAttribute="trailing" secondItem="sZN-x2-0ke" secondAttribute="trailing" id="0dM-ca-hiD"/>
+                            <constraint firstItem="SUM-Jh-oQJ" firstAttribute="bottom" secondItem="KE3-ji-ght" secondAttribute="bottom" constant="0.10000000000000001" id="0w0-4s-Cq9"/>
+                            <constraint firstItem="KE3-ji-ght" firstAttribute="top" secondItem="sZN-x2-0ke" secondAttribute="bottom" id="6oU-ds-ect"/>
+                            <constraint firstItem="n5u-bH-iDM" firstAttribute="leading" secondItem="sZN-x2-0ke" secondAttribute="leading" id="Czz-xQ-Mn7"/>
+                            <constraint firstItem="sZN-x2-0ke" firstAttribute="leading" secondItem="SUM-Jh-oQJ" secondAttribute="leading" constant="0.10000000000000001" id="USn-9D-u3a"/>
+                            <constraint firstItem="SUM-Jh-oQJ" firstAttribute="trailing" secondItem="sZN-x2-0ke" secondAttribute="trailing" constant="0.10000000000000001" id="ZF1-Z4-2F9"/>
+                            <constraint firstItem="n5u-bH-iDM" firstAttribute="bottom" secondItem="sZN-x2-0ke" secondAttribute="bottom" id="a6S-BU-GBK"/>
+                            <constraint firstItem="sZN-x2-0ke" firstAttribute="top" secondItem="SUM-Jh-oQJ" secondAttribute="top" constant="0.10000000000000001" id="gQj-ye-abZ"/>
+                            <constraint firstItem="n5u-bH-iDM" firstAttribute="trailing" secondItem="sZN-x2-0ke" secondAttribute="trailing" id="gZH-9H-fKz"/>
+                            <constraint firstItem="n5u-bH-iDM" firstAttribute="top" secondItem="sZN-x2-0ke" secondAttribute="top" id="nCU-RB-eRH"/>
+                            <constraint firstItem="KE3-ji-ght" firstAttribute="leading" secondItem="sZN-x2-0ke" secondAttribute="leading" id="vYP-EP-jmh"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="hitView" destination="n5u-bH-iDM" id="f29-p2-Rvy"/>
+                        <outlet property="redView" destination="sZN-x2-0ke" id="7Ev-GX-etd"/>
+                        <outlet property="segementView" destination="M2J-x8-ewE" id="5CY-ua-7ZF"/>
+                        <outlet property="viewWhiteAlpha" destination="MjG-qn-nli" id="fHC-FC-UQL"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rmA-uq-peV" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-500.00000000000006" y="750"/>
+        </scene>
+        <!--View Controller3-->
+        <scene sceneID="11o-WW-DMq">
+            <objects>
+                <viewController storyboardIdentifier="ViewController3" id="A81-6G-sg8" customClass="ViewController3" customModule="FloatingPanelTableView" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="4XA-0z-aPa">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="IGU-Xz-f1v">
+                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="8XZ-Ve-OEd"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="IGU-Xz-f1v" firstAttribute="top" secondItem="8XZ-Ve-OEd" secondAttribute="top" constant="0.10000000000000001" id="5e0-dv-gub"/>
+                            <constraint firstItem="8XZ-Ve-OEd" firstAttribute="bottom" secondItem="IGU-Xz-f1v" secondAttribute="bottom" constant="0.10000000000000001" id="Y0R-RE-ECo"/>
+                            <constraint firstItem="8XZ-Ve-OEd" firstAttribute="trailing" secondItem="IGU-Xz-f1v" secondAttribute="trailing" constant="0.10000000000000001" id="aC3-Xp-XTy"/>
+                            <constraint firstItem="IGU-Xz-f1v" firstAttribute="leading" secondItem="8XZ-Ve-OEd" secondAttribute="leading" constant="0.10000000000000001" id="zh6-fg-ZCp"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="tableView" destination="IGU-Xz-f1v" id="DlM-zB-Caz"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ClU-Pd-xLs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="330" y="804"/>
+        </scene>
+        <!--Map View Controller-->
+        <scene sceneID="eoJ-k1-l6N">
+            <objects>
+                <viewController id="0Jg-cF-U62" customClass="MapViewController" customModule="FloatingPanelTableView" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="B50-SS-S0F">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="U1M-i5-gve">
+                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                            </mapView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="CWT-Od-oPm"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="U1M-i5-gve" firstAttribute="leading" secondItem="CWT-Od-oPm" secondAttribute="leading" constant="0.10000000000000001" id="8Sl-9Q-XSR"/>
+                            <constraint firstItem="CWT-Od-oPm" firstAttribute="bottom" secondItem="U1M-i5-gve" secondAttribute="bottom" constant="0.10000000000000001" id="Gsb-95-Cef"/>
+                            <constraint firstItem="U1M-i5-gve" firstAttribute="top" secondItem="CWT-Od-oPm" secondAttribute="top" constant="0.10000000000000001" id="fPr-hg-LSQ"/>
+                            <constraint firstItem="CWT-Od-oPm" firstAttribute="trailing" secondItem="U1M-i5-gve" secondAttribute="trailing" constant="0.10000000000000001" id="sCS-EI-uyh"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="mapView" destination="U1M-i5-gve" id="fYO-i5-FNe"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vhh-gZ-wgb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="890" y="121"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Floating" width="350" height="262"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemTealColor">
+            <color red="0.35294117647058826" green="0.78431372549019607" blue="0.98039215686274506" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>
