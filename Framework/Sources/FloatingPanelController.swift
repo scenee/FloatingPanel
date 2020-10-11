@@ -37,6 +37,8 @@ public protocol FloatingPanelControllerDelegate: class {
     ///
     /// By default, any tap and long gesture recognizers are allowed to recognize gestures simultaneously.
     func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool
+    
+    func floatingPanelDidViewLayout(_ vc: FloatingPanelController)
 }
 
 public extension FloatingPanelControllerDelegate {
@@ -62,6 +64,8 @@ public extension FloatingPanelControllerDelegate {
     func floatingPanel(_ vc: FloatingPanelController, shouldRecognizeSimultaneouslyWith gestureRecognizer: UIGestureRecognizer) -> Bool {
         return false
     }
+    
+    func floatingPanelDidViewLayout(_ vc: FloatingPanelController){}
 }
 
 
@@ -264,6 +268,7 @@ open class FloatingPanelController: UIViewController {
                 self.update(safeAreaInsets: layoutInsets)
             }
         }
+        delegate?.floatingPanelDidViewLayout(self)
     }
 
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
