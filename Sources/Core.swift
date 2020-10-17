@@ -131,6 +131,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                     ?? FloatingPanelDefaultBehavior().removePanelAnimator(vc, from: from, with: animationVector)
             default:
                 move(to: to, with: 0) {
+                    self.moveAnimator = nil
                     updateScrollView()
                     completion?()
                 }
