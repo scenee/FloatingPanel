@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name                = "FloatingPanel"
-  s.version             = "2.0.0"
+  s.version             = "2.0.1"
   s.summary             = "FloatingPanel is a clean and easy-to-use UI component of a floating panel interface."
   s.description         = <<-DESC
 FloatingPanel is a clean and easy-to-use UI component for a new interface introduced in Apple Maps, Shortcuts and Stocks app.
