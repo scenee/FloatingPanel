@@ -142,6 +142,8 @@ class SampleListViewController: UIViewController {
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleSurface(tapGesture:)))
             tapGesture.cancelsTouchesInView = false
             tapGesture.numberOfTapsRequired = 2
+            // Prevents a delay to response a tap in menus of DebugTableViewController.
+            tapGesture.delaysTouchesEnded = false
             mainPanelVC.surfaceView.addGestureRecognizer(tapGesture)
         case .showNestedScrollView:
             mainPanelVC.panGestureRecognizer.delegateProxy = self
@@ -684,6 +686,8 @@ class DebugTableViewController: InspectableViewController {
         case animateScroll = "Animate Scroll"
         case changeContentSize = "Change content size"
         case reorder = "Reorder"
+        case moveToFull = "Move to Full"
+        case moveToHalf = "Move to Half"
     }
 
     var reorderButton: UIButton!
@@ -725,6 +729,10 @@ class DebugTableViewController: InspectableViewController {
             case .reorder:
                 button.addTarget(self, action: #selector(reorderItems), for: .touchUpInside)
                 reorderButton = button
+            case .moveToFull:
+                button.addTarget(self, action: #selector(moveToFull), for: .touchUpInside)
+            case .moveToHalf:
+                button.addTarget(self, action: #selector(moveToHalf), for: .touchUpInside)
             }
             buttonStackView.addArrangedSubview(button)
         }
@@ -783,6 +791,14 @@ class DebugTableViewController: InspectableViewController {
             items.append("Items \(i)")
         }
         tableView.reloadData()
+    }
+
+    @objc func moveToFull() {
+        (self.parent as! FloatingPanelController).move(to: .full, animated: true)
+    }
+
+    @objc func moveToHalf() {
+        (self.parent as! FloatingPanelController).move(to: .half, animated: true)
     }
 
     @objc func close(sender: UIButton) {
