@@ -163,7 +163,7 @@ self.present(fpc, animated: true, completion: nil)
 
 You can show a floating panel over UINavigationController from the container view controllers as a modality of `.overCurrentContext` style.
 
-:pencil2: FloatingPanelController has the custom presentation controller. If you would like to customize the presentation/dismissal, please see [FloatingPanelTransitioning](https://github.com/SCENEE/FloatingPanel/blob/master/Framework/Sources/FloatingPanelTransitioning.swift).
+:pencil2: FloatingPanelController has the custom presentation controller. If you would like to customize the presentation/dismissal, please see [Transitioning](https://github.com/SCENEE/FloatingPanel/blob/master/Sources/Transitioning.swift).
 
 ## View hierarchy
 
