@@ -600,11 +600,11 @@ open class FloatingPanelController: UIViewController {
 
     // MARK: - Accessibility
 
-      open override func accessibilityPerformEscape() -> Bool {
+    open override func accessibilityPerformEscape() -> Bool {
         guard isRemovalInteractionEnabled else { return false }
         dismiss(animated: true, completion: nil)
         return true
-      }
+    }
 
     // MARK: - Utilities
 
