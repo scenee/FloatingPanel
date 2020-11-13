@@ -1320,6 +1320,9 @@ class ImageViewController: UIViewController {
                 return [
                     .full: FloatingPanelAdaptiveLayoutAnchor(absoluteOffset: 0,
                                                              contentLayout: targetView.contentLayoutGuide,
+                                                             referenceGuide: .superview),
+                    .half: FloatingPanelAdaptiveLayoutAnchor(fractionalOffset: 0.5,
+                                                             contentLayout: targetView.contentLayoutGuide,
                                                              referenceGuide: .superview)
                 ]
             } else {
