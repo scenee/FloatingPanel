@@ -664,11 +664,15 @@ class LayoutAdapter {
             }
             staticConstraint = position.mainDimensionAnchor(surfaceView).constraint(equalToConstant: constant)
         case let anchor as FloatingPanelAdaptiveLayoutAnchor:
-            var constant = layout.position.mainDimension(anchor.contentLayoutGuide.layoutFrame.size)
+            let constant: CGFloat
             if anchor.referenceGuide == .safeArea {
-                constant += position.inset(safeAreaInsets)
+                constant = position.inset(safeAreaInsets)
+            } else {
+                constant = 0.0
             }
-            staticConstraint = position.mainDimensionAnchor(surfaceView).constraint(equalToConstant: constant)
+            let baseAnchor = position.mainDimensionAnchor(anchor.contentLayoutGuide)
+            let surfaceAnchor = position.mainDimensionAnchor(surfaceView)
+            staticConstraint = surfaceAnchor.constraint(equalTo: baseAnchor, constant: constant)
         default:
             switch position {
             case .top, .left:

@@ -175,8 +175,6 @@ public extension FloatingPanelIntrinsicLayoutAnchor {
 public extension FloatingPanelAdaptiveLayoutAnchor {
     func layoutConstraints(_ vc: FloatingPanelController, for position: FloatingPanelPosition) -> [NSLayoutConstraint] {
         let layoutGuide = referenceGuide.layoutGuide(vc: vc)
-        let dimension = position.mainDimension(contentLayoutGuide.layoutFrame.size)
-        let constant = isAbsolute ? -offset : dimension * (1 - offset)
         let offsetAnchor: NSLayoutDimension
         switch position {
         case .top:
@@ -188,7 +186,11 @@ public extension FloatingPanelAdaptiveLayoutAnchor {
         case .right:
             offsetAnchor = vc.surfaceView.leftAnchor.anchorWithOffset(to: layoutGuide.rightAnchor)
         }
-        return [offsetAnchor.constraint(equalTo: position.mainDimensionAnchor(contentLayoutGuide), constant: constant)]
+        if isAbsolute {
+            return [offsetAnchor.constraint(equalTo: position.mainDimensionAnchor(contentLayoutGuide), constant: -offset)]
+        } else {
+            return [offsetAnchor.constraint(equalTo: position.mainDimensionAnchor(contentLayoutGuide), multiplier: (1 - offset))]
+        }
     }
 }
 
