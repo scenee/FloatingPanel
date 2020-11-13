@@ -656,13 +656,14 @@ class LayoutAdapter {
         }
 
         let anchor = layout.anchors[self.edgeMostState]!
+        let surfaceAnchor = position.mainDimensionAnchor(surfaceView)
         switch anchor {
         case let anchor as FloatingPanelIntrinsicLayoutAnchor:
-            var constant = layout.position.mainDimension(surfaceView.intrinsicContentSize)
+            var constant = position.mainDimension(surfaceView.intrinsicContentSize)
             if anchor.referenceGuide == .safeArea {
                 constant += position.inset(safeAreaInsets)
             }
-            staticConstraint = position.mainDimensionAnchor(surfaceView).constraint(equalToConstant: constant)
+            staticConstraint = surfaceAnchor.constraint(equalToConstant: constant)
         case let anchor as FloatingPanelAdaptiveLayoutAnchor:
             let constant: CGFloat
             if anchor.referenceGuide == .safeArea {
@@ -671,15 +672,15 @@ class LayoutAdapter {
                 constant = 0.0
             }
             let baseAnchor = position.mainDimensionAnchor(anchor.contentLayoutGuide)
-            let surfaceAnchor = position.mainDimensionAnchor(surfaceView)
             staticConstraint = surfaceAnchor.constraint(equalTo: baseAnchor, constant: constant)
         default:
             switch position {
             case .top, .left:
-                staticConstraint = position.mainDimensionAnchor(surfaceView).constraint(equalToConstant: position(for: self.directionalMostState))
+                staticConstraint = surfaceAnchor.constraint(equalToConstant: position(for: self.directionalMostState))
             case .bottom, .right:
-                staticConstraint = position.mainDimensionAnchor(vc.view).constraint(equalTo: position.mainDimensionAnchor(surfaceView),
-                                                                                    constant: position(for: self.directionalLeastState))
+                let rootViewAnchor = position.mainDimensionAnchor(vc.view)
+                staticConstraint = rootViewAnchor.constraint(equalTo: surfaceAnchor,
+                                                             constant: position(for: self.directionalLeastState))
             }
         }
 
