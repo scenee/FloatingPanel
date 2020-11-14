@@ -65,19 +65,6 @@ open class FloatingPanelDefaultBehavior: FloatingPanelBehavior {
         return 0.5
     }
 
-    func addPanelAnimator(_ fpc: FloatingPanelController, to: FloatingPanelState) -> UIViewPropertyAnimator {
-        return UIViewPropertyAnimator(duration: 0.0,
-                                      timingParameters: UISpringTimingParameters(decelerationRate: UIScrollView.DecelerationRate.fast.rawValue,
-                                                                                 frequencyResponse: 0.25))
-    }
-
-    func removePanelAnimator(_ fpc: FloatingPanelController, from: FloatingPanelState, with velocity: CGVector) -> UIViewPropertyAnimator {
-        return UIViewPropertyAnimator(duration: 0.0,
-                                      timingParameters: UISpringTimingParameters(decelerationRate: UIScrollView.DecelerationRate.fast.rawValue,
-                                                                                 frequencyResponse: 0.25,
-                                                                                 initialVelocity: velocity))
-    }
-
     open func allowsRubberBanding(for edge: UIRectEdge) -> Bool {
         return false
     }
