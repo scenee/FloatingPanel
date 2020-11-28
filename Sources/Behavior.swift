@@ -49,6 +49,8 @@ public protocol FloatingPanelBehavior {
 ///
 /// This behavior object is fine-tuned to behave as a search panel(card) in Apple Maps on iPhone portrait orientation.
 open class FloatingPanelDefaultBehavior: FloatingPanelBehavior {
+    public init() {}
+
     open var springDecelerationRate: CGFloat {
         return UIScrollView.DecelerationRate.fast.rawValue + 0.001
     }
