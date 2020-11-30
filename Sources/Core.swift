@@ -833,6 +833,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             completion: { [weak self] in
                 guard let self = self else { return }
                 self.layoutAdapter.activateLayout(for: targetPosition, forceLayout: true)
+                self.moveAnimator = nil
                 completion()
         })
         moveAnimator?.startAnimation()
