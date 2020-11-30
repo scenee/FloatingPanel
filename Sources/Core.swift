@@ -123,12 +123,10 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             let animator: UIViewPropertyAnimator
             switch (from, to) {
             case (.hidden, let to):
-                animator = vc.delegate?.floatingPanel?(vc, animatorForPresentingTo: to)
-                    ?? FloatingPanelDefaultBehavior().addPanelAnimator(vc, to: to)
+                animator = vc.animatorForPresenting(to: to)
             case (let from, .hidden):
                 let animationVector = CGVector(dx: abs(removalVector.dx), dy: abs(removalVector.dy))
-                animator = vc.delegate?.floatingPanel?(vc, animatorForDismissingWith: .zero)
-                    ?? FloatingPanelDefaultBehavior().removePanelAnimator(vc, from: from, with: animationVector)
+                animator = vc.animatorForDismissing(with: animationVector)
             default:
                 move(to: to, with: 0) {
                     self.moveAnimator = nil
