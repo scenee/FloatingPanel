@@ -61,8 +61,6 @@ struct LayoutSegment {
 
 class LayoutAdapter {
     weak var vc: FloatingPanelController!
-    private weak var surfaceView: SurfaceView!
-    private weak var backdropView: BackdropView!
     private let defaultLayout = FloatingPanelBottomLayout()
 
     fileprivate var layout: FloatingPanelLayout {
@@ -71,6 +69,12 @@ class LayoutAdapter {
         }
     }
 
+    private var surfaceView: SurfaceView {
+        return vc.surfaceView
+    }
+    private var backdropView: BackdropView {
+        return vc.backdropView
+    }
     private var safeAreaInsets: UIEdgeInsets {
         return vc?.fp_safeAreaInsets ?? .zero
     }
@@ -284,14 +288,9 @@ class LayoutAdapter {
         }
     }
 
-    init(vc: FloatingPanelController,
-         surfaceView: SurfaceView,
-         backdropView: BackdropView,
-         layout: FloatingPanelLayout) {
+    init(vc: FloatingPanelController, layout: FloatingPanelLayout) {
         self.vc = vc
         self.layout = layout
-        self.surfaceView = surfaceView
-        self.backdropView = backdropView
     }
 
     func surfaceLocation(for state: FloatingPanelState) -> CGPoint {
@@ -326,6 +325,22 @@ class LayoutAdapter {
                     base -= position.inset(safeAreaInsets)
                 }
                 return base - intrinsicLength + diff
+            }
+        case let anchor as FloatingPanelAdaptiveLayoutAnchor:
+            let dimension = layout.position.mainDimension(anchor.contentLayoutGuide.layoutFrame.size)
+            let diff = anchor.distance(from: dimension)
+            var referenceBoundsLength = layout.position.mainDimension(bounds.size)
+            switch layout.position {
+            case .top, .left:
+                if anchor.referenceGuide == .safeArea {
+                    referenceBoundsLength += position.inset(safeAreaInsets)
+                }
+                return dimension - diff
+            case .bottom, .right:
+                if anchor.referenceGuide == .safeArea {
+                    referenceBoundsLength -= position.inset(safeAreaInsets)
+                }
+                return referenceBoundsLength - dimension + diff
             }
         case let anchor as FloatingPanelLayoutAnchor:
             let referenceBounds = anchor.referenceGuide == .safeArea ? bounds.inset(by: safeAreaInsets) : bounds
@@ -364,7 +379,8 @@ class LayoutAdapter {
 
     private func referenceEdge(of anchor: FloatingPanelLayoutAnchoring) -> FloatingPanelReferenceEdge {
         switch anchor {
-        case is FloatingPanelIntrinsicLayoutAnchor:
+        case is FloatingPanelIntrinsicLayoutAnchor,
+            is FloatingPanelAdaptiveLayoutAnchor:
             switch position {
             case .top: return .top
             case .left: return .left
@@ -640,19 +656,31 @@ class LayoutAdapter {
         }
 
         let anchor = layout.anchors[self.edgeMostState]!
-        if anchor is FloatingPanelIntrinsicLayoutAnchor {
-            var constant = layout.position.mainDimension(surfaceView.intrinsicContentSize)
+        let surfaceAnchor = position.mainDimensionAnchor(surfaceView)
+        switch anchor {
+        case let anchor as FloatingPanelIntrinsicLayoutAnchor:
+            var constant = position.mainDimension(surfaceView.intrinsicContentSize)
             if anchor.referenceGuide == .safeArea {
                 constant += position.inset(safeAreaInsets)
             }
-            staticConstraint = position.mainDimensionAnchor(surfaceView).constraint(equalToConstant: constant)
-        } else {
+            staticConstraint = surfaceAnchor.constraint(equalToConstant: constant)
+        case let anchor as FloatingPanelAdaptiveLayoutAnchor:
+            let constant: CGFloat
+            if anchor.referenceGuide == .safeArea {
+                constant = position.inset(safeAreaInsets)
+            } else {
+                constant = 0.0
+            }
+            let baseAnchor = position.mainDimensionAnchor(anchor.contentLayoutGuide)
+            staticConstraint = surfaceAnchor.constraint(equalTo: baseAnchor, constant: constant)
+        default:
             switch position {
             case .top, .left:
-                staticConstraint = position.mainDimensionAnchor(surfaceView).constraint(equalToConstant: position(for: self.directionalMostState))
+                staticConstraint = surfaceAnchor.constraint(equalToConstant: position(for: self.directionalMostState))
             case .bottom, .right:
-                staticConstraint = position.mainDimensionAnchor(vc.view).constraint(equalTo: position.mainDimensionAnchor(surfaceView),
-                                                                                    constant: position(for: self.directionalLeastState))
+                let rootViewAnchor = position.mainDimensionAnchor(vc.view)
+                staticConstraint = rootViewAnchor.constraint(equalTo: surfaceAnchor,
+                                                             constant: position(for: self.directionalLeastState))
             }
         }
 

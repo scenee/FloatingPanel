@@ -2,8 +2,8 @@
 
 import UIKit
 
-@objc(FloatingPanelPassThroughView)
-class PassThroughView: UIView {
+@objc(FloatingPanelPassthroughView)
+class PassthroughView: UIView {
     public weak var eventForwardingView: UIView?
     public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         let hitView = super.hitTest(point, with: event)
