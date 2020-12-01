@@ -61,10 +61,10 @@
     return @{
         FloatingPanelState.Half: [[FloatingPanelLayoutAnchor alloc] initWithFractionalInset:0.5
                                                                                        edge:FloatingPanelReferenceEdgeTop
-                                                                         referenceGuide:FloatingPanelLayoutReferenceGuideSafeArea],
+                                                                             referenceGuide:FloatingPanelLayoutReferenceGuideSafeArea],
         FloatingPanelState.Tip: [[FloatingPanelLayoutAnchor alloc] initWithAbsoluteInset:44.0
                                                                                     edge:FloatingPanelReferenceEdgeBottom
-                                                                         referenceGuide:FloatingPanelLayoutReferenceGuideSafeArea],
+                                                                          referenceGuide:FloatingPanelLayoutReferenceGuideSafeArea],
     };
 }
 

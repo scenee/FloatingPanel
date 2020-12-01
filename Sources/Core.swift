@@ -68,11 +68,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         backdropView.backgroundColor = .black
         backdropView.alpha = 0.0
 
-        self.layoutAdapter = LayoutAdapter(vc: vc,
-                                           surfaceView: surfaceView,
-                                           backdropView: backdropView,
-                                           layout: layout)
-        self.behaviorAdapter = BehaviorAdapter(vc: vc, behavior: behavior)
+        layoutAdapter = LayoutAdapter(vc: vc, layout: layout)
+        behaviorAdapter = BehaviorAdapter(vc: vc, behavior: behavior)
 
         panGestureRecognizer = FloatingPanelPanGestureRecognizer()
 

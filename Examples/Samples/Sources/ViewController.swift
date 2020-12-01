@@ -23,7 +23,9 @@ class SampleListViewController: UIViewController {
         case showContentInset
         case showContainerMargins
         case showNavigationController
-        case showBottomEdgeInteraction
+        case showTopPositionedPanel
+        case showAdaptivePanel
+        case showAdaptivePanelWithCustomGuide
 
         var name: String {
             switch self {
@@ -43,7 +45,9 @@ class SampleListViewController: UIViewController {
             case .showContentInset: return "Show with ContentInset"
             case .showContainerMargins: return "Show with ContainerMargins"
             case .showNavigationController: return "Show Navigation Controller"
-            case .showBottomEdgeInteraction: return "Show bottom edge interaction"
+            case .showTopPositionedPanel: return "Show Top Positioned Panel"
+            case .showAdaptivePanel: return "Show Adaptive Panel"
+            case .showAdaptivePanelWithCustomGuide: return "Show Adaptive Panel(Custom Layout Guide)"
             }
         }
 
@@ -65,7 +69,10 @@ class SampleListViewController: UIViewController {
             case .showContentInset: return nil
             case .showContainerMargins: return nil
             case .showNavigationController: return "RootNavigationController"
-            case .showBottomEdgeInteraction: return nil
+            case .showTopPositionedPanel: return nil
+            case .showAdaptivePanel,
+                 .showAdaptivePanelWithCustomGuide:
+                return "ImageViewController"
             }
         }
     }
@@ -156,7 +163,7 @@ class SampleListViewController: UIViewController {
             mainPanelVC.backdropView.dismissalTapGestureRecognizer.isEnabled = true
         case .showNavigationController:
             mainPanelVC.contentInsetAdjustmentBehavior = .never
-        case .showBottomEdgeInteraction: // For debug
+        case .showTopPositionedPanel: // For debug
             let contentVC = UIViewController()
             contentVC.view.backgroundColor = .red
             mainPanelVC.set(contentViewController: contentVC)
@@ -184,6 +191,17 @@ class SampleListViewController: UIViewController {
                 rootVC.loadViewIfNeeded()
                 mainPanelVC.track(scrollView: rootVC.tableView)
             }
+        case let contentVC as ImageViewController:
+            if #available(iOS 11.0, *) {
+                let mode: ImageViewController.Mode = (currentMenu == .showAdaptivePanelWithCustomGuide) ? .withHeaderFooter : .onlyImage
+                let layoutGuide = contentVC.layoutGuideFor(mode: mode)
+                mainPanelVC.layout = ImageViewController.PanelLayout(targetGuide: layoutGuide)
+            } else {
+                mainPanelVC.layout = ImageViewController.PanelLayout(targetGuide: nil)
+            }
+            mainPanelVC.delegate = nil
+            mainPanelVC.isRemovalInteractionEnabled = true
+            mainPanelVC.track(scrollView: contentVC.scrollView)
         default:
             break
         }
@@ -419,8 +437,8 @@ extension SampleListViewController: FloatingPanelControllerDelegate {
         }
 
         switch currentMenu {
-        case .showBottomEdgeInteraction:
-            return BottomEdgeInteractionLayout()
+        case .showTopPositionedPanel:
+            return TopPositionedPanelLayout()
         case .showRemovablePanel:
             return newCollection.verticalSizeClass == .compact ? RemovablePanelLandscapeLayout() :  RemovablePanelLayout()
         case .showIntrinsicView:
@@ -506,7 +524,7 @@ extension SampleListViewController: UIPageViewControllerDelegate {
     }
 }
 
-class BottomEdgeInteractionLayout: FloatingPanelLayout {
+class TopPositionedPanelLayout: FloatingPanelLayout {
     let position: FloatingPanelPosition = .top
     let initialState: FloatingPanelState = .full
 
@@ -1295,6 +1313,67 @@ final class MultiPanelController: FloatingPanelController, FloatingPanelControll
             return [
                 .full: FloatingPanelLayoutAnchor(absoluteInset: 40.0, edge: .top, referenceGuide: .superview)
             ]
+        }
+    }
+}
+
+class ImageViewController: UIViewController {
+    class PanelLayout: FloatingPanelLayout {
+        weak var targetGuide: UILayoutGuide?
+        init(targetGuide: UILayoutGuide?) {
+            self.targetGuide = targetGuide
+        }
+        let position: FloatingPanelPosition = .bottom
+        let initialState: FloatingPanelState = .full
+        var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+            if #available(iOS 11.0, *), let targetGuide = targetGuide {
+                return [
+                    .full: FloatingPanelAdaptiveLayoutAnchor(absoluteOffset: 0,
+                                                             contentLayout: targetGuide,
+                                                             referenceGuide: .superview),
+                    .half: FloatingPanelAdaptiveLayoutAnchor(fractionalOffset: 0.5,
+                                                             contentLayout: targetGuide,
+                                                             referenceGuide: .superview)
+                ]
+            } else {
+                return [
+                    .full: FloatingPanelLayoutAnchor(absoluteInset: 500,
+                                                     edge: .bottom,
+                                                     referenceGuide: .superview)
+                ]
+            }
+        }
+    }
+
+    @IBOutlet weak var headerView: UIView!
+    @IBOutlet weak var footerView: UIView!
+    @IBOutlet weak var scrollView: UIScrollView!
+
+    enum Mode {
+        case onlyImage
+        case withHeaderFooter
+    }
+
+    @available(iOS 11.0, *)
+    func layoutGuideFor(mode: Mode) -> UILayoutGuide {
+        switch mode {
+        case .onlyImage:
+            self.headerView.isHidden = true
+            self.footerView.isHidden = true
+            return scrollView.contentLayoutGuide
+        case .withHeaderFooter:
+            self.headerView.isHidden = false
+            self.footerView.isHidden = false
+            let guide = UILayoutGuide()
+            view.addLayoutGuide(guide)
+            // 49 is the height of header and footer
+            NSLayoutConstraint.activate([
+                guide.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: -49),
+                guide.leftAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leftAnchor),
+                guide.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: 49),
+                guide.rightAnchor.constraint(equalTo: scrollView.contentLayoutGuide.rightAnchor),
+            ])
+            return guide
         }
     }
 }
