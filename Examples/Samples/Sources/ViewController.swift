@@ -1348,6 +1348,7 @@ class ImageViewController: UIViewController {
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var footerView: UIView!
     @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var stackView: UIStackView!
 
     enum Mode {
         case onlyImage
@@ -1366,12 +1367,15 @@ class ImageViewController: UIViewController {
             self.footerView.isHidden = false
             let guide = UILayoutGuide()
             view.addLayoutGuide(guide)
-            // 49 is the height of header and footer
+
             NSLayoutConstraint.activate([
-                guide.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: -49),
-                guide.leftAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leftAnchor),
-                guide.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: 49),
-                guide.rightAnchor.constraint(equalTo: scrollView.contentLayoutGuide.rightAnchor),
+
+                scrollView.heightAnchor.constraint(equalTo: scrollView.contentLayoutGuide.heightAnchor),
+
+                guide.topAnchor.constraint(equalTo: stackView.topAnchor),
+                guide.leftAnchor.constraint(equalTo: stackView.leftAnchor),
+                guide.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
+                guide.rightAnchor.constraint(equalTo: stackView.rightAnchor),
             ])
             return guide
         }
