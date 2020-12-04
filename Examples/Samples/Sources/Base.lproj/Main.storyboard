@@ -351,7 +351,6 @@
                     <connections>
                         <outlet property="footerView" destination="SEa-7Y-wa9" id="Gzj-dP-YXl"/>
                         <outlet property="headerView" destination="t7x-eG-MKh" id="njM-un-U8q"/>
-                        <outlet property="imageView" destination="rGf-jW-WNf" id="AxV-my-3ao"/>
                         <outlet property="scrollView" destination="kRA-qy-GpJ" id="iWC-o4-APi"/>
                         <outlet property="stackView" destination="Gs4-S6-Goh" id="f1D-bO-mjr"/>
                     </connections>

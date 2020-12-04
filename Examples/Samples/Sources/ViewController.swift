@@ -47,7 +47,7 @@ class SampleListViewController: UIViewController {
             case .showNavigationController: return "Show Navigation Controller"
             case .showTopPositionedPanel: return "Show Top Positioned Panel"
             case .showAdaptivePanel: return "Show Adaptive Panel"
-            case .showAdaptivePanelWithCustomGuide: return "Show Adaptive Panel(Custom Layout Guide)"
+            case .showAdaptivePanelWithCustomGuide: return "Show Adaptive Panel (Custom Layout Guide)"
             }
         }
 
@@ -1369,7 +1369,6 @@ class ImageViewController: UIViewController {
             view.addLayoutGuide(guide)
 
             NSLayoutConstraint.activate([
-
                 scrollView.heightAnchor.constraint(equalTo: scrollView.contentLayoutGuide.heightAnchor),
 
                 guide.topAnchor.constraint(equalTo: stackView.topAnchor),
