@@ -21,6 +21,9 @@ extension ViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+
+        deactivate(searchBar: searchVC.searchBar)
+
         // Show a detail panel
         switch indexPath.row {
         case 0:
