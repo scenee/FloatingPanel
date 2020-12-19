@@ -317,8 +317,8 @@ public class SurfaceView: UIView {
 
         containerView.backgroundColor = appearance.backgroundColor
 
-        updateShadow()
         updateCornerRadius()
+        updateShadow()
         updateBorder()
 
         grabberHandle.layer.cornerRadius = grabberHandleSize.height / 2
