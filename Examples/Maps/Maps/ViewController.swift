@@ -83,13 +83,13 @@ class ViewController: UIViewController {
     func layoutPanelForPhone() {
         fpc.track(scrollView: searchVC.tableView) // Only track the tabvle view on iPhone
         fpc.addPanel(toParent: self, animated: true)
-        fpc.setApearanceForPhone()
-        detailFpc.setApearanceForPhone()
+        fpc.setAppearanceForPhone()
+        detailFpc.setAppearanceForPhone()
     }
 }
 
 extension FloatingPanelController {
-    func setApearanceForPhone() {
+    func setAppearanceForPhone() {
         let appearance = SurfaceAppearance()
         appearance.cornerRadius = 8.0
         appearance.backgroundColor = .clear
