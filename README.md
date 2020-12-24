@@ -35,6 +35,7 @@ The new interface displays the related contents and utilities in parallel as a u
         - [Support your landscape layout](#support-your-landscape-layout)
         - [Use the intrinsic size of a content in your panel layout](#use-the-intrinsic-size-of-a-content-in-your-panel-layout)
         - [Specify an anchor for each state by an inset of the `FloatingPanelController.view` frame](#specify-an-anchor-for-each-state-by-an-inset-of-the-floatingpanelcontrollerview-frame)
+        - [Change the backdrop alpha](#change-the-backdrop-alpha)
     - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
         - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
         - [Activate the rubber-band effect on panel edges](#activate-the-rubber-band-effect-on-panel-edges)
@@ -369,6 +370,23 @@ class MyFullScreenLayout: FloatingPanelLayout {
 ```
 
 :pencil2: `FloatingPanelFullScreenLayout` is deprecated on v1.
+
+#### Change the backdrop alpha
+
+You can change the backdrop alpha by `FloatingPanelLayout.backdropAlpha(for:)` for each state(`.full`, `.half` and `.tip`).
+
+For instance, if a panel seems like the backdrop view isn't there on `.half` state, it's time to implement the backdropAlpha API and return a value for the state as below.
+
+```swift
+class MyPanelLayout: FloatingPanelLayout {
+    func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
+        switch state {
+        case .full, .half: return 0.3
+        default: return 0.0
+        }
+    }
+}
+```
 
 ### Customize the behavior with `FloatingPanelBehavior` protocol
 
