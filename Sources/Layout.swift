@@ -60,7 +60,7 @@ struct LayoutSegment {
 }
 
 class LayoutAdapter {
-    weak var vc: FloatingPanelController!
+    private unowned var vc: FloatingPanelController
     private let defaultLayout = FloatingPanelBottomLayout()
 
     fileprivate var layout: FloatingPanelLayout {
@@ -76,7 +76,7 @@ class LayoutAdapter {
         return vc.backdropView
     }
     private var safeAreaInsets: UIEdgeInsets {
-        return vc?.fp_safeAreaInsets ?? .zero
+        return vc.fp_safeAreaInsets
     }
 
     private var initialConst: CGFloat = 0.0
@@ -646,7 +646,6 @@ class LayoutAdapter {
     // The method is separated from prepareLayout(to:) for the rotation support
     // It must be called in FloatingPanelController.traitCollectionDidChange(_:)
     func updateStaticConstraint() {
-        guard let vc = vc else { return }
         NSLayoutConstraint.deactivate(constraint: staticConstraint)
         staticConstraint = nil
 
