@@ -91,6 +91,11 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         backdropView.addGestureRecognizer(tapGesture)
     }
 
+    deinit {
+        // Release `NumericSpringAnimator.displayLink` from the run loop.
+        self.moveAnimator?.stopAnimation(false)
+    }
+
     func move(to: FloatingPanelState, animated: Bool, completion: (() -> Void)? = nil) {
         move(from: state, to: to, animated: animated, completion: completion)
     }
@@ -824,12 +829,14 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             decelerationRate: behaviorAdapter.springDecelerationRate,
             responseTime: behaviorAdapter.springResponseTime,
             update: { [weak self] data in
-                guard let self = self else { return }
+                guard let self = self,
+                      let ownerVC = self.ownerVC // Ensure the owner vc is existing for `layoutAdapter.surfaceLocation`
+                else { return }
                 animationConstraint.constant = data.value
                 let current = self.value(of: self.layoutAdapter.surfaceLocation)
                 let translation = data.value - initialData.value
                 self.backdropView.alpha = self.getBackdropAlpha(at: current, with: translation)
-                self.ownerVC?.notifyDidMove()
+                ownerVC.notifyDidMove()
         },
             completion: { [weak self] in
                 guard let self = self else { return }
