@@ -121,7 +121,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             switch (from, to) {
             case (.hidden, let to):
                 animator = vc.animatorForPresenting(to: to)
-            case (let from, .hidden):
+            case (_, .hidden):
                 let animationVector = CGVector(dx: abs(removalVector.dx), dy: abs(removalVector.dy))
                 animator = vc.animatorForDismissing(with: animationVector)
             default:
@@ -140,7 +140,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 && layoutAdapter.isIntrinsicAnchor(state: to)
 
             animator.addAnimations { [weak self] in
-                guard let `self` = self else { return }
+                guard let self = self else { return }
 
                 self.state = to
                 self.updateLayout(to: to)
@@ -151,7 +151,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 }
             }
             animator.addCompletion { [weak self] _ in
-                guard let `self` = self else { return }
+                guard let self = self else { return }
+
                 self.animator = nil
                 updateScrollView()
                 self.ownerVC?.notifyDidMove()
@@ -649,7 +650,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         stopScrollDeceleration = (0 > layoutAdapter.offsetFromEdgeMost + (1.0 / surfaceView.fp_displayScale)) // Projecting the dragging to the scroll dragging or not
         if stopScrollDeceleration {
             DispatchQueue.main.async { [weak self] in
-                guard let `self` = self else { return }
+                guard let self = self else { return }
+
                 self.stopScrolling(at: self.initialScrollOffset)
             }
         }

@@ -498,7 +498,7 @@ open class FloatingPanelController: UIViewController {
             ])
 
         show(animated: animated) { [weak self] in
-            guard let `self` = self else { return }
+            guard let self = self else { return }
             self.didMove(toParent: parent)
         }
     }
@@ -517,7 +517,7 @@ open class FloatingPanelController: UIViewController {
         delegate?.floatingPanelWillRemove?(self)
 
         hide(animated: animated) { [weak self] in
-            guard let `self` = self else { return }
+            guard let self = self else { return }
 
             self.willMove(toParent: nil)
 
