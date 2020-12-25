@@ -205,7 +205,7 @@ extension UIEdgeInsets {
 extension UIBezierPath {
     static func path(roundedRect rect: CGRect, appearance: SurfaceAppearance) -> UIBezierPath {
         let cornerRadius = appearance.cornerRadius;
-        if #available(iOSApplicationExtension 13.0, *) {
+        if #available(iOS 13.0, *) {
             if appearance.cornerCurve == .circular {
                 let path = UIBezierPath()
                 let start = CGPoint(x: rect.minX + cornerRadius, y: rect.minY)
