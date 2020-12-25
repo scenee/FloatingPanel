@@ -125,7 +125,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 let animationVector = CGVector(dx: abs(removalVector.dx), dy: abs(removalVector.dy))
                 animator = vc.animatorForDismissing(with: animationVector)
             default:
-                move(to: to, with: 0) {
+                move(to: to, with: 0) { [weak self] in
+                    guard let self = self else { return }
+
                     self.moveAnimator = nil
                     updateScrollView()
                     completion?()
