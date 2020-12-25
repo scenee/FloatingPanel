@@ -342,10 +342,9 @@ public class SurfaceView: UIView {
             shadowLayer.frame = layer.bounds
 
             let spread = shadow.spread
-            let shadowPath = UIBezierPath(roundedRect: containerView.frame.insetBy(dx: -spread,
-                                                                                   dy: -spread),
-                                          byRoundingCorners: [.allCorners],
-                                          cornerRadii: CGSize(width: appearance.cornerRadius, height: 0))
+            let shadowRect = containerView.frame.insetBy(dx: -spread, dy: -spread)
+            let shadowPath = UIBezierPath.path(roundedRect: shadowRect,
+                                               appearance: appearance)
             shadowLayer.shadowPath = shadowPath.cgPath
             shadowLayer.shadowColor = shadow.color.cgColor
             shadowLayer.shadowOffset = shadow.offset
@@ -354,16 +353,16 @@ public class SurfaceView: UIView {
             shadowLayer.shadowOpacity = shadow.opacity
 
             let mask = CAShapeLayer()
-            let path = UIBezierPath(roundedRect: containerView.frame,
-                                    byRoundingCorners: [.allCorners],
-                                    cornerRadii: CGSize(width: appearance.cornerRadius, height: 0))
+            let path = UIBezierPath.path(roundedRect: containerView.frame,
+                                         appearance: appearance)
             let size = window?.bounds.size ?? CGSize(width: 1000.0, height: 1000.0)
             path.append(UIBezierPath(rect: layer.bounds.insetBy(dx: -size.width,
                                                                 dy: -size.height)))
             mask.fillRule = .evenOdd
             mask.path = path.cgPath
             if #available(iOS 13.0, *) {
-                mask.cornerCurve = containerView.layer.cornerCurve
+                containerView.layer.cornerCurve = appearance.cornerCurve
+                mask.cornerCurve = appearance.cornerCurve
             }
             shadowLayer.mask = mask
         }
@@ -401,10 +400,6 @@ public class SurfaceView: UIView {
         } else {
             // Can't use `containerView.layer.mask` because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
             // Instead, a user should display rounding corners appropriately.
-        }
-
-        if #available(iOS 13, *) {
-            containerView.layer.cornerCurve = appearance.cornerCurve
         }
     }
 
