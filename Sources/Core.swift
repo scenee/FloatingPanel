@@ -713,7 +713,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         if let result = vc.delegate?.floatingPanel?(vc, shouldRemoveAt: vc.surfaceLocation, with: velocityVector) {
             return result
         }
-        let threshold = CGFloat(5.5)
+        let threshold = vc.behavior.removalInteractionVelocityThreshold ?? CGFloat(5.5)
         switch layoutAdapter.position {
         case .top:
             return (velocityVector.dy <= -threshold)
