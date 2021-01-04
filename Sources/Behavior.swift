@@ -100,6 +100,10 @@ class BehaviorAdapter {
     var momentumProjectionRate: CGFloat {
         behavior.momentumProjectionRate ?? FloatingPanelDefaultBehavior().momentumProjectionRate
     }
+    
+    var removalInteractionVelocityThreshold: CGFloat {
+        behavior.removalInteractionVelocityThreshold ?? FloatingPanelDefaultBehavior().removalInteractionVelocityThreshold
+    }
 
     func redirectionalProgress(from: FloatingPanelState, to: FloatingPanelState) -> CGFloat {
         behavior.redirectionalProgress?(vc, from: from, to: to) ?? FloatingPanelDefaultBehavior().redirectionalProgress(vc,from: from, to: to)
