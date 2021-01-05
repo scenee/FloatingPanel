@@ -50,6 +50,12 @@ public class SurfaceAppearance: NSObject {
     /// On iOS 10, they are not automatically masked because of a UIVisualEffectView issue. See https://forums.developer.apple.com/thread/50854
     public var cornerRadius: CGFloat = 0.0
 
+    /// Defines the curve used for rendering the rounded corners of the layer.
+    ///
+    /// Defaults to `.circular`.
+    @available(iOS 13.0, *)
+    public lazy var cornerCurve: CALayerCornerCurve = .circular
+
     /// An array of shadows used to create drop shadows underneath a surface view.
     public var shadows: [Shadow] = [Shadow()]
 
@@ -311,8 +317,8 @@ public class SurfaceView: UIView {
 
         containerView.backgroundColor = appearance.backgroundColor
 
-        updateShadow()
         updateCornerRadius()
+        updateShadow()
         updateBorder()
 
         grabberHandle.layer.cornerRadius = grabberHandleSize.height / 2
@@ -336,10 +342,9 @@ public class SurfaceView: UIView {
             shadowLayer.frame = layer.bounds
 
             let spread = shadow.spread
-            let shadowPath = UIBezierPath(roundedRect: containerView.frame.insetBy(dx: -spread,
-                                                                                   dy: -spread),
-                                          byRoundingCorners: [.allCorners],
-                                          cornerRadii: CGSize(width: appearance.cornerRadius, height: 0))
+            let shadowRect = containerView.frame.insetBy(dx: -spread, dy: -spread)
+            let shadowPath = UIBezierPath.path(roundedRect: shadowRect,
+                                               appearance: appearance)
             shadowLayer.shadowPath = shadowPath.cgPath
             shadowLayer.shadowColor = shadow.color.cgColor
             shadowLayer.shadowOffset = shadow.offset
@@ -348,16 +353,16 @@ public class SurfaceView: UIView {
             shadowLayer.shadowOpacity = shadow.opacity
 
             let mask = CAShapeLayer()
-            let path = UIBezierPath(roundedRect: containerView.frame,
-                                    byRoundingCorners: [.allCorners],
-                                    cornerRadii: CGSize(width: appearance.cornerRadius, height: 0))
+            let path = UIBezierPath.path(roundedRect: containerView.frame,
+                                         appearance: appearance)
             let size = window?.bounds.size ?? CGSize(width: 1000.0, height: 1000.0)
             path.append(UIBezierPath(rect: layer.bounds.insetBy(dx: -size.width,
                                                                 dy: -size.height)))
             mask.fillRule = .evenOdd
             mask.path = path.cgPath
             if #available(iOS 13.0, *) {
-                mask.cornerCurve = containerView.layer.cornerCurve
+                containerView.layer.cornerCurve = appearance.cornerCurve
+                mask.cornerCurve = appearance.cornerCurve
             }
             shadowLayer.mask = mask
         }

@@ -201,3 +201,70 @@ extension UIEdgeInsets {
         return self.top + self.bottom
     }
 }
+
+extension UIBezierPath {
+    static func path(roundedRect rect: CGRect, appearance: SurfaceAppearance) -> UIBezierPath {
+        let cornerRadius = appearance.cornerRadius;
+        if #available(iOS 13.0, *) {
+            if appearance.cornerCurve == .circular {
+                let path = UIBezierPath()
+                let start = CGPoint(x: rect.minX + cornerRadius, y: rect.minY)
+
+                path.move(to: start)
+
+                path.addLine(to: CGPoint(x: rect.maxX - cornerRadius, y: rect.minY))
+                if cornerRadius > 0 {
+                    path .addArc(withCenter: CGPoint(x: rect.maxX - cornerRadius,
+                                                     y: rect.minY + cornerRadius),
+                                 radius: cornerRadius,
+                                 startAngle: -0.5 * .pi,
+                                 endAngle: 0,
+                                 clockwise: true)
+                }
+
+                path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - cornerRadius))
+
+                if cornerRadius > 0 {
+                    path.addArc(withCenter: CGPoint(x: rect.maxX - cornerRadius,
+                                                    y: rect.maxY - cornerRadius),
+                                radius: cornerRadius,
+                                startAngle: 0,
+                                endAngle: .pi * 0.5,
+                                clockwise: true)
+                }
+
+                path.addLine(to: CGPoint(x: rect.minX + cornerRadius, y: rect.maxY))
+
+                if cornerRadius > 0 {
+                    path.addArc(withCenter: CGPoint(x: rect.minX + cornerRadius,
+                                                    y: rect.maxY - cornerRadius),
+                                radius: cornerRadius,
+                                startAngle: .pi * 0.5,
+                                endAngle: .pi,
+                                clockwise: true)
+                }
+
+                path.addLine(to: CGPoint(x: rect.minX, y: rect.minY + cornerRadius))
+
+                if cornerRadius > 0 {
+                    path.addArc(withCenter: CGPoint(x: rect.minX + cornerRadius,
+                                                    y: rect.minY + cornerRadius),
+                                radius: cornerRadius,
+                                startAngle: .pi,
+                                endAngle: .pi * 1.5,
+                                clockwise: true)
+                }
+
+                path.addLine(to: start)
+
+                path.close()
+
+                return path
+            }
+        }
+        return UIBezierPath(roundedRect: rect,
+                            byRoundingCorners: [.allCorners],
+                            cornerRadii: CGSize(width: cornerRadius,
+                                                height: cornerRadius))
+    }
+}
