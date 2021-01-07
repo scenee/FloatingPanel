@@ -672,7 +672,7 @@ extension FloatingPanelController {
 }
 
 extension FloatingPanelController {
-    private static let dismissSwizzling: Any? = {
+    private static let dismissSwizzling: Void = {
         let aClass: AnyClass! = UIViewController.self //object_getClass(vc)
         if let imp = class_getMethodImplementation(aClass, #selector(dismiss(animated:completion:))),
             let originalAltMethod = class_getInstanceMethod(aClass, #selector(fp_original_dismiss(animated:completion:))) {
@@ -681,10 +681,8 @@ extension FloatingPanelController {
         let originalMethod = class_getInstanceMethod(aClass, #selector(dismiss(animated:completion:)))
         let swizzledMethod = class_getInstanceMethod(aClass, #selector(fp_dismiss(animated:completion:)))
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
-            // switch implementation..
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
-        return nil
     }()
 }
 
