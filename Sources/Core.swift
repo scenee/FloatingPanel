@@ -566,6 +566,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         if scrollView.isDecelerating {
             return true
         }
+        if let tableView = (scrollView as? UITableView), tableView.isEditing {
+            return true
+        }
 
         return false
     }
