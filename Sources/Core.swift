@@ -91,6 +91,11 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         backdropView.addGestureRecognizer(tapGesture)
     }
 
+    deinit {
+        // Release `NumericSpringAnimator.displayLink` from the run loop.
+        self.moveAnimator?.stopAnimation(false)
+    }
+
     func move(to: FloatingPanelState, animated: Bool, completion: (() -> Void)? = nil) {
         move(from: state, to: to, animated: animated, completion: completion)
     }
@@ -121,11 +126,13 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             switch (from, to) {
             case (.hidden, let to):
                 animator = vc.animatorForPresenting(to: to)
-            case (let from, .hidden):
+            case (_, .hidden):
                 let animationVector = CGVector(dx: abs(removalVector.dx), dy: abs(removalVector.dy))
                 animator = vc.animatorForDismissing(with: animationVector)
             default:
-                move(to: to, with: 0) {
+                move(to: to, with: 0) { [weak self] in
+                    guard let self = self else { return }
+
                     self.moveAnimator = nil
                     updateScrollView()
                     completion?()
@@ -138,7 +145,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 && layoutAdapter.isIntrinsicAnchor(state: to)
 
             animator.addAnimations { [weak self] in
-                guard let `self` = self else { return }
+                guard let self = self else { return }
 
                 self.state = to
                 self.updateLayout(to: to)
@@ -149,7 +156,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 }
             }
             animator.addCompletion { [weak self] _ in
-                guard let `self` = self else { return }
+                guard let self = self else { return }
+
                 self.animator = nil
                 updateScrollView()
                 self.ownerVC?.notifyDidMove()
@@ -652,7 +660,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         stopScrollDeceleration = (0 > layoutAdapter.offsetFromEdgeMost + (1.0 / surfaceView.fp_displayScale)) // Projecting the dragging to the scroll dragging or not
         if stopScrollDeceleration {
             DispatchQueue.main.async { [weak self] in
-                guard let `self` = self else { return }
+                guard let self = self else { return }
+
                 self.stopScrolling(at: self.initialScrollOffset)
             }
         }
@@ -825,12 +834,14 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             decelerationRate: behaviorAdapter.springDecelerationRate,
             responseTime: behaviorAdapter.springResponseTime,
             update: { [weak self] data in
-                guard let self = self else { return }
+                guard let self = self,
+                      let ownerVC = self.ownerVC // Ensure the owner vc is existing for `layoutAdapter.surfaceLocation`
+                else { return }
                 animationConstraint.constant = data.value
                 let current = self.value(of: self.layoutAdapter.surfaceLocation)
                 let translation = data.value - initialData.value
                 self.backdropView.alpha = self.getBackdropAlpha(at: current, with: translation)
-                self.ownerVC?.notifyDidMove()
+                ownerVC.notifyDidMove()
         },
             completion: { [weak self] in
                 guard let self = self else { return }
