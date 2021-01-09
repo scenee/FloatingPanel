@@ -498,7 +498,7 @@ open class FloatingPanelController: UIViewController {
             ])
 
         show(animated: animated) { [weak self] in
-            guard let `self` = self else { return }
+            guard let self = self else { return }
             self.didMove(toParent: parent)
         }
     }
@@ -517,7 +517,7 @@ open class FloatingPanelController: UIViewController {
         delegate?.floatingPanelWillRemove?(self)
 
         hide(animated: animated) { [weak self] in
-            guard let `self` = self else { return }
+            guard let self = self else { return }
 
             self.willMove(toParent: nil)
 
@@ -537,7 +537,6 @@ open class FloatingPanelController: UIViewController {
     ///     - completion: The block to execute after the view controller has finished moving. This block has no return value and takes no parameters. You may specify nil for this parameter.
     @objc(moveToState:animated:completion:)
     public func move(to: FloatingPanelState, animated: Bool, completion: (() -> Void)? = nil) {
-        assert(floatingPanel.layoutAdapter.vc != nil, "Use show(animated:completion)")
         floatingPanel.move(to: to, animated: animated, completion: completion)
     }
 
