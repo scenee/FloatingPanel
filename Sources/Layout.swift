@@ -503,7 +503,7 @@ class LayoutAdapter {
             constraint = surfaceView.leftAnchor.constraint(equalTo: vc.view.leftAnchor, constant: initialConst)
         }
 
-        constraint.priority = .defaultHigh
+        constraint.priority = .required
         constraint.identifier = "FloatingPanel-interaction"
 
         NSLayoutConstraint.activate([constraint])
