@@ -3,6 +3,7 @@
 import Foundation
 import os.log
 
+// Must be a variable to use `hook` property in testing
 var log = {
     return Logger()
 }()
