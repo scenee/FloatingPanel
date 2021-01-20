@@ -847,7 +847,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 ownerVC.notifyDidMove()
         },
             completion: { [weak self] in
-                guard let self = self else { return }
+                guard let self = self,
+                      self.ownerVC != nil else { return }
                 self.layoutAdapter.activateLayout(for: targetPosition, forceLayout: true)
                 completion()
         })
