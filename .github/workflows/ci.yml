@@ -1,0 +1,81 @@
+name: ci
+
+on: 
+  push:
+    branches: 
+      - master
+  pull_request:
+    branches: 
+      - '*'
+
+jobs:
+  build:
+    runs-on: macOS-10.15
+    steps:
+    - uses: actions/checkout@v1
+    - name: "Swift 5.1"
+      run: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.1 clean build
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_11.3.1.app/Contents/Developer
+    - name: "Swift 5.2"
+      run: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.2 clean build
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_11.7.app/Contents/Developer
+    - name: "Swift 5.3"
+      run: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.3 clean build
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
+
+  testing:
+    runs-on: macOS-10.15
+    steps:
+    - uses: actions/checkout@v1
+    - name: "Testing in iOS 13.7"
+      run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=13.7,name=iPhone 11 Pro'
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_11.7.app/Contents/Developer
+    - name: "Testing in iOS 14.3"
+      run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=14.3,name=iPhone 12 Pro'
+      env:
+        DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
+
+  example:
+    runs-on: macOS-10.15
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
+    steps:
+    - uses: actions/checkout@v1
+    - name: "Build Maps"
+      run: xcodebuild -workspace FloatingPanel.xcworkspace -scheme Maps -sdk iphonesimulator clean build
+    - name: "Build Stocks"
+      run: xcodebuild -workspace FloatingPanel.xcworkspace -scheme Stocks -sdk iphonesimulator clean build
+    - name: "Build Samples"
+      run: xcodebuild -workspace FloatingPanel.xcworkspace -scheme Samples -sdk iphonesimulator clean build
+
+  swiftpm:
+    runs-on: macOS-10.15
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
+    steps:
+    - uses: actions/checkout@v1
+    - name: "Swift Package build"
+      run: swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk iphonesimulator --show-sdk-path`" -Xswiftc "-target" -Xswiftc "x86_64-apple-ios14.3-simulator"
+
+  carthage:
+    runs-on: macOS-10.15
+    env:
+      # Carthage doesn't fix issues on Xcode 12: https://github.com/Carthage/Carthage/releases/tag/0.36.0
+      DEVELOPER_DIR: /Applications/Xcode_11.7.app/Contents/Developer
+    steps:
+    - uses: actions/checkout@v1
+    - name: "Carthage build"
+      run: carthage build --no-skip-current
+
+  cocoapods:
+    runs-on: macOS-10.15
+    steps:
+    - uses: actions/checkout@v1
+    - name: "CocoaPods: pod lib lint"
+      run: pod lib lint --allow-warnings
+    - name: "CocoaPods: pod spec lint"
+      run: pod spec lint --allow-warnings

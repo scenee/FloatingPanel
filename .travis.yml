@@ -8,18 +8,6 @@ env:
   - LC_ALL=en_US.UTF-8
 jobs:
   include:
-  - stage: "Builds"
-    script: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.1 SUPPORTS_MACCATALYST=NO clean build
-    # SUPPORTS_MACCATALYST=NO because Xcode 11 runs on macOS 10.14 in Travis CI
-    osx_image: xcode11.3
-    name: "Swift 5.1"
-  - script: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.2 clean build
-    osx_image: xcode11.6
-    name: "Swift 5.2"
-  - script: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.3 clean build
-    osx_image: xcode12
-    name: "Swift 5.3"
-
   - stage: "Tests"
     script: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=10.3.1,name=iPhone SE (1st generation)'
     osx_image: xcode11.6
@@ -30,45 +18,3 @@ jobs:
   - script: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=12.4,name=iPhone X'
     osx_image: xcode11.6
     name: "iPhone X (iOS 12.4)"
-  - script: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=13.6,name=iPhone 11'
-    osx_image: xcode11.6
-    name: "iPhone X (iOS 13.6)"
-
-  - stage: "Build examples"
-    osx_image: xcode11.6
-    script: xcodebuild -workspace FloatingPanel.xcworkspace -scheme Maps -sdk iphonesimulator clean build
-    name: "Maps"
-  - script: xcodebuild -workspace FloatingPanel.xcworkspace -scheme Stocks -sdk iphonesimulator clean build
-    osx_image: xcode11.6
-    name: "Stocks"
-  - script: xcodebuild -workspace FloatingPanel.xcworkspace -scheme Samples -sdk iphonesimulator clean build
-    osx_image: xcode11.6
-    name: "Samples"
-  - script: xcodebuild -workspace FloatingPanel.xcworkspace -scheme SamplesObjC -sdk iphonesimulator clean build
-    osx_image: xcode11.6
-    name: "SamplesObjC"
-
-  - stage: "Swift Package Manager"
-    script: swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk iphoneos --show-sdk-path`" -Xswiftc "-target" -Xswiftc "arm64-apple-ios13.0"
-    osx_image: xcode11.6
-    name: "iPhone OS"
-  - script: swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk iphonesimulator --show-sdk-path`" -Xswiftc "-target" -Xswiftc "x86_64-apple-ios13.0-simulator"
-    osx_image: xcode11.6
-    name: "iPhone Simulator"
-
-  - stage: "Carthage"
-    # Carthage doesn't fix the issue with Xcode 12: https://github.com/Carthage/Carthage/releases/tag/0.36.0
-    osx_image: xcode11.6
-    before_install:
-    - brew update
-    - brew outdated carthage || brew upgrade carthage
-    script:
-    - carthage build --no-skip-current
-
-  - stage: "CocoaPods"
-    osx_image: xcode11.6
-    before_install: 
-    - gem install cocoapods
-    script:
-    - pod spec lint --allow-warnings
-    - pod lib lint --allow-warnings
