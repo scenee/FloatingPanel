@@ -18,12 +18,3 @@ jobs:
   - script: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=12.4,name=iPhone X'
     osx_image: xcode11.6
     name: "iPhone X (iOS 12.4)"
-
-  - stage: "Carthage"
-    # Carthage doesn't fix the issue with Xcode 12: https://github.com/Carthage/Carthage/releases/tag/0.36.0
-    osx_image: xcode11.6
-    before_install:
-    - brew update
-    - brew outdated carthage || brew upgrade carthage
-    script:
-    - carthage build --no-skip-current

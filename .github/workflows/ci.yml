@@ -61,6 +61,16 @@ jobs:
     - name: "Swift Package build"
       run: swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk iphonesimulator --show-sdk-path`" -Xswiftc "-target" -Xswiftc "x86_64-apple-ios14.3-simulator"
 
+  carthage:
+    runs-on: macOS-10.15
+    env:
+      # Carthage doesn't fix issues on Xcode 12: https://github.com/Carthage/Carthage/releases/tag/0.36.0
+      DEVELOPER_DIR: /Applications/Xcode_11.7.app/Contents/Developer
+    steps:
+    - uses: actions/checkout@v1
+    - name: "Carthage build"
+      run: carthage build --no-skip-current
+
   cocoapods:
     runs-on: macOS-10.15
     steps:
