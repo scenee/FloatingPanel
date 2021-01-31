@@ -4,7 +4,7 @@ import Foundation
 
 /// An object that represents the display state of a panel in a screen.
 @objc
-public class FloatingPanelState: NSObject, NSCopying, RawRepresentable {
+open class FloatingPanelState: NSObject, NSCopying, RawRepresentable {
     public typealias RawValue = String
 
     required public init?(rawValue: RawValue) {
@@ -35,7 +35,6 @@ public class FloatingPanelState: NSObject, NSCopying, RawRepresentable {
     public override var debugDescription: String {
         return description
     }
-
     /// A panel state indicates the entire panel is shown.
     @objc(Full) public static let full: FloatingPanelState = FloatingPanelState(rawValue: "full", order: 1000)
     /// A panel state indicates the half of a panel is shown.
