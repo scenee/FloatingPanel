@@ -13,6 +13,7 @@ open class FloatingPanelState: NSObject, NSCopying, RawRepresentable {
         super.init()
     }
 
+    @objc
     public init(rawValue: RawValue, order: Int) {
         self.rawValue = rawValue
         self.order = order
@@ -33,8 +34,9 @@ open class FloatingPanelState: NSObject, NSCopying, RawRepresentable {
     }
 
     public override var debugDescription: String {
-        return description
+        return "<FloatingPanel.FloatingPanelState: \(Unmanaged.passUnretained(self).toOpaque())>"
     }
+
     /// A panel state indicates the entire panel is shown.
     @objc(Full) public static let full: FloatingPanelState = FloatingPanelState(rawValue: "full", order: 1000)
     /// A panel state indicates the half of a panel is shown.
