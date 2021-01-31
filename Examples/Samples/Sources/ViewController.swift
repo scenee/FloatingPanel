@@ -6,78 +6,7 @@ import FloatingPanel
 class SampleListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
 
-    enum Menu: Int, CaseIterable {
-        case trackingTableView
-        case trackingTextView
-        case showDetail
-        case showModal
-        case showPanelModal
-        case showMultiPanelModal
-        case showPanelInSheetModal
-        case showTabBar
-        case showPageView
-        case showPageContentView
-        case showNestedScrollView
-        case showRemovablePanel
-        case showIntrinsicView
-        case showContentInset
-        case showContainerMargins
-        case showNavigationController
-        case showTopPositionedPanel
-        case showAdaptivePanel
-        case showAdaptivePanelWithCustomGuide
-
-        var name: String {
-            switch self {
-            case .trackingTableView: return "Scroll tracking(TableView)"
-            case .trackingTextView: return "Scroll tracking(TextView)"
-            case .showDetail: return "Show Detail Panel"
-            case .showModal: return "Show Modal"
-            case .showPanelModal: return "Show Panel Modal"
-            case .showMultiPanelModal: return "Show Multi Panel Modal"
-            case .showPanelInSheetModal: return "Show Panel in Sheet Modal"
-            case .showTabBar: return "Show Tab Bar"
-            case .showPageView: return "Show Page View"
-            case .showPageContentView: return "Show Page Content View"
-            case .showNestedScrollView: return "Show Nested ScrollView"
-            case .showRemovablePanel: return "Show Removable Panel"
-            case .showIntrinsicView: return "Show Intrinsic View"
-            case .showContentInset: return "Show with ContentInset"
-            case .showContainerMargins: return "Show with ContainerMargins"
-            case .showNavigationController: return "Show Navigation Controller"
-            case .showTopPositionedPanel: return "Show Top Positioned Panel"
-            case .showAdaptivePanel: return "Show Adaptive Panel"
-            case .showAdaptivePanelWithCustomGuide: return "Show Adaptive Panel (Custom Layout Guide)"
-            }
-        }
-
-        var storyboardID: String? {
-            switch self {
-            case .trackingTableView: return nil
-            case .trackingTextView: return "ConsoleViewController"
-            case .showDetail: return "DetailViewController"
-            case .showModal: return "ModalViewController"
-            case .showMultiPanelModal: return nil
-            case .showPanelInSheetModal: return nil
-            case .showPanelModal: return nil
-            case .showTabBar: return "TabBarViewController"
-            case .showPageView: return nil
-            case .showPageContentView: return nil
-            case .showNestedScrollView: return "NestedScrollViewController"
-            case .showRemovablePanel: return "DetailViewController"
-            case .showIntrinsicView: return "IntrinsicViewController"
-            case .showContentInset: return nil
-            case .showContainerMargins: return nil
-            case .showNavigationController: return "RootNavigationController"
-            case .showTopPositionedPanel: return nil
-            case .showAdaptivePanel,
-                 .showAdaptivePanelWithCustomGuide:
-                return "ImageViewController"
-            }
-        }
-    }
-
-    var currentMenu: Menu = .trackingTableView
+    var currentMenu: UseCases = .trackingTableView
 
     var mainPanelVC: FloatingPanelController!
     var detailPanelVC: FloatingPanelController!
@@ -254,19 +183,19 @@ extension SampleListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if #available(iOS 11.0, *) {
             if navigationController?.navigationBar.prefersLargeTitles == true {
-                return Menu.allCases.count + 30
+                return UseCases.allCases.count + 30
             } else {
-                return Menu.allCases.count
+                return UseCases.allCases.count
             }
         } else {
-            return Menu.allCases.count
+            return UseCases.allCases.count
         }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        if Menu.allCases.count > indexPath.row {
-            let menu = Menu.allCases[indexPath.row]
+        if UseCases.allCases.count > indexPath.row {
+            let menu = UseCases.allCases[indexPath.row]
             cell.textLabel?.text = menu.name
         } else {
             cell.textLabel?.text = "\(indexPath.row) row"
@@ -277,8 +206,8 @@ extension SampleListViewController: UITableViewDataSource {
 
 extension SampleListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard Menu.allCases.count > indexPath.row else { return }
-        let menu = Menu.allCases[indexPath.row]
+        guard UseCases.allCases.count > indexPath.row else { return }
+        let menu = UseCases.allCases[indexPath.row]
         let contentVC: UIViewController = {
             guard let storyboardID = menu.storyboardID else { return DebugTableViewController() }
             guard let vc = self.storyboard?.instantiateViewController(withIdentifier: storyboardID) else { fatalError() }
