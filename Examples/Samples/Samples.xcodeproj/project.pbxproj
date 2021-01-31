@@ -15,6 +15,7 @@
 		545DBA0321511E6400CA77B8 /* SampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DBA0221511E6400CA77B8 /* SampleTests.swift */; };
 		545DBA0E21511E6400CA77B8 /* SampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DBA0D21511E6400CA77B8 /* SampleUITests.swift */; };
 		546341A125C6415100CA0596 /* UseCases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546341A025C6415100CA0596 /* UseCases.swift */; };
+		546341AC25C6426500CA0596 /* CustomState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546341AB25C6426500CA0596 /* CustomState.swift */; };
 		549D23CB233C7779008EF4D7 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23CA233C7779008EF4D7 /* FloatingPanel.framework */; };
 		549D23CC233C7779008EF4D7 /* FloatingPanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23CA233C7779008EF4D7 /* FloatingPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B51116216AFE5F0033A6F3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B51115216AFE5F0033A6F3 /* Extensions.swift */; };
@@ -67,6 +68,7 @@
 		545DBA0D21511E6400CA77B8 /* SampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleUITests.swift; sourceTree = "<group>"; };
 		545DBA0F21511E6400CA77B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		546341A025C6415100CA0596 /* UseCases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseCases.swift; sourceTree = "<group>"; };
+		546341AB25C6426500CA0596 /* CustomState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomState.swift; sourceTree = "<group>"; };
 		549D23CA233C7779008EF4D7 /* FloatingPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FloatingPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		54B51115216AFE5F0033A6F3 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		54CDC5D7215BBE23007D205C /* UIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIComponents.swift; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				546341A025C6415100CA0596 /* UseCases.swift */,
+				546341AB25C6426500CA0596 /* CustomState.swift */,
 			);
 			path = UseCases;
 			sourceTree = "<group>";
@@ -316,6 +319,7 @@
 			files = (
 				54CDC5D8215BBE23007D205C /* UIComponents.swift in Sources */,
 				54B51116216AFE5F0033A6F3 /* Extensions.swift in Sources */,
+				546341AC25C6426500CA0596 /* CustomState.swift in Sources */,
 				546341A125C6415100CA0596 /* UseCases.swift in Sources */,
 				545DB9F021511E6300CA77B8 /* ViewController.swift in Sources */,
 				545DB9EE21511E6300CA77B8 /* AppDelegate.swift in Sources */,

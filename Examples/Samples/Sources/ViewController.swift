@@ -379,6 +379,8 @@ extension SampleListViewController: FloatingPanelControllerDelegate {
             fallthrough
         case .showContentInset:
             return FloatingPanelBottomLayout()
+        case .showCustomStatePanel:
+            return FloatingPanelLayoutWithCustomState()
         default:
             return (newCollection.verticalSizeClass == .compact) ? FloatingPanelBottomLayout() : self
         }

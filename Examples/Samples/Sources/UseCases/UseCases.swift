@@ -1,10 +1,4 @@
-//
-//  UseCases.swift
-//  Samples
-//
-//  Created by Shin Yamamoto on 2021/01/31.
-//  Copyright © 2021 scenee. All rights reserved.
-//
+// Copyright 2018-Present Shin Yamamoto. All rights reserved. MIT license.
 
 import Foundation
 
@@ -51,6 +45,7 @@ enum UseCases: Int, CaseIterable {
         case .showTopPositionedPanel: return "Show Top Positioned Panel"
         case .showAdaptivePanel: return "Show Adaptive Panel"
         case .showAdaptivePanelWithCustomGuide: return "Show Adaptive Panel (Custom Layout Guide)"
+        case .showCustomStatePanel: return "Show Panel with Custom state"
         }
     }
 
@@ -76,6 +71,8 @@ enum UseCases: Int, CaseIterable {
         case .showAdaptivePanel,
              .showAdaptivePanelWithCustomGuide:
             return "ImageViewController"
+        case .showCustomStatePanel:
+            return nil
         }
     }
 }
