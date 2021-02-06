@@ -32,7 +32,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     let panGestureRecognizer: FloatingPanelPanGestureRecognizer
     var isRemovalInteractionEnabled: Bool = false
 
-    fileprivate var animator: UIViewPropertyAnimator?
+    fileprivate var isSuspended: Bool = false // Prevent a memory leak in the modal transition
+    fileprivate var transitionAnimator: UIViewPropertyAnimator?
     fileprivate var moveAnimator: NumericSpringAnimator?
 
     private var initialSurfaceLocation: CGPoint = .zero
@@ -158,12 +159,15 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             animator.addCompletion { [weak self] _ in
                 guard let self = self else { return }
 
-                self.animator = nil
+                self.transitionAnimator = nil
                 updateScrollView()
                 self.ownerVC?.notifyDidMove()
                 completion?()
             }
-            self.animator = animator
+            self.transitionAnimator = animator
+            if isSuspended {
+                return
+            }
             animator.startAnimation()
         } else {
             self.state = to
@@ -376,7 +380,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 if interactionInProgress {
                     lockScrollView()
                 } else {
-                    if state == layoutAdapter.edgeMostState, self.animator == nil {
+                    if state == layoutAdapter.edgeMostState, self.transitionAnimator == nil {
                         switch layoutAdapter.position {
                         case .top, .left:
                             if offsetDiff < 0 && velocity > 0 {
@@ -496,7 +500,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             animator.stopAnimation(true)
             endAttraction(false)
         }
-        if let animator = self.animator {
+        if let animator = self.transitionAnimator {
             guard 0 >= layoutAdapter.offsetFromEdgeMost else { return }
             log.debug("a panel animation(interruptible: \(animator.isInterruptible)) interrupted!!!")
             if animator.isInterruptible {
@@ -1038,7 +1042,7 @@ public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
     public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
         super.touchesBegan(touches, with: event)
         initialLocation = touches.first?.location(in: view) ?? .zero
-        if floatingPanel?.animator != nil || floatingPanel?.moveAnimator != nil {
+        if floatingPanel?.transitionAnimator != nil || floatingPanel?.moveAnimator != nil {
             self.state = .began
         }
     }
@@ -1197,5 +1201,14 @@ private class NumericSpringAnimator: NSObject {
         let det = f + h2 * o2
         x = (f * x + h * v + h2 * o2 * xt) / det
         v = (v + h * o2 * (xt - x)) / det
+    }
+}
+
+extension FloatingPanelController {
+    func suspendTransitionAnimator(_ suspended: Bool) {
+        self.floatingPanel.isSuspended = suspended
+    }
+    var transitionAnimator: UIViewPropertyAnimator? {
+        return self.floatingPanel.transitionAnimator
     }
 }
