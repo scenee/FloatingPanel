@@ -710,14 +710,14 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
         // Workaround: Disable a tracking scroll to prevent bouncing a scroll content in a panel animating
         let isScrollEnabled = scrollView?.isScrollEnabled
-        if let scrollView = scrollView, targetPosition != .full {
+        if let scrollView = scrollView, targetPosition != layoutAdapter.edgeMostState {
             scrollView.isScrollEnabled = false
         }
 
         startAttraction(to: targetPosition, with: velocity)
 
         // Workaround: Reset `self.scrollView.isScrollEnabled`
-        if let scrollView = scrollView, targetPosition != .full,
+        if let scrollView = scrollView, targetPosition != layoutAdapter.edgeMostState,
             let isScrollEnabled = isScrollEnabled {
             scrollView.isScrollEnabled = isScrollEnabled
         }
