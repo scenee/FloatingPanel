@@ -14,9 +14,11 @@
 		545DB9F821511E6400CA77B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 545DB9F621511E6400CA77B8 /* LaunchScreen.storyboard */; };
 		545DBA0321511E6400CA77B8 /* SampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DBA0221511E6400CA77B8 /* SampleTests.swift */; };
 		545DBA0E21511E6400CA77B8 /* SampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DBA0D21511E6400CA77B8 /* SampleUITests.swift */; };
+		546341A125C6415100CA0596 /* UseCases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546341A025C6415100CA0596 /* UseCases.swift */; };
+		546341AC25C6426500CA0596 /* CustomState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546341AB25C6426500CA0596 /* CustomState.swift */; };
 		549D23CB233C7779008EF4D7 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23CA233C7779008EF4D7 /* FloatingPanel.framework */; };
 		549D23CC233C7779008EF4D7 /* FloatingPanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23CA233C7779008EF4D7 /* FloatingPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		54B51116216AFE5F0033A6F3 /* UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B51115216AFE5F0033A6F3 /* UIExtensions.swift */; };
+		54B51116216AFE5F0033A6F3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B51115216AFE5F0033A6F3 /* Extensions.swift */; };
 		54CDC5D8215BBE23007D205C /* UIComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CDC5D7215BBE23007D205C /* UIComponents.swift */; };
 /* End PBXBuildFile section */
 
@@ -65,8 +67,10 @@
 		545DBA0921511E6400CA77B8 /* SamplesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SamplesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		545DBA0D21511E6400CA77B8 /* SampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleUITests.swift; sourceTree = "<group>"; };
 		545DBA0F21511E6400CA77B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		546341A025C6415100CA0596 /* UseCases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseCases.swift; sourceTree = "<group>"; };
+		546341AB25C6426500CA0596 /* CustomState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomState.swift; sourceTree = "<group>"; };
 		549D23CA233C7779008EF4D7 /* FloatingPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FloatingPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		54B51115216AFE5F0033A6F3 /* UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIExtensions.swift; sourceTree = "<group>"; };
+		54B51115216AFE5F0033A6F3 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		54CDC5D7215BBE23007D205C /* UIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIComponents.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -125,8 +129,9 @@
 				545DB9F121511E6300CA77B8 /* Main.storyboard */,
 				545DB9ED21511E6300CA77B8 /* AppDelegate.swift */,
 				545DB9EF21511E6300CA77B8 /* ViewController.swift */,
-				54B51115216AFE5F0033A6F3 /* UIExtensions.swift */,
+				54B51115216AFE5F0033A6F3 /* Extensions.swift */,
 				54CDC5D7215BBE23007D205C /* UIComponents.swift */,
+				546341AA25C6421000CA0596 /* UseCases */,
 				545DB9F921511E6400CA77B8 /* Info.plist */,
 			);
 			path = Sources;
@@ -148,6 +153,15 @@
 				545DBA0F21511E6400CA77B8 /* Info.plist */,
 			);
 			path = UITests;
+			sourceTree = "<group>";
+		};
+		546341AA25C6421000CA0596 /* UseCases */ = {
+			isa = PBXGroup;
+			children = (
+				546341A025C6415100CA0596 /* UseCases.swift */,
+				546341AB25C6426500CA0596 /* CustomState.swift */,
+			);
+			path = UseCases;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -304,7 +318,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				54CDC5D8215BBE23007D205C /* UIComponents.swift in Sources */,
-				54B51116216AFE5F0033A6F3 /* UIExtensions.swift in Sources */,
+				54B51116216AFE5F0033A6F3 /* Extensions.swift in Sources */,
+				546341AC25C6426500CA0596 /* CustomState.swift in Sources */,
+				546341A125C6415100CA0596 /* UseCases.swift in Sources */,
 				545DB9F021511E6300CA77B8 /* ViewController.swift in Sources */,
 				545DB9EE21511E6300CA77B8 /* AppDelegate.swift in Sources */,
 			);

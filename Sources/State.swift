@@ -4,7 +4,7 @@ import Foundation
 
 /// An object that represents the display state of a panel in a screen.
 @objc
-public class FloatingPanelState: NSObject, NSCopying, RawRepresentable {
+open class FloatingPanelState: NSObject, NSCopying, RawRepresentable {
     public typealias RawValue = String
 
     required public init?(rawValue: RawValue) {
@@ -13,6 +13,7 @@ public class FloatingPanelState: NSObject, NSCopying, RawRepresentable {
         super.init()
     }
 
+    @objc
     public init(rawValue: RawValue, order: Int) {
         self.rawValue = rawValue
         self.order = order
@@ -33,7 +34,7 @@ public class FloatingPanelState: NSObject, NSCopying, RawRepresentable {
     }
 
     public override var debugDescription: String {
-        return description
+        return "<FloatingPanel.FloatingPanelState: \(Unmanaged.passUnretained(self).toOpaque())>"
     }
 
     /// A panel state indicates the entire panel is shown.
