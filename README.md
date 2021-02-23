@@ -36,6 +36,7 @@ The new interface displays the related contents and utilities in parallel as a u
         - [Use the intrinsic size of a content in your panel layout](#use-the-intrinsic-size-of-a-content-in-your-panel-layout)
         - [Specify an anchor for each state by an inset of the `FloatingPanelController.view` frame](#specify-an-anchor-for-each-state-by-an-inset-of-the-floatingpanelcontrollerview-frame)
         - [Change the backdrop alpha](#change-the-backdrop-alpha)
+        - [Using custome panel states](#using-custome-panel-states)
     - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
         - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
         - [Activate the rubber-band effect on panel edges](#activate-the-rubber-band-effect-on-panel-edges)
@@ -72,7 +73,7 @@ The new interface displays the related contents and utilities in parallel as a u
 - [x] Multi panel support
 - [x] Modal presentation
 - [x] 4 positioning support(top, left, bottom, right)
-- [x] 1~3 magnetic anchors(full, half, tip)
+- [x] 1 or more magnetic anchors(full, half, tip and more)
 - [x] Layout support for all trait environments(i.e. Landscape orientation)
 - [x] Common UI elements: surface, backdrop and grabber handle
 - [x] Free from common issues of Auto Layout and gesture handling
@@ -384,6 +385,29 @@ class MyPanelLayout: FloatingPanelLayout {
         case .full, .half: return 0.3
         default: return 0.0
         }
+    }
+}
+```
+
+#### Using custome panel states
+
+You're able to define custom panel states and use them as the following example.
+
+```swift
+extension FloatingPanelState {
+    static let lastQuart: FloatingPanelState = FloatingPanelState(rawValue: "lastQuart", order: 750)
+    static let firstQuart: FloatingPanelState = FloatingPanelState(rawValue: "firstQuart", order: 250)
+}
+
+class FloatingPanelLayoutWithCustomState: FloatingPanelBottomLayout {
+    override var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
+        return [
+            .full: FloatingPanelLayoutAnchor(absoluteInset: 0.0, edge: .top, referenceGuide: .safeArea),
+            .lastQuart: FloatingPanelLayoutAnchor(fractionalInset: 0.75, edge: .bottom, referenceGuide: .safeArea),
+            .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
+            .firstQuart: FloatingPanelLayoutAnchor(fractionalInset: 0.25, edge: .bottom, referenceGuide: .safeArea),
+            .tip: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .bottom, referenceGuide: .safeArea),
+        ]
     }
 }
 ```
