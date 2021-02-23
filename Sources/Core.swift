@@ -115,7 +115,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         interruptAnimationIfNeeded()
 
         if animated {
-            func updateScrollView() {
+            let updateScrollView: () -> Void = { [weak self] in
+                guard let self = self else { return }
                 if self.state == self.layoutAdapter.edgeMostState, abs(self.layoutAdapter.offsetFromEdgeMost) <= 1.0 {
                     self.unlockScrollView()
                 } else {
