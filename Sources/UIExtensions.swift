@@ -2,15 +2,16 @@
 
 import UIKit
 
-internal func displayTrunc(_ v: CGFloat, by s: CGFloat) -> CGFloat {
-    let base = (1 / s)
-    let t = v.rounded(.down)
-    return t + ((v - t) / base).rounded(.toNearestOrAwayFromZero) * base
+extension CGFloat {
+    /// Returns this value rounded to an logical pixel value by a display scale
+    func rounded(by displayScale: CGFloat) -> CGFloat {
+        return (self * displayScale).rounded(.toNearestOrAwayFromZero) / displayScale
+    }
+    func isEqual(to: CGFloat, on displayScale: CGFloat) -> Bool {
+        return self.rounded(by: displayScale) == to.rounded(by: displayScale)
+    }
 }
 
-internal func displayEqual(_ lhs: CGFloat, _ rhs: CGFloat, by displayScale: CGFloat) -> Bool {
-    return displayTrunc(lhs, by: displayScale) == displayTrunc(rhs, by: displayScale)
-}
 
 protocol LayoutGuideProvider {
     var topAnchor: NSLayoutYAxisAnchor { get }

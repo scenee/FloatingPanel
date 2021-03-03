@@ -223,7 +223,7 @@ class LayoutAdapter {
                     }
                 }
             } else {
-                pos = displayTrunc(edgePosition(surfaceView.frame), by: surfaceView.fp_displayScale)
+                pos = edgePosition(surfaceView.frame).rounded(by: surfaceView.fp_displayScale)
             }
             switch position {
             case .top, .bottom:
@@ -293,7 +293,7 @@ class LayoutAdapter {
     }
 
     func surfaceLocation(for state: FloatingPanelState) -> CGPoint {
-        let pos = displayTrunc(position(for: state), by: surfaceView.fp_displayScale)
+        let pos = position(for: state).rounded(by: surfaceView.fp_displayScale)
         switch layout.position {
         case .top, .bottom:
             return CGPoint(x: 0.0, y: pos)
