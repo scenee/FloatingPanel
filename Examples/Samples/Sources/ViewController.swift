@@ -6,7 +6,7 @@ import FloatingPanel
 class SampleListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
 
-    var currentMenu: UseCases = .trackingTableView
+    var currentMenu: UseCase = .trackingTableView
 
     var mainPanelVC: FloatingPanelController!
     var detailPanelVC: FloatingPanelController!
@@ -183,19 +183,19 @@ extension SampleListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if #available(iOS 11.0, *) {
             if navigationController?.navigationBar.prefersLargeTitles == true {
-                return UseCases.allCases.count + 30
+                return UseCase.allCases.count + 30
             } else {
-                return UseCases.allCases.count
+                return UseCase.allCases.count
             }
         } else {
-            return UseCases.allCases.count
+            return UseCase.allCases.count
         }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        if UseCases.allCases.count > indexPath.row {
-            let menu = UseCases.allCases[indexPath.row]
+        if UseCase.allCases.count > indexPath.row {
+            let menu = UseCase.allCases[indexPath.row]
             cell.textLabel?.text = menu.name
         } else {
             cell.textLabel?.text = "\(indexPath.row) row"
@@ -206,8 +206,8 @@ extension SampleListViewController: UITableViewDataSource {
 
 extension SampleListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard UseCases.allCases.count > indexPath.row else { return }
-        let menu = UseCases.allCases[indexPath.row]
+        guard UseCase.allCases.count > indexPath.row else { return }
+        let menu = UseCase.allCases[indexPath.row]
         let contentVC: UIViewController = {
             guard let storyboardID = menu.storyboardID else { return DebugTableViewController() }
             guard let vc = self.storyboard?.instantiateViewController(withIdentifier: storyboardID) else { fatalError() }
