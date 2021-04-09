@@ -744,8 +744,6 @@ class LayoutAdapter {
 
         var state = state
 
-        setBackdropAlpha(of: state)
-
         if validStates.contains(state) == false {
             state = layout.initialState
         }
@@ -773,14 +771,6 @@ class LayoutAdapter {
         guard surfaceView.window != nil else { return }
         #endif
         surfaceView.superview?.layoutIfNeeded()
-    }
-
-    private func setBackdropAlpha(of target: FloatingPanelState) {
-        if target == .hidden {
-            self.backdropView.alpha = 0.0
-        } else {
-            self.backdropView.alpha = backdropAlpha(for: target)
-        }
     }
 
     func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
