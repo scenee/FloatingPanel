@@ -185,6 +185,57 @@ class CoreTests: XCTestCase {
         XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: halfPos, with: -1 * distance2), 0.0)
     }
 
+
+    func test_updateBackdropAlpha() {
+        class BackdropTestLayout: FloatingPanelTestLayout {
+            override var initialState: FloatingPanelState { .hidden }
+            func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
+                switch state {
+                case .full: return 0.3
+                case .half: return 0.0
+                case .tip: return 0.3
+                default: return 0.0
+                }
+            }
+        }
+        let fpc = FloatingPanelController()
+        fpc.layout = BackdropTestLayout()
+
+        fpc.showForTest()
+
+        fpc.move(to: .full, animated: false)
+        XCTAssertEqual(floor(fpc.backdropView.alpha * 1000_000) / 1000_000, 0.3)
+
+        fpc.move(to: .half, animated: false)
+        XCTAssertEqual(fpc.backdropView.alpha, 0.0)
+
+        fpc.move(to: .tip, animated: false)
+        XCTAssertEqual(floor(fpc.backdropView.alpha * 1000_000) / 1000_000, 0.3)
+
+        let exp1 = expectation(description: "move to full with animation")
+        fpc.move(to: .full, animated: true) {
+            exp1.fulfill()
+        }
+        wait(for: [exp1], timeout: 1.0)
+        XCTAssertEqual(floor(fpc.backdropView.alpha * 1000_000) / 1000_000, 0.3)
+
+        let exp2 = expectation(description: "move to half with animation")
+        fpc.move(to: .half, animated: true) {
+            exp2.fulfill()
+        }
+        wait(for: [exp2], timeout: 1.0)
+        XCTAssertEqual(fpc.backdropView.alpha, 0.0)
+
+        let exp3 = expectation(description: "move to tip with animation")
+        fpc.move(to: .tip, animated: true) {
+            exp3.fulfill()
+        }
+        fpc.contentMode = .fitToBounds
+        XCTAssertEqual(fpc.backdropView.alpha, 0.0) // Must not affect the backdrop alpha by changing the content mode
+        wait(for: [exp3], timeout: 1.0)
+        XCTAssertEqual(floor(fpc.backdropView.alpha * 1000_000) / 1000_000, 0.3)
+    }
+
     func test_targetPosition_1positions() {
         class FloatingPanelLayout1Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .full
