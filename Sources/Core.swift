@@ -187,7 +187,12 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     // MARK: - Layout update
 
     private func updateLayout(to target: FloatingPanelState) {
-        self.layoutAdapter.activateLayout(for: state, forceLayout: true)
+        self.layoutAdapter.activateLayout(for: target, forceLayout: true)
+        self.backdropView.alpha = self.getBackdropAlpha(for: target)
+    }
+
+    private func getBackdropAlpha(for target: FloatingPanelState) -> CGFloat {
+        return target == .hidden ? 0.0 : layoutAdapter.backdropAlpha(for: target)
     }
 
     func getBackdropAlpha(at cur: CGFloat, with translation: CGFloat) -> CGFloat {
@@ -210,9 +215,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
         if pre == next {
             return preAlpha
-        } else {
-            return preAlpha + max(min(1.0, 1.0 - (next - cur) / (next - pre) ), 0.0) * (nextAlpha - preAlpha)
         }
+        return preAlpha + max(min(1.0, 1.0 - (next - cur) / (next - pre) ), 0.0) * (nextAlpha - preAlpha)
     }
 
     // MARK: - UIGestureRecognizerDelegate
@@ -854,7 +858,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             completion: { [weak self] in
                 guard let self = self,
                       self.ownerVC != nil else { return }
-                self.layoutAdapter.activateLayout(for: targetPosition, forceLayout: true)
+                self.updateLayout(to: targetPosition)
                 completion()
         })
         moveAnimator?.startAnimation()
