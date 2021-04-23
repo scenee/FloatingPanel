@@ -2,6 +2,8 @@
 
 import UIKit
 
+// MARK: - CoreGraphics
+
 extension CGFloat {
     /// Returns this value rounded to an logical pixel value by a display scale
     func rounded(by displayScale: CGFloat) -> CGFloat {
@@ -12,6 +14,25 @@ extension CGFloat {
     }
 }
 
+extension CGPoint {
+    static var leastNonzeroMagnitude: CGPoint {
+        return CGPoint(x: CGFloat.leastNonzeroMagnitude, y: CGFloat.leastNonzeroMagnitude)
+    }
+
+    static func + (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
+        return CGPoint(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
+    }
+
+    static func - (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
+        return CGPoint(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
+    }
+
+    static prefix func - (point: CGPoint) -> CGPoint {
+        return CGPoint(x: -point.x, y: -point.y)
+    }
+}
+
+// MARK: - UIKit
 
 protocol LayoutGuideProvider {
     var topAnchor: NSLayoutYAxisAnchor { get }
@@ -162,24 +183,6 @@ extension UISpringTimingParameters {
         let stiffness = pow(2 * .pi / frequencyResponse, 2) * mass
         let damp = 4 * .pi * dampingRatio * mass / frequencyResponse
         self.init(mass: mass, stiffness: stiffness, damping: damp, initialVelocity: initialVelocity)
-    }
-}
-
-extension CGPoint {
-    static var leastNonzeroMagnitude: CGPoint {
-        return CGPoint(x: CGFloat.leastNonzeroMagnitude, y: CGFloat.leastNonzeroMagnitude)
-    }
-
-    static func + (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
-        return CGPoint(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
-    }
-
-    static func - (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
-        return CGPoint(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
-    }
-
-    static prefix func - (point: CGPoint) -> CGPoint {
-        return CGPoint(x: -point.x, y: -point.y)
     }
 }
 
