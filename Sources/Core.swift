@@ -17,6 +17,19 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         didSet {
             oldValue?.panGestureRecognizer.removeTarget(self, action: nil)
             scrollView?.panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
+            if let cur = scrollView {
+                if oldValue == nil {
+                    initialScrollOffset = cur.contentOffset
+                    scrollBounce = cur.bounces
+                    scrollIndictorVisible = cur.showsVerticalScrollIndicator
+                }
+            } else {
+                if let pre = oldValue {
+                    pre.isDirectionalLockEnabled = false
+                    pre.bounces = scrollBounce
+                    pre.showsVerticalScrollIndicator = scrollIndictorVisible
+                }
+            }
         }
     }
 
