@@ -6,7 +6,7 @@ import FloatingPanel
 final class SampleListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
 
-    private var currentMenu: UseCase = .trackingTableView
+    private var currentUseCase: UseCase = .trackingTableView
 
     private var mainPanelVC: FloatingPanelController!
     private var detailPanelVC: FloatingPanelController!
@@ -73,7 +73,7 @@ final class SampleListViewController: UIViewController {
         mainPanelVC.set(contentViewController: contentVC)
 
         // Enable tap-to-hide and removal interaction
-        switch currentMenu {
+        switch currentUseCase {
         case .trackingTableView:
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleSurface(tapGesture:)))
             tapGesture.cancelsTouchesInView = false
@@ -122,7 +122,7 @@ final class SampleListViewController: UIViewController {
             }
         case let contentVC as ImageViewController:
             if #available(iOS 11.0, *) {
-                let mode: ImageViewController.Mode = (currentMenu == .showAdaptivePanelWithCustomGuide) ? .withHeaderFooter : .onlyImage
+                let mode: ImageViewController.Mode = (currentUseCase == .showAdaptivePanelWithCustomGuide) ? .withHeaderFooter : .onlyImage
                 let layoutGuide = contentVC.layoutGuideFor(mode: mode)
                 mainPanelVC.layout = ImageViewController.PanelLayout(targetGuide: layoutGuide)
             } else {
@@ -214,7 +214,7 @@ extension SampleListViewController: UITableViewDelegate {
             return vc
         }()
 
-        self.currentMenu = menu
+        self.currentUseCase = menu
         detailPanelVC?.removePanelFromParent(animated: true, completion: nil)
         detailPanelVC = nil
 
@@ -329,7 +329,7 @@ extension SampleListViewController: UITableViewDelegate {
 
 extension SampleListViewController: FloatingPanelControllerDelegate {
     func floatingPanel(_ vc: FloatingPanelController, contentOffsetForPinning trackingScrollView: UIScrollView) -> CGPoint {
-        if currentMenu == .showNavigationController, #available(iOS 11.0, *) {
+        if currentUseCase == .showNavigationController, #available(iOS 11.0, *) {
             // 148.0 is the SafeArea's top value for a navigation bar with a large title.
             return CGPoint(x: 0.0, y: 0.0 - trackingScrollView.contentInset.top - 148.0)
         }
@@ -341,7 +341,7 @@ extension SampleListViewController: FloatingPanelControllerDelegate {
             return IntrinsicPanelLayout()
         }
 
-        switch currentMenu {
+        switch currentUseCase {
         case .showTopPositionedPanel:
             return TopPositionedPanelLayout()
         case .showRemovablePanel:
@@ -374,7 +374,7 @@ extension SampleListViewController: FloatingPanelControllerDelegate {
 
 extension SampleListViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        switch currentMenu {
+        switch currentUseCase {
         case .showNestedScrollView:
             return true
         default:
