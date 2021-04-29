@@ -127,6 +127,7 @@
 		5442E22225FC519700A26F43 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				545DB9EF21511E6300CA77B8 /* SampleListViewController.swift */,
 				5442E23F25FC533800A26F43 /* DebugTableViewController.swift */,
 				5442E24925FC53C100A26F43 /* DebugTextViewController.swift */,
 				5442E23325FC528400A26F43 /* DetailViewController.swift */,
@@ -170,10 +171,9 @@
 				545DB9F621511E6400CA77B8 /* LaunchScreen.storyboard */,
 				545DB9F121511E6300CA77B8 /* Main.storyboard */,
 				545DB9ED21511E6300CA77B8 /* AppDelegate.swift */,
-				545DB9EF21511E6300CA77B8 /* SampleListViewController.swift */,
-				54EAD35A263A75EB006A36EA /* Layouts.swift */,
 				546341AA25C6421000CA0596 /* UseCases */,
 				5442E22225FC519700A26F43 /* ViewControllers */,
+				54EAD35A263A75EB006A36EA /* Layouts.swift */,
 				54B51115216AFE5F0033A6F3 /* Extensions.swift */,
 				54CDC5D7215BBE23007D205C /* Components.swift */,
 				545DB9F921511E6400CA77B8 /* Info.plist */,
