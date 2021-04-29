@@ -15,7 +15,7 @@ class SampleListViewController: UIViewController {
     var mainPanelObserves: [NSKeyValueObservation] = []
     var settingsObserves: [NSKeyValueObservation] = []
 
-    var pages: [UIViewController] = []
+    lazy var pagePanelController = PagePanelController()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -244,35 +244,11 @@ extension SampleListViewController: UITableViewDelegate {
             present(modalVC, animated: true, completion: nil)
 
         case .showPageView:
-            pages = [UIColor.blue, .red, .green].compactMap({ (color) -> UIViewController in
-                let page = FloatingPanelController(delegate: self)
-                page.view.backgroundColor = color
-                page.panGestureRecognizer.delegateProxy = self
-                page.show()
-                return page
-            })
-
-            let pageVC = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
-            let closeButton = UIButton(type: .custom)
-            pageVC.view.addSubview(closeButton)
-            closeButton.setTitle("Close", for: .normal)
-            closeButton.translatesAutoresizingMaskIntoConstraints = false
-            closeButton.addTarget(self, action: #selector(dismissPresentedVC), for: .touchUpInside)
-            NSLayoutConstraint.activate([
-                closeButton.topAnchor.constraint(equalTo: pageVC.layoutGuide.topAnchor, constant: 16.0),
-                closeButton.leftAnchor.constraint(equalTo: pageVC.view.leftAnchor, constant: 16.0),
-                ])
-            pageVC.dataSource = self
-            pageVC.setViewControllers([pages[0]], direction: .forward, animated: false, completion: nil)
-            pageVC.modalPresentationStyle = .fullScreen
+            let pageVC = pagePanelController.makePageViewController(for: self)
             present(pageVC, animated: true, completion: nil)
 
         case .showPageContentView:
-            pages = [DebugTableViewController(), DebugTableViewController(), DebugTableViewController()]
-            let pageVC = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
-            pageVC.dataSource = self
-            pageVC.delegate = self
-            pageVC.setViewControllers([pages[0]], direction: .forward, animated: false, completion: nil)
+            let pageVC = pagePanelController.makePageViewControllerForContent()
             self.addMainPanel(with: pageVC)
         case .showPanelModal:
             let fpc = FloatingPanelController()
@@ -401,39 +377,11 @@ extension SampleListViewController: UIGestureRecognizerDelegate {
         switch currentMenu {
         case .showNestedScrollView:
             return true
-        case .showPageView:
-            // Tips: Need to allow recognizing the pan gesture of UIPageViewController simultaneously.
-            return true
         default:
             return false
         }
     }
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return false
-    }
-}
-
-extension SampleListViewController: UIPageViewControllerDataSource {
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard
-            let index = pages.firstIndex(of: viewController),
-            index + 1 < pages.count
-            else { return nil }
-        return pages[index + 1]
-    }
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard
-            let index = pages.firstIndex(of: viewController),
-            index - 1 >= 0
-            else { return nil }
-        return pages[index - 1]
-    }
-}
-extension SampleListViewController: UIPageViewControllerDelegate {
-    // For showPageContent
-    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        if completed, let page = pageViewController.viewControllers?.first {
-            (pageViewController.parent as! FloatingPanelController).track(scrollView: (page as! DebugTableViewController).tableView)
-        }
     }
 }

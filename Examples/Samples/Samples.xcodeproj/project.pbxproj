@@ -31,6 +31,7 @@
 		54B51116216AFE5F0033A6F3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B51115216AFE5F0033A6F3 /* Extensions.swift */; };
 		54CDC5D8215BBE23007D205C /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CDC5D7215BBE23007D205C /* Components.swift */; };
 		54EAD35B263A75EB006A36EA /* Layouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EAD35A263A75EB006A36EA /* Layouts.swift */; };
+		54EAD365263A765F006A36EA /* PagePanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EAD364263A765F006A36EA /* PagePanelController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,6 +95,7 @@
 		54B51115216AFE5F0033A6F3 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		54CDC5D7215BBE23007D205C /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		54EAD35A263A75EB006A36EA /* Layouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layouts.swift; sourceTree = "<group>"; };
+		54EAD364263A765F006A36EA /* PagePanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagePanelController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +137,7 @@
 				5442E22725FC51E200A26F43 /* MultiPanelController.swift */,
 				5442E22B25FC521F00A26F43 /* SettingsViewController.swift */,
 				5442E22F25FC525200A26F43 /* TabBarViewController.swift */,
+				54EAD364263A765F006A36EA /* PagePanelController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -373,6 +376,7 @@
 				545DB9EE21511E6300CA77B8 /* AppDelegate.swift in Sources */,
 				5442E23025FC525200A26F43 /* TabBarViewController.swift in Sources */,
 				54EAD35B263A75EB006A36EA /* Layouts.swift in Sources */,
+				54EAD365263A765F006A36EA /* PagePanelController.swift in Sources */,
 				5442E24425FC538200A26F43 /* InspectorViewController.swift in Sources */,
 				5442E22C25FC521F00A26F43 /* SettingsViewController.swift in Sources */,
 			);
