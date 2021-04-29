@@ -4,23 +4,113 @@ import UIKit
 import FloatingPanel
 
 class DebugTableViewController: InspectableViewController {
-    lazy var tableView = UITableView(frame: .zero, style: .plain)
-    lazy var buttonStackView = UIStackView()
-    var items: [String] = []
+    // MARK: - Views
+
+    lazy var tableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .plain)
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        return tableView
+    }()
+    lazy var buttonStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.alignment = .trailing
+        stackView.spacing = 10.0
+        return stackView
+    }()
+    lazy var reorderButton: UIButton = {
+        let button = UIButton()
+        button.setTitle(Menu.reorder.rawValue, for: .normal)
+        button.setTitleColor(view.tintColor, for: .normal)
+        button.addTarget(self, action: #selector(reorderItems), for: .touchUpInside)
+        return button
+    }()
+    lazy var trackingSwitchWrapper: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.distribution = .fillProportionally
+        stackView.alignment = .center
+        stackView.spacing = 8.0
+        stackView.addArrangedSubview(trackingLabel)
+        stackView.addArrangedSubview(trackingSwitch)
+        return stackView
+    }()
+    lazy var trackingLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Tracking"
+        label.font = UIFont.systemFont(ofSize: 17.0, weight: .regular)
+        return label
+    }()
+    lazy var trackingSwitch: UISwitch = {
+        let trackingSwitch = UISwitch()
+        trackingSwitch.isOn = true
+        trackingSwitch.addTarget(self, action: #selector(turnTrackingOn), for: .touchUpInside)
+        return trackingSwitch
+    }()
+
+    // MARK: - Properties
+
+    lazy var items: [String] = {
+        let items = (0..<100).map { "Items \($0)" }
+        return Command.replace(items: items)
+    }()
     var itemHeight: CGFloat = 66.0
 
     enum Menu: String, CaseIterable {
-        case animateScroll = "Animate Scroll"
-        case changeContentSize = "Change content size"
+        case turnOffTracking = "Tracking"
         case reorder = "Reorder"
-        case moveToFull = "Move to Full"
-        case moveToHalf = "Move to Half"
     }
 
-    var reorderButton: UIButton!
+    enum Command: Int, CaseIterable {
+        case animateScroll
+        case changeContentSize
+        case moveToFull
+        case moveToHalf
+        var text: String {
+            switch self {
+            case .animateScroll: return "Scroll in the middle"
+            case .changeContentSize: return "Change content size"
+            case .moveToFull: return "Move to Full"
+            case.moveToHalf: return "Move to Half"
+            }
+        }
+
+        static func replace(items: [String]) -> [String] {
+            return items.enumerated().map { (index, text) -> String in
+                if let action = Command(rawValue: index) {
+                    return "\(index). \(action.text)"
+                }
+                return text
+            }
+        }
+
+        func execute(for vc: DebugTableViewController) {
+            switch self {
+            case .animateScroll:
+                vc.animateScroll()
+            case .changeContentSize:
+                vc.changeContentSize()
+            case .moveToFull:
+                vc.moveToFull()
+            case .moveToHalf:
+                vc.moveToHalf()
+            }
+        }
+    }
+
+    // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        layoutTableView()
+        layoutMenuStackView()
+        setUpMenu()
+    }
 
+    private func layoutTableView() {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -29,53 +119,65 @@ class DebugTableViewController: InspectableViewController {
             tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
             tableView.rightAnchor.constraint(equalTo: view.rightAnchor)
             ])
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+    }
 
+    private func layoutMenuStackView() {
         view.addSubview(buttonStackView)
-        buttonStackView.axis = .vertical
-        buttonStackView.distribution = .fillEqually
-        buttonStackView.alignment = .trailing
-        buttonStackView.spacing = 10.0
         buttonStackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             buttonStackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 22.0),
             buttonStackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -22.0),
             ])
+    }
 
+    private func setUpMenu() {
         for menu in Menu.allCases {
-            let button = UIButton()
-            button.setTitle(menu.rawValue, for: .normal)
-            button.setTitleColor(view.tintColor, for: .normal)
             switch menu {
-            case .animateScroll:
-                button.addTarget(self, action: #selector(animateScroll), for: .touchUpInside)
-            case .changeContentSize:
-                button.addTarget(self, action: #selector(changeContentSize), for: .touchUpInside)
             case .reorder:
-                button.addTarget(self, action: #selector(reorderItems), for: .touchUpInside)
-                reorderButton = button
-            case .moveToFull:
-                button.addTarget(self, action: #selector(moveToFull), for: .touchUpInside)
-            case .moveToHalf:
-                button.addTarget(self, action: #selector(moveToHalf), for: .touchUpInside)
+                buttonStackView.addArrangedSubview(reorderButton)
+            case .turnOffTracking:
+                buttonStackView.addArrangedSubview(trackingSwitchWrapper)
             }
-            buttonStackView.addArrangedSubview(button)
-        }
-
-        for i in 0...100 {
-            items.append("Items \(i)")
         }
     }
 
-    @objc func animateScroll() {
+    // MARK: - Menu
+    @objc
+    private func reorderItems() {
+        if reorderButton.titleLabel?.text == Menu.reorder.rawValue {
+            tableView.isEditing = true
+            reorderButton.setTitle("Cancel", for: .normal)
+        } else {
+            tableView.isEditing = false
+            reorderButton.setTitle(Menu.reorder.rawValue, for: .normal)
+        }
+    }
+
+    @objc
+    private func turnTrackingOn(_ sender: UISwitch) {
+        guard let fpc = self.parent as? FloatingPanelController else { return }
+        if sender.isOn {
+            fpc.track(scrollView: tableView)
+        } else {
+            fpc.untrack(scrollView: tableView)
+        }
+    }
+
+    // MARK: - Actions
+
+    private func execute(command: Command) {
+        command.execute(for: self)
+    }
+
+    @objc
+    private func animateScroll() {
         tableView.scrollToRow(at: IndexPath(row: lround(Double(items.count) / 2.0),
                                             section: 0),
                               at: .top, animated: true)
     }
 
-    @objc func changeContentSize() {
+    @objc
+    private func changeContentSize() {
         let actionSheet = UIAlertController(title: "Change content size", message: "", preferredStyle: .actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Large", style: .default, handler: { (_) in
             self.itemHeight = 66.0
@@ -102,39 +204,25 @@ class DebugTableViewController: InspectableViewController {
         self.present(actionSheet, animated: true, completion: nil)
     }
 
-    @objc func reorderItems() {
-        if reorderButton.titleLabel?.text == Menu.reorder.rawValue {
-            tableView.isEditing = true
-            reorderButton.setTitle("Cancel", for: .normal)
-        } else {
-            tableView.isEditing = false
-            reorderButton.setTitle(Menu.reorder.rawValue, for: .normal)
-        }
-    }
-
-    func changeItems(_ count: Int) {
-        items.removeAll()
-        for i in 0..<count {
-            items.append("Items \(i)")
-        }
+    private func changeItems(_ count: Int) {
+        items = Command.replace(items: (0..<count).map{ "\($0). No action" })
         tableView.reloadData()
     }
 
-    @objc func moveToFull() {
+    @objc
+    private func moveToFull() {
         (self.parent as! FloatingPanelController).move(to: .full, animated: true)
     }
 
-    @objc func moveToHalf() {
+    @objc
+    private func moveToHalf() {
         (self.parent as! FloatingPanelController).move(to: .half, animated: true)
     }
 
-    @objc func close(sender: UIButton) {
+    @objc
+    private func close(sender: UIButton) {
         //  Remove FloatingPanel from a view
         (self.parent as! FloatingPanelController).removePanelFromParent(animated: true, completion: nil)
-    }
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print("TableView --- ", scrollView.contentOffset, scrollView.contentInset)
     }
 }
 
@@ -155,8 +243,14 @@ extension DebugTableViewController: UITableViewDataSource {
 }
 
 extension DebugTableViewController: UITableViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        print("TableView --- ", scrollView.contentOffset, scrollView.contentInset)
+    }
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("DebugTableViewController -- select row \(indexPath.row)")
+        guard let action = Command(rawValue: indexPath.row) else { return }
+        execute(command: action)
     }
 
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
