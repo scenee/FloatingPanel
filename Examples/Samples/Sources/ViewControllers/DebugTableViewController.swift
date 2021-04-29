@@ -21,14 +21,14 @@ class DebugTableViewController: InspectableViewController {
         stackView.spacing = 10.0
         return stackView
     }()
-    lazy var reorderButton: UIButton = {
+    private lazy var reorderButton: UIButton = {
         let button = UIButton()
         button.setTitle(Menu.reorder.rawValue, for: .normal)
         button.setTitleColor(view.tintColor, for: .normal)
         button.addTarget(self, action: #selector(reorderItems), for: .touchUpInside)
         return button
     }()
-    lazy var trackingSwitchWrapper: UIStackView = {
+    private lazy var trackingSwitchWrapper: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.distribution = .fillProportionally
@@ -38,13 +38,13 @@ class DebugTableViewController: InspectableViewController {
         stackView.addArrangedSubview(trackingSwitch)
         return stackView
     }()
-    lazy var trackingLabel: UILabel = {
+    private lazy var trackingLabel: UILabel = {
         let label = UILabel()
         label.text = "Tracking"
         label.font = UIFont.systemFont(ofSize: 17.0, weight: .regular)
         return label
     }()
-    lazy var trackingSwitch: UISwitch = {
+    private lazy var trackingSwitch: UISwitch = {
         let trackingSwitch = UISwitch()
         trackingSwitch.isOn = true
         trackingSwitch.addTarget(self, action: #selector(turnTrackingOn), for: .touchUpInside)
@@ -53,11 +53,11 @@ class DebugTableViewController: InspectableViewController {
 
     // MARK: - Properties
 
-    lazy var items: [String] = {
+    private lazy var items: [String] = {
         let items = (0..<100).map { "Items \($0)" }
         return Command.replace(items: items)
     }()
-    var itemHeight: CGFloat = 66.0
+    private var itemHeight: CGFloat = 66.0
 
     enum Menu: String, CaseIterable {
         case turnOffTracking = "Tracking"

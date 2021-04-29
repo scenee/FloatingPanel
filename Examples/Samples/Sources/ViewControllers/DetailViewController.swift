@@ -3,7 +3,7 @@
 import UIKit
 import FloatingPanel
 
-class DetailViewController: InspectableViewController {
+final class DetailViewController: InspectableViewController {
     @IBOutlet weak var modeChangeView: UIStackView!
     @IBOutlet weak var intrinsicHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var closeButton: UIButton!

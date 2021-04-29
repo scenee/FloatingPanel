@@ -3,7 +3,7 @@
 import UIKit
 import FloatingPanel
 
-class ImageViewController: UIViewController {
+final class ImageViewController: UIViewController {
     class PanelLayout: FloatingPanelLayout {
         weak var targetGuide: UILayoutGuide?
         init(targetGuide: UILayoutGuide?) {

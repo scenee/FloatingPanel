@@ -3,9 +3,9 @@
 import UIKit
 import FloatingPanel
 
-class TabBarViewController: UITabBarController {}
+final class TabBarViewController: UITabBarController {}
 
-class TabBarContentViewController: UIViewController {
+final class TabBarContentViewController: UIViewController {
     enum Tab3Mode {
         case changeOffset
         case changeAutoLayout

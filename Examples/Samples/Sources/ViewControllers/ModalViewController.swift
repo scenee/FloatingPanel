@@ -3,7 +3,7 @@
 import UIKit
 import FloatingPanel
 
-class ModalViewController: UIViewController, FloatingPanelControllerDelegate {
+final class ModalViewController: UIViewController, FloatingPanelControllerDelegate {
     var fpc: FloatingPanelController!
     var consoleVC: DebugTextViewController!
 

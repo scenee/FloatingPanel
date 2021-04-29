@@ -3,7 +3,7 @@
 import UIKit
 import FloatingPanel
 
-class SettingsViewController: InspectableViewController {
+final class SettingsViewController: InspectableViewController {
     @IBOutlet weak var largeTitlesSwicth: UISwitch!
     @IBOutlet weak var translucentSwicth: UISwitch!
     @IBOutlet weak var versionLabel: UILabel!

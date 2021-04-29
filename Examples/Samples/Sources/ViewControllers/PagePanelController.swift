@@ -3,7 +3,7 @@
 import UIKit
 import FloatingPanel
 
-class PagePanelController: NSObject {
+final class PagePanelController: NSObject {
     lazy var pages = [UIColor.blue, .red, .green].compactMap({ (color) -> UIViewController in
         let page = FloatingPanelController(delegate: self)
         page.view.backgroundColor = color

@@ -2,7 +2,7 @@
 
 import UIKit
 
-class DebugTextViewController: UIViewController, UITextViewDelegate {
+final class DebugTextViewController: UIViewController, UITextViewDelegate {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var textViewTopConstraint: NSLayoutConstraint!
 

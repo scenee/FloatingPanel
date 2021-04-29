@@ -2,7 +2,7 @@
 
 import UIKit
 
-class NestedScrollViewController: UIViewController {
+final class NestedScrollViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var nestedScrollView: UIScrollView!
 

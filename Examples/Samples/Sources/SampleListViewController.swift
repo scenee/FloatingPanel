@@ -3,19 +3,19 @@
 import UIKit
 import FloatingPanel
 
-class SampleListViewController: UIViewController {
+final class SampleListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
 
-    var currentMenu: UseCase = .trackingTableView
+    private var currentMenu: UseCase = .trackingTableView
 
-    var mainPanelVC: FloatingPanelController!
-    var detailPanelVC: FloatingPanelController!
-    var settingsPanelVC: FloatingPanelController!
+    private var mainPanelVC: FloatingPanelController!
+    private var detailPanelVC: FloatingPanelController!
+    private var settingsPanelVC: FloatingPanelController!
 
-    var mainPanelObserves: [NSKeyValueObservation] = []
-    var settingsObserves: [NSKeyValueObservation] = []
+    private var mainPanelObserves: [NSKeyValueObservation] = []
+    private var settingsObserves: [NSKeyValueObservation] = []
 
-    lazy var pagePanelController = PagePanelController()
+    private lazy var pagePanelController = PagePanelController()
 
     override func viewDidLoad() {
         super.viewDidLoad()
