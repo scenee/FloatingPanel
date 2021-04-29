@@ -21,13 +21,13 @@ final class PagePanelController: NSObject {
         return pageVC
     }
 
-    func makePageViewController(for vc: SampleListViewController) -> UIPageViewController {
+    func makePageViewController(for vc: MainViewController) -> UIPageViewController {
         let pageVC = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
         let closeButton = UIButton(type: .custom)
         pageVC.view.addSubview(closeButton)
         closeButton.setTitle("Close", for: .normal)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
-        closeButton.addTarget(vc, action: #selector(SampleListViewController.dismissPresentedVC), for: .touchUpInside)
+        closeButton.addTarget(vc, action: #selector(MainViewController.dismissPresentedVC), for: .touchUpInside)
         NSLayoutConstraint.activate([
             closeButton.topAnchor.constraint(equalTo: pageVC.layoutGuide.topAnchor, constant: 16.0),
             closeButton.leftAnchor.constraint(equalTo: pageVC.view.leftAnchor, constant: 16.0),

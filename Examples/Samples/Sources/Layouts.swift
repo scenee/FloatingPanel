@@ -5,10 +5,10 @@ import FloatingPanel
 
 /**
  - Attention: `FloatingPanelLayout` must not be applied by the parent view
- controller of a panel. But here `SampleListViewController` adopts it
+ controller of a panel. But here `MainViewController` adopts it
  purposely to check if the library prints an appropriate warning.
  */
-extension SampleListViewController: FloatingPanelLayout {
+extension MainViewController: FloatingPanelLayout {
     var position: FloatingPanelPosition { .bottom }
     var initialState: FloatingPanelState { .half }
     var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {

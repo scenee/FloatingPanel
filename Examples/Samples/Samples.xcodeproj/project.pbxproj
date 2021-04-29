@@ -18,7 +18,7 @@
 		5442E24A25FC53C100A26F43 /* DebugTextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E24925FC53C100A26F43 /* DebugTextViewController.swift */; };
 		5442E25225FC541700A26F43 /* NestedScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E25125FC541700A26F43 /* NestedScrollViewController.swift */; };
 		545DB9EE21511E6300CA77B8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9ED21511E6300CA77B8 /* AppDelegate.swift */; };
-		545DB9F021511E6300CA77B8 /* SampleListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9EF21511E6300CA77B8 /* SampleListViewController.swift */; };
+		545DB9F021511E6300CA77B8 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9EF21511E6300CA77B8 /* MainViewController.swift */; };
 		545DB9F321511E6300CA77B8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 545DB9F121511E6300CA77B8 /* Main.storyboard */; };
 		545DB9F521511E6400CA77B8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 545DB9F421511E6400CA77B8 /* Assets.xcassets */; };
 		545DB9F821511E6400CA77B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 545DB9F621511E6400CA77B8 /* LaunchScreen.storyboard */; };
@@ -78,7 +78,7 @@
 		5442E25125FC541700A26F43 /* NestedScrollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestedScrollViewController.swift; sourceTree = "<group>"; };
 		545DB9EA21511E6300CA77B8 /* Samples.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Samples.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		545DB9ED21511E6300CA77B8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		545DB9EF21511E6300CA77B8 /* SampleListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleListViewController.swift; sourceTree = "<group>"; };
+		545DB9EF21511E6300CA77B8 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		545DB9F221511E6300CA77B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		545DB9F421511E6400CA77B8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		545DB9F721511E6400CA77B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -127,7 +127,7 @@
 		5442E22225FC519700A26F43 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				545DB9EF21511E6300CA77B8 /* SampleListViewController.swift */,
+				545DB9EF21511E6300CA77B8 /* MainViewController.swift */,
 				5442E23F25FC533800A26F43 /* DebugTableViewController.swift */,
 				5442E24925FC53C100A26F43 /* DebugTextViewController.swift */,
 				5442E23325FC528400A26F43 /* DetailViewController.swift */,
@@ -372,7 +372,7 @@
 				5442E25225FC541700A26F43 /* NestedScrollViewController.swift in Sources */,
 				5442E22825FC51E200A26F43 /* MultiPanelController.swift in Sources */,
 				546341A125C6415100CA0596 /* UseCase.swift in Sources */,
-				545DB9F021511E6300CA77B8 /* SampleListViewController.swift in Sources */,
+				545DB9F021511E6300CA77B8 /* MainViewController.swift in Sources */,
 				545DB9EE21511E6300CA77B8 /* AppDelegate.swift in Sources */,
 				5442E23025FC525200A26F43 /* TabBarViewController.swift in Sources */,
 				54EAD35B263A75EB006A36EA /* Layouts.swift in Sources */,
