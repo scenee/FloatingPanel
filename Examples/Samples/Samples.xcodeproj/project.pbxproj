@@ -17,6 +17,7 @@
 		5442E24425FC538200A26F43 /* InspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E24325FC538200A26F43 /* InspectorViewController.swift */; };
 		5442E24A25FC53C100A26F43 /* DebugTextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E24925FC53C100A26F43 /* DebugTextViewController.swift */; };
 		5442E25225FC541700A26F43 /* NestedScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E25125FC541700A26F43 /* NestedScrollViewController.swift */; };
+		54496C59263A7E5A0031E0C8 /* UseCaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54496C58263A7E5A0031E0C8 /* UseCaseController.swift */; };
 		545DB9EE21511E6300CA77B8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9ED21511E6300CA77B8 /* AppDelegate.swift */; };
 		545DB9F021511E6300CA77B8 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9EF21511E6300CA77B8 /* MainViewController.swift */; };
 		545DB9F321511E6300CA77B8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 545DB9F121511E6300CA77B8 /* Main.storyboard */; };
@@ -76,6 +77,7 @@
 		5442E24325FC538200A26F43 /* InspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorViewController.swift; sourceTree = "<group>"; };
 		5442E24925FC53C100A26F43 /* DebugTextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugTextViewController.swift; sourceTree = "<group>"; };
 		5442E25125FC541700A26F43 /* NestedScrollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestedScrollViewController.swift; sourceTree = "<group>"; };
+		54496C58263A7E5A0031E0C8 /* UseCaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseCaseController.swift; sourceTree = "<group>"; };
 		545DB9EA21511E6300CA77B8 /* Samples.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Samples.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		545DB9ED21511E6300CA77B8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		545DB9EF21511E6300CA77B8 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -127,7 +129,6 @@
 		5442E22225FC519700A26F43 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				545DB9EF21511E6300CA77B8 /* MainViewController.swift */,
 				5442E23F25FC533800A26F43 /* DebugTableViewController.swift */,
 				5442E24925FC53C100A26F43 /* DebugTextViewController.swift */,
 				5442E23325FC528400A26F43 /* DetailViewController.swift */,
@@ -138,7 +139,6 @@
 				5442E22725FC51E200A26F43 /* MultiPanelController.swift */,
 				5442E22B25FC521F00A26F43 /* SettingsViewController.swift */,
 				5442E22F25FC525200A26F43 /* TabBarViewController.swift */,
-				54EAD364263A765F006A36EA /* PagePanelController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -171,6 +171,8 @@
 				545DB9F621511E6400CA77B8 /* LaunchScreen.storyboard */,
 				545DB9F121511E6300CA77B8 /* Main.storyboard */,
 				545DB9ED21511E6300CA77B8 /* AppDelegate.swift */,
+				545DB9EF21511E6300CA77B8 /* MainViewController.swift */,
+				54496C58263A7E5A0031E0C8 /* UseCaseController.swift */,
 				546341AA25C6421000CA0596 /* UseCases */,
 				5442E22225FC519700A26F43 /* ViewControllers */,
 				54EAD35A263A75EB006A36EA /* Layouts.swift */,
@@ -204,6 +206,7 @@
 			children = (
 				546341A025C6415100CA0596 /* UseCase.swift */,
 				546341AB25C6426500CA0596 /* CustomState.swift */,
+				54EAD364263A765F006A36EA /* PagePanelController.swift */,
 			);
 			path = UseCases;
 			sourceTree = "<group>";
@@ -362,6 +365,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5442E23425FC528400A26F43 /* DetailViewController.swift in Sources */,
+				54496C59263A7E5A0031E0C8 /* UseCaseController.swift in Sources */,
 				54CDC5D8215BBE23007D205C /* Components.swift in Sources */,
 				54B51116216AFE5F0033A6F3 /* Extensions.swift in Sources */,
 				5442E24A25FC53C100A26F43 /* DebugTextViewController.swift in Sources */,
