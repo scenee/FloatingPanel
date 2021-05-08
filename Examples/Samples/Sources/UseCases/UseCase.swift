@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum UseCases: Int, CaseIterable {
+enum UseCase: Int, CaseIterable {
     case trackingTableView
     case trackingTextView
     case showDetail
@@ -52,25 +52,25 @@ enum UseCases: Int, CaseIterable {
     var storyboardID: String? {
         switch self {
         case .trackingTableView: return nil
-        case .trackingTextView: return "ConsoleViewController"
-        case .showDetail: return "DetailViewController"
-        case .showModal: return "ModalViewController"
+        case .trackingTextView: return "ConsoleViewController" // Storyboard only
+        case .showDetail: return String(describing: DetailViewController.self)
+        case .showModal: return String(describing: ModalViewController.self)
         case .showMultiPanelModal: return nil
         case .showPanelInSheetModal: return nil
         case .showPanelModal: return nil
-        case .showTabBar: return "TabBarViewController"
+        case .showTabBar: return String(describing: TabBarViewController.self)
         case .showPageView: return nil
         case .showPageContentView: return nil
-        case .showNestedScrollView: return "NestedScrollViewController"
-        case .showRemovablePanel: return "DetailViewController"
-        case .showIntrinsicView: return "IntrinsicViewController"
+        case .showNestedScrollView: return String(describing: NestedScrollViewController.self)
+        case .showRemovablePanel: return String(describing: DetailViewController.self)
+        case .showIntrinsicView: return "IntrinsicViewController" // Storyboard only
         case .showContentInset: return nil
         case .showContainerMargins: return nil
-        case .showNavigationController: return "RootNavigationController"
+        case .showNavigationController: return "RootNavigationController" // Storyboard only
         case .showTopPositionedPanel: return nil
         case .showAdaptivePanel,
              .showAdaptivePanelWithCustomGuide:
-            return "ImageViewController"
+            return String(describing: ImageViewController.self)
         case .showCustomStatePanel:
             return nil
         }
