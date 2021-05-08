@@ -13,8 +13,8 @@ class LayoutTests: XCTestCase {
     override func tearDown() {}
 
     func test_layoutAdapter_topAndBottomMostState() {
-        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.edgeMostState, .full)
-        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.edgeLeastState, .tip)
+        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.mostExpandedState, .full)
+        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.leastExpandedState, .tip)
 
         class FloatingPanelLayoutWithHidden: FloatingPanelLayout {
             var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
@@ -38,12 +38,12 @@ class LayoutTests: XCTestCase {
             let position: FloatingPanelPosition = .bottom
         }
         fpc.layout = FloatingPanelLayoutWithHidden()
-        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.edgeMostState, .full)
-        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.edgeLeastState, .hidden)
+        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.mostExpandedState, .full)
+        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.leastExpandedState, .hidden)
 
         fpc.layout = FloatingPanelLayout2Positions()
-        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.edgeMostState, .half)
-        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.edgeLeastState, .tip)
+        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.mostExpandedState, .half)
+        XCTAssertEqual(fpc.floatingPanel.layoutAdapter.leastExpandedState, .tip)
     }
 
     func test_layoutSegment_3position() {
