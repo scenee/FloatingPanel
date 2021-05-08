@@ -92,8 +92,14 @@ class LayoutAdapter {
 
     private var staticConstraint: NSLayoutConstraint?
 
-    private var activeStates: Set<FloatingPanelState> {
+    private var anchorStates: Set<FloatingPanelState> {
         return Set(layout.anchors.keys)
+    }
+
+    private var sortedAnchorStates: [FloatingPanelState] {
+        return anchorStates.sorted(by: {
+            return $0.order < $1.order
+        })
     }
 
     var initialState: FloatingPanelState {
@@ -104,18 +110,12 @@ class LayoutAdapter {
         layout.position
     }
 
-    var orderedStates: [FloatingPanelState] {
-        return activeStates.sorted(by: {
-            return $0.order < $1.order
-        })
-    }
-
     var validStates: Set<FloatingPanelState> {
-        return activeStates.union([.hidden])
+        return anchorStates.union([.hidden])
     }
 
-    var sortedDirectionalStates: [FloatingPanelState] {
-        return activeStates.sorted(by: {
+    var sortedAnchorStatesByCoordinate: [FloatingPanelState] {
+        return anchorStates.sorted(by: {
             switch position {
             case .top, .left:
                 return $0.order < $1.order
@@ -125,30 +125,26 @@ class LayoutAdapter {
         })
     }
 
-    private var directionalLeastState: FloatingPanelState {
-        return sortedDirectionalStates.first ?? .hidden
+    private var leastCoordinateState: FloatingPanelState {
+        return sortedAnchorStatesByCoordinate.first ?? .hidden
     }
 
-    private var directionalMostState: FloatingPanelState {
-        return sortedDirectionalStates.last ?? .hidden
+    private var mostCoordinateState: FloatingPanelState {
+        return sortedAnchorStatesByCoordinate.last ?? .hidden
     }
 
-    var edgeLeastState: FloatingPanelState {
-        if orderedStates.count == 1 {
+    var leastExpandedState: FloatingPanelState {
+        if sortedAnchorStates.count == 1 {
             return .hidden
         }
-        return orderedStates.first ?? .hidden
+        return sortedAnchorStates.first ?? .hidden
     }
 
-    var edgeMostState: FloatingPanelState {
-        if orderedStates.count == 1 {
-            return orderedStates[0]
+    var mostExpandedState: FloatingPanelState {
+        if sortedAnchorStates.count == 1 {
+            return sortedAnchorStates[0]
         }
-        return orderedStates.last ?? .hidden
-    }
-
-    var edgeMostY: CGFloat {
-        return position(for: edgeMostState)
+        return sortedAnchorStates.last ?? .hidden
     }
 
     var adjustedContentInsets: UIEdgeInsets {
@@ -265,12 +261,12 @@ class LayoutAdapter {
         }
     }
 
-    var offsetFromEdgeMost: CGFloat {
+    var offsetFromMostExpandedAnchor: CGFloat {
         switch position {
         case .top, .left:
-            return edgePosition(surfaceView.presentationFrame) - position(for: directionalMostState)
+            return edgePosition(surfaceView.presentationFrame) - position(for: mostExpandedState)
         case .bottom, .right:
-            return position(for: directionalLeastState) - edgePosition(surfaceView.presentationFrame)
+            return position(for: mostExpandedState) - edgePosition(surfaceView.presentationFrame)
         }
     }
 
@@ -641,7 +637,7 @@ class LayoutAdapter {
             return
         }
 
-        let anchor = layout.anchors[self.edgeMostState]!
+        let anchor = layout.anchors[self.mostExpandedState]!
         let surfaceAnchor = position.mainDimensionAnchor(surfaceView)
         switch anchor {
         case let anchor as FloatingPanelIntrinsicLayoutAnchor:
@@ -662,11 +658,11 @@ class LayoutAdapter {
         default:
             switch position {
             case .top, .left:
-                staticConstraint = surfaceAnchor.constraint(equalToConstant: position(for: self.directionalMostState))
+                staticConstraint = surfaceAnchor.constraint(equalToConstant: position(for: self.mostCoordinateState))
             case .bottom, .right:
                 let rootViewAnchor = position.mainDimensionAnchor(vc.view)
                 staticConstraint = rootViewAnchor.constraint(equalTo: surfaceAnchor,
-                                                             constant: position(for: self.directionalLeastState))
+                                                             constant: position(for: self.leastCoordinateState))
             }
         }
 
@@ -687,8 +683,8 @@ class LayoutAdapter {
             log.debug("update surface location = \(surfaceLocation)")
         }
 
-        let minConst: CGFloat = position(for: directionalLeastState)
-        let maxConst: CGFloat = position(for: directionalMostState)
+        let minConst: CGFloat = position(for: leastCoordinateState)
+        let maxConst: CGFloat = position(for: mostCoordinateState)
 
         var const = initialConst + diff
 
@@ -779,7 +775,7 @@ class LayoutAdapter {
 
     fileprivate func checkLayout() {
         // Verify layout configurations
-        assert(activeStates.count > 0)
+        assert(anchorStates.count > 0)
         assert(validStates.contains(layout.initialState),
                "Does not include an initial state (\(layout.initialState)) in (\(validStates))")
         /* This assertion does not work in a device rotating
@@ -799,7 +795,7 @@ extension LayoutAdapter {
         /// |-------|-------|===o===|  |-------|===o===|-------|
         /// pos: o/x, segment: =
 
-        let sortedStates = sortedDirectionalStates
+        let sortedStates = sortedAnchorStatesByCoordinate
 
         let upperIndex: Int?
         if forward {
