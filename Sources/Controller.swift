@@ -26,10 +26,12 @@ import UIKit
     @objc(floatingPanel:animatorForDismissingWithVelocity:) optional
     func floatingPanel(_ fpc: FloatingPanelController, animatorForDismissingWith velocity: CGVector) -> UIViewPropertyAnimator
 
-    /// Called when a panel has changed to a new position. Can be called inside an animation block, so any
-    /// view properties set inside this function will be automatically animated alongside a panel.
+    /// Called when a panel has changed to a new state.
+    ///
+    /// This can be called inside an animation block for presenting, dismissing a panel or moving a panel with your
+    /// animation. So any view properties set inside this function will be automatically animated alongside a panel.
     @objc optional
-    func floatingPanelDidChangePosition(_ fpc: FloatingPanelController)
+    func floatingPanelDidChangeState(_ fpc: FloatingPanelController)
 
     /// Asks the delegate if dragging should begin by the pan gesture recognizer.
     @objc optional
@@ -531,6 +533,7 @@ open class FloatingPanelController: UIViewController {
     }
 
     /// Moves the position to the specified position.
+    ///
     /// - Parameters:
     ///     - to: Pass a FloatingPanelPosition value to move the surface view to the position.
     ///     - animated: Pass true to animate the presentation; otherwise, pass false.

@@ -564,8 +564,8 @@ override func viewDidLoad() {
     surfaceTapGesture.isEnabled = (fpc.position == .tip)
 }
 
-// Enable `surfaceTapGesture` only at `tip` position
-func floatingPanelDidChangePosition(_ vc: FloatingPanelController) {
+// Enable `surfaceTapGesture` only at `tip` state
+func floatingPanelDidChangeState(_ vc: FloatingPanelController) {
     surfaceTapGesture.isEnabled = (vc.position == .tip)
 }
 ```

@@ -24,7 +24,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         didSet {
             log.debug("state changed: \(oldValue) -> \(state)")
             if let vc = ownerVC {
-                vc.delegate?.floatingPanelDidChangePosition?(vc)
+                vc.delegate?.floatingPanelDidChangeState?(vc)
             }
         }
     }
