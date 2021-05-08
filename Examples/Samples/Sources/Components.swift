@@ -3,7 +3,7 @@
 import UIKit
 
 @IBDesignable
-class CloseButton: UIButton {
+final class CloseButton: UIButton {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         render()
@@ -71,7 +71,7 @@ class CloseButton: UIButton {
 }
 
 @IBDesignable
-class SafeAreaView: UIView {
+final class SafeAreaView: UIView {
     override func prepareForInterfaceBuilder() {
         let label = UILabel()
         label.text = "Safe Area"
@@ -86,7 +86,7 @@ class SafeAreaView: UIView {
 
 
 @IBDesignable
-class OnSafeAreaView: UIView {
+final class OnSafeAreaView: UIView {
     override func prepareForInterfaceBuilder() {
         let label = UILabel()
         label.text = "On Safe Area"
