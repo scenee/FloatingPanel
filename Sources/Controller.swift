@@ -429,6 +429,9 @@ open class FloatingPanelController: UIViewController {
     // MARK: - Container view controller interface
 
     /// Shows the surface view at the initial position defined by the current layout
+    /// - Parameters:
+    ///     - animated: Pass true to animate the presentation; otherwise, pass false.
+    ///     - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
     @objc(show:completion:)
     public func show(animated: Bool = false, completion: (() -> Void)? = nil) {
         // Must apply the current layout here
@@ -470,8 +473,9 @@ open class FloatingPanelController: UIViewController {
     ///     - parent: A parent view controller object that displays FloatingPanelController's view. A container view controller object isn't applicable.
     ///     - viewIndex: Insert the surface view managed by the controller below the specified view index. By default, the surface view will be added to the end of the parent list of subviews.
     ///     - animated: Pass true to animate the presentation; otherwise, pass false.
-    @objc(addPanelToParent:at:animated:)
-    public func addPanel(toParent parent: UIViewController, at viewIndex: Int = -1, animated: Bool = false) {
+    ///     - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
+    @objc(addPanelToParent:at:animated:completion:)
+    public func addPanel(toParent parent: UIViewController, at viewIndex: Int = -1, animated: Bool = false, completion: (() -> Void)? = nil) {
         guard self.parent == nil else {
             log.warning("Already added to a parent(\(parent))")
             return
@@ -502,6 +506,7 @@ open class FloatingPanelController: UIViewController {
         show(animated: animated) { [weak self] in
             guard let self = self else { return }
             self.didMove(toParent: parent)
+            completion?()
         }
     }
 
