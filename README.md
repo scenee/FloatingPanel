@@ -55,6 +55,7 @@ The new interface displays the related contents and utilities in parallel as a u
     - [Create an additional floating panel for a detail](#create-an-additional-floating-panel-for-a-detail)
     - [Move a position with an animation](#move-a-position-with-an-animation)
     - [Work your contents together with a floating panel behavior](#work-your-contents-together-with-a-floating-panel-behavior)
+    - [Enabling the tap-to-dismiss action of the backdrop view](#enabling-the-tap-to-dismiss-action-of-the-backdrop-view)
 - [Notes](#notes)
     - ['Show' or 'Show Detail' Segues from `FloatingPanelController`'s content view controller](#show-or-show-detail-segues-from-floatingpanelcontrollers-content-view-controller)
     - [UISearchController issue](#uisearchcontroller-issue)
@@ -656,6 +657,14 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
         }
     }
 }
+```
+
+### Enabling the tap-to-dismiss action of the backdrop view
+
+The tap-to-dismiss action is disabled by default. So it needs to be enabled as below.
+
+```swift
+fpc.backdropView.dismissalTapGestureRecognizer.isEnabled = true
 ```
 
 ## Notes
