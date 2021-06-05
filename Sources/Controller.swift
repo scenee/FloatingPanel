@@ -398,20 +398,8 @@ open class FloatingPanelController: UIViewController {
     }
 
     private func activateLayout(forceLayout: Bool = false) {
-        floatingPanel.layoutAdapter.prepareLayout()
-
-        // preserve the current content offset if contentInsetAdjustmentBehavior is `.always`
-        var contentOffset: CGPoint?
-        if contentInsetAdjustmentBehavior == .always {
-            contentOffset = trackingScrollView?.contentOffset
-        }
-
-        floatingPanel.layoutAdapter.updateStaticConstraint()
-        floatingPanel.layoutAdapter.activateLayout(for: floatingPanel.state, forceLayout: forceLayout)
-
-        if let contentOffset = contentOffset {
-            trackingScrollView?.contentOffset = contentOffset
-        }
+        floatingPanel.activateLayout(forceLayout: forceLayout,
+                                     contentInsetAdjustmentBehavior: contentInsetAdjustmentBehavior)
     }
 
     func remove() {
