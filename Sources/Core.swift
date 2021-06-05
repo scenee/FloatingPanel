@@ -186,6 +186,30 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
     // MARK: - Layout update
 
+    func activateLayout(forceLayout: Bool = false,
+                        contentInsetAdjustmentBehavior: FloatingPanelController.ContentInsetAdjustmentBehavior) {
+        layoutAdapter.prepareLayout()
+
+        // preserve the current content offset if contentInsetAdjustmentBehavior is `.always`
+        var contentOffset: CGPoint?
+        if contentInsetAdjustmentBehavior == .always {
+            contentOffset = scrollView?.contentOffset
+        }
+
+        layoutAdapter.updateStaticConstraint()
+        layoutAdapter.activateLayout(for: state, forceLayout: true)
+
+        // Update the backdrop alpha only when called in `Controller.show(animated:completion:)`
+        // Because that prevents a backdrop flicking just before presenting a panel(#466).
+        if forceLayout {
+            backdropView.alpha = getBackdropAlpha(for: state)
+        }
+
+        if let contentOffset = contentOffset {
+            scrollView?.contentOffset = contentOffset
+        }
+    }
+
     private func updateLayout(to target: FloatingPanelState) {
         self.layoutAdapter.activateLayout(for: target, forceLayout: true)
         self.backdropView.alpha = self.getBackdropAlpha(for: target)
