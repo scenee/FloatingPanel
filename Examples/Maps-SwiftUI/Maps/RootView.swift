@@ -57,8 +57,7 @@ final class SearchPanelPhoneDelegate: NSObject, FloatingPanelControllerDelegate,
 
     func floatingPanelWillBeginDragging(_ vc: FloatingPanelController) {
         if vc.state == .full {
-//            owner.searchVC.searchBar.showsCancelButton = false
-//            owner.searchVC.searchBar.resignFirstResponder()
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
     }
 
