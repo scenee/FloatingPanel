@@ -3,13 +3,13 @@
 import SwiftUI
 
 struct ResultsList: UIViewControllerRepresentable {
-    var onCreateScrollView: (_ scrollView: UIScrollView) -> Void
+    var onScrollViewCreated: (_ scrollView: UIScrollView) -> Void
 
     func makeUIViewController(
         context: Context
     ) -> ResultsTableViewController {
         let rtvc = ResultsTableViewController()
-        onCreateScrollView(rtvc.tableView)
+        onScrollViewCreated(rtvc.tableView)
         return rtvc
     }
 

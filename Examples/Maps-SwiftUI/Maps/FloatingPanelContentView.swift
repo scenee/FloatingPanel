@@ -32,6 +32,6 @@ struct FloatingPanelContentView: View {
     }
 
     var resultList: some View {
-        ResultsList(onCreateScrollView: proxy.onScrollViewCreated(_:))
+        ResultsList(onScrollViewCreated: proxy.onScrollViewCreated(_:))
     }
 }
