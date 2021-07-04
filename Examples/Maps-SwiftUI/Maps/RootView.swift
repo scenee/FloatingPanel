@@ -24,8 +24,8 @@ struct RootView<Content: View, PanelContent: View>: UIViewControllerRepresentabl
 
     public class Coordinator {
         let parent: RootView<Content, PanelContent>
-        private let fpc = FloatingPanelController()
-        private let fpcDelegate = SearchPanelPhoneDelegate()
+        private lazy var fpc = FloatingPanelController()
+        private lazy var fpcDelegate = SearchPanelPhoneDelegate()
 
         init(parent: RootView<Content, PanelContent>) {
             self.parent = parent

@@ -35,10 +35,7 @@ struct PanelContentView: View {
     }
 
     var resultList: some View {
-        Color.red
-//        StopListView(
-//            tableHolder: tableHolder, onSelect: onSelect, onLongPress: onLongPress
-//        )
+        ResultsList()
     }
 }
 
