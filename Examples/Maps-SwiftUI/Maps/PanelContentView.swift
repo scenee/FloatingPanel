@@ -5,8 +5,7 @@ import SwiftUI
 struct PanelContentView: View {
     @State private var scrollView: UIScrollView?
     @State private var searchText = ""
-    @State private var isShowingCancelButton = false
-    var onKeyboardShown: () -> Void = { }
+    @State private var isSearchOnFocus = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -18,18 +17,16 @@ struct PanelContentView: View {
         .background(VisualEffectBlur(blurStyle: .systemMaterial))
         .ignoresSafeArea()
         .preference(key: ScrollViewPreferenceKey.self, value: scrollView)
+        .preference(key: KeyboardShownPreferenceKey.self, value: isSearchOnFocus)
     }
 
     var searchBar: some View {
         SearchBar(
             "Search for a place or address",
             text: $searchText,
-            isShowingCancelButton: $isShowingCancelButton
+            isShowingCancelButton: $isSearchOnFocus
         ) { isFocused in
-            if isFocused {
-                onKeyboardShown()
-            }
-            isShowingCancelButton = isFocused
+            isSearchOnFocus = isFocused
         } onCancel: {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
@@ -45,4 +42,9 @@ struct PanelContentView: View {
 struct ScrollViewPreferenceKey: PreferenceKey {
   static var defaultValue: UIScrollView? = nil
   static func reduce(value: inout UIScrollView?, nextValue: () -> UIScrollView?) {}
+}
+
+struct KeyboardShownPreferenceKey: PreferenceKey {
+  static var defaultValue: Bool = false
+  static func reduce(value: inout Bool, nextValue: () -> Bool) {}
 }

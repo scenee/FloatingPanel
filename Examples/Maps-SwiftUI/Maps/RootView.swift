@@ -44,6 +44,9 @@ struct RootView<Content: View, PanelContent: View>: UIViewControllerRepresentabl
                         fpc?.track(scrollView: scrollView)
                     }
                 }
+                .onPreferenceChange(KeyboardShownPreferenceKey.self) { [weak fpc] isKeyboardShown in
+                    fpc?.move(to: isKeyboardShown ? .full : .half, animated: true)
+                }
 
             let hostingViewController = UIHostingController(rootView: panelContent)
             hostingViewController.view.backgroundColor = nil
