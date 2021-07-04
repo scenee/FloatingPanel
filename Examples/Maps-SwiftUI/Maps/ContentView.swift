@@ -12,7 +12,7 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             Map(coordinateRegion: $region)
-                .edgesIgnoringSafeArea(.all)
+                .ignoresSafeArea()
             statusBarView
         }
     }
@@ -21,7 +21,7 @@ struct ContentView: View {
         GeometryReader { geometry in
             VisualEffectBlur()
                 .frame(height: geometry.safeAreaInsets.top, alignment: .top)
-                .edgesIgnoringSafeArea(.top)
+                .ignoresSafeArea()
         }
     }
 }

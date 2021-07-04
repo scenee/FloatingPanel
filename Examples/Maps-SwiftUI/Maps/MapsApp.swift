@@ -11,6 +11,7 @@ struct MapsApp: App {
             } panelContent: {
                 Color.red
             }
+            .ignoresSafeArea()
         }
     }
 }
