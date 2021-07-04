@@ -34,6 +34,7 @@ struct RootView<Content: View, PanelContent: View>: UIViewControllerRepresentabl
         }
 
         func updateUIViewController(uiViewController: UIHostingController<Content>) {
+            fpc.contentMode = .fitToBounds
             fpc.delegate = fpcDelegate
             fpc.contentInsetAdjustmentBehavior = .never
             fpc.setAppearanceForPhone()
