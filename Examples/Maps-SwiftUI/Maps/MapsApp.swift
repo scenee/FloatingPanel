@@ -1,9 +1,9 @@
-//
+// Copyright 2021 the FloatingPanel authors. All rights reserved. MIT license.
 
 import SwiftUI
 
 @main
-struct Maps_SwiftUIApp: App {
+struct MapsApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

@@ -7,18 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		64A5B7232691323900BCAA05 /* Maps_SwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A5B7222691323900BCAA05 /* Maps_SwiftUIApp.swift */; };
+		64A5B7232691323900BCAA05 /* MapsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A5B7222691323900BCAA05 /* MapsApp.swift */; };
 		64A5B7252691323900BCAA05 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A5B7242691323900BCAA05 /* ContentView.swift */; };
-		64A5B7272691323A00BCAA05 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 64A5B7262691323A00BCAA05 /* Assets.xcassets */; };
-		64A5B72A2691323A00BCAA05 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 64A5B7292691323A00BCAA05 /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		64A5B71F2691323900BCAA05 /* Maps-SwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Maps-SwiftUI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		64A5B7222691323900BCAA05 /* Maps_SwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Maps_SwiftUIApp.swift; sourceTree = "<group>"; };
+		64A5B7222691323900BCAA05 /* MapsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapsApp.swift; sourceTree = "<group>"; };
 		64A5B7242691323900BCAA05 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		64A5B7262691323A00BCAA05 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		64A5B7292691323A00BCAA05 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,7 +31,7 @@
 		64A5B7162691323900BCAA05 = {
 			isa = PBXGroup;
 			children = (
-				64A5B7212691323900BCAA05 /* Maps-SwiftUI */,
+				64A5B7212691323900BCAA05 /* Maps */,
 				64A5B7202691323900BCAA05 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -48,23 +44,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		64A5B7212691323900BCAA05 /* Maps-SwiftUI */ = {
+		64A5B7212691323900BCAA05 /* Maps */ = {
 			isa = PBXGroup;
 			children = (
-				64A5B7222691323900BCAA05 /* Maps_SwiftUIApp.swift */,
+				64A5B7222691323900BCAA05 /* MapsApp.swift */,
 				64A5B7242691323900BCAA05 /* ContentView.swift */,
-				64A5B7262691323A00BCAA05 /* Assets.xcassets */,
-				64A5B7282691323A00BCAA05 /* Preview Content */,
 			);
-			path = "Maps-SwiftUI";
-			sourceTree = "<group>";
-		};
-		64A5B7282691323A00BCAA05 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				64A5B7292691323A00BCAA05 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
+			path = Maps;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -125,8 +111,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				64A5B72A2691323A00BCAA05 /* Preview Assets.xcassets in Resources */,
-				64A5B7272691323A00BCAA05 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,7 +122,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				64A5B7252691323900BCAA05 /* ContentView.swift in Sources */,
-				64A5B7232691323900BCAA05 /* Maps_SwiftUIApp.swift in Sources */,
+				64A5B7232691323900BCAA05 /* MapsApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,7 +180,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -251,7 +235,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -268,7 +252,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Maps-SwiftUI/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -297,7 +280,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Maps-SwiftUI/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
