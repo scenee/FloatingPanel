@@ -3,12 +3,15 @@
 import SwiftUI
 
 struct ResultsList: UIViewControllerRepresentable {
+    var onCreateScrollView: (_ scrollView: UIScrollView) -> Void
 
     func makeUIViewController(
         context: Context
     ) -> ResultsTableViewController {
         let rtvc = ResultsTableViewController()
-        //    tableHolder.tableViewController = sdtvc
+        DispatchQueue.main.async {
+            onCreateScrollView(rtvc.tableView)
+        }
         return rtvc
     }
 

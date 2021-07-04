@@ -3,6 +3,7 @@
 import SwiftUI
 
 struct PanelContentView: View {
+    @State var scrollView: UIScrollView?
     @State var searchText = ""
     @State var isShowingCancelButton = false
     var onKeyboardShown: () -> Void = { }
@@ -17,6 +18,7 @@ struct PanelContentView: View {
         .padding(.top, 6)
         .background(VisualEffectBlur(blurStyle: .systemMaterial))
         .ignoresSafeArea()
+        .preference(key: ScrollViewPreferenceKey.self, value: scrollView)
     }
 
     var searchBar: some View {
@@ -35,7 +37,14 @@ struct PanelContentView: View {
     }
 
     var resultList: some View {
-        ResultsList()
+        ResultsList { scrollView in
+            print("state updated with \(scrollView)")
+            self.scrollView = scrollView
+        }
     }
 }
 
+struct ScrollViewPreferenceKey: PreferenceKey {
+  static var defaultValue: UIScrollView? = nil
+  static func reduce(value: inout UIScrollView?, nextValue: () -> UIScrollView?) {}
+}

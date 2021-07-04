@@ -34,7 +34,15 @@ struct RootView<Content: View, PanelContent: View>: UIViewControllerRepresentabl
         func updateUIViewController(uiViewController: UIHostingController<Content>) {
             fpc.delegate = fpcDelegate
             fpc.contentInsetAdjustmentBehavior = .never
-            let hostingViewController = UIHostingController(rootView: parent.panelContent)
+
+            let panelContent = parent.panelContent
+                .onPreferenceChange(ScrollViewPreferenceKey.self) { [weak fpc] scrollView in
+                    if let scrollView = scrollView {
+                        fpc?.track(scrollView: scrollView)
+                    }
+                }
+
+            let hostingViewController = UIHostingController(rootView: panelContent)
             fpc.set(contentViewController: hostingViewController)
             fpc.addPanel(toParent: uiViewController, animated: true)
         }
