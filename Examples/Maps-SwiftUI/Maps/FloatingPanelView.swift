@@ -19,14 +19,15 @@ struct FloatingPanelProxy {
     }
 }
 
-struct FloatingPanelView<Content: View, PanelContent: View>: UIViewControllerRepresentable {
+struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewControllerRepresentable {
     @ViewBuilder var content: Content
-    @ViewBuilder var panelContent: (FloatingPanelProxy) -> PanelContent
+    @ViewBuilder var floatingPanelContent: (FloatingPanelProxy) -> FloatingPanelContent
     @State private var proxy = FloatingPanelProxy()
 
     public func makeUIViewController(context: Context) -> UIHostingController<Content> {
         let hostingController = UIHostingController(rootView: content)
         hostingController.view.backgroundColor = nil
+        context.coordinator.setupFloatingPanel(hostingController)
         return hostingController
     }
 
@@ -34,7 +35,6 @@ struct FloatingPanelView<Content: View, PanelContent: View>: UIViewControllerRep
         _ uiViewController: UIHostingController<Content>,
         context: Context
     ) {
-        context.coordinator.updateUIViewController(uiViewController: uiViewController)
     }
 
     public func makeCoordinator() -> Coordinator {
@@ -42,32 +42,35 @@ struct FloatingPanelView<Content: View, PanelContent: View>: UIViewControllerRep
     }
 
     public class Coordinator {
-        let parent: FloatingPanelView<Content, PanelContent>
+        let parent: FloatingPanelView<Content, FloatingPanelContent>
         private lazy var fpc = FloatingPanelController()
         private lazy var fpcDelegate = SearchPanelPhoneDelegate()
 
-        init(parent: FloatingPanelView<Content, PanelContent>) {
+        init(parent: FloatingPanelView<Content, FloatingPanelContent>) {
             self.parent = parent
         }
 
-        func updateUIViewController(uiViewController: UIHostingController<Content>) {
+        func setupFloatingPanel(_ parentViewController: UIViewController) {
             parent.proxy.coordinator.fpc = fpc
             fpc.contentMode = .fitToBounds
             fpc.delegate = fpcDelegate
             fpc.contentInsetAdjustmentBehavior = .never
             fpc.setAppearanceForPhone()
-            let panelContent = parent.panelContent(parent.proxy)
+            let panelContent = parent.floatingPanelContent(parent.proxy)
             let hostingViewController = UIHostingController(rootView: panelContent)
             hostingViewController.view.backgroundColor = nil
             fpc.set(contentViewController: hostingViewController)
-            fpc.addPanel(toParent: uiViewController, animated: true)
+            fpc.addPanel(toParent: parentViewController, animated: true)
         }
     }
 }
 
-final class SearchPanelPhoneDelegate: NSObject, FloatingPanelControllerDelegate, UIGestureRecognizerDelegate {
+final class SearchPanelPhoneDelegate: NSObject, FloatingPanelControllerDelegate {
 
-    func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout {
+    func floatingPanel(
+        _ vc: FloatingPanelController,
+        layoutFor newCollection: UITraitCollection
+    ) -> FloatingPanelLayout {
         FloatingPanelBottomLayout()
     }
 
