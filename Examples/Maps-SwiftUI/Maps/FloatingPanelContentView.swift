@@ -10,7 +10,7 @@ struct FloatingPanelContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             searchBar
-            resultList
+            resultsList
         }
         // 👇🏻 for the floating panel handle.
         .padding(.top, 6)
@@ -31,7 +31,7 @@ struct FloatingPanelContentView: View {
         }
     }
 
-    var resultList: some View {
+    var resultsList: some View {
         ResultsList(onScrollViewCreated: proxy.onScrollViewCreated(_:))
     }
 }
