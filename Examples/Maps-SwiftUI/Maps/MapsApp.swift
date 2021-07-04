@@ -9,7 +9,7 @@ struct MapsApp: App {
             RootView {
                 ContentView()
             } panelContent: {
-                Color.red
+                PanelContentView()
             }
             .ignoresSafeArea()
         }
