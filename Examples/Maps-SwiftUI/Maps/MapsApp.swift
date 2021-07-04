@@ -6,12 +6,10 @@ import SwiftUI
 struct MapsApp: App {
     var body: some Scene {
         WindowGroup {
-            RootView {
-                ContentView()
-            } panelContent: { proxy in
-                PanelContentView(proxy: proxy)
-            }
-            .ignoresSafeArea()
+            ContentView()
+                .floatingPanel {
+                    PanelContentView(proxy: $0)
+                }
         }
     }
 }

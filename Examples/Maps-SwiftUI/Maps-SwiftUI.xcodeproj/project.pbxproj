@@ -12,11 +12,12 @@
 		64A5B734269133DC00BCAA05 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64A5B733269133DC00BCAA05 /* FloatingPanel.framework */; };
 		64A5B735269133DC00BCAA05 /* FloatingPanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 64A5B733269133DC00BCAA05 /* FloatingPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		64A5B738269134CA00BCAA05 /* VisualEffectBlur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A5B737269134CA00BCAA05 /* VisualEffectBlur.swift */; };
-		64A5B73A2691394400BCAA05 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A5B7392691394400BCAA05 /* RootView.swift */; };
+		64A5B73A2691394400BCAA05 /* FloatingPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A5B7392691394400BCAA05 /* FloatingPanelView.swift */; };
 		64A5B73C2691469900BCAA05 /* PanelContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A5B73B2691469900BCAA05 /* PanelContentView.swift */; };
 		64A5B73E269147DC00BCAA05 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A5B73D269147DC00BCAA05 /* SearchBar.swift */; };
 		64A5B7402691532400BCAA05 /* ResultsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A5B73F2691532400BCAA05 /* ResultsList.swift */; };
 		64A5B7422691541A00BCAA05 /* HostingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A5B7412691541A00BCAA05 /* HostingCell.swift */; };
+		64BE556F2691BAFF006D98BD /* View+floatingPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64BE556E2691BAFF006D98BD /* View+floatingPanel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -39,11 +40,12 @@
 		64A5B7242691323900BCAA05 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		64A5B733269133DC00BCAA05 /* FloatingPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FloatingPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A5B737269134CA00BCAA05 /* VisualEffectBlur.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectBlur.swift; sourceTree = "<group>"; };
-		64A5B7392691394400BCAA05 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		64A5B7392691394400BCAA05 /* FloatingPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelView.swift; sourceTree = "<group>"; };
 		64A5B73B2691469900BCAA05 /* PanelContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelContentView.swift; sourceTree = "<group>"; };
 		64A5B73D269147DC00BCAA05 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		64A5B73F2691532400BCAA05 /* ResultsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsList.swift; sourceTree = "<group>"; };
 		64A5B7412691541A00BCAA05 /* HostingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostingCell.swift; sourceTree = "<group>"; };
+		64BE556E2691BAFF006D98BD /* View+floatingPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+floatingPanel.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,7 +81,8 @@
 			isa = PBXGroup;
 			children = (
 				64A5B7222691323900BCAA05 /* MapsApp.swift */,
-				64A5B7392691394400BCAA05 /* RootView.swift */,
+				64BE556E2691BAFF006D98BD /* View+floatingPanel.swift */,
+				64A5B7392691394400BCAA05 /* FloatingPanelView.swift */,
 				64A5B7242691323900BCAA05 /* ContentView.swift */,
 				64A5B73B2691469900BCAA05 /* PanelContentView.swift */,
 				64A5B73F2691532400BCAA05 /* ResultsList.swift */,
@@ -170,8 +173,9 @@
 				64A5B7422691541A00BCAA05 /* HostingCell.swift in Sources */,
 				64A5B738269134CA00BCAA05 /* VisualEffectBlur.swift in Sources */,
 				64A5B7402691532400BCAA05 /* ResultsList.swift in Sources */,
+				64BE556F2691BAFF006D98BD /* View+floatingPanel.swift in Sources */,
 				64A5B7252691323900BCAA05 /* ContentView.swift in Sources */,
-				64A5B73A2691394400BCAA05 /* RootView.swift in Sources */,
+				64A5B73A2691394400BCAA05 /* FloatingPanelView.swift in Sources */,
 				64A5B7232691323900BCAA05 /* MapsApp.swift in Sources */,
 				64A5B73C2691469900BCAA05 /* PanelContentView.swift in Sources */,
 				64A5B73E269147DC00BCAA05 /* SearchBar.swift in Sources */,

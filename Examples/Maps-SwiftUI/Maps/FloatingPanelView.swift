@@ -19,7 +19,7 @@ struct FloatingPanelProxy {
     }
 }
 
-struct RootView<Content: View, PanelContent: View>: UIViewControllerRepresentable {
+struct FloatingPanelView<Content: View, PanelContent: View>: UIViewControllerRepresentable {
     @ViewBuilder var content: Content
     @ViewBuilder var panelContent: (FloatingPanelProxy) -> PanelContent
     @State private var proxy = FloatingPanelProxy()
@@ -42,11 +42,11 @@ struct RootView<Content: View, PanelContent: View>: UIViewControllerRepresentabl
     }
 
     public class Coordinator {
-        let parent: RootView<Content, PanelContent>
+        let parent: FloatingPanelView<Content, PanelContent>
         private lazy var fpc = FloatingPanelController()
         private lazy var fpcDelegate = SearchPanelPhoneDelegate()
 
-        init(parent: RootView<Content, PanelContent>) {
+        init(parent: FloatingPanelView<Content, PanelContent>) {
             self.parent = parent
         }
 
