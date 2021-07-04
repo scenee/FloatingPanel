@@ -3,11 +3,10 @@
 import SwiftUI
 
 struct PanelContentView: View {
-    @State var scrollView: UIScrollView?
-    @State var searchText = ""
-    @State var isShowingCancelButton = false
+    @State private var scrollView: UIScrollView?
+    @State private var searchText = ""
+    @State private var isShowingCancelButton = false
     var onKeyboardShown: () -> Void = { }
-    var onCancel: () -> Void = { }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -32,7 +31,7 @@ struct PanelContentView: View {
             }
             isShowingCancelButton = isFocused
         } onCancel: {
-            onCancel()
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
     }
 

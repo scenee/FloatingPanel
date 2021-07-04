@@ -60,17 +60,4 @@ final class SearchPanelPhoneDelegate: NSObject, FloatingPanelControllerDelegate,
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
     }
-
-    func floatingPanelWillEndDragging(_ vc: FloatingPanelController, withVelocity velocity: CGPoint, targetState: UnsafeMutablePointer<FloatingPanelState>) {
-        if targetState.pointee != .full {
-//            owner.searchVC.hideHeader(animated: true)
-        }
-        if targetState.pointee == .tip {
-            vc.contentMode = .static
-        }
-    }
-
-    func floatingPanelDidEndAttracting(_ fpc: FloatingPanelController) {
-        fpc.contentMode = .fitToBounds
-    }
 }
