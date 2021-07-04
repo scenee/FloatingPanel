@@ -2,9 +2,9 @@
 
 import SwiftUI
 
-struct PanelContentView: View {
+struct FloatingPanelContentView: View {
     @State private var searchText = ""
-    @State private var isSearchOnFocus = false
+    @State private var isShowingCancelButton = false
     var proxy: FloatingPanelProxy
 
     var body: some View {
@@ -22,10 +22,10 @@ struct PanelContentView: View {
         SearchBar(
             "Search for a place or address",
             text: $searchText,
-            isShowingCancelButton: $isSearchOnFocus
+            isShowingCancelButton: $isShowingCancelButton
         ) { isFocused in
             proxy.onSearchBarEditingChanged(isFocused)
-            isSearchOnFocus = isFocused
+            isShowingCancelButton = isFocused
         } onCancel: {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }

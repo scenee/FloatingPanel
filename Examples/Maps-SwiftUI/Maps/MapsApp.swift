@@ -8,7 +8,7 @@ struct MapsApp: App {
         WindowGroup {
             ContentView()
                 .floatingPanel {
-                    PanelContentView(proxy: $0)
+                    FloatingPanelContentView(proxy: $0)
                 }
         }
     }
