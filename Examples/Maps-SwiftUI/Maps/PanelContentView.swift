@@ -3,9 +3,9 @@
 import SwiftUI
 
 struct PanelContentView: View {
-    @State private var scrollView: UIScrollView?
     @State private var searchText = ""
     @State private var isSearchOnFocus = false
+    var proxy: FloatingPanelProxy
 
     var body: some View {
         VStack(spacing: 0) {
@@ -16,8 +16,6 @@ struct PanelContentView: View {
         .padding(.top, 6)
         .background(VisualEffectBlur(blurStyle: .systemMaterial))
         .ignoresSafeArea()
-        .preference(key: ScrollViewPreferenceKey.self, value: scrollView)
-        .preference(key: KeyboardShownPreferenceKey.self, value: isSearchOnFocus)
     }
 
     var searchBar: some View {
@@ -26,6 +24,7 @@ struct PanelContentView: View {
             text: $searchText,
             isShowingCancelButton: $isSearchOnFocus
         ) { isFocused in
+            proxy.onSearchBarEditingChanged(isFocused)
             isSearchOnFocus = isFocused
         } onCancel: {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -33,18 +32,6 @@ struct PanelContentView: View {
     }
 
     var resultList: some View {
-        ResultsList { scrollView in
-            self.scrollView = scrollView
-        }
+        ResultsList(onCreateScrollView: proxy.onScrollViewCreated(_:))
     }
-}
-
-struct ScrollViewPreferenceKey: PreferenceKey {
-  static var defaultValue: UIScrollView? = nil
-  static func reduce(value: inout UIScrollView?, nextValue: () -> UIScrollView?) {}
-}
-
-struct KeyboardShownPreferenceKey: PreferenceKey {
-  static var defaultValue: Bool = false
-  static func reduce(value: inout Bool, nextValue: () -> Bool) {}
 }

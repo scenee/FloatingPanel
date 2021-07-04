@@ -8,8 +8,8 @@ struct MapsApp: App {
         WindowGroup {
             RootView {
                 ContentView()
-            } panelContent: {
-                PanelContentView()
+            } panelContent: { proxy in
+                PanelContentView(proxy: proxy)
             }
             .ignoresSafeArea()
         }

@@ -3,9 +3,26 @@
 import FloatingPanel
 import SwiftUI
 
+struct FloatingPanelProxy {
+    fileprivate class Coordinator {
+        weak var fpc: FloatingPanelController?
+    }
+
+    fileprivate var coordinator = Coordinator()
+
+    func onScrollViewCreated(_ scrollView: UIScrollView) {
+        coordinator.fpc?.track(scrollView: scrollView)
+    }
+
+    func onSearchBarEditingChanged(_ isFocused: Bool) {
+        coordinator.fpc?.move(to: isFocused ? .full : .half, animated: true)
+    }
+}
+
 struct RootView<Content: View, PanelContent: View>: UIViewControllerRepresentable {
     @ViewBuilder var content: Content
-    @ViewBuilder var panelContent: PanelContent
+    @ViewBuilder var panelContent: (FloatingPanelProxy) -> PanelContent
+    @State private var proxy = FloatingPanelProxy()
 
     public func makeUIViewController(context: Context) -> UIHostingController<Content> {
         let hostingController = UIHostingController(rootView: content)
@@ -34,20 +51,12 @@ struct RootView<Content: View, PanelContent: View>: UIViewControllerRepresentabl
         }
 
         func updateUIViewController(uiViewController: UIHostingController<Content>) {
+            parent.proxy.coordinator.fpc = fpc
             fpc.contentMode = .fitToBounds
             fpc.delegate = fpcDelegate
             fpc.contentInsetAdjustmentBehavior = .never
             fpc.setAppearanceForPhone()
-            let panelContent = parent.panelContent
-                .onPreferenceChange(ScrollViewPreferenceKey.self) { [weak fpc] scrollView in
-                    if let scrollView = scrollView {
-                        fpc?.track(scrollView: scrollView)
-                    }
-                }
-                .onPreferenceChange(KeyboardShownPreferenceKey.self) { [weak fpc] isKeyboardShown in
-                    fpc?.move(to: isKeyboardShown ? .full : .half, animated: true)
-                }
-
+            let panelContent = parent.panelContent(parent.proxy)
             let hostingViewController = UIHostingController(rootView: panelContent)
             hostingViewController.view.backgroundColor = nil
             fpc.set(contentViewController: hostingViewController)
