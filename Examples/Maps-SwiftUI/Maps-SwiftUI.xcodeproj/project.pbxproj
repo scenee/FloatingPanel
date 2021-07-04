@@ -87,8 +87,7 @@
 				64A5B73B2691469900BCAA05 /* PanelContentView.swift */,
 				64A5B73F2691532400BCAA05 /* ResultsList.swift */,
 				64A5B7412691541A00BCAA05 /* HostingCell.swift */,
-				64A5B73D269147DC00BCAA05 /* SearchBar.swift */,
-				64A5B737269134CA00BCAA05 /* VisualEffectBlur.swift */,
+				64BE55702691BBB0006D98BD /* Representable */,
 			);
 			path = Maps;
 			sourceTree = "<group>";
@@ -99,6 +98,15 @@
 				64A5B733269133DC00BCAA05 /* FloatingPanel.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		64BE55702691BBB0006D98BD /* Representable */ = {
+			isa = PBXGroup;
+			children = (
+				64A5B73D269147DC00BCAA05 /* SearchBar.swift */,
+				64A5B737269134CA00BCAA05 /* VisualEffectBlur.swift */,
+			);
+			path = Representable;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

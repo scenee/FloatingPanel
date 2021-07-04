@@ -20,7 +20,7 @@ struct ContentView: View {
     private var statusBarView: some View {
         GeometryReader { geometry in
             VisualEffectBlur()
-                .frame(height: geometry.safeAreaInsets.top, alignment: .top)
+                .frame(height: geometry.safeAreaInsets.top)
                 .ignoresSafeArea()
         }
     }
