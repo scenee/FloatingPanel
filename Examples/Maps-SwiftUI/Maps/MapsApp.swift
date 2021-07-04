@@ -6,7 +6,11 @@ import SwiftUI
 struct MapsApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView {
+                ContentView()
+            } panelContent: {
+                Color.red
+            }
         }
     }
 }

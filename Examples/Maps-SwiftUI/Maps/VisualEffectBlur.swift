@@ -1,3 +1,5 @@
+// Copyright 2021 the FloatingPanel authors. All rights reserved. MIT license.
+
 import SwiftUI
 
 @available(iOS, introduced: 13, deprecated: 15, message: "Use iOS 15 material API.")
