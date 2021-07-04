@@ -38,7 +38,6 @@ struct PanelContentView: View {
 
     var resultList: some View {
         ResultsList { scrollView in
-            print("state updated with \(scrollView)")
             self.scrollView = scrollView
         }
     }
