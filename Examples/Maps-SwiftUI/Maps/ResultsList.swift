@@ -9,9 +9,7 @@ struct ResultsList: UIViewControllerRepresentable {
         context: Context
     ) -> ResultsTableViewController {
         let rtvc = ResultsTableViewController()
-        DispatchQueue.main.async {
-            onCreateScrollView(rtvc.tableView)
-        }
+        onCreateScrollView(rtvc.tableView)
         return rtvc
     }
 
@@ -22,20 +20,18 @@ struct ResultsList: UIViewControllerRepresentable {
     }
 }
 
-struct TableViewItem: Hashable {
-    let color: Color
-    let symbolName: String
-    let title: String
-    let description: String
-}
-
 final class ResultsTableViewController: UITableViewController {
     private let reuseIdentifier = "HostingCell<ResultListCell>"
 
-    // MARK: Section
-
     private enum Section: CaseIterable {
         case main
+    }
+
+    private struct TableViewItem: Hashable {
+        let color: Color
+        let symbolName: String
+        let title: String
+        let description: String
     }
 
     private var dataSource: UITableViewDiffableDataSource<Section, TableViewItem>?
@@ -46,10 +42,6 @@ final class ResultsTableViewController: UITableViewController {
         super.viewDidLoad()
         tableView.backgroundColor = nil
         tableView.register(HostingCell<ResultListCell>.self, forCellReuseIdentifier: reuseIdentifier)
-
-        // A little trick for removing the cell separators
-        tableView.tableFooterView = UIView()
-
         configureDataSource()
     }
 
@@ -63,9 +55,7 @@ final class ResultsTableViewController: UITableViewController {
         tableView.dataSource = dataSource
 
         var snapshot = NSDiffableDataSourceSnapshot<Section, TableViewItem>()
-
         snapshot.appendSections([.main])
-
         let results: [TableViewItem] = (1...100).map {
             TableViewItem(
                 color: Color(red: 255 / 255.0, green: 94 / 255.0 , blue: 94 / 255.0),
