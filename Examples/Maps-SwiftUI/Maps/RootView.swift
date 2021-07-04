@@ -36,7 +36,7 @@ struct RootView<Content: View, PanelContent: View>: UIViewControllerRepresentabl
         func updateUIViewController(uiViewController: UIHostingController<Content>) {
             fpc.delegate = fpcDelegate
             fpc.contentInsetAdjustmentBehavior = .never
-
+            fpc.setAppearanceForPhone()
             let panelContent = parent.panelContent
                 .onPreferenceChange(ScrollViewPreferenceKey.self) { [weak fpc] scrollView in
                     if let scrollView = scrollView {
@@ -62,5 +62,15 @@ final class SearchPanelPhoneDelegate: NSObject, FloatingPanelControllerDelegate,
         if vc.state == .full {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
+    }
+}
+
+extension FloatingPanelController {
+    func setAppearanceForPhone() {
+        let appearance = SurfaceAppearance()
+        appearance.cornerCurve = .continuous
+        appearance.cornerRadius = 8.0
+        appearance.backgroundColor = .clear
+        surfaceView.appearance = appearance
     }
 }
