@@ -22,7 +22,6 @@ struct FloatingPanelProxy {
 struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewControllerRepresentable {
     @ViewBuilder var content: Content
     @ViewBuilder var floatingPanelContent: (FloatingPanelProxy) -> FloatingPanelContent
-    @State private var proxy = FloatingPanelProxy()
 
     public func makeUIViewController(context: Context) -> UIHostingController<Content> {
         let hostingController = UIHostingController(rootView: content)
@@ -41,22 +40,23 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
         Coordinator(parent: self)
     }
 
-    public class Coordinator {
-        let parent: FloatingPanelView<Content, FloatingPanelContent>
+    class Coordinator {
+        private let parent: FloatingPanelView<Content, FloatingPanelContent>
         private lazy var fpc = FloatingPanelController()
         private lazy var fpcDelegate = SearchPanelPhoneDelegate()
+        private lazy var proxy = FloatingPanelProxy()
 
         init(parent: FloatingPanelView<Content, FloatingPanelContent>) {
             self.parent = parent
         }
 
         func setupFloatingPanel(_ parentViewController: UIViewController) {
-            parent.proxy.coordinator.fpc = fpc
+            proxy.coordinator.fpc = fpc
             fpc.contentMode = .fitToBounds
             fpc.delegate = fpcDelegate
             fpc.contentInsetAdjustmentBehavior = .never
             fpc.setAppearanceForPhone()
-            let panelContent = parent.floatingPanelContent(parent.proxy)
+            let panelContent = parent.floatingPanelContent(proxy)
             let hostingViewController = UIHostingController(rootView: panelContent)
             hostingViewController.view.backgroundColor = nil
             fpc.set(contentViewController: hostingViewController)
