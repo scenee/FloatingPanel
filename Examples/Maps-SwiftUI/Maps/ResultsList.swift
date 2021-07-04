@@ -44,7 +44,7 @@ final class ResultsTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.backgroundColor = .clear
+        tableView.backgroundColor = nil
         tableView.register(HostingCell<ResultListCell>.self, forCellReuseIdentifier: reuseIdentifier)
 
         // A little trick for removing the cell separators

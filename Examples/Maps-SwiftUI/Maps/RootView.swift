@@ -8,7 +8,9 @@ struct RootView<Content: View, PanelContent: View>: UIViewControllerRepresentabl
     @ViewBuilder var panelContent: PanelContent
 
     public func makeUIViewController(context: Context) -> UIHostingController<Content> {
-        UIHostingController(rootView: content)
+        let hostingController = UIHostingController(rootView: content)
+        hostingController.view.backgroundColor = nil
+        return hostingController
     }
 
     public func updateUIViewController(
@@ -43,6 +45,7 @@ struct RootView<Content: View, PanelContent: View>: UIViewControllerRepresentabl
                 }
 
             let hostingViewController = UIHostingController(rootView: panelContent)
+            hostingViewController.view.backgroundColor = nil
             fpc.set(contentViewController: hostingViewController)
             fpc.addPanel(toParent: uiViewController, animated: true)
         }
