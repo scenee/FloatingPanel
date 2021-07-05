@@ -30,10 +30,10 @@ public struct FloatingPanelProxy {
 
 /// A view with an associated floating panel.
 struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewControllerRepresentable {
-    /// The floating panel parent view.
+    /// The view builder that creates the floating panel parent view content.
     @ViewBuilder var content: Content
 
-    /// Floating panel content.
+    /// The view builder that creates the floating panel content.
     @ViewBuilder var floatingPanelContent: (FloatingPanelProxy) -> FloatingPanelContent
 
     public func makeUIViewController(context: Context) -> UIHostingController<Content> {
