@@ -3,7 +3,7 @@
 import SwiftUI
 
 extension View {
-    func floatingPanel<FloatingPanelContent: View>(
+    public func floatingPanel<FloatingPanelContent: View>(
         @ViewBuilder _ floatingPanelContent: @escaping (_: FloatingPanelProxy) -> FloatingPanelContent
     ) -> some View {
         FloatingPanelView(

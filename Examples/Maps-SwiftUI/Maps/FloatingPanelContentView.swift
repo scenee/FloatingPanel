@@ -24,7 +24,7 @@ struct FloatingPanelContentView: View {
             text: $searchText,
             isShowingCancelButton: $isShowingCancelButton
         ) { isFocused in
-            proxy.onSearchBarEditingChanged(isFocused)
+            proxy.move(to: isFocused ? .full : .half, animated: true)
             isShowingCancelButton = isFocused
         } onCancel: {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -32,6 +32,6 @@ struct FloatingPanelContentView: View {
     }
 
     var resultsList: some View {
-        ResultsList(onScrollViewCreated: proxy.onScrollViewCreated(_:))
+        ResultsList(onScrollViewCreated: proxy.track(scrollView:))
     }
 }

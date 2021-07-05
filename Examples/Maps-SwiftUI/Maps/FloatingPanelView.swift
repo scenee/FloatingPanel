@@ -3,19 +3,27 @@
 import FloatingPanel
 import SwiftUI
 
-struct FloatingPanelProxy {
-    fileprivate class Coordinator {
-        weak var fpc: FloatingPanelController?
+/// A proxy for exposing the methods of the floating panel controller.
+public struct FloatingPanelProxy {
+    /// The associated floating panel controller.
+    weak var fpc: FloatingPanelController?
+
+    /// Tracks the specified scroll view to correspond with the scroll.
+    ///
+    /// - Parameter scrollView: Specify a scroll view to continuously and
+    ///   seamlessly work in concert with interactions of the surface view.
+    public func track(scrollView: UIScrollView) {
+        fpc?.track(scrollView: scrollView)
     }
 
-    fileprivate var coordinator = Coordinator()
-
-    func onScrollViewCreated(_ scrollView: UIScrollView) {
-        coordinator.fpc?.track(scrollView: scrollView)
-    }
-
-    func onSearchBarEditingChanged(_ isFocused: Bool) {
-        coordinator.fpc?.move(to: isFocused ? .full : .half, animated: true)
+    /// Moves the floating panel to the specified position.
+    ///
+    /// - Parameters:
+    ///   - floatingPanelState: The state to move to.
+    ///   - animated: `true` to animate the transition to the new state; `false`
+    ///     otherwise.
+    public func move(to floatingPanelState: FloatingPanelState, animated: Bool) {
+        fpc?.move(to: floatingPanelState, animated: animated)
     }
 }
 
@@ -44,19 +52,17 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
         private let parent: FloatingPanelView<Content, FloatingPanelContent>
         private lazy var fpc = FloatingPanelController()
         private lazy var fpcDelegate = SearchPanelPhoneDelegate()
-        private lazy var proxy = FloatingPanelProxy()
 
         init(parent: FloatingPanelView<Content, FloatingPanelContent>) {
             self.parent = parent
         }
 
         func setupFloatingPanel(_ parentViewController: UIViewController) {
-            proxy.coordinator.fpc = fpc
             fpc.contentMode = .fitToBounds
             fpc.delegate = fpcDelegate
             fpc.contentInsetAdjustmentBehavior = .never
             fpc.setAppearanceForPhone()
-            let panelContent = parent.floatingPanelContent(proxy)
+            let panelContent = parent.floatingPanelContent(FloatingPanelProxy(fpc: fpc))
             let hostingViewController = UIHostingController(rootView: panelContent)
             hostingViewController.view.backgroundColor = nil
             fpc.set(contentViewController: hostingViewController)
