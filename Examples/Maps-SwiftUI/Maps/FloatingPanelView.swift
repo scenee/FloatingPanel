@@ -80,14 +80,6 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
 }
 
 final class SearchPanelPhoneDelegate: FloatingPanelControllerDelegate {
-
-    func floatingPanel(
-        _ vc: FloatingPanelController,
-        layoutFor newCollection: UITraitCollection
-    ) -> FloatingPanelLayout {
-        FloatingPanelBottomLayout()
-    }
-
     func floatingPanelWillBeginDragging(_ vc: FloatingPanelController) {
         if vc.state == .full {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
