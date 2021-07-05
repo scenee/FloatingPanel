@@ -13,11 +13,11 @@ struct ContentView: View {
         ZStack {
             Map(coordinateRegion: $region)
                 .ignoresSafeArea()
-            statusBarView
+            statusBarBlur
         }
     }
 
-    private var statusBarView: some View {
+    private var statusBarBlur: some View {
         GeometryReader { geometry in
             VisualEffectBlur()
                 .frame(height: geometry.safeAreaInsets.top)
