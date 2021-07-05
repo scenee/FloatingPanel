@@ -79,7 +79,7 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
     }
 }
 
-final class SearchPanelPhoneDelegate: NSObject, FloatingPanelControllerDelegate {
+final class SearchPanelPhoneDelegate: FloatingPanelControllerDelegate {
 
     func floatingPanel(
         _ vc: FloatingPanelController,
