@@ -12,7 +12,7 @@ struct FloatingPanelContentView: View {
             searchBar
             resultsList
         }
-        // 👇🏻 for the floating panel handle.
+        // 👇🏻 for the floating panel grabber handle.
         .padding(.top, 6)
         .background(VisualEffectBlur(blurStyle: .systemMaterial))
         .ignoresSafeArea()
