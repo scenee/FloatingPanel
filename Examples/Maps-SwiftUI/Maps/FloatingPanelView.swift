@@ -27,8 +27,13 @@ public struct FloatingPanelProxy {
     }
 }
 
+
+/// A view with an associated floating panel.
 struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewControllerRepresentable {
+    /// The floating panel parent view.
     @ViewBuilder var content: Content
+
+    /// Floating panel content.
     @ViewBuilder var floatingPanelContent: (FloatingPanelProxy) -> FloatingPanelContent
 
     public func makeUIViewController(context: Context) -> UIHostingController<Content> {
@@ -48,7 +53,10 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
         Coordinator(parent: self)
     }
 
-    class Coordinator {
+    /// `FloatingPanelView` coordinator.
+    ///
+    /// Responsible to setup the view hierarchy and floating panel.
+    final class Coordinator {
         private let parent: FloatingPanelView<Content, FloatingPanelContent>
         private lazy var fpc = FloatingPanelController()
         private lazy var fpcDelegate = SearchPanelPhoneDelegate()
