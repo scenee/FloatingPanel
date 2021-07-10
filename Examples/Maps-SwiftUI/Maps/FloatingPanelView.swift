@@ -31,6 +31,8 @@ public struct FloatingPanelProxy {
 /// A view with an associated floating panel.
 struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewControllerRepresentable {
     @Environment(\.surfaceAppearance) var surfaceAppearance
+    @Environment(\.contentMode) var contentMode
+    @Environment(\.contentInsetAdjustmentBehavior) var contentInsetAdjustmentBehavior
 
     /// The view builder that creates the floating panel parent view content.
     @ViewBuilder var content: Content
@@ -68,9 +70,9 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
         }
 
         func setupFloatingPanel(_ parentViewController: UIViewController) {
-            fpc.contentMode = .fitToBounds
+            fpc.contentMode = parent.contentMode
             fpc.delegate = fpcDelegate
-            fpc.contentInsetAdjustmentBehavior = .never
+            fpc.contentInsetAdjustmentBehavior = parent.contentInsetAdjustmentBehavior
             fpc.surfaceView.appearance = parent.surfaceAppearance
             let panelContent = parent.floatingPanelContent(FloatingPanelProxy(fpc: fpc))
             let hostingViewController = UIHostingController(rootView: panelContent)
