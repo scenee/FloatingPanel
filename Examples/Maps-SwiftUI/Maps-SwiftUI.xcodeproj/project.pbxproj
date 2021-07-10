@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		6467E8622699AA1900565F4F /* View+floatingPanelSurfaceAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6467E8612699AA1900565F4F /* View+floatingPanelSurfaceAppearance.swift */; };
 		6467E8642699AC5F00565F4F /* MapsApp+SurfaceAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6467E8632699AC5F00565F4F /* MapsApp+SurfaceAppearance.swift */; };
+		6467E8662699AD6000565F4F /* View+floatingPanelContentMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6467E8652699AD6000565F4F /* View+floatingPanelContentMode.swift */; };
+		6467E8682699B04100565F4F /* View+floatingPanelContentInsetAdjustmentBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6467E8672699B04100565F4F /* View+floatingPanelContentInsetAdjustmentBehavior.swift */; };
 		64A5B7232691323900BCAA05 /* MapsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A5B7222691323900BCAA05 /* MapsApp.swift */; };
 		64A5B7252691323900BCAA05 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A5B7242691323900BCAA05 /* ContentView.swift */; };
 		64A5B734269133DC00BCAA05 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64A5B733269133DC00BCAA05 /* FloatingPanel.framework */; };
@@ -39,6 +41,8 @@
 /* Begin PBXFileReference section */
 		6467E8612699AA1900565F4F /* View+floatingPanelSurfaceAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+floatingPanelSurfaceAppearance.swift"; sourceTree = "<group>"; };
 		6467E8632699AC5F00565F4F /* MapsApp+SurfaceAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapsApp+SurfaceAppearance.swift"; sourceTree = "<group>"; };
+		6467E8652699AD6000565F4F /* View+floatingPanelContentMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+floatingPanelContentMode.swift"; sourceTree = "<group>"; };
+		6467E8672699B04100565F4F /* View+floatingPanelContentInsetAdjustmentBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+floatingPanelContentInsetAdjustmentBehavior.swift"; sourceTree = "<group>"; };
 		64A5B71F2691323900BCAA05 /* Maps-SwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Maps-SwiftUI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A5B7222691323900BCAA05 /* MapsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapsApp.swift; sourceTree = "<group>"; };
 		64A5B7242691323900BCAA05 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -88,6 +92,8 @@
 				6467E8632699AC5F00565F4F /* MapsApp+SurfaceAppearance.swift */,
 				64BE556E2691BAFF006D98BD /* View+floatingPanel.swift */,
 				6467E8612699AA1900565F4F /* View+floatingPanelSurfaceAppearance.swift */,
+				6467E8652699AD6000565F4F /* View+floatingPanelContentMode.swift */,
+				6467E8672699B04100565F4F /* View+floatingPanelContentInsetAdjustmentBehavior.swift */,
 				64A5B7392691394400BCAA05 /* FloatingPanelView.swift */,
 				64A5B7242691323900BCAA05 /* ContentView.swift */,
 				64A5B73B2691469900BCAA05 /* FloatingPanelContentView.swift */,
@@ -184,6 +190,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6467E8662699AD6000565F4F /* View+floatingPanelContentMode.swift in Sources */,
 				64A5B7422691541A00BCAA05 /* HostingCell.swift in Sources */,
 				64A5B738269134CA00BCAA05 /* VisualEffectBlur.swift in Sources */,
 				64A5B7402691532400BCAA05 /* ResultsList.swift in Sources */,
@@ -191,6 +198,7 @@
 				6467E8642699AC5F00565F4F /* MapsApp+SurfaceAppearance.swift in Sources */,
 				64A5B7252691323900BCAA05 /* ContentView.swift in Sources */,
 				64A5B73A2691394400BCAA05 /* FloatingPanelView.swift in Sources */,
+				6467E8682699B04100565F4F /* View+floatingPanelContentInsetAdjustmentBehavior.swift in Sources */,
 				64A5B7232691323900BCAA05 /* MapsApp.swift in Sources */,
 				6467E8622699AA1900565F4F /* View+floatingPanelSurfaceAppearance.swift in Sources */,
 				64A5B73C2691469900BCAA05 /* FloatingPanelContentView.swift in Sources */,
