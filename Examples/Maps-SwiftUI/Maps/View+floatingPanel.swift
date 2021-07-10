@@ -1,6 +1,7 @@
 // Copyright 2021 the FloatingPanel authors. All rights reserved. MIT license.
 
 import SwiftUI
+import FloatingPanel
 
 extension View {
     /// Presents a floating panel using the given closure as its content.
@@ -14,9 +15,11 @@ extension View {
     ///     receives a `FloatingPanelProxy` instance that you use to interact
     ///     with the `FloatingPanelController`.
     public func floatingPanel<FloatingPanelContent: View>(
+        delegate: FloatingPanelControllerDelegate? = nil,
         @ViewBuilder _ floatingPanelContent: @escaping (_: FloatingPanelProxy) -> FloatingPanelContent
     ) -> some View {
         FloatingPanelView(
+            delegate: delegate,
             content: { self },
             floatingPanelContent: floatingPanelContent
         )

@@ -30,6 +30,7 @@ public struct FloatingPanelProxy {
 
 /// A view with an associated floating panel.
 struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewControllerRepresentable {
+    var delegate: FloatingPanelControllerDelegate?
     @Environment(\.surfaceAppearance) var surfaceAppearance
     @Environment(\.contentMode) var contentMode
     @Environment(\.contentInsetAdjustmentBehavior) var contentInsetAdjustmentBehavior
@@ -63,7 +64,6 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
     final class Coordinator {
         private let parent: FloatingPanelView<Content, FloatingPanelContent>
         private lazy var fpc = FloatingPanelController()
-        private lazy var fpcDelegate = SearchPanelPhoneDelegate()
 
         init(parent: FloatingPanelView<Content, FloatingPanelContent>) {
             self.parent = parent
@@ -71,7 +71,7 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
 
         func setupFloatingPanel(_ parentViewController: UIViewController) {
             fpc.contentMode = parent.contentMode
-            fpc.delegate = fpcDelegate
+            fpc.delegate = parent.delegate
             fpc.contentInsetAdjustmentBehavior = parent.contentInsetAdjustmentBehavior
             fpc.surfaceView.appearance = parent.surfaceAppearance
             let panelContent = parent.floatingPanelContent(FloatingPanelProxy(fpc: fpc))

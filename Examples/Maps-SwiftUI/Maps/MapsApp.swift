@@ -7,7 +7,7 @@ struct MapsApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .floatingPanel { proxy in
+                .floatingPanel(delegate: SearchPanelPhoneDelegate()) { proxy in
                     FloatingPanelContentView(proxy: proxy)
                 }
                 .floatingPanelSurfaceAppearance(.phone)
