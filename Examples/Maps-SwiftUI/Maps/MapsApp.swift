@@ -10,6 +10,7 @@ struct MapsApp: App {
                 .floatingPanel {
                     FloatingPanelContentView(proxy: $0)
                 }
+                .floatingPanelSurfaceAppearance(.phone)
         }
     }
 }

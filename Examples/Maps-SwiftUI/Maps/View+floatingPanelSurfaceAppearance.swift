@@ -4,18 +4,18 @@ import FloatingPanel
 import SwiftUI
 
 struct SurfaceAppearanceKey: EnvironmentKey {
-  static var defaultValue = SurfaceAppearance()
+    static var defaultValue = SurfaceAppearance()
 }
 
 extension EnvironmentValues {
-  var surfaceAppearance: SurfaceAppearance {
-    get { self[SurfaceAppearanceKey.self] }
-    set { self[SurfaceAppearanceKey.self] = newValue }
-  }
+    var surfaceAppearance: SurfaceAppearance {
+        get { self[SurfaceAppearanceKey.self] }
+        set { self[SurfaceAppearanceKey.self] = newValue }
+    }
 }
 
 extension View {
-  public func floatingPanelSurfaceAppearance(_ surfaceAppearance: SurfaceAppearance) -> some View {
-    environment(\.surfaceAppearance, surfaceAppearance)
-  }
+    public func floatingPanelSurfaceAppearance(_ surfaceAppearance: SurfaceAppearance) -> some View {
+        environment(\.surfaceAppearance, surfaceAppearance)
+    }
 }

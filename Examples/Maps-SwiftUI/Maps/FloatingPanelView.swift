@@ -30,6 +30,8 @@ public struct FloatingPanelProxy {
 
 /// A view with an associated floating panel.
 struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewControllerRepresentable {
+    @Environment(\.surfaceAppearance) var surfaceAppearance
+
     /// The view builder that creates the floating panel parent view content.
     @ViewBuilder var content: Content
 
@@ -69,7 +71,7 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
             fpc.contentMode = .fitToBounds
             fpc.delegate = fpcDelegate
             fpc.contentInsetAdjustmentBehavior = .never
-            fpc.setAppearanceForPhone()
+            fpc.surfaceView.appearance = parent.surfaceAppearance
             let panelContent = parent.floatingPanelContent(FloatingPanelProxy(fpc: fpc))
             let hostingViewController = UIHostingController(rootView: panelContent)
             hostingViewController.view.backgroundColor = nil
@@ -84,15 +86,5 @@ final class SearchPanelPhoneDelegate: FloatingPanelControllerDelegate {
         if vc.state == .full {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
-    }
-}
-
-extension FloatingPanelController {
-    func setAppearanceForPhone() {
-        let appearance = SurfaceAppearance()
-        appearance.cornerCurve = .continuous
-        appearance.cornerRadius = 8.0
-        appearance.backgroundColor = .clear
-        surfaceView.appearance = appearance
     }
 }
