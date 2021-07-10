@@ -1,7 +1,7 @@
 // Copyright 2021 the FloatingPanel authors. All rights reserved. MIT license.
 
-import SwiftUI
 import FloatingPanel
+import SwiftUI
 
 extension View {
     /// Presents a floating panel using the given closure as its content.
@@ -26,4 +26,3 @@ extension View {
         .ignoresSafeArea()
     }
 }
-

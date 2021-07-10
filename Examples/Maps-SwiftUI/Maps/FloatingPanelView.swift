@@ -27,7 +27,6 @@ public struct FloatingPanelProxy {
     }
 }
 
-
 /// A view with an associated floating panel.
 struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewControllerRepresentable {
     var delegate: FloatingPanelControllerDelegate?
