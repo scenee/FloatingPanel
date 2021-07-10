@@ -43,7 +43,14 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
     public func makeUIViewController(context: Context) -> UIHostingController<Content> {
         let hostingController = UIHostingController(rootView: content)
         hostingController.view.backgroundColor = nil
-        context.coordinator.setupFloatingPanel(hostingController)
+
+        // We need to wait for the current runloop cycle to complete before our
+        // view is actually added into the view hierarchy, otherwise the
+        // environment is not ready yet.
+        DispatchQueue.main.async {
+            context.coordinator.setupFloatingPanel(hostingController)
+        }
+
         return hostingController
     }
 
