@@ -14,7 +14,13 @@ struct FloatingPanelContentView: View {
         }
         // 👇🏻 for the floating panel grabber handle.
         .padding(.top, 6)
-        .background(VisualEffectBlur(blurStyle: .systemMaterial))
+        .background(
+            VisualEffectBlur(blurStyle: .systemMaterial)
+                // ⚠️ If the `VisualEffectBlur` view receives taps, it's going
+                // to mess up with the whole panel and render it
+                // non-interactive, make sure it never receives any taps.
+                .allowsHitTesting(false)
+        )
         .ignoresSafeArea()
     }
 

@@ -7,9 +7,12 @@ struct MapsApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .floatingPanel {
-                    FloatingPanelContentView(proxy: $0)
+                .floatingPanel(delegate: SearchPanelPhoneDelegate()) { proxy in
+                    FloatingPanelContentView(proxy: proxy)
                 }
+                .floatingPanelSurfaceAppearance(.phone)
+                .floatingPanelContentMode(.fitToBounds)
+                .floatingPanelContentInsetAdjustmentBehavior(.never)
         }
     }
 }
