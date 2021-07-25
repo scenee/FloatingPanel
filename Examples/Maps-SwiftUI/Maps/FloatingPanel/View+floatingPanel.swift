@@ -11,6 +11,9 @@ extension View {
     /// `FloatingPanelController`.
     ///
     /// - Parameters:
+    ///   - delegate: A type that conforms to the
+    ///     `FloatingPanelControllerDelegate` protocol. You have comprehensive
+    ///     control over the floating panel behavior when you use a delegate.
     ///   - floatingPanelContent: The floating panel content. This view builder
     ///     receives a `FloatingPanelProxy` instance that you use to interact
     ///     with the `FloatingPanelController`.
