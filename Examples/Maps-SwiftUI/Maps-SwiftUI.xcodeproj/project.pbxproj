@@ -93,12 +93,12 @@
 				64F7E82B26AD70EB00A0E0F7 /* FloatingPanel */,
 				64BE55702691BBB0006D98BD /* Representable */,
 				64A5B7222691323900BCAA05 /* MapsApp.swift */,
-				6467E8632699AC5F00565F4F /* SurfaceAppearance+phone.swift */,
-				6467E8692699B19D00565F4F /* SearchPanelPhoneDelegate.swift */,
 				64A5B7242691323900BCAA05 /* ContentView.swift */,
 				64A5B73B2691469900BCAA05 /* FloatingPanelContentView.swift */,
-				64A5B73F2691532400BCAA05 /* ResultsList.swift */,
+				6467E8692699B19D00565F4F /* SearchPanelPhoneDelegate.swift */,
+				6467E8632699AC5F00565F4F /* SurfaceAppearance+phone.swift */,
 				64A5B7412691541A00BCAA05 /* HostingCell.swift */,
+				64A5B73F2691532400BCAA05 /* ResultsList.swift */,
 			);
 			path = Maps;
 			sourceTree = "<group>";
@@ -123,10 +123,10 @@
 		64F7E82B26AD70EB00A0E0F7 /* FloatingPanel */ = {
 			isa = PBXGroup;
 			children = (
-				64F7E82C26AD70EB00A0E0F7 /* View+floatingPanelContentInsetAdjustmentBehavior.swift */,
-				64F7E82D26AD70EB00A0E0F7 /* View+floatingPanelContentMode.swift */,
 				64F7E82E26AD70EB00A0E0F7 /* FloatingPanelView.swift */,
 				64F7E82F26AD70EB00A0E0F7 /* View+floatingPanel.swift */,
+				64F7E82C26AD70EB00A0E0F7 /* View+floatingPanelContentInsetAdjustmentBehavior.swift */,
+				64F7E82D26AD70EB00A0E0F7 /* View+floatingPanelContentMode.swift */,
 				64F7E83026AD70EB00A0E0F7 /* View+floatingPanelSurfaceAppearance.swift */,
 			);
 			path = FloatingPanel;
