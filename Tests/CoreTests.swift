@@ -766,6 +766,13 @@ class CoreTests: XCTestCase {
             (#line, tipPos, CGPoint(x: 0.0, y: 1000.0), .hidden),
             ])
     }
+
+    func test_keep_pan_gesture_disabled() {
+        let fpc = FloatingPanelController()
+        fpc.panGestureRecognizer.isEnabled = false
+        fpc.showForTest()
+        XCTAssertFalse(fpc.panGestureRecognizer.isEnabled)
+    }
 }
 
 private class FloatingPanelLayout3Positions: FloatingPanelTestLayout {
