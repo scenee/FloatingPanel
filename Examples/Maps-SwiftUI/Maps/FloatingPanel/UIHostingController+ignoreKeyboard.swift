@@ -1,6 +1,6 @@
 // Copyright 2021 the FloatingPanel authors. All rights reserved. MIT license.
 
-import Foundation
+import SwiftUI
 
 /// This extension makes sure SwiftUI views are not affected by iOS keyboard.
 ///
