@@ -88,7 +88,10 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
         func setupFloatingPanel(_ parentViewController: UIViewController) {
             updateIfNeeded()
             let panelContent = parent.floatingPanelContent(FloatingPanelProxy(fpc: fpc))
-            let hostingViewController = UIHostingController(rootView: panelContent)
+            let hostingViewController = UIHostingController(
+                rootView: panelContent,
+                ignoresKeyboard: true
+            )
             hostingViewController.view.backgroundColor = nil
             fpc.set(contentViewController: hostingViewController)
             fpc.addPanel(toParent: parentViewController, at: 1, animated: true)
