@@ -10,6 +10,7 @@
 		6467E8642699AC5F00565F4F /* SurfaceAppearance+phone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6467E8632699AC5F00565F4F /* SurfaceAppearance+phone.swift */; };
 		6467E86A2699B19D00565F4F /* SearchPanelPhoneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6467E8692699B19D00565F4F /* SearchPanelPhoneDelegate.swift */; };
 		649A122926C14D0900DAB961 /* UIHostingController+ignoreKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649A122826C14D0900DAB961 /* UIHostingController+ignoreKeyboard.swift */; };
+		649A122D26C168CF00DAB961 /* View+floatingPanelGrabberHandlePadding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649A122C26C168CF00DAB961 /* View+floatingPanelGrabberHandlePadding.swift */; };
 		64A5B7232691323900BCAA05 /* MapsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A5B7222691323900BCAA05 /* MapsApp.swift */; };
 		64A5B7252691323900BCAA05 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A5B7242691323900BCAA05 /* ContentView.swift */; };
 		64A5B734269133DC00BCAA05 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64A5B733269133DC00BCAA05 /* FloatingPanel.framework */; };
@@ -44,6 +45,7 @@
 		6467E8632699AC5F00565F4F /* SurfaceAppearance+phone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SurfaceAppearance+phone.swift"; sourceTree = "<group>"; };
 		6467E8692699B19D00565F4F /* SearchPanelPhoneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPanelPhoneDelegate.swift; sourceTree = "<group>"; };
 		649A122826C14D0900DAB961 /* UIHostingController+ignoreKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIHostingController+ignoreKeyboard.swift"; sourceTree = "<group>"; };
+		649A122C26C168CF00DAB961 /* View+floatingPanelGrabberHandlePadding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+floatingPanelGrabberHandlePadding.swift"; sourceTree = "<group>"; };
 		64A5B71F2691323900BCAA05 /* Maps-SwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Maps-SwiftUI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A5B7222691323900BCAA05 /* MapsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapsApp.swift; sourceTree = "<group>"; };
 		64A5B7242691323900BCAA05 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 				64F7E82C26AD70EB00A0E0F7 /* View+floatingPanelContentInsetAdjustmentBehavior.swift */,
 				64F7E82D26AD70EB00A0E0F7 /* View+floatingPanelContentMode.swift */,
 				64F7E83026AD70EB00A0E0F7 /* View+floatingPanelSurfaceAppearance.swift */,
+				649A122C26C168CF00DAB961 /* View+floatingPanelGrabberHandlePadding.swift */,
 				649A122826C14D0900DAB961 /* UIHostingController+ignoreKeyboard.swift */,
 			);
 			path = FloatingPanel;
@@ -213,6 +216,7 @@
 				64A5B7252691323900BCAA05 /* ContentView.swift in Sources */,
 				64A5B7232691323900BCAA05 /* MapsApp.swift in Sources */,
 				64A5B73C2691469900BCAA05 /* FloatingPanelContentView.swift in Sources */,
+				649A122D26C168CF00DAB961 /* View+floatingPanelGrabberHandlePadding.swift in Sources */,
 				64F7E83326AD70EB00A0E0F7 /* FloatingPanelView.swift in Sources */,
 				64F7E83426AD70EB00A0E0F7 /* View+floatingPanel.swift in Sources */,
 				64F7E83526AD70EB00A0E0F7 /* View+floatingPanelSurfaceAppearance.swift in Sources */,

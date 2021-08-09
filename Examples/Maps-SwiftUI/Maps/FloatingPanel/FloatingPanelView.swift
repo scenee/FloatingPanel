@@ -36,14 +36,17 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
     /// A type that conforms to the `FloatingPanelControllerDelegate` protocol.
     var delegate: FloatingPanelControllerDelegate?
 
-    /// The floating panel `surfaceView` appearance.
-    @Environment(\.surfaceAppearance) var surfaceAppearance
+    /// The behavior for determining the adjusted content offsets.
+    @Environment(\.contentInsetAdjustmentBehavior) var contentInsetAdjustmentBehavior
 
     /// Constants that define how a panel content fills in the surface.
     @Environment(\.contentMode) var contentMode
 
-    /// The behavior for determining the adjusted content offsets.
-    @Environment(\.contentInsetAdjustmentBehavior) var contentInsetAdjustmentBehavior
+    /// The floating panel grabber handle offset.
+    @Environment(\.grabberHandlePadding) var grabberHandlePadding
+
+    /// The floating panel `surfaceView` appearance.
+    @Environment(\.surfaceAppearance) var surfaceAppearance
 
     /// The view builder that creates the floating panel parent view content.
     @ViewBuilder var content: Content
@@ -94,18 +97,21 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
             )
             hostingViewController.view.backgroundColor = nil
             fpc.set(contentViewController: hostingViewController)
-            fpc.addPanel(toParent: parentViewController, at: 1, animated: true)
+            fpc.addPanel(toParent: parentViewController, at: 1, animated: false)
         }
 
         func updateIfNeeded() {
+            if fpc.contentInsetAdjustmentBehavior != parent.contentInsetAdjustmentBehavior {
+                fpc.contentInsetAdjustmentBehavior = parent.contentInsetAdjustmentBehavior
+            }
             if fpc.contentMode != parent.contentMode {
                 fpc.contentMode = parent.contentMode
             }
             if fpc.delegate !== parent.delegate {
                 fpc.delegate = parent.delegate
             }
-            if fpc.contentInsetAdjustmentBehavior != parent.contentInsetAdjustmentBehavior {
-                fpc.contentInsetAdjustmentBehavior = parent.contentInsetAdjustmentBehavior
+            if fpc.surfaceView.grabberHandlePadding != parent.grabberHandlePadding {
+                fpc.surfaceView.grabberHandlePadding = parent.grabberHandlePadding
             }
             if fpc.surfaceView.appearance != parent.surfaceAppearance {
                 fpc.surfaceView.appearance = parent.surfaceAppearance
