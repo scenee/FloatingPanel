@@ -837,6 +837,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     private func tearDownActiveInteraction() {
+        guard panGestureRecognizer.isEnabled else { return }
         // Cancel the pan gesture so that panningEnd(with:velocity:) is called
         panGestureRecognizer.isEnabled = false
         panGestureRecognizer.isEnabled = true
