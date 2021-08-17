@@ -36,7 +36,7 @@ static FloatingPanelState *_lastQuart;
     [fpc setBehavior:[MyFloatingPanelBehavior new]];
     [fpc setRemovalInteractionEnabled:NO];
 
-    [fpc addPanelToParent:self at:self.view.subviews.count  animated:NO];
+    [fpc addPanelToParent:self at:self.view.subviews.count animated:NO completion:nil];
     [fpc moveToState:FloatingPanelState.Tip animated:true completion:nil];
 
     [self updateAppearance: fpc];
