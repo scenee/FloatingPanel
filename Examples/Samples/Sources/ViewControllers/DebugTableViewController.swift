@@ -87,12 +87,12 @@ class DebugTableViewController: InspectableViewController {
             }
         }
 
-        func execute(for vc: DebugTableViewController) {
+        func execute(for vc: DebugTableViewController, sourceView: UIView) {
             switch self {
             case .animateScroll:
                 vc.animateScroll()
             case .changeContentSize:
-                vc.changeContentSize()
+                vc.changeContentSize(sourceView: sourceView)
             case .moveToFull:
                 vc.moveToFull()
             case .moveToHalf:
@@ -165,8 +165,8 @@ class DebugTableViewController: InspectableViewController {
 
     // MARK: - Actions
 
-    private func execute(command: Command) {
-        command.execute(for: self)
+    private func execute(command: Command, sourceView: UIView) {
+        command.execute(for: self, sourceView: sourceView)
     }
 
     @objc
@@ -177,7 +177,7 @@ class DebugTableViewController: InspectableViewController {
     }
 
     @objc
-    private func changeContentSize() {
+    private func changeContentSize(sourceView: UIView) {
         let actionSheet = UIAlertController(title: "Change content size", message: "", preferredStyle: .actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Large", style: .default, handler: { (_) in
             self.itemHeight = 66.0
@@ -200,6 +200,11 @@ class DebugTableViewController: InspectableViewController {
             self.itemHeight = 66.0
             self.changeItems(3)
         }))
+
+        if let popoverController = actionSheet.popoverPresentationController {
+            popoverController.sourceView = sourceView
+            popoverController.sourceRect = sourceView.bounds
+        }
 
         self.present(actionSheet, animated: true, completion: nil)
     }
@@ -250,7 +255,7 @@ extension DebugTableViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("DebugTableViewController -- select row \(indexPath.row)")
         guard let action = Command(rawValue: indexPath.row) else { return }
-        execute(command: action)
+        execute(command: action, sourceView: tableView)
     }
 
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
