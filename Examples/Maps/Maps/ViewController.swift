@@ -81,7 +81,7 @@ class ViewController: UIViewController {
     }
 
     func layoutPanelForPhone() {
-        fpc.track(scrollView: searchVC.tableView) // Only track the tabvle view on iPhone
+        fpc.track(scrollView: searchVC.tableView) // Only track the table view on iPhone
         fpc.addPanel(toParent: self, animated: true)
         fpc.setAppearanceForPhone()
         detailFpc.setAppearanceForPhone()

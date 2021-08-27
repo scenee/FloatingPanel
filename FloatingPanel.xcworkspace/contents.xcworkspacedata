@@ -11,6 +11,9 @@
       location = "group:Examples"
       name = "Examples">
       <FileRef
+         location = "group:Maps-SwiftUI/Maps-SwiftUI.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Maps/Maps.xcodeproj">
       </FileRef>
       <FileRef
