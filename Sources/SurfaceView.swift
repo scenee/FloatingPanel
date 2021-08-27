@@ -424,9 +424,9 @@ public class SurfaceView: UIView {
             rightConstraint,
             bottomConstraint,
         ].map {
-            $0.priority = .required - 1;
+            $0.priority = .required
             $0.identifier = "FloatingPanel-surface-content"
-            return $0;
+            return $0
         })
         self.contentViewTopConstraint = topConstraint
         self.contentViewLeftConstraint = leftConstraint

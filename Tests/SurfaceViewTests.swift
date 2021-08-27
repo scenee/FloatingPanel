@@ -117,6 +117,31 @@ class SurfaceViewTests: XCTestCase {
         }
     }
 
+    func test_surfaceView_size_equalTo_containerView_size() {
+        let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
+        let contentView = UIView()
+        let titleLabel = UILabel()
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        contentView.addSubview(titleLabel)
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            titleLabel.leftAnchor.constraint(equalTo: contentView.readableContentGuide.leftAnchor),
+            titleLabel.rightAnchor.constraint(equalTo: contentView.readableContentGuide.rightAnchor),
+            titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
+        surface.set(contentView: contentView)
+        surface.layoutIfNeeded()
+        XCTAssertEqual(surface.contentView?.frame ?? .zero, surface.bounds)
+        XCTAssertEqual(surface.containerView.frame, surface.bounds)
+
+        surface.frame = CGRect(x: 0.0, y: 0.0, width: 300, height: 400)
+        surface.setNeedsLayout()
+        surface.layoutIfNeeded()
+        XCTAssertEqual(surface.contentView?.frame ?? .zero, surface.bounds)
+        XCTAssertEqual(surface.containerView.frame, surface.bounds)
+    }
+
     func test_surfaceView_contentMargins() {
         XCTContext.runActivity(named: "Top sheet") { _ in
             let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
