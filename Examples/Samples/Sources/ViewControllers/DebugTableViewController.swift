@@ -255,7 +255,8 @@ extension DebugTableViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("DebugTableViewController -- select row \(indexPath.row)")
         guard let action = Command(rawValue: indexPath.row) else { return }
-        execute(command: action, sourceView: tableView)
+        let cell = tableView.cellForRow(at: indexPath)
+        execute(command: action, sourceView: cell ?? tableView)
     }
 
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
