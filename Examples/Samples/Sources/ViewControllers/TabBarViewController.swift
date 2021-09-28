@@ -41,6 +41,10 @@ final class TabBarContentViewController: UIViewController {
         fpc.addPanel(toParent: self)
 
 
+        if #available(iOS 15, *) {
+            tabBarController?.tabBar.scrollEdgeAppearance = UITabBarAppearance()
+        }
+
         switch tabBarItem.tag {
         case 1:
             fpc.behavior = TwoTabBarPanelBehavior()
