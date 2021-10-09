@@ -85,7 +85,7 @@ public class SurfaceView: UIView {
 
     /// The grabber handle size
     ///
-    /// On left/right positioned panel the width dimension is used as the height of `grabberHandle`, and vice versa.
+    /// On left/right positioned panel the width dimension is used as the height of ``grabberHandle``, and vice versa.
     public var grabberHandleSize: CGSize = CGSize(width: 36.0, height: 5.0) { didSet {
         setNeedsUpdateConstraints()
     } }

@@ -46,7 +46,7 @@ public protocol FloatingPanelBehavior {
     
     /// Returns the velocity threshold for the default interactive removal gesture.
     ///
-    /// In case `floatingPanel:shouldRemoveAt:with` is implemented, this value will not be used. The default value of `FloatingPanelDefaultBehavior` is 5.5
+    /// In case ``FloatingPanel/FloatingPanelControllerDelegate/floatingPanel(_:shouldRemoveAt:with:)`` is implemented, this value will not be used. The default value of ``FloatingPanelDefaultBehavior`` is 5.5
     @objc optional
     var removalInteractionVelocityThreshold: CGFloat { get }
 }
