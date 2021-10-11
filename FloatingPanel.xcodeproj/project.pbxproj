@@ -33,6 +33,7 @@
 		54CFBFC3215CD045006B5735 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CFBFC2215CD045006B5735 /* Layout.swift */; };
 		54CFBFC5215CD09C006B5735 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CFBFC4215CD09C006B5735 /* Core.swift */; };
 		54DBA3DC262E938500D75969 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54DBA3DB262E938500D75969 /* Extensions.swift */; };
+		54E3992727141F5100A8F9ED /* FloatingPanel.docc in Sources */ = {isa = PBXBuildFile; fileRef = 54E3992627141F5100A8F9ED /* FloatingPanel.docc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,6 +84,7 @@
 		54CFBFC2215CD045006B5735 /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
 		54CFBFC4215CD09C006B5735 /* Core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; };
 		54DBA3DB262E938500D75969 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		54E3992627141F5100A8F9ED /* FloatingPanel.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = FloatingPanel.docc; sourceTree = "<group>"; };
 		54E740CA218AFD67005C1A34 /* FloatingPanelTesting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FloatingPanelTesting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -151,6 +153,7 @@
 				54ABD7AE216CCFF7002E6C13 /* Logger.swift */,
 				545DB9C42151169500CA77B8 /* FloatingPanel.h */,
 				545DB9C52151169500CA77B8 /* Info.plist */,
+				54E3992627141F5100A8F9ED /* FloatingPanel.docc */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -335,6 +338,7 @@
 				54DBA3DC262E938500D75969 /* Extensions.swift in Sources */,
 				5450EEE421646DF500135936 /* Behavior.swift in Sources */,
 				545DBA2B2152383100CA77B8 /* GrabberView.swift in Sources */,
+				54E3992727141F5100A8F9ED /* FloatingPanel.docc in Sources */,
 				54352E9621A51A2500CBCA08 /* Transitioning.swift in Sources */,
 				5469F4AE24B30D7E00537F8A /* State.swift in Sources */,
 			);
