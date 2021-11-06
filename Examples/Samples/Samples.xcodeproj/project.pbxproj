@@ -30,8 +30,8 @@
 		549D23CB233C7779008EF4D7 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23CA233C7779008EF4D7 /* FloatingPanel.framework */; };
 		549D23CC233C7779008EF4D7 /* FloatingPanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23CA233C7779008EF4D7 /* FloatingPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B51116216AFE5F0033A6F3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B51115216AFE5F0033A6F3 /* Extensions.swift */; };
-		54CDC5D8215BBE23007D205C /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CDC5D7215BBE23007D205C /* Components.swift */; };
-		54EAD35B263A75EB006A36EA /* Layouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EAD35A263A75EB006A36EA /* Layouts.swift */; };
+		54CDC5D8215BBE23007D205C /* SupplementaryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CDC5D7215BBE23007D205C /* SupplementaryViews.swift */; };
+		54EAD35B263A75EB006A36EA /* PanelLayouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EAD35A263A75EB006A36EA /* PanelLayouts.swift */; };
 		54EAD365263A765F006A36EA /* PagePanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EAD364263A765F006A36EA /* PagePanelController.swift */; };
 /* End PBXBuildFile section */
 
@@ -95,8 +95,8 @@
 		546341AB25C6426500CA0596 /* CustomState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomState.swift; sourceTree = "<group>"; };
 		549D23CA233C7779008EF4D7 /* FloatingPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FloatingPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		54B51115216AFE5F0033A6F3 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		54CDC5D7215BBE23007D205C /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
-		54EAD35A263A75EB006A36EA /* Layouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layouts.swift; sourceTree = "<group>"; };
+		54CDC5D7215BBE23007D205C /* SupplementaryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementaryViews.swift; sourceTree = "<group>"; };
+		54EAD35A263A75EB006A36EA /* PanelLayouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelLayouts.swift; sourceTree = "<group>"; };
 		54EAD364263A765F006A36EA /* PagePanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagePanelController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -126,7 +126,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		5442E22225FC519700A26F43 /* ViewControllers */ = {
+		5442E22225FC519700A26F43 /* ContentViewControllers */ = {
 			isa = PBXGroup;
 			children = (
 				5442E23F25FC533800A26F43 /* DebugTableViewController.swift */,
@@ -140,7 +140,7 @@
 				5442E22B25FC521F00A26F43 /* SettingsViewController.swift */,
 				5442E22F25FC525200A26F43 /* TabBarViewController.swift */,
 			);
-			path = ViewControllers;
+			path = ContentViewControllers;
 			sourceTree = "<group>";
 		};
 		545DB9E121511E6300CA77B8 = {
@@ -172,12 +172,12 @@
 				545DB9F121511E6300CA77B8 /* Main.storyboard */,
 				545DB9ED21511E6300CA77B8 /* AppDelegate.swift */,
 				545DB9EF21511E6300CA77B8 /* MainViewController.swift */,
-				54496C58263A7E5A0031E0C8 /* UseCaseController.swift */,
 				546341AA25C6421000CA0596 /* UseCases */,
-				5442E22225FC519700A26F43 /* ViewControllers */,
-				54EAD35A263A75EB006A36EA /* Layouts.swift */,
+				5442E22225FC519700A26F43 /* ContentViewControllers */,
+				54EAD35A263A75EB006A36EA /* PanelLayouts.swift */,
+				546341AB25C6426500CA0596 /* CustomState.swift */,
+				54CDC5D7215BBE23007D205C /* SupplementaryViews.swift */,
 				54B51115216AFE5F0033A6F3 /* Extensions.swift */,
-				54CDC5D7215BBE23007D205C /* Components.swift */,
 				545DB9F921511E6400CA77B8 /* Info.plist */,
 			);
 			path = Sources;
@@ -205,7 +205,7 @@
 			isa = PBXGroup;
 			children = (
 				546341A025C6415100CA0596 /* UseCase.swift */,
-				546341AB25C6426500CA0596 /* CustomState.swift */,
+				54496C58263A7E5A0031E0C8 /* UseCaseController.swift */,
 				54EAD364263A765F006A36EA /* PagePanelController.swift */,
 			);
 			path = UseCases;
@@ -366,7 +366,7 @@
 			files = (
 				5442E23425FC528400A26F43 /* DetailViewController.swift in Sources */,
 				54496C59263A7E5A0031E0C8 /* UseCaseController.swift in Sources */,
-				54CDC5D8215BBE23007D205C /* Components.swift in Sources */,
+				54CDC5D8215BBE23007D205C /* SupplementaryViews.swift in Sources */,
 				54B51116216AFE5F0033A6F3 /* Extensions.swift in Sources */,
 				5442E24A25FC53C100A26F43 /* DebugTextViewController.swift in Sources */,
 				546341AC25C6426500CA0596 /* CustomState.swift in Sources */,
@@ -379,7 +379,7 @@
 				545DB9F021511E6300CA77B8 /* MainViewController.swift in Sources */,
 				545DB9EE21511E6300CA77B8 /* AppDelegate.swift in Sources */,
 				5442E23025FC525200A26F43 /* TabBarViewController.swift in Sources */,
-				54EAD35B263A75EB006A36EA /* Layouts.swift in Sources */,
+				54EAD35B263A75EB006A36EA /* PanelLayouts.swift in Sources */,
 				54EAD365263A765F006A36EA /* PagePanelController.swift in Sources */,
 				5442E24425FC538200A26F43 /* InspectorViewController.swift in Sources */,
 				5442E22C25FC521F00A26F43 /* SettingsViewController.swift in Sources */,

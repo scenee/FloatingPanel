@@ -5,48 +5,79 @@ import FloatingPanel
 
 final class UseCaseController: NSObject {
     unowned let mainVC: MainViewController
-    private(set) var useCase: UseCase = .trackingTableView
+    private(set) var useCase: UseCase
 
-    fileprivate var mainPanelVC: FloatingPanelController!
+    private var mainPanelVC: FloatingPanelController!
     private var detailPanelVC: FloatingPanelController!
     private var settingsPanelVC: FloatingPanelController!
-
     private lazy var pagePanelController = PagePanelController()
-
-    private var mainPanelObserves: [NSKeyValueObservation] = []
 
     init(mainVC: MainViewController) {
         self.mainVC = mainVC
+        self.useCase = .trackingTableView
     }
+}
 
+extension UseCaseController {
     func set(useCase: UseCase) {
         self.useCase = useCase
 
         let contentVC = useCase.makeContentViewController(with: mainVC.storyboard!)
 
-        detailPanelVC?.removePanelFromParent(animated: true, completion: nil)
-        detailPanelVC = nil
+        if let fpc = detailPanelVC {
+            fpc.removePanelFromParent(animated: true, completion: nil)
+            self.detailPanelVC = nil
+        }
 
         switch useCase {
+        case .trackingTableView:
+            let fpc = FloatingPanelController()
+            fpc.delegate = self
+            fpc.contentInsetAdjustmentBehavior = .always
+            fpc.surfaceView.appearance = {
+                let appearance = SurfaceAppearance()
+                appearance.cornerRadius = 6.0
+                return appearance
+            }()
+
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(UseCaseController.handleSurface(tapGesture:)))
+            tapGesture.cancelsTouchesInView = false
+            tapGesture.numberOfTapsRequired = 2
+            // Prevents a delay to response a tap in menus of DebugTableViewController.
+            tapGesture.delaysTouchesEnded = false
+            fpc.surfaceView.addGestureRecognizer(tapGesture)
+
+            addMain(panel: fpc, with: contentVC)
+
+        case .trackingTextView:
+            let fpc = FloatingPanelController()
+            fpc.delegate = self
+            fpc.contentInsetAdjustmentBehavior = .always
+            fpc.surfaceView.appearance = {
+                let appearance = SurfaceAppearance()
+                appearance.cornerRadius = 6.0
+                return appearance
+            }()
+            addMain(panel: fpc, with: contentVC)
+
         case .showDetail:
-            detailPanelVC?.removePanelFromParent(animated: false)
-
             // Initialize FloatingPanelController
-            detailPanelVC = FloatingPanelController()
-            detailPanelVC.delegate = self
-
-            let appearance = SurfaceAppearance()
-            appearance.cornerRadius = 6.0
-            detailPanelVC.surfaceView.appearance = appearance
-
+            let fpc = FloatingPanelController()
+            fpc.delegate = self
+            fpc.surfaceView.appearance = {
+                let appearance = SurfaceAppearance()
+                appearance.cornerRadius = 6.0
+                return appearance
+            }()
             // Set a content view controller
-            detailPanelVC.set(contentViewController: contentVC)
-
-            detailPanelVC.contentMode = .fitToBounds
+            fpc.set(contentViewController: contentVC)
+            fpc.contentMode = .fitToBounds
             (contentVC as? DetailViewController)?.intrinsicHeightConstraint.isActive = false
 
+            detailPanelVC = fpc
             //  Add FloatingPanel to self.view
-            detailPanelVC.addPanel(toParent: mainVC, animated: true)
+            fpc.addPanel(toParent: mainVC, animated: true)
+
         case .showModal, .showTabBar:
             let modalVC = contentVC
             modalVC.modalPresentationStyle = .fullScreen
@@ -57,8 +88,45 @@ final class UseCaseController: NSObject {
             mainVC.present(pageVC, animated: true, completion: nil)
 
         case .showPageContentView:
+            let fpc = FloatingPanelController()
+            fpc.delegate = self
+            fpc.contentInsetAdjustmentBehavior = .always
+            fpc.surfaceView.appearance = {
+                let appearance = SurfaceAppearance()
+                appearance.cornerRadius = 6.0
+                return appearance
+            }()
             let pageVC = pagePanelController.makePageViewControllerForContent()
-            self.addMainPanel(with: pageVC)
+            if let page = (fpc.contentViewController as? UIPageViewController)?.viewControllers?.first {
+                fpc.track(scrollView: (page as! DebugTableViewController).tableView)
+            }
+            addMain(panel: fpc, with: pageVC)
+
+        case .showRemovablePanel, .showIntrinsicView:
+            let fpc = FloatingPanelController()
+            fpc.isRemovalInteractionEnabled = true
+            fpc.backdropView.dismissalTapGestureRecognizer.isEnabled = true
+            fpc.delegate = self
+            fpc.contentInsetAdjustmentBehavior = .always
+            fpc.surfaceView.appearance = {
+                let appearance = SurfaceAppearance()
+                appearance.cornerRadius = 6.0
+                return appearance
+            }()
+            addMain(panel: fpc, with: contentVC)
+
+        case .showNestedScrollView:
+            let fpc = FloatingPanelController()
+            fpc.panGestureRecognizer.delegateProxy = self
+            fpc.delegate = self
+            fpc.contentInsetAdjustmentBehavior = .always
+            fpc.surfaceView.appearance = {
+                let appearance = SurfaceAppearance()
+                appearance.cornerRadius = 6.0
+                return appearance
+            }()
+            addMain(panel: fpc, with: contentVC)
+
         case .showPanelModal:
             let fpc = FloatingPanelController()
             let contentVC = mainVC.storyboard!.instantiateViewController(withIdentifier: "DetailViewController")
@@ -96,6 +164,7 @@ final class UseCaseController: NSObject {
             mvc.view.backgroundColor = UIColor(displayP3Red: 2/255, green: 184/255, blue: 117/255, alpha: 1.0)
             fpc.addPanel(toParent: mvc)
             mainVC.present(mvc, animated: true, completion: nil)
+
         case .showContentInset:
             let contentViewController = UIViewController()
             contentViewController.view.backgroundColor = .green
@@ -110,7 +179,6 @@ final class UseCaseController: NSObject {
 
         case .showContainerMargins:
             let fpc = FloatingPanelController()
-
             let appearance = SurfaceAppearance()
             appearance.cornerRadius = 38.5
             fpc.surfaceView.appearance = appearance
@@ -126,81 +194,33 @@ final class UseCaseController: NSObject {
             fpc.delegate = self
             fpc.isRemovalInteractionEnabled = true
             mainVC.present(fpc, animated: true, completion: nil)
-        default:
-            self.addMainPanel(with: contentVC)
-        }
-    }
 
-    private func addMainPanel(with contentVC: UIViewController) {
-        mainPanelObserves.removeAll()
+        case .showNavigationController:
+            let fpc = FloatingPanelController()
+            fpc.contentInsetAdjustmentBehavior = .never
+            addMain(panel: fpc, with: contentVC)
 
-        let oldMainPanelVC = mainPanelVC
+        case .showTopPositionedPanel: // For debug
+            let fpc = FloatingPanelController()
+            let contentVC = UIViewController()
+            contentVC.view.backgroundColor = .red
+            addMain(panel: fpc, with: contentVC)
 
-        mainPanelVC = FloatingPanelController()
-        mainPanelVC.delegate = self
-        mainPanelVC.contentInsetAdjustmentBehavior = .always
+        case .showAdaptivePanel, .showAdaptivePanelWithCustomGuide:
+            let fpc = FloatingPanelController()
+            fpc.isRemovalInteractionEnabled = true
+            addMain(panel: fpc, with: contentVC)
 
-        let appearance = SurfaceAppearance()
-        appearance.cornerRadius = 6.0
-        mainPanelVC.surfaceView.appearance = appearance
-
-        set(contentViewController: contentVC)
-
-        useCase.setUpInteraction(for: self)
-
-        //  Add FloatingPanel to self.view
-        if let oldMainPanelVC = oldMainPanelVC {
-            oldMainPanelVC.removePanelFromParent(animated: true, completion: {
-                self.mainPanelVC.addPanel(toParent: self.mainVC, animated: true)
-            })
-        } else {
-            mainPanelVC.addPanel(toParent: mainVC, animated: true)
-        }
-    }
-
-    private func set(contentViewController contentVC: UIViewController) {
-        mainPanelVC.set(contentViewController: contentVC)
-        // Track a scroll view
-        switch contentVC {
-        case let consoleVC as DebugTextViewController:
-            mainPanelVC.track(scrollView: consoleVC.textView)
-
-        case let contentVC as DebugTableViewController:
-            let ob = contentVC.tableView.observe(\.isEditing) { (tableView, _) in
-                self.mainPanelVC.panGestureRecognizer.isEnabled = !tableView.isEditing
-            }
-            mainPanelObserves.append(ob)
-            mainPanelVC.track(scrollView: contentVC.tableView)
-        case let contentVC as NestedScrollViewController:
-            mainPanelVC.track(scrollView: contentVC.scrollView)
-        case let navVC as UINavigationController:
-            if let rootVC = (navVC.topViewController as? MainViewController) {
-                rootVC.loadViewIfNeeded()
-                mainPanelVC.track(scrollView: rootVC.tableView)
-            }
-        case let contentVC as ImageViewController:
-            if #available(iOS 11.0, *) {
-                let mode: ImageViewController.Mode = (useCase == .showAdaptivePanelWithCustomGuide) ? .withHeaderFooter : .onlyImage
-                let layoutGuide = contentVC.layoutGuideFor(mode: mode)
-                mainPanelVC.layout = ImageViewController.PanelLayout(targetGuide: layoutGuide)
-            } else {
-                mainPanelVC.layout = ImageViewController.PanelLayout(targetGuide: nil)
-            }
-            mainPanelVC.delegate = nil
-            mainPanelVC.isRemovalInteractionEnabled = true
-            mainPanelVC.track(scrollView: contentVC.scrollView)
-        default:
-            break
-        }
-    }
-
-    @objc
-    fileprivate func handleSurface(tapGesture: UITapGestureRecognizer) {
-        switch mainPanelVC.state {
-        case .full:
-            mainPanelVC.move(to: .half, animated: true)
-        default:
-            mainPanelVC.move(to: .full, animated: true)
+        case .showCustomStatePanel:
+            let fpc = FloatingPanelController()
+            fpc.delegate = self
+            fpc.contentInsetAdjustmentBehavior = .always
+            fpc.surfaceView.appearance = {
+                let appearance = SurfaceAppearance()
+                appearance.cornerRadius = 6.0
+                return appearance
+            }()
+            addMain(panel: fpc, with: contentVC)
         }
     }
 
@@ -224,6 +244,64 @@ final class UseCaseController: NSObject {
 
         //  Add FloatingPanel to self.view
         settingsPanelVC.addPanel(toParent: mainVC, animated: true)
+    }
+
+    private func addMain(panel fpc: FloatingPanelController, with contentVC: UIViewController) {
+        set(contentViewController: contentVC, to: fpc)
+
+        let oldMainPanelVC = mainPanelVC
+        mainPanelVC = fpc
+        if let oldMainPanelVC = oldMainPanelVC {
+            oldMainPanelVC.removePanelFromParent(animated: true, completion: {
+                self.mainPanelVC.addPanel(toParent: self.mainVC, animated: true)
+            })
+        } else {
+            mainPanelVC.addPanel(toParent: mainVC, animated: true)
+        }
+    }
+
+    private func set(contentViewController contentVC: UIViewController, to fpc: FloatingPanelController) {
+        fpc.set(contentViewController: contentVC)
+        // Track a scroll view
+        switch contentVC {
+        case let consoleVC as DebugTextViewController:
+            fpc.track(scrollView: consoleVC.textView)
+
+        case let contentVC as DebugTableViewController:
+            let ob = contentVC.tableView.observe(\.isEditing) { (tableView, _) in
+                fpc.panGestureRecognizer.isEnabled = !tableView.isEditing
+            }
+            contentVC.kvoObservers.append(ob)
+            fpc.track(scrollView: contentVC.tableView)
+        case let contentVC as NestedScrollViewController:
+            fpc.track(scrollView: contentVC.scrollView)
+        case let navVC as UINavigationController:
+            if let rootVC = (navVC.topViewController as? MainViewController) {
+                rootVC.loadViewIfNeeded()
+                fpc.track(scrollView: rootVC.tableView)
+            }
+        case let contentVC as ImageViewController:
+            if #available(iOS 11.0, *) {
+                let mode: ImageViewController.Mode = (useCase == .showAdaptivePanelWithCustomGuide) ? .withHeaderFooter : .onlyImage
+                let layoutGuide = contentVC.layoutGuideFor(mode: mode)
+                fpc.layout = ImageViewController.PanelLayout(targetGuide: layoutGuide)
+            } else {
+                fpc.layout = ImageViewController.PanelLayout(targetGuide: nil)
+            }
+            fpc.track(scrollView: contentVC.scrollView)
+        default:
+            break
+        }
+    }
+
+    @objc
+    private func handleSurface(tapGesture: UITapGestureRecognizer) {
+        switch mainPanelVC.state {
+        case .full:
+            mainPanelVC.move(to: .half, animated: true)
+        default:
+            mainPanelVC.move(to: .full, animated: true)
+        }
     }
 }
 
@@ -274,56 +352,13 @@ extension UseCaseController: FloatingPanelControllerDelegate {
 
 extension UseCaseController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        switch useCase {
-        case .showNestedScrollView:
+        if case .showNestedScrollView = useCase {
             return true
-        default:
+        } else {
             return false
         }
     }
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return false
-    }
-}
-
-extension UseCase {
-    func makeContentViewController(with storyboard: UIStoryboard) -> UIViewController {
-        guard let storyboardID = self.storyboardID else { return DebugTableViewController() }
-        return storyboard.instantiateViewController(withIdentifier: storyboardID)
-    }
-
-    func setUpInteraction(for useCaseController: UseCaseController) {
-        let mainVC = useCaseController.mainVC
-        let mainPanelVC = useCaseController.mainPanelVC!
-
-        // Enable tap-to-hide and removal interaction
-        switch self {
-        case .trackingTableView:
-            let tapGesture = UITapGestureRecognizer(target: useCaseController, action: #selector(UseCaseController.handleSurface(tapGesture:)))
-            tapGesture.cancelsTouchesInView = false
-            tapGesture.numberOfTapsRequired = 2
-            // Prevents a delay to response a tap in menus of DebugTableViewController.
-            tapGesture.delaysTouchesEnded = false
-            mainPanelVC.surfaceView.addGestureRecognizer(tapGesture)
-        case .showNestedScrollView:
-            mainPanelVC.panGestureRecognizer.delegateProxy = useCaseController
-        case .showPageContentView:
-            if let page = (mainPanelVC.contentViewController as? UIPageViewController)?.viewControllers?.first {
-                mainPanelVC.track(scrollView: (page as! DebugTableViewController).tableView)
-            }
-        case .showRemovablePanel, .showIntrinsicView:
-            mainPanelVC.isRemovalInteractionEnabled = true
-            mainPanelVC.backdropView.dismissalTapGestureRecognizer.isEnabled = true
-        case .showNavigationController:
-            mainPanelVC.contentInsetAdjustmentBehavior = .never
-        case .showTopPositionedPanel: // For debug
-            let contentVC = UIViewController()
-            contentVC.view.backgroundColor = .red
-            mainPanelVC.set(contentViewController: contentVC)
-            mainPanelVC.addPanel(toParent: mainVC, animated: true)
-            return
-        default:
-            break
-        }
+         false
     }
 }

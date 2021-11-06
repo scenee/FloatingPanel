@@ -53,6 +53,7 @@ class DebugTableViewController: InspectableViewController {
 
     // MARK: - Properties
 
+    var kvoObservers: [NSKeyValueObservation] = []
     private lazy var items: [String] = {
         let items = (0..<100).map { "Items \($0)" }
         return Command.replace(items: items)
