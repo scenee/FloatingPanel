@@ -290,6 +290,8 @@ fpc.layout = MyPanelLayout()
 fpc.invalidateLayout() // If needed
 ```
 
+Note: If you already set a `FloatingPanelControllerDelegate` object to `FloatingPanelController.delegate`, `invalidateLayout()` overrides a layout object which assigned to `FloatingPanelController.layout` just before calling it, with one returned by the delegate object.
+
 2. Returns an appropriate layout object in one of 2 `floatingPanel(_:layoutFor:)` delegates.
 
 ```swift

@@ -56,7 +56,6 @@ final class ModalViewController: UIViewController, FloatingPanelControllerDelega
     @IBAction func updateLayout(_ sender: Any) {
         isNewlayout = !isNewlayout
         UIView.animate(withDuration: 0.5) {
-            self.fpc.layout = (self.isNewlayout) ? ModalSecondLayout() : FloatingPanelBottomLayout()
             self.fpc.invalidateLayout()
         }
     }

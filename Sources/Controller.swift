@@ -603,15 +603,20 @@ open class FloatingPanelController: UIViewController {
 
     // MARK: - Utilities
 
-    /// Updates the layout object from the delegate and lays out the views managed
+    /// Updates the layout object from the ``FloatingPanelControllerDelegate`` delegate method and lays out the views managed
     /// by the controller immediately.
     ///
-    /// This method updates the ``FloatingPanelLayout`` object from the delegate and
-    /// then it calls `layoutIfNeeded()` of the root view to force the view
-    /// to update the layout immediately. It can be called in an
-    /// animation block.
+    /// This method updates the ``layout`` by a layout object returned by the delegate method,
+    /// `floatingPanel(_: FloatingPanelController, layoutFor: UITraitCollection)`.
+    /// And then it calls `layoutIfNeeded()` of the root view to force the view to update the layout immediately.
+    /// It can be called in an animation block.
+    ///
+    /// - Attention: `invalidateLayout()` can override a layout object assigned to ``layout`` just before calling it,  with one returned by the delegate method.
     @objc
     public func invalidateLayout() {
+        if let newLayout = self.delegate?.floatingPanel?(self, layoutFor: traitCollection) {
+            layout = newLayout
+        }
         activateLayout(forceLayout: true)
     }
 
