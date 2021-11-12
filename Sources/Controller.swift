@@ -158,6 +158,8 @@ open class FloatingPanelController: UIViewController {
     }
 
     /// The layout object managed by the controller
+    ///
+    /// To apply the new layout object into views managed by the controller, you need to call ``invalidateLayout()``.
     @objc
     public var layout: FloatingPanelLayout {
         get { _layout }
@@ -603,15 +605,13 @@ open class FloatingPanelController: UIViewController {
 
     // MARK: - Utilities
 
-    /// Updates the layout object from the ``FloatingPanelControllerDelegate`` delegate method and lays out the views managed
-    /// by the controller immediately.
+    /// Invalidates the current layout of the views and apply the ``layout`` object into them.
     ///
-    /// This method updates the ``layout`` by a layout object returned by the delegate method,
-    /// `floatingPanel(_: FloatingPanelController, layoutFor: UITraitCollection)`.
-    /// And then it calls `layoutIfNeeded()` of the root view to force the view to update the layout immediately.
-    /// It can be called in an animation block.
+    /// This lays out the views managed by the controller immediately according to the ``layout``
+    /// object by calling `layoutIfNeeded()` of the root view. Thus it can be called in an animation block.
     ///
-    /// - Attention: `invalidateLayout()` can override a layout object assigned to ``layout`` just before calling it,  with one returned by the delegate method.
+    /// If the controller has a delegate object, this can override its ``layout``  object with one returned by
+    /// `floatingPanel(_:layoutFor:)` of its  delegate object with the current `UITraitCollection` object.
     @objc
     public func invalidateLayout() {
         if let newLayout = self.delegate?.floatingPanel?(self, layoutFor: traitCollection) {
