@@ -3,7 +3,7 @@
 import UIKit
 import FloatingPanel
 
-class ViewController: UIViewController, FloatingPanelControllerDelegate {
+class MainViewController: UIViewController, FloatingPanelControllerDelegate {
     @IBOutlet var topBannerView: UIImageView!
     @IBOutlet weak var labelStackView: UIStackView!
     @IBOutlet weak var bottomToolView: UIView!
