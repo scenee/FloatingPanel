@@ -4,7 +4,7 @@ import UIKit
 import MapKit
 import FloatingPanel
 
-class ViewController: UIViewController {
+class MainViewController: UIViewController {
     typealias PanelDelegate = FloatingPanelControllerDelegate & UIGestureRecognizerDelegate
 
     // Search Panel
@@ -22,7 +22,9 @@ class ViewController: UIViewController {
         storyboard?.instantiateViewController(withIdentifier: "DetailViewController") as! DetailViewController
 
     @IBOutlet weak var mapView: MKMapView!
+}
 
+extension MainViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         fpc.contentMode = .fitToBounds
@@ -55,7 +57,9 @@ class ViewController: UIViewController {
         super.viewDidDisappear(animated)
         teardownMapView()
     }
+}
 
+extension MainViewController {
     func layoutPanelForPad() {
         fpc.behavior = SearchPaneliPadBehavior()
         fpc.panGestureRecognizer.delegateProxy = fpcDelegate
@@ -116,7 +120,7 @@ extension FloatingPanelController {
 
 // MARK: - UISearchBarDelegate
 
-extension ViewController: UISearchBarDelegate {
+extension MainViewController: UISearchBarDelegate {
     func activate(searchBar: UISearchBar) {
         searchBar.showsCancelButton = true
         searchVC.showHeader(animated: true)
@@ -147,9 +151,9 @@ extension ViewController: UISearchBarDelegate {
 // MARK: - iPhone
 
 class SearchPanelPhoneDelegate: NSObject, FloatingPanelControllerDelegate, UIGestureRecognizerDelegate {
-    unowned let owner: ViewController
+    unowned let owner: MainViewController
 
-    init(owner: ViewController) {
+    init(owner: MainViewController) {
         self.owner = owner
     }
 
@@ -232,9 +236,9 @@ class SearchPanelLandscapeLayout: FloatingPanelLayout {
 }
 
 class DetailPanelPhoneDelegate: NSObject, FloatingPanelControllerDelegate, UIGestureRecognizerDelegate {
-    unowned let owner: ViewController
+    unowned let owner: MainViewController
 
-    init(owner: ViewController) {
+    init(owner: MainViewController) {
         self.owner = owner
     }
 }
@@ -255,9 +259,9 @@ class DetailPanelPhoneLayout: FloatingPanelLayout {
 // MARK: - iPad
 
 class SearchPanelPadDelegate: NSObject, FloatingPanelControllerDelegate, UIGestureRecognizerDelegate {
-    unowned let owner: ViewController
+    unowned let owner: MainViewController
 
-    init(owner: ViewController) {
+    init(owner: MainViewController) {
         self.owner = owner
     }
 
@@ -328,9 +332,9 @@ class SearchPaneliPadBehavior: FloatingPanelBehavior {
 }
 
 class DetailPanelPadDelegate: NSObject, FloatingPanelControllerDelegate, UIGestureRecognizerDelegate {
-    unowned let owner: ViewController
+    unowned let owner: MainViewController
 
-    init(owner: ViewController) {
+    init(owner: MainViewController) {
         self.owner = owner
     }
 
@@ -380,7 +384,7 @@ class DetailPanelPadRightLayout: FloatingPanelLayout {
 
 // MARK: - MKMapViewDelegate
 
-extension ViewController: MKMapViewDelegate {
+extension MainViewController: MKMapViewDelegate {
     func setupMapView() {
         let center = CLLocationCoordinate2D(latitude: 37.623198015869235,
                                             longitude: -122.43066818432008)
