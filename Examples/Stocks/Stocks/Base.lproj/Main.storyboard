@@ -15,7 +15,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Uop-sw-I6p">
-                                <rect key="frame" x="0.0" y="85" width="375" height="537.5"/>
+                                <rect key="frame" x="0.0" y="65" width="600" height="490.5"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="375" placeholderIntrinsicHeight="625" image="stocks_list" translatesAutoresizingMaskIntoConstraints="NO" id="XJR-iK-fem">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="625"/>
@@ -30,10 +30,10 @@
                                 </constraints>
                             </scrollView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dFl-81-6ok">
-                                <rect key="frame" x="0.0" y="622.5" width="375" height="44.5"/>
+                                <rect key="frame" x="0.0" y="555.5" width="600" height="44.5"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="yahoo_bottom_bar" translatesAutoresizingMaskIntoConstraints="NO" id="NKr-gS-mpx">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="44.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="44.5"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="44.5" id="B5t-ZF-qUj"/>
@@ -49,10 +49,10 @@
                                 </constraints>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="-8" translatesAutoresizingMaskIntoConstraints="NO" id="f7r-Al-pIN">
-                                <rect key="frame" x="16" y="20" width="153.5" height="57"/>
+                                <rect key="frame" x="16" y="0.0" width="153.5" height="57"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="STOCKS" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PCG-Wl-fXa">
-                                        <rect key="frame" x="0.0" y="0.0" width="111.5" height="32.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="111" height="32.5"/>
                                         <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="27"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
