@@ -157,9 +157,10 @@ open class FloatingPanelController: UIViewController {
         return floatingPanel.isAttracting
     }
 
-    /// The layout object managed by the controller
+    /// The layout object that the controller manages
     ///
-    /// To apply the new layout object into views managed by the controller, you need to call ``invalidateLayout()``.
+    /// You need to call ``invalidateLayout()`` if you want to apply a new layout object immediately
+    /// into the panel.
     @objc
     public var layout: FloatingPanelLayout {
         get { _layout }
@@ -171,7 +172,7 @@ open class FloatingPanelController: UIViewController {
         }
     }
 
-    /// The behavior object managed by the controller
+    /// The behavior object that the controller manages
     @objc
     public var behavior: FloatingPanelBehavior {
         get { _behavior }
@@ -605,13 +606,13 @@ open class FloatingPanelController: UIViewController {
 
     // MARK: - Utilities
 
-    /// Invalidates the current layout of the views and apply the ``layout`` object into them.
+    /// Invalidates all layout information of the panel and apply the ``layout`` property into it immediately.
     ///
-    /// This lays out the views managed by the controller immediately according to the ``layout``
-    /// object by calling `layoutIfNeeded()` of the root view. Thus it can be called in an animation block.
+    /// This lays out subviews of the view that the controller manages immediately according to the ``layout``
+    /// property by calling `layoutIfNeeded()` of the view. Thus it can be called in an animation block.
     ///
-    /// If the controller has a delegate object, this can override its ``layout``  object with one returned by
-    /// `floatingPanel(_:layoutFor:)` of its  delegate object with the current `UITraitCollection` object.
+    /// If the controller has a delegate object, this will lays out them using a layout object returned by
+    /// `floatingPanel(_:layoutFor:)` for the current `UITraitCollection`.
     @objc
     public func invalidateLayout() {
         if let newLayout = self.delegate?.floatingPanel?(self, layoutFor: traitCollection) {
