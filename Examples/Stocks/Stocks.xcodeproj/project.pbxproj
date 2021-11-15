@@ -73,11 +73,11 @@
 		548DF95221705BE00041922A /* Stocks */ = {
 			isa = PBXGroup;
 			children = (
-				548DF95321705BE00041922A /* AppDelegate.swift */,
-				548DF95521705BE00041922A /* MainViewController.swift */,
-				548DF95721705BE00041922A /* Main.storyboard */,
 				548DF95A21705BE10041922A /* Assets.xcassets */,
 				548DF95C21705BE10041922A /* LaunchScreen.storyboard */,
+				548DF95721705BE00041922A /* Main.storyboard */,
+				548DF95321705BE00041922A /* AppDelegate.swift */,
+				548DF95521705BE00041922A /* MainViewController.swift */,
 				548DF95F21705BE10041922A /* Info.plist */,
 			);
 			path = Stocks;

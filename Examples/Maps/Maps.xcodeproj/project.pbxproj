@@ -91,14 +91,14 @@
 		54B51128216C3D840033A6F3 /* Maps */ = {
 			isa = PBXGroup;
 			children = (
+				54B51130216C3D860033A6F3 /* Assets.xcassets */,
+				54B51132216C3D860033A6F3 /* LaunchScreen.storyboard */,
+				54B5112D216C3D840033A6F3 /* Main.storyboard */,
 				54B51129216C3D840033A6F3 /* AppDelegate.swift */,
 				54B5112B216C3D840033A6F3 /* MainViewController.swift */,
 				549A5F58244673FE0025F312 /* SearchViewController.swift */,
 				54E26CB724A98E310066C720 /* DetailViewController.swift */,
 				54E26CB524A989090066C720 /* Utils.swift */,
-				54B5112D216C3D840033A6F3 /* Main.storyboard */,
-				54B51130216C3D860033A6F3 /* Assets.xcassets */,
-				54B51132216C3D860033A6F3 /* LaunchScreen.storyboard */,
 				54B51135216C3D860033A6F3 /* Info.plist */,
 			);
 			path = Maps;

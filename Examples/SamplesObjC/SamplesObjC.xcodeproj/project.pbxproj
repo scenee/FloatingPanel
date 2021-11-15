@@ -78,13 +78,13 @@
 		545BA70321BA3214007F7846 /* SamplesObjC */ = {
 			isa = PBXGroup;
 			children = (
+				545BA70D21BA3217007F7846 /* Assets.xcassets */,
+				545BA70F21BA3217007F7846 /* LaunchScreen.storyboard */,
+				545BA70A21BA3214007F7846 /* Main.storyboard */,
 				545BA70421BA3214007F7846 /* AppDelegate.h */,
 				545BA70521BA3214007F7846 /* AppDelegate.m */,
 				545BA70721BA3214007F7846 /* MainViewController.h */,
 				545BA70821BA3214007F7846 /* MainViewController.m */,
-				545BA70A21BA3214007F7846 /* Main.storyboard */,
-				545BA70D21BA3217007F7846 /* Assets.xcassets */,
-				545BA70F21BA3217007F7846 /* LaunchScreen.storyboard */,
 				545BA71221BA3217007F7846 /* Info.plist */,
 				545BA71321BA3217007F7846 /* main.m */,
 				545BA72221BA3867007F7846 /* SamplesObjC-Bridging-Header.h */,
