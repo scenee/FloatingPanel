@@ -320,7 +320,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.SamplesObjC;
+				PRODUCT_BUNDLE_IDENTIFIER = example.SamplesObjC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SamplesObjC/SamplesObjC-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -342,7 +342,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.SamplesObjC;
+				PRODUCT_BUNDLE_IDENTIFIER = example.SamplesObjC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SamplesObjC/SamplesObjC-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
