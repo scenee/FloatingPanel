@@ -201,13 +201,6 @@ class SearchPanelPhoneDelegate: NSObject, FloatingPanelControllerDelegate, UIGes
         if targetState.pointee != .full {
             owner.searchVC.hideHeader(animated: true)
         }
-        if targetState.pointee == .tip {
-            vc.contentMode = .static
-        }
-    }
-
-    func floatingPanelDidEndAttracting(_ fpc: FloatingPanelController) {
-        fpc.contentMode = .fitToBounds
     }
 }
 
