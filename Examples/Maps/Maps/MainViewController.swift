@@ -42,7 +42,7 @@ extension MainViewController {
             layoutPanelForPhone()
         }
 
-        setupMapView()
+        setUpMapView()
         setUpSearchView()
     }
 
@@ -55,7 +55,7 @@ extension MainViewController {
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        teardownMapView()
+        tearDownMapView()
     }
 }
 
@@ -80,15 +80,14 @@ extension MainViewController {
             self.didMove(toParent: self)
         }
 
-        fpc.setAppearanceForPad()
-        detailFpc.setAppearanceForPad()
+        [fpc, detailFpc].forEach { $0.setAppearanceForPad() }
     }
 
     func layoutPanelForPhone() {
         fpc.track(scrollView: searchVC.tableView) // Only track the table view on iPhone
         fpc.addPanel(toParent: self, animated: true)
-        fpc.setAppearanceForPhone()
-        detailFpc.setAppearanceForPhone()
+
+        [fpc, detailFpc].forEach { $0.setAppearanceForPhone()}
     }
 }
 
@@ -385,7 +384,7 @@ class DetailPanelPadRightLayout: FloatingPanelLayout {
 // MARK: - MKMapViewDelegate
 
 extension MainViewController: MKMapViewDelegate {
-    func setupMapView() {
+    func setUpMapView() {
         let center = CLLocationCoordinate2D(latitude: 37.623198015869235,
                                             longitude: -122.43066818432008)
         let span = MKCoordinateSpan(latitudeDelta: 0.4425100023575723,
@@ -397,7 +396,7 @@ extension MainViewController: MKMapViewDelegate {
         mapView.delegate = self
     }
 
-    func teardownMapView() {
+    func tearDownMapView() {
         // Prevent a crash
         mapView.delegate = nil
         mapView = nil
