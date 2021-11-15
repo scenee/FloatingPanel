@@ -611,7 +611,7 @@ open class FloatingPanelController: UIViewController {
     /// This lays out subviews of the view that the controller manages immediately according to the ``layout``
     /// property by calling `layoutIfNeeded()` of the view. Thus it can be called in an animation block.
     ///
-    /// If the controller has a delegate object, this will lays out them using a layout object returned by
+    /// If the controller has a delegate object, this will lay out them using the layout object returned by
     /// `floatingPanel(_:layoutFor:)` for the current `UITraitCollection`.
     @objc
     public func invalidateLayout() {
