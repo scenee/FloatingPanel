@@ -47,7 +47,9 @@ extension UseCaseController {
             tapGesture.delaysTouchesEnded = false
             fpc.surfaceView.addGestureRecognizer(tapGesture)
 
-            addMain(panel: fpc, with: contentVC)
+            fpc.set(contentViewController: contentVC)
+            fpc.ext_trackScrollView(in: contentVC)
+            addMain(panel: fpc)
 
         case .trackingTextView:
             let fpc = FloatingPanelController()
@@ -58,7 +60,9 @@ extension UseCaseController {
                 appearance.cornerRadius = 6.0
                 return appearance
             }()
-            addMain(panel: fpc, with: contentVC)
+            fpc.set(contentViewController: contentVC)
+            fpc.ext_trackScrollView(in: contentVC)
+            addMain(panel: fpc)
 
         case .showDetail:
             // Initialize FloatingPanelController
@@ -100,7 +104,8 @@ extension UseCaseController {
             if let page = (fpc.contentViewController as? UIPageViewController)?.viewControllers?.first {
                 fpc.track(scrollView: (page as! DebugTableViewController).tableView)
             }
-            addMain(panel: fpc, with: pageVC)
+            fpc.set(contentViewController: pageVC)
+            addMain(panel: fpc)
 
         case .showRemovablePanel, .showIntrinsicView:
             let fpc = FloatingPanelController()
@@ -113,7 +118,9 @@ extension UseCaseController {
                 appearance.cornerRadius = 6.0
                 return appearance
             }()
-            addMain(panel: fpc, with: contentVC)
+            fpc.set(contentViewController: contentVC)
+            fpc.ext_trackScrollView(in: contentVC)
+            addMain(panel: fpc)
 
         case .showNestedScrollView:
             let fpc = FloatingPanelController()
@@ -125,7 +132,9 @@ extension UseCaseController {
                 appearance.cornerRadius = 6.0
                 return appearance
             }()
-            addMain(panel: fpc, with: contentVC)
+            fpc.set(contentViewController: contentVC)
+            fpc.ext_trackScrollView(in: contentVC)
+            addMain(panel: fpc)
 
         case .showPanelModal:
             let fpc = FloatingPanelController()
@@ -198,18 +207,32 @@ extension UseCaseController {
         case .showNavigationController:
             let fpc = FloatingPanelController()
             fpc.contentInsetAdjustmentBehavior = .never
-            addMain(panel: fpc, with: contentVC)
+            fpc.set(contentViewController: contentVC)
+            fpc.ext_trackScrollView(in: contentVC)
+            addMain(panel: fpc)
 
         case .showTopPositionedPanel: // For debug
             let fpc = FloatingPanelController()
             let contentVC = UIViewController()
             contentVC.view.backgroundColor = .red
-            addMain(panel: fpc, with: contentVC)
+            fpc.set(contentViewController: contentVC)
+            addMain(panel: fpc)
 
         case .showAdaptivePanel, .showAdaptivePanelWithCustomGuide:
             let fpc = FloatingPanelController()
             fpc.isRemovalInteractionEnabled = true
-            addMain(panel: fpc, with: contentVC)
+            fpc.set(contentViewController: contentVC)
+            fpc.ext_trackScrollView(in: contentVC)
+            if case let contentVC as ImageViewController = contentVC {
+                if #available(iOS 11.0, *) {
+                    let mode: ImageViewController.Mode = (useCase == .showAdaptivePanelWithCustomGuide) ? .withHeaderFooter : .onlyImage
+                    let layoutGuide = contentVC.layoutGuideFor(mode: mode)
+                    fpc.layout = ImageViewController.PanelLayout(targetGuide: layoutGuide)
+                } else {
+                    fpc.layout = ImageViewController.PanelLayout(targetGuide: nil)
+                }
+            }
+            addMain(panel: fpc)
 
         case .showCustomStatePanel:
             let fpc = FloatingPanelController()
@@ -220,7 +243,9 @@ extension UseCaseController {
                 appearance.cornerRadius = 6.0
                 return appearance
             }()
-            addMain(panel: fpc, with: contentVC)
+            fpc.set(contentViewController: contentVC)
+            fpc.ext_trackScrollView(in: contentVC)
+            addMain(panel: fpc)
         }
     }
 
@@ -246,9 +271,7 @@ extension UseCaseController {
         settingsPanelVC.addPanel(toParent: mainVC, animated: true)
     }
 
-    private func addMain(panel fpc: FloatingPanelController, with contentVC: UIViewController) {
-        set(contentViewController: contentVC, to: fpc)
-
+    private func addMain(panel fpc: FloatingPanelController) {
         let oldMainPanelVC = mainPanelVC
         mainPanelVC = fpc
         if let oldMainPanelVC = oldMainPanelVC {
@@ -260,41 +283,7 @@ extension UseCaseController {
         }
     }
 
-    private func set(contentViewController contentVC: UIViewController, to fpc: FloatingPanelController) {
-        fpc.set(contentViewController: contentVC)
-        // Track a scroll view
-        switch contentVC {
-        case let consoleVC as DebugTextViewController:
-            fpc.track(scrollView: consoleVC.textView)
-
-        case let contentVC as DebugTableViewController:
-            let ob = contentVC.tableView.observe(\.isEditing) { (tableView, _) in
-                fpc.panGestureRecognizer.isEnabled = !tableView.isEditing
-            }
-            contentVC.kvoObservers.append(ob)
-            fpc.track(scrollView: contentVC.tableView)
-        case let contentVC as NestedScrollViewController:
-            fpc.track(scrollView: contentVC.scrollView)
-        case let navVC as UINavigationController:
-            if let rootVC = (navVC.topViewController as? MainViewController) {
-                rootVC.loadViewIfNeeded()
-                fpc.track(scrollView: rootVC.tableView)
-            }
-        case let contentVC as ImageViewController:
-            if #available(iOS 11.0, *) {
-                let mode: ImageViewController.Mode = (useCase == .showAdaptivePanelWithCustomGuide) ? .withHeaderFooter : .onlyImage
-                let layoutGuide = contentVC.layoutGuideFor(mode: mode)
-                fpc.layout = ImageViewController.PanelLayout(targetGuide: layoutGuide)
-            } else {
-                fpc.layout = ImageViewController.PanelLayout(targetGuide: nil)
-            }
-            fpc.track(scrollView: contentVC.scrollView)
-        default:
-            break
-        }
-    }
-
-    @objc
+   @objc
     private func handleSurface(tapGesture: UITapGestureRecognizer) {
         switch mainPanelVC.state {
         case .full:
@@ -360,5 +349,36 @@ extension UseCaseController: UIGestureRecognizerDelegate {
     }
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
          false
+    }
+}
+
+private extension FloatingPanelController {
+    func ext_trackScrollView(in contentVC: UIViewController) {
+        switch contentVC {
+        case let consoleVC as DebugTextViewController:
+            track(scrollView: consoleVC.textView)
+
+        case let contentVC as DebugTableViewController:
+            let ob = contentVC.tableView.observe(\.isEditing) { [weak self] (tableView, _) in
+                self?.panGestureRecognizer.isEnabled = !tableView.isEditing
+            }
+            contentVC.kvoObservers.append(ob)
+            track(scrollView: contentVC.tableView)
+
+        case let contentVC as NestedScrollViewController:
+            track(scrollView: contentVC.scrollView)
+
+        case let navVC as UINavigationController:
+            if let rootVC = (navVC.topViewController as? MainViewController) {
+                rootVC.loadViewIfNeeded()
+                track(scrollView: rootVC.tableView)
+            }
+
+        case let contentVC as ImageViewController:
+            track(scrollView: contentVC.scrollView)
+
+        default:
+            break
+        }
     }
 }
