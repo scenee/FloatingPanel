@@ -4,7 +4,7 @@ import UIKit
 
 // MARK: - UITableViewDelegate
 
-extension ViewController: UITableViewDelegate {
+extension MainViewController: UITableViewDelegate {
     func setUpSearchView() {
         searchVC.loadViewIfNeeded()
         searchVC.tableView.delegate = self

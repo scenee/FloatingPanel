@@ -1,6 +1,6 @@
 // Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
 
-#import "ViewController.h"
+#import "MainViewController.h"
 @import FloatingPanel;
 
 // Defining a custom FloatingPanelState
@@ -19,10 +19,10 @@ static FloatingPanelState *_lastQuart;
 }
 @end
 
-@interface ViewController()<FloatingPanelControllerDelegate>
+@interface MainViewController()<FloatingPanelControllerDelegate>
 @end
 
-@implementation ViewController
+@implementation MainViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

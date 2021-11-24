@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		545BA70621BA3214007F7846 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 545BA70521BA3214007F7846 /* AppDelegate.m */; };
-		545BA70921BA3214007F7846 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 545BA70821BA3214007F7846 /* ViewController.m */; };
+		545BA70921BA3214007F7846 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 545BA70821BA3214007F7846 /* MainViewController.m */; };
 		545BA70C21BA3214007F7846 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 545BA70A21BA3214007F7846 /* Main.storyboard */; };
 		545BA70E21BA3217007F7846 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 545BA70D21BA3217007F7846 /* Assets.xcassets */; };
 		545BA71121BA3217007F7846 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 545BA70F21BA3217007F7846 /* LaunchScreen.storyboard */; };
@@ -35,8 +35,8 @@
 		545BA70121BA3214007F7846 /* SamplesObjC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SamplesObjC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		545BA70421BA3214007F7846 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		545BA70521BA3214007F7846 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		545BA70721BA3214007F7846 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		545BA70821BA3214007F7846 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		545BA70721BA3214007F7846 /* MainViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		545BA70821BA3214007F7846 /* MainViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
 		545BA70B21BA3214007F7846 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		545BA70D21BA3217007F7846 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		545BA71021BA3217007F7846 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -78,13 +78,13 @@
 		545BA70321BA3214007F7846 /* SamplesObjC */ = {
 			isa = PBXGroup;
 			children = (
-				545BA70421BA3214007F7846 /* AppDelegate.h */,
-				545BA70521BA3214007F7846 /* AppDelegate.m */,
-				545BA70721BA3214007F7846 /* ViewController.h */,
-				545BA70821BA3214007F7846 /* ViewController.m */,
-				545BA70A21BA3214007F7846 /* Main.storyboard */,
 				545BA70D21BA3217007F7846 /* Assets.xcassets */,
 				545BA70F21BA3217007F7846 /* LaunchScreen.storyboard */,
+				545BA70A21BA3214007F7846 /* Main.storyboard */,
+				545BA70421BA3214007F7846 /* AppDelegate.h */,
+				545BA70521BA3214007F7846 /* AppDelegate.m */,
+				545BA70721BA3214007F7846 /* MainViewController.h */,
+				545BA70821BA3214007F7846 /* MainViewController.m */,
 				545BA71221BA3217007F7846 /* Info.plist */,
 				545BA71321BA3217007F7846 /* main.m */,
 				545BA72221BA3867007F7846 /* SamplesObjC-Bridging-Header.h */,
@@ -164,7 +164,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				545BA70921BA3214007F7846 /* ViewController.m in Sources */,
+				545BA70921BA3214007F7846 /* MainViewController.m in Sources */,
 				545BA71421BA3217007F7846 /* main.m in Sources */,
 				545BA70621BA3214007F7846 /* AppDelegate.m in Sources */,
 			);
@@ -320,7 +320,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.SamplesObjC;
+				PRODUCT_BUNDLE_IDENTIFIER = example.SamplesObjC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SamplesObjC/SamplesObjC-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -342,7 +342,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.SamplesObjC;
+				PRODUCT_BUNDLE_IDENTIFIER = example.SamplesObjC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SamplesObjC/SamplesObjC-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;

@@ -6,9 +6,10 @@ import FloatingPanel
 final class MainViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     private var observations: [NSKeyValueObservation] = []
-
     private lazy var useCaseController = UseCaseController(mainVC: self)
+}
 
+extension MainViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
@@ -21,8 +22,6 @@ final class MainViewController: UIViewController {
             navigationItem.searchController = searchController
             navigationItem.hidesSearchBarWhenScrolling = false
             navigationItem.largeTitleDisplayMode = .automatic
-        } else {
-            // Fallback on earlier versions
         }
         var insets = UIEdgeInsets.zero
         insets.bottom += 69.0
@@ -47,8 +46,9 @@ final class MainViewController: UIViewController {
         super.viewWillDisappear(animated)
         observations.removeAll()
     }
+}
 
-    // MARK:- Actions
+extension MainViewController {
     @IBAction func showDebugMenu(_ sender: UIBarButtonItem) {
         useCaseController.setUpSettingsPanel(for: self)
     }

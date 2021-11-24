@@ -4,14 +4,10 @@ import UIKit
 import FloatingPanel
 
 final class PagePanelController: NSObject {
-    lazy var pages = [UIColor.blue, .red, .green].compactMap({ (color) -> UIViewController in
-        let page = FloatingPanelController(delegate: self)
-        page.view.backgroundColor = color
-        page.panGestureRecognizer.delegateProxy = self
-        page.show()
-        return page
-    })
+    var pages: [UIViewController] = []
+}
 
+extension PagePanelController {
     func makePageViewControllerForContent() -> UIPageViewController {
         pages = [DebugTableViewController(), DebugTableViewController(), DebugTableViewController()]
         let pageVC = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
@@ -22,6 +18,13 @@ final class PagePanelController: NSObject {
     }
 
     func makePageViewController(for vc: MainViewController) -> UIPageViewController {
+        pages = [UIColor.blue, .red, .green].compactMap({ (color) -> UIViewController in
+            let page = FloatingPanelController(delegate: self)
+            page.view.backgroundColor = color
+            page.panGestureRecognizer.delegateProxy = self
+            page.show()
+            return page
+        })
         let pageVC = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
         let closeButton = UIButton(type: .custom)
         pageVC.view.addSubview(closeButton)
