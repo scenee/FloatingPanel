@@ -551,7 +551,7 @@ open class FloatingPanelController: UIViewController {
             addChild(vc)
 
             let surfaceView = floatingPanel.surfaceView
-            surfaceView.set(contentView: vc.view)
+            surfaceView.set(contentView: vc.view, mode: contentMode)
 
             vc.didMove(toParent: self)
         }

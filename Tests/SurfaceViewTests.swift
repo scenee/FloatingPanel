@@ -53,7 +53,7 @@ class SurfaceViewTests: XCTestCase {
             surface.layoutIfNeeded()
 
             let contentView = UIView()
-            surface.set(contentView: contentView)
+            surface.set(contentView: contentView, mode: .static)
 
             let height = surface.bounds.height * 2
             surface.containerOverflow = height
@@ -68,7 +68,7 @@ class SurfaceViewTests: XCTestCase {
             surface.layoutIfNeeded()
 
             let contentView = UIView()
-            surface.set(contentView: contentView)
+            surface.set(contentView: contentView, mode: .static)
 
             let height = surface.bounds.height * 2
             surface.containerOverflow = height
@@ -144,7 +144,7 @@ class SurfaceViewTests: XCTestCase {
             let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
             surface.position = .top
             let contentView = UIView()
-            surface.set(contentView: contentView)
+            surface.set(contentView: contentView, mode: .static)
             surface.layoutIfNeeded()
             XCTAssertEqual(surface.contentView?.frame ?? .zero, surface.bounds)
             surface.contentPadding = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
@@ -155,7 +155,7 @@ class SurfaceViewTests: XCTestCase {
         XCTContext.runActivity(named: "Bottom sheet") { _ in
             let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
             let contentView = UIView()
-            surface.set(contentView: contentView)
+            surface.set(contentView: contentView, mode: .static)
             surface.layoutIfNeeded()
             XCTAssertEqual(surface.contentView?.frame ?? .zero, surface.bounds)
             surface.contentPadding = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
@@ -168,7 +168,7 @@ class SurfaceViewTests: XCTestCase {
     func test_surfaceView_containerMargins_and_contentInsets() {
         let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
         let contentView = UIView()
-        surface.set(contentView: contentView)
+        surface.set(contentView: contentView, mode: .static)
         surface.layoutIfNeeded()
         XCTAssertEqual(surface.contentView?.frame ?? .zero, surface.bounds)
         surface.containerMargins = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
