@@ -1,6 +1,6 @@
 // Copyright 2018-Present Shin Yamamoto. All rights reserved. MIT license.
 
-import Foundation
+import UIKit
 
 enum UseCase: Int, CaseIterable {
     case trackingTableView
@@ -23,7 +23,9 @@ enum UseCase: Int, CaseIterable {
     case showAdaptivePanel
     case showAdaptivePanelWithCustomGuide
     case showCustomStatePanel
+}
 
+extension UseCase {
     var name: String {
         switch self {
         case .trackingTableView: return "Scroll tracking(TableView)"
@@ -49,30 +51,42 @@ enum UseCase: Int, CaseIterable {
         }
     }
 
-    var storyboardID: String? {
+    private enum Content {
+        case storyboard(String)
+        case viewController(UIViewController)
+    }
+
+    private var content: Content {
         switch self {
-        case .trackingTableView: return nil
-        case .trackingTextView: return "ConsoleViewController" // Storyboard only
-        case .showDetail: return String(describing: DetailViewController.self)
-        case .showModal: return String(describing: ModalViewController.self)
-        case .showMultiPanelModal: return nil
-        case .showPanelInSheetModal: return nil
-        case .showPanelModal: return nil
-        case .showTabBar: return String(describing: TabBarViewController.self)
-        case .showPageView: return nil
-        case .showPageContentView: return nil
-        case .showNestedScrollView: return String(describing: NestedScrollViewController.self)
-        case .showRemovablePanel: return String(describing: DetailViewController.self)
-        case .showIntrinsicView: return "IntrinsicViewController" // Storyboard only
-        case .showContentInset: return nil
-        case .showContainerMargins: return nil
-        case .showNavigationController: return "RootNavigationController" // Storyboard only
-        case .showTopPositionedPanel: return nil
-        case .showAdaptivePanel,
-             .showAdaptivePanelWithCustomGuide:
-            return String(describing: ImageViewController.self)
-        case .showCustomStatePanel:
-            return nil
+        case .trackingTableView: return .viewController(DebugTableViewController())
+        case .trackingTextView: return .storyboard("ConsoleViewController") // Storyboard only
+        case .showDetail: return .storyboard(String(describing: DetailViewController.self))
+        case .showModal: return .storyboard(String(describing: ModalViewController.self))
+        case .showMultiPanelModal: return .viewController(DebugTableViewController())
+        case .showPanelInSheetModal: return .viewController(DebugTableViewController())
+        case .showPanelModal: return .viewController(DebugTableViewController())
+        case .showTabBar: return .storyboard(String(describing: TabBarViewController.self))
+        case .showPageView: return .viewController(DebugTableViewController())
+        case .showPageContentView: return .viewController(DebugTableViewController())
+        case .showNestedScrollView: return .storyboard(String(describing: NestedScrollViewController.self))
+        case .showRemovablePanel: return .storyboard(String(describing: DetailViewController.self))
+        case .showIntrinsicView: return .storyboard("IntrinsicViewController") // Storyboard only
+        case .showContentInset: return .viewController(DebugTableViewController())
+        case .showContainerMargins: return .viewController(DebugTableViewController())
+        case .showNavigationController: return .storyboard("RootNavigationController") // Storyboard only
+        case .showTopPositionedPanel: return .viewController(DebugTableViewController())
+        case .showAdaptivePanel: return .storyboard(String(describing: ImageViewController.self))
+        case .showAdaptivePanelWithCustomGuide: return .storyboard(String(describing: ImageViewController.self))
+        case .showCustomStatePanel: return .viewController(DebugTableViewController())
+        }
+    }
+
+    func makeContentViewController(with storyboard: UIStoryboard) -> UIViewController {
+        switch content {
+        case .storyboard(let id):
+            return storyboard.instantiateViewController(withIdentifier: id)
+        case .viewController(let vc):
+            return vc
         }
     }
 }

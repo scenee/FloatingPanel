@@ -4,6 +4,9 @@ import UIKit
 
 @IBDesignable
 final class CloseButton: UIButton {
+    override var isHighlighted: Bool { didSet { setNeedsDisplay() } }
+    override var isSelected: Bool { didSet { setNeedsDisplay() } }
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         render()
@@ -17,14 +20,11 @@ final class CloseButton: UIButton {
         self.backgroundColor = .clear
     }
 
-    func p(_ p: CGFloat) -> CGFloat {
-        return p * (2.0 / 3.0)
-    }
-
-    override var isHighlighted: Bool { didSet { setNeedsDisplay() } }
-    override var isSelected: Bool { didSet { setNeedsDisplay() } }
-
     override func draw(_ rect: CGRect) {
+        func p(_ p: CGFloat) -> CGFloat {
+            return p * (2.0 / 3.0)
+        }
+
         guard let context = UIGraphicsGetCurrentContext() else { return }
 
         context.setLineWidth(p(1.0))
