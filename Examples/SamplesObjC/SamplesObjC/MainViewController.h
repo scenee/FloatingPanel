@@ -3,7 +3,7 @@
 #import <UIKit/UIKit.h>
 @import FloatingPanel;
 
-@interface ViewController : UIViewController
+@interface MainViewController : UIViewController
 @end
 
 @interface MyFloatingPanelLayout : NSObject <FloatingPanelLayout>
