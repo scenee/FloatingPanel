@@ -157,7 +157,10 @@ open class FloatingPanelController: UIViewController {
         return floatingPanel.isAttracting
     }
 
-    /// The layout object managed by the controller
+    /// The layout object that the controller manages
+    ///
+    /// You need to call ``invalidateLayout()`` if you want to apply a new layout object into the panel
+    /// immediately.
     @objc
     public var layout: FloatingPanelLayout {
         get { _layout }
@@ -169,7 +172,7 @@ open class FloatingPanelController: UIViewController {
         }
     }
 
-    /// The behavior object managed by the controller
+    /// The behavior object that the controller manages
     @objc
     public var behavior: FloatingPanelBehavior {
         get { _behavior }
@@ -603,15 +606,19 @@ open class FloatingPanelController: UIViewController {
 
     // MARK: - Utilities
 
-    /// Updates the layout object from the delegate and lays out the views managed
-    /// by the controller immediately.
+    /// Invalidates all layout information of the panel and apply the ``layout`` property into it immediately.
     ///
-    /// This method updates the ``FloatingPanelLayout`` object from the delegate and
-    /// then it calls `layoutIfNeeded()` of the root view to force the view
-    /// to update the layout immediately. It can be called in an
-    /// animation block.
+    /// This lays out subviews of the view that the controller manages with the ``layout`` property by
+    /// calling the view's `layoutIfNeeded()`. Thus this method can be called in an animation block to
+    /// animate the panel's changes.
+    ///
+    /// If the controller has a delegate object, this will lay them out using the layout object returned by
+    /// `floatingPanel(_:layoutFor:)` delegate method for the current `UITraitCollection`.
     @objc
     public func invalidateLayout() {
+        if let newLayout = self.delegate?.floatingPanel?(self, layoutFor: traitCollection) {
+            layout = newLayout
+        }
         activateLayout(forceLayout: true)
     }
 
