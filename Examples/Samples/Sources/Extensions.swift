@@ -2,6 +2,20 @@
 
 import UIKit
 
+extension UIView {
+    func makeBoundsLayoutGuide() -> UILayoutGuide {
+        let guide = UILayoutGuide()
+        addLayoutGuide(guide)
+        NSLayoutConstraint.activate([
+            guide.topAnchor.constraint(equalTo: topAnchor),
+            guide.leftAnchor.constraint(equalTo: leftAnchor),
+            guide.bottomAnchor.constraint(equalTo: bottomAnchor),
+            guide.rightAnchor.constraint(equalTo: rightAnchor),
+        ])
+        return guide
+    }
+}
+
 protocol LayoutGuideProvider {
     var topAnchor: NSLayoutYAxisAnchor { get }
     var bottomAnchor: NSLayoutYAxisAnchor { get }

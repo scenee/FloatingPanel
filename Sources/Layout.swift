@@ -91,6 +91,7 @@ class LayoutAdapter {
     private(set) var attractionConstraint: NSLayoutConstraint?
 
     private var staticConstraint: NSLayoutConstraint?
+    private var boundingConstraint: NSLayoutConstraint?
 
     private var anchorStates: Set<FloatingPanelState> {
         return Set(layout.anchors.keys)
@@ -330,12 +331,27 @@ class LayoutAdapter {
                 if anchor.referenceGuide == .safeArea {
                     referenceBoundsLength += position.inset(safeAreaInsets)
                 }
-                return dimension - diff
+                let maxPosition: CGFloat = {
+                    if let maxBounds = anchor.boundingGuide.maxBounds(vc) {
+                        return layout.position.mainLocation(maxBounds.origin)
+                            + layout.position.mainDimension(maxBounds.size)
+                    } else {
+                        return .infinity
+                    }
+                }()
+                return min(dimension - diff, maxPosition)
             case .bottom, .right:
                 if anchor.referenceGuide == .safeArea {
                     referenceBoundsLength -= position.inset(safeAreaInsets)
                 }
-                return referenceBoundsLength - dimension + diff
+                let minPosition: CGFloat = {
+                    if let maxBounds = anchor.boundingGuide.maxBounds(vc) {
+                        return layout.position.mainLocation(maxBounds.origin)
+                    } else {
+                        return -(.infinity)
+                    }
+                }()
+                return max(referenceBoundsLength - dimension + diff, minPosition)
             }
         case let anchor as FloatingPanelLayoutAnchor:
             let referenceBounds = anchor.referenceGuide == .safeArea ? bounds.inset(by: safeAreaInsets) : bounds
@@ -629,8 +645,9 @@ class LayoutAdapter {
     // The method is separated from prepareLayout(to:) for the rotation support
     // It must be called in FloatingPanelController.traitCollectionDidChange(_:)
     func updateStaticConstraint() {
-        NSLayoutConstraint.deactivate(constraint: staticConstraint)
+        NSLayoutConstraint.deactivate([staticConstraint, boundingConstraint].compactMap{ $0 })
         staticConstraint = nil
+        boundingConstraint = nil
 
         if vc.contentMode == .fitToBounds {
             surfaceView.containerOverflow = 0
@@ -654,7 +671,18 @@ class LayoutAdapter {
                 constant = 0.0
             }
             let baseAnchor = position.mainDimensionAnchor(anchor.contentLayoutGuide)
-            staticConstraint = surfaceAnchor.constraint(equalTo: baseAnchor, constant: constant)
+            if let boundingLayoutGuide = anchor.boundingGuide.layoutGuide(vc) {
+                if anchor.isAbsolute {
+                    boundingConstraint = baseAnchor.constraint(lessThanOrEqualTo: position.mainDimensionAnchor(boundingLayoutGuide),
+                                                               constant: anchor.offset)
+                } else {
+                    boundingConstraint = baseAnchor.constraint(lessThanOrEqualTo: position.mainDimensionAnchor(boundingLayoutGuide),
+                                                               multiplier: anchor.offset)
+                }
+                staticConstraint = surfaceAnchor.constraint(lessThanOrEqualTo: baseAnchor, constant: constant)
+            } else {
+                staticConstraint = surfaceAnchor.constraint(equalTo: baseAnchor, constant: constant)
+            }
         default:
             switch position {
             case .top, .left:
@@ -673,7 +701,7 @@ class LayoutAdapter {
             staticConstraint?.identifier = "FloatingPanel-static-width"
         }
 
-        NSLayoutConstraint.activate(constraint: staticConstraint)
+        NSLayoutConstraint.activate([staticConstraint, boundingConstraint].compactMap{ $0 })
 
         surfaceView.containerOverflow = position.mainDimension(vc.view.bounds.size)
     }

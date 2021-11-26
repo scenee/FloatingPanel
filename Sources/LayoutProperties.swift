@@ -43,3 +43,34 @@ extension FloatingPanelLayoutReferenceGuide {
         }
     }
 }
+
+/// Constants that specify a layout guide to lay out a panel.
+@objc public enum FloatingPanelLayoutBoundingGuide: Int {
+    case none = 0
+    case superview = 1
+    case safeArea = 2
+}
+
+extension FloatingPanelLayoutBoundingGuide {
+    func layoutGuide(_ fpc: FloatingPanelController) -> LayoutGuideProvider? {
+        switch self {
+        case .superview:
+            return fpc.view
+        case .safeArea:
+            return fpc.fp_safeAreaLayoutGuide
+        case .none:
+            return nil
+        }
+    }
+    func maxBounds(_ fpc: FloatingPanelController) -> CGRect? {
+        switch self {
+        case .superview:
+            return fpc.view.bounds
+        case .safeArea:
+            return fpc.view.bounds.inset(by: fpc.fp_safeAreaInsets)
+        case .none:
+            return nil
+        }
+    }
+
+}

@@ -148,33 +148,59 @@ public extension FloatingPanelIntrinsicLayoutAnchor {
     ///
     /// The offset is an amount to offset a position of panel that displays the entire content of the specified guide from an edge of
     /// the reference guide.  The edge refers to a panel positioning.
-    @objc public init(absoluteOffset offset: CGFloat, contentLayout: UILayoutGuide, referenceGuide: FloatingPanelLayoutReferenceGuide = .safeArea) {
+    @objc public init(absoluteOffset offset: CGFloat,
+                      contentLayout: UILayoutGuide,
+                      referenceGuide: FloatingPanelLayoutReferenceGuide = .safeArea,
+                      boundingGuide: FloatingPanelLayoutBoundingGuide = .none) {
         self.offset = offset
         self.contentLayoutGuide = contentLayout
         self.referenceGuide = referenceGuide
+        self.boundingGuide = boundingGuide
         self.isAbsolute = true
-
     }
 
     /// Returns a layout anchor with the specified offset by a fractional value, layout guide to display content and reference guide for a panel.
     ///
     /// The offset value is a floating-point number in the range 0.0 to 1.0, where 0.0 represents the full content
     /// is displayed and 0.5 represents the half of content is displayed.
-    @objc public init(fractionalOffset offset: CGFloat, contentLayout: UILayoutGuide, referenceGuide: FloatingPanelLayoutReferenceGuide = .safeArea) {
+    @objc public init(fractionalOffset offset: CGFloat,
+                      contentLayout: UILayoutGuide,
+                      referenceGuide: FloatingPanelLayoutReferenceGuide = .safeArea,
+                      boundingGuide: FloatingPanelLayoutBoundingGuide = .none) {
         self.offset = offset
         self.contentLayoutGuide = contentLayout
         self.referenceGuide = referenceGuide
+        self.boundingGuide = boundingGuide
         self.isAbsolute = false
     }
-    fileprivate let offset: CGFloat
-    fileprivate let isAbsolute: Bool
+    let offset: CGFloat
+    let isAbsolute: Bool
     let contentLayoutGuide: UILayoutGuide
     @objc public let referenceGuide: FloatingPanelLayoutReferenceGuide
+    @objc public let boundingGuide: FloatingPanelLayoutBoundingGuide
 }
 
 public extension FloatingPanelAdaptiveLayoutAnchor {
     func layoutConstraints(_ vc: FloatingPanelController, for position: FloatingPanelPosition) -> [NSLayoutConstraint] {
+        var constraints = [NSLayoutConstraint]()
+
+        let boundingConstraint: NSLayoutConstraint
+        if let boundingLayoutGuide = boundingGuide.layoutGuide(vc) {
+            switch position {
+            case .top:
+                boundingConstraint = vc.surfaceView.bottomAnchor.constraint(greaterThanOrEqualTo: boundingLayoutGuide.bottomAnchor)
+            case .left:
+                boundingConstraint = vc.surfaceView.rightAnchor.constraint(greaterThanOrEqualTo: boundingLayoutGuide.rightAnchor)
+            case .bottom:
+                boundingConstraint = vc.surfaceView.topAnchor.constraint(greaterThanOrEqualTo: boundingLayoutGuide.topAnchor)
+            case .right:
+                boundingConstraint = vc.surfaceView.leftAnchor.constraint(greaterThanOrEqualTo: boundingLayoutGuide.leftAnchor)
+            }
+            constraints.append(boundingConstraint)
+        }
+
         let layoutGuide = referenceGuide.layoutGuide(vc: vc)
+        let offsetConstraint: NSLayoutConstraint
         let offsetAnchor: NSLayoutDimension
         switch position {
         case .top:
@@ -187,10 +213,13 @@ public extension FloatingPanelAdaptiveLayoutAnchor {
             offsetAnchor = vc.surfaceView.leftAnchor.anchorWithOffset(to: layoutGuide.rightAnchor)
         }
         if isAbsolute {
-            return [offsetAnchor.constraint(equalTo: position.mainDimensionAnchor(contentLayoutGuide), constant: -offset)]
+            offsetConstraint = offsetAnchor.constraint(equalTo: position.mainDimensionAnchor(contentLayoutGuide), constant: -offset)
         } else {
-            return [offsetAnchor.constraint(equalTo: position.mainDimensionAnchor(contentLayoutGuide), multiplier: (1 - offset))]
+            offsetConstraint = offsetAnchor.constraint(equalTo: position.mainDimensionAnchor(contentLayoutGuide), multiplier: (1 - offset))
         }
+        constraints.append(offsetConstraint)
+
+        return constraints
     }
 }
 
