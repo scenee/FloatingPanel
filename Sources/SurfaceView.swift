@@ -426,6 +426,7 @@ public class SurfaceView: UIView {
             switch mode {
             case .static:
                 $0.priority = .required
+            // The reason why the priority was set to .required - 1 is #359, which fixed #294.
             case .fitToBounds:
                 $0.priority = .required - 1
             }
