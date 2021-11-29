@@ -408,12 +408,11 @@ public class SurfaceView: UIView {
         containerView.layer.borderWidth = appearance.borderWidth
     }
 
-    func set(contentView: UIView) {
+    func set(contentView: UIView, mode: FloatingPanelController.ContentMode) {
         containerView.addSubview(contentView)
         self.contentView = contentView
         /* contentView.frame = bounds */ // MUST NOT: Because the top safe area inset of a content VC will be incorrect.
         contentView.translatesAutoresizingMaskIntoConstraints = false
-
         let topConstraint = contentView.topAnchor.constraint(equalTo: topAnchor, constant: containerMargins.top + contentPadding.top)
         let leftConstraint = contentView.leftAnchor.constraint(equalTo: leftAnchor, constant: containerMargins.left + contentPadding.left)
         let rightConstraint = rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: containerMargins.right + contentPadding.right)
@@ -424,9 +423,15 @@ public class SurfaceView: UIView {
             rightConstraint,
             bottomConstraint,
         ].map {
-            $0.priority = .required - 1;
+            switch mode {
+            case .static:
+                $0.priority = .required
+            // The reason why this priority is set to .required - 1 is #359, which fixed #294.
+            case .fitToBounds:
+                $0.priority = .required - 1
+            }
             $0.identifier = "FloatingPanel-surface-content"
-            return $0;
+            return $0
         })
         self.contentViewTopConstraint = topConstraint
         self.contentViewLeftConstraint = leftConstraint
