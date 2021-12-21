@@ -442,4 +442,22 @@ public class SurfaceView: UIView {
     func hasStackView() -> Bool {
         return contentView?.subviews.reduce(false) { $0 || ($1 is UIStackView) } ?? false
     }
+
+    func grabberAreaContains(_ location: CGPoint) -> Bool {
+        // Sometimes a dragging finger's location is out of surface frame.
+        let cappedLocation: CGPoint
+        // Because the maximum width / height is out of bounds in CGRect.contains(_:)
+        let adjustment = 1 / fp_displayScale
+        switch position {
+        case .top:
+            cappedLocation = CGPoint(x: location.x, y: min(location.y, bounds.height - adjustment))
+        case .left:
+            cappedLocation = CGPoint(x: min(location.x, bounds.width - adjustment), y: location.y)
+        case .bottom:
+            cappedLocation = CGPoint(x: location.x, y: max(location.y, 0))
+        case .right:
+            cappedLocation = CGPoint(x: max(location.x, 0), y: location.y)
+        }
+        return grabberAreaFrame.contains(cappedLocation)
+    }
 }

@@ -228,4 +228,88 @@ class SurfaceViewTests: XCTestCase {
         XCTAssert(surface.containerView.layer.borderColor == UIColor.red.cgColor)
         XCTAssert(surface.containerView.layer.borderWidth == 3.0)
     }
+
+    func test_surfaceView_grabberArea() {
+        let sv = SurfaceView()
+        sv.bounds  = .init(x: 0, y: 0, width: 375, height: 500)
+        sv.grabberAreaOffset = 44.0
+        // Top
+        do {
+            sv.position = .top
+            XCTAssertEqual(sv.grabberAreaFrame,
+                           .init(x: 0,
+                                 y: sv.bounds.height - sv.grabberAreaOffset,
+                                 width: sv.bounds.width,
+                                 height: sv.grabberAreaOffset))
+        }
+        // Bottom
+        do {
+            sv.position = .bottom
+            XCTAssertEqual(sv.grabberAreaFrame,
+                           .init(x: 0,
+                                 y: 0,
+                                 width: sv.bounds.width,
+                                 height: sv.grabberAreaOffset))
+        }
+        // Left
+        do {
+            sv.position = .left
+            XCTAssertEqual(sv.grabberAreaFrame,
+                           .init(x: sv.bounds.width - sv.grabberAreaOffset,
+                                 y: 0,
+                                 width: sv.grabberAreaOffset,
+                                 height: sv.bounds.height))
+        }
+        // Right
+        do {
+            sv.position = .right
+            XCTAssertEqual(sv.grabberAreaFrame,
+                           .init(x: 0,
+                                 y: 0,
+                                 width: sv.grabberAreaOffset,
+                                 height: sv.bounds.height))
+        }
+    }
+
+    func test_surfaceView_grabberAreaDetection() {
+        let sv = SurfaceView()
+        sv.bounds  = .init(x: 0, y: 0, width: 375, height: 500)
+        // Top
+        do {
+            sv.position = .top
+            XCTAssertTrue(sv.grabberAreaContains(.init(x: 0, y: sv.bounds.height)))
+            XCTAssertTrue(sv.grabberAreaContains(.init(x: sv.bounds.width / 2, y: sv.bounds.height)))
+            XCTAssertTrue(sv.grabberAreaContains(.init(x: sv.bounds.width / 2, y: sv.bounds.height + 2)))
+            XCTAssertFalse(sv.grabberAreaContains(.init(x: -2, y: sv.bounds.height)))
+            XCTAssertFalse(sv.grabberAreaContains(.init(x: -2, y: -2)))
+        }
+        // Bottom
+        do {
+            sv.position = .bottom
+            XCTAssertTrue(sv.grabberAreaContains(.init(x: 0, y: 0)))
+            XCTAssertTrue(sv.grabberAreaContains(.init(x: sv.bounds.width / 2, y: 0)))
+            XCTAssertTrue(sv.grabberAreaContains(.init(x: sv.bounds.width / 2, y: -2)))
+            XCTAssertFalse(sv.grabberAreaContains(.init(x: -2, y: 0)))
+            XCTAssertFalse(sv.grabberAreaContains(.init(x: -2, y: -2)))
+        }
+        // Left
+        do {
+            sv.position = .left
+            XCTAssertTrue(sv.grabberAreaContains(.init(x: sv.bounds.width, y: 0)))
+            XCTAssertTrue(sv.grabberAreaContains(.init(x: sv.bounds.width, y: sv.bounds.height / 2)))
+            XCTAssertTrue(sv.grabberAreaContains(.init(x: sv.bounds.width + 2, y: sv.bounds.height / 2)))
+            XCTAssertFalse(sv.grabberAreaContains(.init(x: sv.bounds.width, y: -2)))
+            XCTAssertFalse(sv.grabberAreaContains(.init(x: -2, y: -2)))
+        }
+        // Right
+        do {
+            sv.position = .right
+            XCTAssertTrue(sv.grabberAreaContains(.init(x: 0, y: 0)))
+            XCTAssertTrue(sv.grabberAreaContains(.init(x: 0, y: sv.bounds.height / 2)))
+            XCTAssertTrue(sv.grabberAreaContains(.init(x: -2, y: sv.bounds.height / 2)))
+            XCTAssertFalse(sv.grabberAreaContains(.init(x: 0, y: -2)))
+            XCTAssertFalse(sv.grabberAreaContains(.init(x: -2, y: -2)))
+        }
+    }
+
 }
