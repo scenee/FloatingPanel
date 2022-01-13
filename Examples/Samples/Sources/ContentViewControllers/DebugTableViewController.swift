@@ -53,6 +53,7 @@ class DebugTableViewController: InspectableViewController {
 
     // MARK: - Properties
 
+    var fpc: FloatingPanelController?
     var kvoObservers: [NSKeyValueObservation] = []
     private lazy var items: [String] = {
         let items = (0..<100).map { "Items \($0)" }
@@ -250,6 +251,7 @@ extension DebugTableViewController: UITableViewDataSource {
 
 extension DebugTableViewController: UITableViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        fpc?.trackingScrollViewDidScroll()
         print("TableView --- ", scrollView.contentOffset, scrollView.contentInset)
     }
 

@@ -1001,6 +1001,22 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     // MARK: - ScrollView handling
+    
+    func trackingScrollViewDidScroll() {
+        guard let scrollView = scrollView else {
+            return
+        }
+        let contentOffset = scrollView.contentOffset.y
+        guard contentOffset < 0, layoutAdapter.position == .bottom, state == layoutAdapter.mostExpandedState else {
+            if surfaceView.transform != .identity {
+                surfaceView.transform = .identity
+                scrollView.transform = .identity
+            }
+            return
+        }
+        surfaceView.transform = CGAffineTransform(translationX: 0, y: -contentOffset)
+        scrollView.transform = CGAffineTransform(translationX: 0, y: contentOffset)
+    }
 
     private func lockScrollView() {
         guard let scrollView = scrollView else { return }

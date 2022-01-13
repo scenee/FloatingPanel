@@ -586,6 +586,12 @@ open class FloatingPanelController: UIViewController {
             break
         }
     }
+    
+    /// Tracks the specified scroll view scrolling.
+    ///
+    public func trackingScrollViewDidScroll() {
+        floatingPanel.trackingScrollViewDidScroll()
+    }
 
     /// Cancel tracking the specify scroll view.
     ///
