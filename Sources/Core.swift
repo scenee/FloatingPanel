@@ -710,8 +710,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         if stopScrollDeceleration {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-
-                self.stopScrolling(at: self.initialScrollOffset)
+                guard let scrollView = self.scrollView else { return }
+                
+                self.stopScrolling(at: scrollView.contentOffset)
             }
         }
 
