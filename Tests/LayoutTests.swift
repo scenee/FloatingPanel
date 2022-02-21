@@ -138,31 +138,31 @@ class LayoutTests: XCTestCase {
         var next: CGFloat
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: -100.0,
-                                                                        overflow: false,
+                                                                        scrollingContent: true,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, fullPos)
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: 100.0,
-                                                                        overflow: true,
+                                                                        scrollingContent: false,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, fullPos + 100.0)
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: tipPos - fullPos,
-                                                                        overflow: true,
+                                                                        scrollingContent: false,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, tipPos)
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: tipPos - fullPos + 100.0,
-                                                                        overflow: false,
+                                                                        scrollingContent: true,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, tipPos)
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: tipPos - fullPos + 100.0,
-                                                                        overflow: true,
+                                                                        scrollingContent: false,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, tipPos + 100.0)
@@ -190,31 +190,31 @@ class LayoutTests: XCTestCase {
         var next: CGFloat
         pre = fpc.surfaceLocation.y
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: -100.0,
-                                                                        overflow: false,
+                                                                        scrollingContent: true,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, pre)
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: 100.0,
-                                                                        overflow: true,
+                                                                        scrollingContent: false,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, tipPos + 100.0)
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: fullPos - tipPos,
-                                                                        overflow: true,
+                                                                        scrollingContent: false,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, fullPos)
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: fullPos - tipPos + 100,
-                                                                        overflow: false,
+                                                                        scrollingContent: true,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, fullPos)
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: fullPos - tipPos + 100,
-                                                                        overflow: true,
+                                                                        scrollingContent: false,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, fullPos + 100.0)
@@ -245,19 +245,19 @@ class LayoutTests: XCTestCase {
         var next: CGFloat
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: -100.0,
-                                                                        overflow: false,
+                                                                        scrollingContent: true,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, fullPos)
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: -100.0,
-                                                                        overflow: true,
+                                                                        scrollingContent: false,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, fullPos - 100.0)
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: hiddenPos - fullPos + 100.0,
-                                                                        overflow: true,
+                                                                        scrollingContent: false,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, hiddenPos + 100.0)
@@ -288,19 +288,19 @@ class LayoutTests: XCTestCase {
         var next: CGFloat
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: 100.0,
-                                                                        overflow: false,
+                                                                        scrollingContent: true,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, fullPos)
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: 100.0,
-                                                                        overflow: true,
+                                                                        scrollingContent: false,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, fullPos + 100.0)
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: hiddenPos - fullPos + 100.0,
-                                                                        overflow: true,
+                                                                        scrollingContent: false,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, hiddenPos + 100.0)
@@ -328,19 +328,19 @@ class LayoutTests: XCTestCase {
 
         var next: CGFloat
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: -100.0,
-                                                                        overflow: false,
+                                                                        scrollingContent: true,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, fullPos)
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: -100.0,
-                                                                        overflow: true,
+                                                                        scrollingContent: false,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, fullPos - 100)
 
         fpc.floatingPanel.layoutAdapter.updateInteractiveEdgeConstraint(diff: tipPos - fullPos + 100.0,
-                                                                        overflow: true,
+                                                                        scrollingContent: false,
                                                                         allowsRubberBanding: fpc.floatingPanel.behaviorAdapter.allowsRubberBanding(for:))
         next = fpc.surfaceLocation.y
         XCTAssertEqual(next, tipPos + 100)
