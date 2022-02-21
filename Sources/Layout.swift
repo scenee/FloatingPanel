@@ -678,7 +678,7 @@ class LayoutAdapter {
         surfaceView.containerOverflow = position.mainDimension(vc.view.bounds.size)
     }
 
-    func updateInteractiveEdgeConstraint(diff: CGFloat, overflow: Bool, allowsRubberBanding: (UIRectEdge) -> Bool) {
+    func updateInteractiveEdgeConstraint(diff: CGFloat, scrollingContent: Bool, allowsRubberBanding: (UIRectEdge) -> Bool) {
         defer {
             log.debug("update surface location = \(surfaceLocation)")
         }
@@ -701,7 +701,7 @@ class LayoutAdapter {
             const = maxConst + rubberBandEffect(for: buffer, base: base)
         }
 
-        if overflow == false {
+        if scrollingContent {
             const = min(max(const, minConst), maxConst)
         }
 

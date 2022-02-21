@@ -521,7 +521,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                     // doesn't pass through .changed state after an interruptible animator is interrupted.
                     let diff = translation - .leastNonzeroMagnitude
                     layoutAdapter.updateInteractiveEdgeConstraint(diff: value(of: diff),
-                                                                  overflow: true,
+                                                                  scrollingContent: true,
                                                                   allowsRubberBanding: behaviorAdapter.allowsRubberBanding(for:))
                 }
                 panningEnd(with: translation, velocity: velocity)
@@ -650,10 +650,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         let pre = value(of: layoutAdapter.surfaceLocation)
         let diff = value(of: translation - initialTranslation)
         let next = pre + diff
-        let overflow = shouldOverflow(from: pre, to: next)
 
         layoutAdapter.updateInteractiveEdgeConstraint(diff: diff,
-                                                      overflow: overflow,
+                                                      scrollingContent: shouldScrollingContentInMoving(from: pre, to: next),
                                                       allowsRubberBanding: behaviorAdapter.allowsRubberBanding(for:))
 
         let cur = value(of: layoutAdapter.surfaceLocation)
@@ -667,32 +666,36 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
     }
 
-    private func shouldOverflow(from pre: CGFloat, to next: CGFloat) -> Bool {
+    private func shouldScrollingContentInMoving(from pre: CGFloat, to next: CGFloat) -> Bool {
+        // Don't allow scrolling if the initial panning location is in the grabber area.
+        if surfaceView.grabberAreaContains(initialLocation) {
+            return false
+        }
         if let scrollView = scrollView, scrollView.panGestureRecognizer.state == .changed {
             switch layoutAdapter.position {
             case .top:
                 if pre > .zero, pre < next,
                     scrollView.contentSize.height > scrollView.bounds.height || scrollView.alwaysBounceVertical {
-                    return false
+                    return true
                 }
             case .left:
                 if pre > .zero, pre < next,
                     scrollView.contentSize.width > scrollView.bounds.width || scrollView.alwaysBounceHorizontal {
-                    return false
+                    return true
                 }
             case .bottom:
                 if pre > .zero, pre > next,
                     scrollView.contentSize.height > scrollView.bounds.height || scrollView.alwaysBounceVertical {
-                    return false
+                    return true
                 }
             case .right:
                 if pre > .zero, pre > next,
                     scrollView.contentSize.width > scrollView.bounds.width || scrollView.alwaysBounceHorizontal {
-                    return false
+                    return true
                 }
             }
         }
-        return true
+        return false
     }
 
     private func panningEnd(with translation: CGPoint, velocity: CGPoint) {
