@@ -19,15 +19,12 @@ jobs:
           - swift: "5.6"
             xcode: "Xcode_13.3.1.app"
             runsOn: macOS-12
-            name: "macOS 12, Swift 5.6"
           - swift: "5.5"
             xcode: "Xcode_13.2.1.app"
             runsOn: macOS-11
-            name: "macOS 11, Swift 5.5"
           - swift: "5.4"
             xcode: "Xcode_12.5.1.app"
             runsOn: macOS-11
-            name: "macOS 11, Swift 5.4"
     steps:
       - uses: actions/checkout@v2
       - name: ${{ matrix.name }}
