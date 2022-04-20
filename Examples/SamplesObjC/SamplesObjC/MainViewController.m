@@ -29,7 +29,6 @@ static FloatingPanelState *_lastQuart;
 
     FloatingPanelController *fpc = [[FloatingPanelController alloc] init];
     [fpc setContentViewController:nil];
-    [fpc trackScrollView:nil];
     [fpc setDelegate:self];
 
     [fpc setLayout: [MyFloatingPanelLayout new]];
