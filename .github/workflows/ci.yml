@@ -97,7 +97,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - target: "arm64-apple-ios15.4"
           - target: "arm64-apple-ios15.4-simulator"
           - target: "x86_64-apple-ios15.4-simulator"
     steps:
