@@ -12,93 +12,103 @@ jobs:
   build:
     runs-on: ${{ matrix.runsOn }}
     env:
-      DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}/Contents/Developer"
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer
     strategy:
       matrix:
         include:
           - swift: "5.6"
-            xcode: "Xcode_13.3.1.app"
+            xcode: "13.3.1"
             runsOn: macos-12
           - swift: "5.5"
-            xcode: "Xcode_13.2.1.app"
+            xcode: "13.2.1"
             runsOn: macos-11
           - swift: "5.4"
-            xcode: "Xcode_12.5.1.app"
+            xcode: "12.5.1"
             runsOn: macos-11
+          - swift: "5.3"
+            xcode: "12.4"
+            runsOn: macos-10.15
+          - swift: "5.2"
+            xcode: "11.7"
+            runsOn: macos-10.15
+          - swift: "5.1"
+            xcode: "11.3.1"
+            runsOn: macos-10.15
     steps:
       - uses: actions/checkout@v2
-      - name: ${{ matrix.name }}
+      - name: Building in Swift ${{ matrix.swift }}
         run: xcodebuild -scheme FloatingPanel SWIFT_VERSION=${{ matrix.swift }} clean build
 
-  build_compat:
-    runs-on: macos-10.15
+  test:
+    runs-on: ${{ matrix.runsOn }}
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer
+    strategy:
+      matrix:
+        include:
+          - os: "15.4"
+            xcode: "13.3.1"
+            sim: "iPhone 13 Pro"
+            runsOn: macos-12
+          - os: "15.2"
+            xcode: "13.2.1"
+            sim: "iPhone 13 Pro"
+            runsOn: macos-11
+          - os: "15.0"
+            xcode: "13.1"
+            sim: "iPhone 13 Pro"
+            runsOn: macos-11
+          - os: "14.5"
+            xcode: "12.5.1"
+            sim: "iPhone 12 Pro"
+            runsOn: macos-11
+          - os: "14.4"
+            xcode: "12.4"
+            sim: "iPhone 12 Pro"
+            runsOn: macos-10.15
+          - os: "13.7"
+            xcode: "11.7"
+            sim: "iPhone 11 Pro"
+            runsOn: macos-10.15
     steps:
-    - uses: actions/checkout@v1
-    - name: "Swift 5.1"
-      run: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.1 clean build
-      env:
-        DEVELOPER_DIR: /Applications/Xcode_11.3.1.app/Contents/Developer
-    - name: "Swift 5.2"
-      run: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.2 clean build
-      env:
-        DEVELOPER_DIR: /Applications/Xcode_11.7.app/Contents/Developer
-    - name: "Swift 5.3"
-      run: xcodebuild -scheme FloatingPanel SWIFT_VERSION=5.3 clean build
-      env:
-        DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
-
-  testing:
-    runs-on: macos-11
-    steps:
-    - uses: actions/checkout@v1
-    - name: "Testing in iOS 14.5"
-      run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=14.5,name=iPhone 12 Pro'
-      env:
-        DEVELOPER_DIR: /Applications/Xcode_12.5.1.app/Contents/Developer
-    - name: "Testing in iOS 15.0"
-      run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=15.0,name=iPhone 13 Pro'
-      env:
-        DEVELOPER_DIR: /Applications/Xcode_13.0.app/Contents/Developer
-
-  testing_compat:
-    runs-on: macos-10.15
-    steps:
-    - uses: actions/checkout@v1
-    - name: "Testing in iOS 13.7"
-      run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=13.7,name=iPhone 11 Pro'
-      env:
-        DEVELOPER_DIR: /Applications/Xcode_11.7.app/Contents/Developer
-    - name: "Testing in iOS 14.4"
-      run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=14.4,name=iPhone 12 Pro'
-      env:
-        DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+    - uses: actions/checkout@v2
+    - name: Testing in iOS ${{ matrix.os }}
+      run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=${{ matrix.os }},name=${{ matrix.sim }}'
 
   example:
     runs-on: macos-12
     env:
       DEVELOPER_DIR: /Applications/Xcode_13.3.1.app/Contents/Developer
+    strategy:
+      matrix:
+        include:
+          - example: "Maps"
+          - example: "Stocks"
+          - example: "Samples"
     steps:
     - uses: actions/checkout@v2
-    - name: "Build Maps"
-      run: xcodebuild -workspace FloatingPanel.xcworkspace -scheme Maps -sdk iphonesimulator clean build
-    - name: "Build Stocks"
-      run: xcodebuild -workspace FloatingPanel.xcworkspace -scheme Stocks -sdk iphonesimulator clean build
-    - name: "Build Samples"
-      run: xcodebuild -workspace FloatingPanel.xcworkspace -scheme Samples -sdk iphonesimulator clean build
+    - name: Building ${{ matrix.example }}
+      run: xcodebuild -workspace FloatingPanel.xcworkspace -scheme ${{ matrix.example }} -sdk iphonesimulator clean build
 
   swiftpm:
     runs-on: macos-12
     env:
       DEVELOPER_DIR: /Applications/Xcode_13.3.1.app/Contents/Developer
+    strategy:
+      matrix:
+        include:
+          - target: "arm64-apple-ios15.4"
+          - target: "arm64-apple-ios15.4-simulator"
+          - target: "x86_64-apple-ios15.4-simulator"
     steps:
     - uses: actions/checkout@v2
-    - name: "Swift Package build"
-      run: swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk iphonesimulator --show-sdk-path`" -Xswiftc "-target" -Xswiftc "x86_64-apple-ios14.3-simulator"
+    - name: "Swift Package Manager build"
+      run: swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk iphonesimulator --show-sdk-path`" -Xswiftc "-target" -Xswiftc "${{ matrix.target }}"
 
   carthage:
     runs-on: macos-11
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: "Carthage build"
       run: carthage build --use-xcframeworks --no-skip-current
 
