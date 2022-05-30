@@ -99,6 +99,9 @@ class ModalPresentTransition: NSObject, UIViewControllerAnimatedTransitioning {
             return animator
         }
 
+        // Ensure the current(initial) state is hidden. Because `fpc.transitionAnimator` can be nil if not.
+        fpc.move(to: .hidden, animated: false)
+
         fpc.suspendTransitionAnimator(true)
         fpc.show(animated: true) { [weak fpc] in
             fpc?.suspendTransitionAnimator(false)
