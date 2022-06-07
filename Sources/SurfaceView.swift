@@ -52,9 +52,14 @@ public class SurfaceAppearance: NSObject {
 
     /// Defines the curve used for rendering the rounded corners of the layer.
     ///
-    /// Defaults to `.circular`.
-    @available(iOS 13.0, *)
-    public lazy var cornerCurve: CALayerCornerCurve = .circular
+    /// Defaults to `.circular`. Support only iOS 13.0+
+    public lazy var cornerCurve: CALayerCornerCurve?  = {
+        if #available(iOS 13, *) {
+            return .circular
+        } else {
+            return nil
+        }
+    }()
 
     /// An array of shadows used to create drop shadows underneath a surface view.
     public var shadows: [Shadow] = [Shadow()]
@@ -361,8 +366,9 @@ public class SurfaceView: UIView {
             mask.fillRule = .evenOdd
             mask.path = path.cgPath
             if #available(iOS 13.0, *) {
-                containerView.layer.cornerCurve = appearance.cornerCurve
-                mask.cornerCurve = appearance.cornerCurve
+                let cornerCurve = appearance.cornerCurve ?? .circular
+                containerView.layer.cornerCurve = cornerCurve
+                layer.cornerCurve = cornerCurve
             }
             shadowLayer.mask = mask
         }
