@@ -98,6 +98,10 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
             hostingViewController.view.backgroundColor = nil
             fpc.set(contentViewController: hostingViewController)
             fpc.addPanel(toParent: parentViewController, at: 1, animated: false)
+            
+            // Invalidate the UIHostingController's intrinsic content size
+            // as it did not yet know the floating panel constraints.
+            hostingViewController.view.invalidateIntrinsicContentSize()
         }
 
         func updateIfNeeded() {
