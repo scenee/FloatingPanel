@@ -96,8 +96,20 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
                 ignoresKeyboard: true
             )
             hostingViewController.view.backgroundColor = nil
-            fpc.set(contentViewController: hostingViewController)
+            let contentViewController = UIViewController()
+            contentViewController.view.addSubview(hostingViewController.view)
+            fpc.set(contentViewController: contentViewController)
             fpc.addPanel(toParent: parentViewController, at: 1, animated: false)
+
+            hostingViewController.view.translatesAutoresizingMaskIntoConstraints = false
+            let bottomConstraint = hostingViewController.view.bottomAnchor.constraint(equalTo: contentViewController.view.bottomAnchor)
+            bottomConstraint.priority = .defaultHigh
+            NSLayoutConstraint.activate([
+                hostingViewController.view.topAnchor.constraint(equalTo: contentViewController.view.topAnchor),
+                hostingViewController.view.leadingAnchor.constraint(equalTo: contentViewController.view.leadingAnchor),
+                hostingViewController.view.trailingAnchor.constraint(equalTo: contentViewController.view.trailingAnchor),
+                bottomConstraint
+            ])
         }
 
         func updateIfNeeded() {
