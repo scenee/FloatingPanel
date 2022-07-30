@@ -99,7 +99,7 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
             let contentViewController = UIViewController()
             contentViewController.view.addSubview(hostingViewController.view)
             fpc.set(contentViewController: contentViewController)
-            fpc.addPanel(toParent: parentViewController, at: 1, animated: false)
+            fpc.addPanel(toParent: parentViewController, animated: false)
 
             hostingViewController.view.translatesAutoresizingMaskIntoConstraints = false
             let bottomConstraint = hostingViewController.view.bottomAnchor.constraint(equalTo: contentViewController.view.bottomAnchor)
