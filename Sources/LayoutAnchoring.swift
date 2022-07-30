@@ -18,7 +18,7 @@ import UIKit
     ///
     /// - Parameters:
     ///     - absoluteOffset: An absolute offset to attach the panel from the edge.
-    ///     - edge: Specify the edge of  ``FloatingPanelController``'s view. This is the staring point of the offset.
+    ///     - edge: Specify the edge of ``FloatingPanelController``'s view. This is the staring point of the offset.
     ///     - referenceGuide: The rectangular area to lay out the content. If it's set to `.safeArea`, the panel content lays out inside the safe area of its ``FloatingPanelController``'s view.
     @objc public init(absoluteInset: CGFloat, edge: FloatingPanelReferenceEdge, referenceGuide: FloatingPanelLayoutReferenceGuide) {
         self.inset = absoluteInset
@@ -34,8 +34,8 @@ import UIKit
     /// 1.0 represents a distance to the opposite edge.
     ///
     /// - Parameters:
-    ///     - fractionalOffset: A fractional value of  the size of ``FloatingPanelController``'s view to attach the panel from the edge.
-    ///     - edge: Specify the edge of  ``FloatingPanelController``'s view. This is the staring point of the offset.
+    ///     - fractionalOffset: A fractional value of the size of ``FloatingPanelController``'s view to attach the panel from the edge.
+    ///     - edge: Specify the edge of ``FloatingPanelController``'s view. This is the staring point of the offset.
     ///     - referenceGuide: The rectangular area to lay out the content. If it's set to `.safeArea`, the panel content lays out inside the safe area of its ``FloatingPanelController``'s view.
     @objc public init(fractionalInset: CGFloat, edge: FloatingPanelReferenceEdge, referenceGuide: FloatingPanelLayoutReferenceGuide) {
         self.inset = fractionalInset
@@ -59,7 +59,7 @@ public extension FloatingPanelLayoutAnchor {
         case .left:
             return layoutConstraints(layoutGuide, for: vc.surfaceView.rightAnchor)
         case .bottom:
-            return layoutConstraints(layoutGuide, for:  vc.surfaceView.topAnchor)
+            return layoutConstraints(layoutGuide, for: vc.surfaceView.topAnchor)
         case .right:
             return layoutConstraints(layoutGuide, for: vc.surfaceView.leftAnchor)
         }
