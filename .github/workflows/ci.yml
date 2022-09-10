@@ -56,10 +56,6 @@ jobs:
             xcode: "13.2.1"
             sim: "iPhone 13 Pro"
             runsOn: macos-11
-          - os: "15.0"
-            xcode: "13.1"
-            sim: "iPhone 13 Pro"
-            runsOn: macos-11
           - os: "14.5"
             xcode: "12.5.1"
             sim: "iPhone 12 Pro"
