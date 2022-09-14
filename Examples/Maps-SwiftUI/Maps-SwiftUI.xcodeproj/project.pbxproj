@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D82A6B228D18452006A44BA /* libswiftCoreGraphics.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D82A6B128D1844E006A44BA /* libswiftCoreGraphics.tbd */; };
 		6467E8642699AC5F00565F4F /* SurfaceAppearance+phone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6467E8632699AC5F00565F4F /* SurfaceAppearance+phone.swift */; };
 		6467E86A2699B19D00565F4F /* SearchPanelPhoneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6467E8692699B19D00565F4F /* SearchPanelPhoneDelegate.swift */; };
 		649A122926C14D0900DAB961 /* UIHostingController+ignoreKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649A122826C14D0900DAB961 /* UIHostingController+ignoreKeyboard.swift */; };
@@ -42,6 +43,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5D82A6B128D1844E006A44BA /* libswiftCoreGraphics.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswiftCoreGraphics.tbd; path = usr/lib/swift/libswiftCoreGraphics.tbd; sourceTree = SDKROOT; };
 		6467E8632699AC5F00565F4F /* SurfaceAppearance+phone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SurfaceAppearance+phone.swift"; sourceTree = "<group>"; };
 		6467E8692699B19D00565F4F /* SearchPanelPhoneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPanelPhoneDelegate.swift; sourceTree = "<group>"; };
 		649A122826C14D0900DAB961 /* UIHostingController+ignoreKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIHostingController+ignoreKeyboard.swift"; sourceTree = "<group>"; };
@@ -67,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D82A6B228D18452006A44BA /* libswiftCoreGraphics.tbd in Frameworks */,
 				64A5B734269133DC00BCAA05 /* FloatingPanel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -110,6 +113,7 @@
 		64A5B732269133DC00BCAA05 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5D82A6B128D1844E006A44BA /* libswiftCoreGraphics.tbd */,
 				64A5B733269133DC00BCAA05 /* FloatingPanel.framework */,
 			);
 			name = Frameworks;
@@ -363,6 +367,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/swift",
+				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "example.Maps-SwiftUI";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -389,6 +397,10 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/swift",
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "exmaple.Maps-SwiftUI";
