@@ -212,7 +212,7 @@ extension UseCaseController {
             addMain(panel: fpc)
 
         case .showTopPositionedPanel: // For debug
-            let fpc = FloatingPanelController()
+            let fpc = FloatingPanelController(delegate: self)
             let contentVC = UIViewController()
             contentVC.view.backgroundColor = .red
             fpc.set(contentViewController: contentVC)
