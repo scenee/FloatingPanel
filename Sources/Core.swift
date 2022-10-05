@@ -73,6 +73,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         ownerVC = vc
 
         surfaceView = SurfaceView()
+        surfaceView.position = layout.position
         surfaceView.backgroundColor = .white
 
         backdropView = BackdropView()
