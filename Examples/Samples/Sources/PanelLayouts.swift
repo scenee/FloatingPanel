@@ -23,14 +23,11 @@ extension MainViewController: FloatingPanelLayout {
 class TopPositionedPanelLayout: FloatingPanelLayout {
     let position: FloatingPanelPosition = .top
     let initialState: FloatingPanelState = .full
-
-    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-        return [
-            .full: FloatingPanelLayoutAnchor(absoluteInset: 88.0, edge: .bottom, referenceGuide: .safeArea),
-            .half: FloatingPanelLayoutAnchor(absoluteInset: 216.0, edge: .top, referenceGuide: .safeArea),
-            .tip: FloatingPanelLayoutAnchor(absoluteInset: 44.0, edge: .top, referenceGuide: .safeArea)
-        ]
-    }
+    let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelLayoutAnchor(absoluteInset: 88.0, edge: .bottom, referenceGuide: .safeArea),
+        .half: FloatingPanelLayoutAnchor(absoluteInset: 216.0, edge: .top, referenceGuide: .safeArea),
+        .tip: FloatingPanelLayoutAnchor(absoluteInset: 44.0, edge: .top, referenceGuide: .safeArea)
+    ]
 }
 
 class IntrinsicPanelLayout: FloatingPanelBottomLayout {
@@ -45,13 +42,10 @@ class IntrinsicPanelLayout: FloatingPanelBottomLayout {
 class RemovablePanelLayout: FloatingPanelLayout {
     let position: FloatingPanelPosition = .bottom
     let initialState: FloatingPanelState = .half
-
-    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-        return [
+    let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
             .full: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.0, referenceGuide: .safeArea),
             .half: FloatingPanelLayoutAnchor(absoluteInset: 130.0, edge: .bottom, referenceGuide: .safeArea)
-        ]
-    }
+    ]
 
     func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.3
@@ -61,13 +55,10 @@ class RemovablePanelLayout: FloatingPanelLayout {
 class RemovablePanelLandscapeLayout: FloatingPanelLayout {
     let position: FloatingPanelPosition = .bottom
     let initialState: FloatingPanelState = .full
-
-    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-        return [
-            .full: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.0, referenceGuide: .safeArea),
-            .half: FloatingPanelLayoutAnchor(absoluteInset: 216.0, edge: .bottom, referenceGuide: .safeArea)
-        ]
-    }
+    let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.0, referenceGuide: .safeArea),
+        .half: FloatingPanelLayoutAnchor(absoluteInset: 216.0, edge: .bottom, referenceGuide: .safeArea)
+    ]
 
     func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.3
@@ -77,12 +68,9 @@ class RemovablePanelLandscapeLayout: FloatingPanelLayout {
 class ModalPanelLayout: FloatingPanelLayout {
     let position: FloatingPanelPosition = .bottom
     let initialState: FloatingPanelState = .full
-
-    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-        return [
-            .full: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 0.0, referenceGuide: .safeArea),
-        ]
-    }
+    let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 0.0, referenceGuide: .safeArea),
+    ]
 
     func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.3

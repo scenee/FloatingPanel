@@ -17,23 +17,19 @@ class LayoutTests: XCTestCase {
         XCTAssertEqual(fpc.floatingPanel.layoutAdapter.leastExpandedState, .tip)
 
         class FloatingPanelLayoutWithHidden: FloatingPanelLayout {
-            var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
-                return [
-                    .full: FloatingPanelLayoutAnchor(absoluteInset: 18.0, edge: .top, referenceGuide: .safeArea),
-                    .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
-                    .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .bottom, referenceGuide: .superview)
-                ]
-            }
+            let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
+                .full: FloatingPanelLayoutAnchor(absoluteInset: 18.0, edge: .top, referenceGuide: .safeArea),
+                .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
+                .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .bottom, referenceGuide: .superview)
+            ]
             let initialState: FloatingPanelState = .hidden
             let position: FloatingPanelPosition = .bottom
         }
         class FloatingPanelLayout2Positions: FloatingPanelLayout {
-            var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
-                return [
-                    .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
-                    .tip: FloatingPanelLayoutAnchor(absoluteInset: 69.0, edge: .bottom, referenceGuide: .safeArea),
-                ]
-            }
+            let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
+                .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
+                .tip: FloatingPanelLayoutAnchor(absoluteInset: 69.0, edge: .bottom, referenceGuide: .safeArea),
+            ]
             let initialState: FloatingPanelState = .tip
             let position: FloatingPanelPosition = .bottom
         }
@@ -224,12 +220,10 @@ class LayoutTests: XCTestCase {
 
     func test_updateInteractiveEdgeConstraintWithHidden() {
         class FloatingPanelLayout2Positions: FloatingPanelLayout {
-            var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
-                return [
-                    .full: FloatingPanelLayoutAnchor(absoluteInset: 18.0, edge: .bottom, referenceGuide: .safeArea),
-                    .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .bottom, referenceGuide: .superview),
-                ]
-            }
+            let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
+                .full: FloatingPanelLayoutAnchor(absoluteInset: 18.0, edge: .bottom, referenceGuide: .safeArea),
+                .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .bottom, referenceGuide: .superview),
+            ]
             let initialState: FloatingPanelState = .hidden
             let position: FloatingPanelPosition = .bottom
         }
@@ -267,12 +261,10 @@ class LayoutTests: XCTestCase {
 
     func test_updateInteractiveEdgeConstraintWithHidden_bottomEdge() {
         class FloatingPanelLayout2Positions: FloatingPanelLayout {
-            var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
-                [
-                    .full: FloatingPanelLayoutAnchor(absoluteInset: 18.0, edge: .bottom, referenceGuide: .safeArea),
-                    .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .top, referenceGuide: .superview),
-                ]
-            }
+            let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
+                .full: FloatingPanelLayoutAnchor(absoluteInset: 18.0, edge: .bottom, referenceGuide: .safeArea),
+                .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .top, referenceGuide: .superview),
+            ]
             let initialState: FloatingPanelState = .hidden
             let position: FloatingPanelPosition = .top
         }
@@ -310,12 +302,10 @@ class LayoutTests: XCTestCase {
 
     func test_updateInteractiveTopConstraintWithMinusInsets() {
         class FloatingPanelLayoutMinusInsets: FloatingPanelLayout {
-            var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
-                [
-                    .full: FloatingPanelLayoutAnchor(absoluteInset: -200, edge: .top, referenceGuide: .safeArea),
-                    .tip: FloatingPanelLayoutAnchor(absoluteInset: -200, edge: .bottom, referenceGuide: .safeArea),
-                ]
-            }
+            let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
+                .full: FloatingPanelLayoutAnchor(absoluteInset: -200, edge: .top, referenceGuide: .safeArea),
+                .tip: FloatingPanelLayoutAnchor(absoluteInset: -200, edge: .bottom, referenceGuide: .safeArea),
+            ]
             let initialState: FloatingPanelState = .full
             let position: FloatingPanelPosition = .bottom
         }

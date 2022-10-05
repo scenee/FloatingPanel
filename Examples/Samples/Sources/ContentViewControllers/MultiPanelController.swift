@@ -57,11 +57,9 @@ final class MultiPanelController: FloatingPanelController, FloatingPanelControll
     private final class FirstViewLayout: FloatingPanelLayout {
         let position: FloatingPanelPosition = .bottom
         let initialState: FloatingPanelState = .full
-        var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-            return [
-                .full: FloatingPanelLayoutAnchor(absoluteInset: 40.0, edge: .top, referenceGuide: .superview)
-            ]
-        }
+        let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+            .full: FloatingPanelLayoutAnchor(absoluteInset: 40.0, edge: .top, referenceGuide: .superview)
+        ]
     }
 }
 
