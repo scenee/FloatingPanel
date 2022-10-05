@@ -210,12 +210,10 @@ class SearchPanelPhoneDelegate: NSObject, FloatingPanelControllerDelegate, UIGes
 class SearchPanelLandscapeLayout: FloatingPanelLayout {
     let position: FloatingPanelPosition  = .bottom
     let initialState: FloatingPanelState = .tip
-    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-        return [
-            .full: FloatingPanelLayoutAnchor(absoluteInset: 16.0, edge: .top, referenceGuide: .safeArea),
-            .tip: FloatingPanelLayoutAnchor(absoluteInset: 69.0, edge: .bottom, referenceGuide: .safeArea),
-        ]
-    }
+    let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelLayoutAnchor(absoluteInset: 16.0, edge: .top, referenceGuide: .safeArea),
+        .tip: FloatingPanelLayoutAnchor(absoluteInset: 69.0, edge: .bottom, referenceGuide: .safeArea),
+    ]
     func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
         if #available(iOS 11.0, *) {
             return [
@@ -244,11 +242,9 @@ class DetailPanelPhoneDelegate: NSObject, FloatingPanelControllerDelegate, UIGes
 
 class DetailPanelPhoneLayout: FloatingPanelLayout {
     let position: FloatingPanelPosition  = .bottom
-    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-        return [
-            .full: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
-        ]
-    }
+    let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
+    ]
     let initialState: FloatingPanelState = .full
     func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.0
@@ -297,13 +293,11 @@ class SearchPanelPadDelegate: NSObject, FloatingPanelControllerDelegate, UIGestu
 class SearchPanelPadLayout: FloatingPanelLayout {
     let position: FloatingPanelPosition  = .top
     let initialState: FloatingPanelState = .tip
-    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-        return [
-            .tip: FloatingPanelLayoutAnchor(absoluteInset: 80.0, edge: .top, referenceGuide: .superview),
-            .half: FloatingPanelLayoutAnchor(absoluteInset: 200.0, edge: .top, referenceGuide: .superview),
-            .full: FloatingPanelLayoutAnchor(absoluteInset: 60.0, edge: .bottom, referenceGuide: .superview),
-        ]
-    }
+    let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+        .tip: FloatingPanelLayoutAnchor(absoluteInset: 80.0, edge: .top, referenceGuide: .superview),
+        .half: FloatingPanelLayoutAnchor(absoluteInset: 200.0, edge: .top, referenceGuide: .superview),
+        .full: FloatingPanelLayoutAnchor(absoluteInset: 60.0, edge: .bottom, referenceGuide: .superview),
+    ]
     func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.0
     }
@@ -357,11 +351,9 @@ class DetailPanelPadDelegate: NSObject, FloatingPanelControllerDelegate, UIGestu
 
 class DetailPanelPadLeftLayout: FloatingPanelLayout {
     let position: FloatingPanelPosition  = .left
-    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-        return [
-            .full: FloatingPanelLayoutAnchor(absoluteInset: 375, edge: .left, referenceGuide: .superview)
-        ]
-    }
+    let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelLayoutAnchor(absoluteInset: 375, edge: .left, referenceGuide: .superview)
+    ]
     let initialState: FloatingPanelState = .full
     func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.0
@@ -370,11 +362,9 @@ class DetailPanelPadLeftLayout: FloatingPanelLayout {
 
 class DetailPanelPadRightLayout: FloatingPanelLayout {
     let position: FloatingPanelPosition  = .right
-    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-        return [
-            .full: FloatingPanelLayoutAnchor(absoluteInset: 375, edge: .right, referenceGuide: .superview)
-        ]
-    }
+    let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelLayoutAnchor(absoluteInset: 375, edge: .right, referenceGuide: .superview)
+    ]
     let initialState: FloatingPanelState = .full
     func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.0

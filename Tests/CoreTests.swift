@@ -61,9 +61,8 @@ class CoreTests: XCTestCase {
         class FloatingPanelLayout1Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .full
             let position: FloatingPanelPosition = .bottom
-            var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-                return [.full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview)]
-            }
+            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] =
+                [.full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview)]
         }
 
         let delegate = FloatingPanelTestDelegate()
@@ -106,12 +105,10 @@ class CoreTests: XCTestCase {
         class FloatingPanelLayout2Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .half
             let position: FloatingPanelPosition = .bottom
-            var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-                return [
-                    .full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview),
-                    .half: FloatingPanelLayoutAnchor(absoluteInset: 250.0, edge: .bottom, referenceGuide: .superview),
-                ]
-            }
+            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+                .full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview),
+                .half: FloatingPanelLayoutAnchor(absoluteInset: 250.0, edge: .bottom, referenceGuide: .superview),
+            ]
         }
 
         let delegate = FloatingPanelTestDelegate()
@@ -240,9 +237,8 @@ class CoreTests: XCTestCase {
         class FloatingPanelLayout1Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .full
             let position: FloatingPanelPosition = .bottom
-            var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-                return [.full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview)]
-            }
+            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring]
+                = [.full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview)]
         }
 
         let delegate = FloatingPanelTestDelegate()
@@ -269,12 +265,10 @@ class CoreTests: XCTestCase {
         class FloatingPanelLayout2Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .half
             let position: FloatingPanelPosition = .bottom
-            var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-                return [
-                    .full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview),
-                    .half: FloatingPanelLayoutAnchor(absoluteInset: 250.0, edge: .bottom, referenceGuide: .superview),
-                ]
-            }
+            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+                .full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview),
+                .half: FloatingPanelLayoutAnchor(absoluteInset: 250.0, edge: .bottom, referenceGuide: .superview),
+            ]
         }
 
         let delegate = FloatingPanelTestDelegate()
@@ -326,12 +320,10 @@ class CoreTests: XCTestCase {
         class FloatingPanelLayout2Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .hidden
             let position: FloatingPanelPosition = .bottom
-            var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-                return [
-                    .full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview),
-                    .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .bottom, referenceGuide: .superview),
-                ]
-            }
+            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+                .full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview),
+                .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .bottom, referenceGuide: .superview),
+            ]
         }
 
         let delegate = FloatingPanelTestDelegate()
@@ -689,13 +681,11 @@ class CoreTests: XCTestCase {
         class FloatingPanelLayout3PositionsWithHidden: FloatingPanelLayout {
             let initialState: FloatingPanelState = .hidden
             let position: FloatingPanelPosition = .bottom
-            var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-                return [
-                    .full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview),
-                    .half: FloatingPanelLayoutAnchor(absoluteInset: 250.0, edge: .bottom, referenceGuide: .superview),
-                    .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .bottom, referenceGuide: .superview),
-                ]
-            }
+            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+                .full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview),
+                .half: FloatingPanelLayoutAnchor(absoluteInset: 250.0, edge: .bottom, referenceGuide: .superview),
+                .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .bottom, referenceGuide: .superview),
+            ]
         }
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
@@ -721,13 +711,11 @@ class CoreTests: XCTestCase {
         class FloatingPanelLayout3Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .hidden
             let position: FloatingPanelPosition = .bottom
-            var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-                return [
-                    .half: FloatingPanelLayoutAnchor(absoluteInset: 250.0, edge: .bottom, referenceGuide: .superview),
-                    .tip: FloatingPanelLayoutAnchor(absoluteInset: 60.0, edge: .bottom, referenceGuide: .superview),
-                    .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .bottom, referenceGuide: .superview),
-                ]
-            }
+            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+                .half: FloatingPanelLayoutAnchor(absoluteInset: 250.0, edge: .bottom, referenceGuide: .superview),
+                .tip: FloatingPanelLayoutAnchor(absoluteInset: 60.0, edge: .bottom, referenceGuide: .superview),
+                .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .bottom, referenceGuide: .superview),
+            ]
         }
 
         let delegate = FloatingPanelTestDelegate()

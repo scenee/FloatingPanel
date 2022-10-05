@@ -195,14 +195,12 @@ class OneTabBarPanelLayout: FloatingPanelLayout {
 }
 
 class TwoTabBarPanelLayout: FloatingPanelLayout {
-    var initialState: FloatingPanelState { .half }
-    var position: FloatingPanelPosition { .bottom }
-    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-        return [
-            .full: FloatingPanelLayoutAnchor(absoluteInset: 100.0, edge: .top, referenceGuide: .safeArea),
-            .half: FloatingPanelLayoutAnchor(absoluteInset: 261.0, edge: .bottom, referenceGuide: .safeArea)
-        ]
-    }
+    let initialState: FloatingPanelState = .half
+    let position: FloatingPanelPosition = .bottom
+    let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelLayoutAnchor(absoluteInset: 100.0, edge: .top, referenceGuide: .safeArea),
+        .half: FloatingPanelLayoutAnchor(absoluteInset: 261.0, edge: .bottom, referenceGuide: .safeArea)
+    ]
 }
 
 class TwoTabBarPanelBehavior: FloatingPanelBehavior {
