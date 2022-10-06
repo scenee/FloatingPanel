@@ -86,7 +86,7 @@ class LayoutAdapter {
         return vc.fp_safeAreaInsets
     }
 
-    private var initialConst: CGFloat = 0.0
+    var initialConst: CGFloat = 0.0
 
     private var fixedConstraints: [NSLayoutConstraint] = []
 

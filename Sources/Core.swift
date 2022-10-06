@@ -387,7 +387,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
             let velocity = value(of: panGesture.velocity(in: panGesture.view))
             let location = panGesture.location(in: surfaceView)
-
+            let offsetDiff = value(of: scrollView.contentOffset - contentOffsetForPinning(of: scrollView))
+            
             let belowEdgeMost = 0 > layoutAdapter.offsetFromMostExpandedAnchor + (1.0 / surfaceView.fp_displayScale)
 
             log.debug("""
@@ -397,8 +398,6 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 scroll offset = \(value(of: scrollView.contentOffset)), \
                 location = \(value(of: location)), velocity = \(velocity)
                 """)
-
-            let offsetDiff = value(of: scrollView.contentOffset - contentOffsetForPinning(of: scrollView))
 
             if belowEdgeMost {
                 // Scroll offset pinning
@@ -485,7 +484,11 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             let translation = panGesture.translation(in: panGestureRecognizer.view!.superview)
             let velocity = panGesture.velocity(in: panGesture.view)
             let location = panGesture.location(in: panGesture.view)
-
+            if state == .full && translation.y <= 0 {
+                layoutAdapter.interactionConstraint?.constant = layoutAdapter.initialConst
+                return
+            }
+            
             log.debug("""
                 panel gesture(\(state):\(panGesture.state)) -- \
                 translation =  \(value(of: translation)), \
@@ -653,7 +656,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         let next = pre + diff
         
         if !layoutAdapter.canGoAboveTheTopAnchor && pre <= layoutAdapter.surfaceLocation(for: .full).y && translation.y <= 0 {
-            return
+            guard (layoutAdapter.initialConst + diff) >= layoutAdapter.surfaceLocation(for: .full).y else { return }
         }
         
         layoutAdapter.updateInteractiveEdgeConstraint(diff: diff,
@@ -1025,11 +1028,12 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     private func unlockScrollView() {
-        guard let scrollView = scrollView, scrollView.isLocked else { return }
+        guard let scrollView = scrollView else { return }
         log.debug("unlock scroll view")
 
         scrollView.isDirectionalLockEnabled = false
-        scrollView.bounces = scrollBounce
+//        scrollView.bounces = false
+        scrollView.alwaysBounceVertical = true
         scrollView.showsVerticalScrollIndicator = scrollIndictorVisible
     }
 
