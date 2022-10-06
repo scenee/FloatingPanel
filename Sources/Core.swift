@@ -651,7 +651,11 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         let pre = value(of: layoutAdapter.surfaceLocation)
         let diff = value(of: translation - initialTranslation)
         let next = pre + diff
-
+        
+        if !layoutAdapter.canGoAboveTheTopAnchor && pre <= layoutAdapter.surfaceLocation(for: .full).y && translation.y <= 0 {
+            return
+        }
+        
         layoutAdapter.updateInteractiveEdgeConstraint(diff: diff,
                                                       scrollingContent: shouldScrollingContentInMoving(from: pre, to: next),
                                                       allowsRubberBanding: behaviorAdapter.allowsRubberBanding(for:))
