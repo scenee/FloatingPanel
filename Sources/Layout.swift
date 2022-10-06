@@ -18,6 +18,9 @@ import UIKit
 
     /// Returns the alpha value of the backdrop of a panel for each state.
     @objc optional func backdropAlpha(for state: FloatingPanelState) -> CGFloat
+    
+    /// Allow the panel sheet to go above the upper position when it is in `.full` state.
+    @objc optional var canGoAboveTheTopAnchor: Bool { get }
 }
 
 /// A layout object that lays out a panel in bottom sheet style.
@@ -51,6 +54,10 @@ open class FloatingPanelBottomLayout: NSObject, FloatingPanelLayout {
 
     open func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return state == .full ? 0.3 : 0.0
+    }
+    
+    public var canGoAboveTheTopAnchor: Bool {
+        true
     }
 }
 
@@ -124,7 +131,7 @@ class LayoutAdapter {
             }
         })
     }
-
+    
     private var leastCoordinateState: FloatingPanelState {
         return sortedAnchorStatesByCoordinate.first ?? .hidden
     }
@@ -133,6 +140,10 @@ class LayoutAdapter {
         return sortedAnchorStatesByCoordinate.last ?? .hidden
     }
 
+    var canGoAboveTheTopAnchor: Bool {
+        layout.canGoAboveTheTopAnchor ?? true
+    }
+    
     var leastExpandedState: FloatingPanelState {
         if sortedAnchorStates.count == 1 {
             return .hidden
