@@ -34,6 +34,7 @@
 		54CFBFC5215CD09C006B5735 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CFBFC4215CD09C006B5735 /* Core.swift */; };
 		54DBA3DC262E938500D75969 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54DBA3DB262E938500D75969 /* Extensions.swift */; };
 		54E3992727141F5100A8F9ED /* FloatingPanel.docc in Sources */ = {isa = PBXBuildFile; fileRef = 54E3992627141F5100A8F9ED /* FloatingPanel.docc */; };
+		5D82A6B528D18464006A44BA /* libswiftCoreGraphics.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D82A6B428D18461006A44BA /* libswiftCoreGraphics.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +87,7 @@
 		54DBA3DB262E938500D75969 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		54E3992627141F5100A8F9ED /* FloatingPanel.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = FloatingPanel.docc; sourceTree = "<group>"; };
 		54E740CA218AFD67005C1A34 /* FloatingPanelTesting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FloatingPanelTesting.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D82A6B428D18461006A44BA /* libswiftCoreGraphics.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswiftCoreGraphics.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/swift/libswiftCoreGraphics.tbd; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +95,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D82A6B528D18464006A44BA /* libswiftCoreGraphics.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,6 +123,7 @@
 				545DB9C32151169500CA77B8 /* Sources */,
 				545DB9CE2151169500CA77B8 /* Tests */,
 				545DB9C22151169500CA77B8 /* Products */,
+				5D82A6B328D18460006A44BA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -182,6 +186,14 @@
 				5469F4A124B003EF00537F8A /* Info.plist */,
 			);
 			path = TestingApp;
+			sourceTree = "<group>";
+		};
+		5D82A6B328D18460006A44BA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5D82A6B428D18461006A44BA /* libswiftCoreGraphics.tbd */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

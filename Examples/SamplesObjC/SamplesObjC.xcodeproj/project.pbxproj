@@ -15,6 +15,7 @@
 		545BA71421BA3217007F7846 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 545BA71321BA3217007F7846 /* main.m */; };
 		545BA72621BA3BAF007F7846 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 545BA72521BA3BAF007F7846 /* FloatingPanel.framework */; };
 		545BA72721BA3BAF007F7846 /* FloatingPanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 545BA72521BA3BAF007F7846 /* FloatingPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5D82A6B028D18447006A44BA /* libswiftCoreGraphics.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D82A6AF28D18443006A44BA /* libswiftCoreGraphics.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,6 +45,7 @@
 		545BA71321BA3217007F7846 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		545BA72221BA3867007F7846 /* SamplesObjC-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SamplesObjC-Bridging-Header.h"; sourceTree = "<group>"; };
 		545BA72521BA3BAF007F7846 /* FloatingPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FloatingPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D82A6AF28D18443006A44BA /* libswiftCoreGraphics.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswiftCoreGraphics.tbd; path = usr/lib/swift/libswiftCoreGraphics.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D82A6B028D18447006A44BA /* libswiftCoreGraphics.tbd in Frameworks */,
 				545BA72621BA3BAF007F7846 /* FloatingPanel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -64,6 +67,7 @@
 				545BA72521BA3BAF007F7846 /* FloatingPanel.framework */,
 				545BA70321BA3214007F7846 /* SamplesObjC */,
 				545BA70221BA3214007F7846 /* Products */,
+				5D82A6AE28D18443006A44BA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -90,6 +94,14 @@
 				545BA72221BA3867007F7846 /* SamplesObjC-Bridging-Header.h */,
 			);
 			path = SamplesObjC;
+			sourceTree = "<group>";
+		};
+		5D82A6AE28D18443006A44BA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5D82A6AF28D18443006A44BA /* libswiftCoreGraphics.tbd */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -320,6 +332,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/swift",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = example.SamplesObjC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SamplesObjC/SamplesObjC-Bridging-Header.h";
@@ -341,6 +357,10 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/swift",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = example.SamplesObjC;
 				PRODUCT_NAME = "$(TARGET_NAME)";
