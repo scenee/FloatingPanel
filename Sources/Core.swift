@@ -197,8 +197,10 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
     // MARK: - Layout update
 
-    func activateLayout(forceLayout: Bool = false,
-                        contentInsetAdjustmentBehavior: FloatingPanelController.ContentInsetAdjustmentBehavior) {
+    func activateLayout(
+        forceLayout: Bool = false,
+        contentInsetAdjustmentBehavior: FloatingPanelController.ContentInsetAdjustmentBehavior
+    ) {
         layoutAdapter.prepareLayout()
 
         // preserve the current content offset if contentInsetAdjustmentBehavior is `.always`

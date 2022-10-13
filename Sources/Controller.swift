@@ -401,8 +401,10 @@ open class FloatingPanelController: UIViewController {
     }
 
     private func activateLayout(forceLayout: Bool = false) {
-        floatingPanel.activateLayout(forceLayout: forceLayout,
-                                     contentInsetAdjustmentBehavior: contentInsetAdjustmentBehavior)
+        floatingPanel.activateLayout(
+            forceLayout: forceLayout,
+            contentInsetAdjustmentBehavior: contentInsetAdjustmentBehavior
+        )
     }
 
     func remove() {
