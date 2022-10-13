@@ -210,7 +210,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
 
         layoutAdapter.updateStaticConstraint()
-        layoutAdapter.activateLayout(for: state, forceLayout: true)
+        layoutAdapter.activateLayout(for: state, forceLayout: forceLayout)
 
         // Update the backdrop alpha only when called in `Controller.show(animated:completion:)`
         // Because that prevents a backdrop flicking just before presenting a panel(#466).
