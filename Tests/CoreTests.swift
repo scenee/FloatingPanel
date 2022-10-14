@@ -205,6 +205,9 @@ class CoreTests: XCTestCase {
             func floatingPanel(_ fpc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout { layout }
             func floatingPanel(_ fpc: FloatingPanelController, layoutFor size: CGSize) -> FloatingPanelLayout { layout }
         }
+        func _floor(_ alpha: CGFloat) -> CGFloat {
+            return floor(fpc.backdropView.alpha * 1e+06) / 1e+06
+        }
 
         let delegate = TestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
@@ -213,20 +216,20 @@ class CoreTests: XCTestCase {
         fpc.showForTest()
 
         fpc.move(to: .full, animated: false)
-        XCTAssertEqual(floor(fpc.backdropView.alpha * 1000_000) / 1000_000, 0.3)
+        XCTAssertEqual(_floor(fpc.backdropView.alpha), 0.3)
 
         fpc.move(to: .half, animated: false)
         XCTAssertEqual(fpc.backdropView.alpha, 0.0)
 
         fpc.move(to: .tip, animated: false)
-        XCTAssertEqual(floor(fpc.backdropView.alpha * 1000_000) / 1000_000, 0.3)
+        XCTAssertEqual(_floor(fpc.backdropView.alpha), 0.3)
 
         let exp1 = expectation(description: "move to full with animation")
         fpc.move(to: .full, animated: true) {
             exp1.fulfill()
         }
         wait(for: [exp1], timeout: 1.0)
-        XCTAssertEqual(floor(fpc.backdropView.alpha * 1000_000) / 1000_000, 0.3)
+        XCTAssertEqual(_floor(fpc.backdropView.alpha), 0.3)
 
         let exp2 = expectation(description: "move to half with animation")
         fpc.move(to: .half, animated: true) {
@@ -244,12 +247,12 @@ class CoreTests: XCTestCase {
         fpc.contentMode = .fitToBounds
         XCTAssertEqual(fpc.backdropView.alpha, 0.0)  // Must not affect the backdrop alpha by changing the content mode
         wait(for: [exp3], timeout: 1.0)
-        XCTAssertEqual(floor(fpc.backdropView.alpha * 1000_000) / 1000_000, 0.3)
+        XCTAssertEqual(_floor(fpc.backdropView.alpha), 0.3)
 
         // Test a size class change of FloatingPanelController.view
 
         fpc.move(to: .full, animated: false)
-        XCTAssertEqual(floor(fpc.backdropView.alpha * 1000_000) / 1000_000, 0.3)
+        XCTAssertEqual(_floor(fpc.backdropView.alpha), 0.3)
         fpc.willTransition(to: UITraitCollection(horizontalSizeClass: .regular), with: MockTransitionCoordinator())
         XCTAssertEqual(fpc.backdropView.alpha, 0.0) // Must update the alpha by BackdropTestLayout2 in TestDelegate.
 
@@ -258,7 +261,7 @@ class CoreTests: XCTestCase {
         fpc.move(to: .full, animated: false)
         delegate.layout = BackdropTestLayout()
         fpc.invalidateLayout()
-        XCTAssertEqual(floor(fpc.backdropView.alpha * 1000_000) / 1000_000, 0.3)
+        XCTAssertEqual(_floor(fpc.backdropView.alpha), 0.3)
 
         delegate.layout = BackdropTestLayout2()
         fpc.viewWillTransition(to: CGSize.zero, with: MockTransitionCoordinator())
