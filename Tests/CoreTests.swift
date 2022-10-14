@@ -195,7 +195,19 @@ class CoreTests: XCTestCase {
                 }
             }
         }
-        let fpc = FloatingPanelController()
+        class BackdropTestLayout2: FloatingPanelTestLayout {
+            func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
+                return 0.0
+            }
+        }
+        class TestDelegate: FloatingPanelControllerDelegate {
+            var layout: FloatingPanelLayout = BackdropTestLayout2()
+            func floatingPanel(_ fpc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout { layout }
+            func floatingPanel(_ fpc: FloatingPanelController, layoutFor size: CGSize) -> FloatingPanelLayout { layout }
+        }
+
+        let delegate = TestDelegate()
+        let fpc = FloatingPanelController(delegate: delegate)
         fpc.layout = BackdropTestLayout()
 
         fpc.showForTest()
@@ -223,14 +235,34 @@ class CoreTests: XCTestCase {
         wait(for: [exp2], timeout: 1.0)
         XCTAssertEqual(fpc.backdropView.alpha, 0.0)
 
+        // Test a content mode change of FloatingPanelController
+
         let exp3 = expectation(description: "move to tip with animation")
         fpc.move(to: .tip, animated: true) {
             exp3.fulfill()
         }
         fpc.contentMode = .fitToBounds
-        XCTAssertEqual(fpc.backdropView.alpha, 0.0) // Must not affect the backdrop alpha by changing the content mode
+        XCTAssertEqual(fpc.backdropView.alpha, 0.0)  // Must not affect the backdrop alpha by changing the content mode
         wait(for: [exp3], timeout: 1.0)
         XCTAssertEqual(floor(fpc.backdropView.alpha * 1000_000) / 1000_000, 0.3)
+
+        // Test a size class change of FloatingPanelController.view
+
+        fpc.move(to: .full, animated: false)
+        XCTAssertEqual(floor(fpc.backdropView.alpha * 1000_000) / 1000_000, 0.3)
+        fpc.willTransition(to: UITraitCollection(horizontalSizeClass: .regular), with: MockTransitionCoordinator())
+        XCTAssertEqual(fpc.backdropView.alpha, 0.0) // Must update the alpha by BackdropTestLayout2 in TestDelegate.
+
+        // Test a view size change of FloatingPanelController.view
+
+        fpc.move(to: .full, animated: false)
+        delegate.layout = BackdropTestLayout()
+        fpc.invalidateLayout()
+        XCTAssertEqual(floor(fpc.backdropView.alpha * 1000_000) / 1000_000, 0.3)
+
+        delegate.layout = BackdropTestLayout2()
+        fpc.viewWillTransition(to: CGSize.zero, with: MockTransitionCoordinator())
+        XCTAssertEqual(fpc.backdropView.alpha, 0.0) // Must update the alpha by BackdropTestLayout2 in TestDelegate.
     }
 
     func test_targetPosition_1positions() {
