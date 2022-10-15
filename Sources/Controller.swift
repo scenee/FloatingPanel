@@ -316,7 +316,7 @@ open class FloatingPanelController: UIViewController {
         // Change a layout for the new view size
         if let newLayout = self.delegate?.floatingPanel?(self, layoutFor: size) {
             layout = newLayout
-            activateLayout(forceLayout: false)
+            activateLayout(forceLayout: true)
         }
 
         if view.translatesAutoresizingMaskIntoConstraints {
@@ -335,7 +335,7 @@ open class FloatingPanelController: UIViewController {
         // Change a layout for the new trait collection
         if let newLayout = self.delegate?.floatingPanel?(self, layoutFor: newCollection) {
             self.layout = newLayout
-            activateLayout(forceLayout: false)
+            activateLayout(forceLayout: true)
         }
     }
 
@@ -401,8 +401,10 @@ open class FloatingPanelController: UIViewController {
     }
 
     private func activateLayout(forceLayout: Bool = false) {
-        floatingPanel.activateLayout(forceLayout: forceLayout,
-                                     contentInsetAdjustmentBehavior: contentInsetAdjustmentBehavior)
+        floatingPanel.activateLayout(
+            forceLayout: forceLayout,
+            contentInsetAdjustmentBehavior: contentInsetAdjustmentBehavior
+        )
     }
 
     func remove() {
