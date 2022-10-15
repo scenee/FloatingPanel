@@ -268,6 +268,30 @@ class CoreTests: XCTestCase {
         XCTAssertEqual(fpc.backdropView.alpha, 0.0) // Must update the alpha by BackdropTestLayout2 in TestDelegate.
     }
 
+    func test_initial_surface_position() {
+        class FloatingPanelTestDelegate: FloatingPanelControllerDelegate {
+            class Layout: FloatingPanelLayout {
+                let initialState: FloatingPanelState = .full
+                let position: FloatingPanelPosition = .top
+                let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring]
+                    = [.full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .bottom, referenceGuide: .superview)]
+            }
+            func floatingPanel(_ fpc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout {
+                Layout()
+            }
+        }
+        do {
+            let delegate = FloatingPanelTestDelegate()
+            let fpc = FloatingPanelController(delegate: delegate)
+            XCTAssertEqual(fpc.surfaceView.position, .top)
+        }
+        do {
+            let fpc = FloatingPanelController()
+            fpc.layout = FloatingPanelTestDelegate.Layout()
+            XCTAssertEqual(fpc.surfaceView.position, .top)
+        }
+    }
+
     func test_targetPosition_1positions() {
         class FloatingPanelLayout1Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .full
