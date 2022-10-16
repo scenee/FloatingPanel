@@ -34,6 +34,7 @@
 		54CDC5D8215BBE23007D205C /* SupplementaryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CDC5D7215BBE23007D205C /* SupplementaryViews.swift */; };
 		54EAD35B263A75EB006A36EA /* PanelLayouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EAD35A263A75EB006A36EA /* PanelLayouts.swift */; };
 		54EAD365263A765F006A36EA /* PagePanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EAD364263A765F006A36EA /* PagePanelController.swift */; };
+		5D82A6AD28D1843C006A44BA /* libswiftCoreGraphics.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D82A6AC28D18438006A44BA /* libswiftCoreGraphics.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,6 +101,7 @@
 		54CDC5D7215BBE23007D205C /* SupplementaryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementaryViews.swift; sourceTree = "<group>"; };
 		54EAD35A263A75EB006A36EA /* PanelLayouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelLayouts.swift; sourceTree = "<group>"; };
 		54EAD364263A765F006A36EA /* PagePanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagePanelController.swift; sourceTree = "<group>"; };
+		5D82A6AC28D18438006A44BA /* libswiftCoreGraphics.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswiftCoreGraphics.tbd; path = usr/lib/swift/libswiftCoreGraphics.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D82A6AD28D1843C006A44BA /* libswiftCoreGraphics.tbd in Frameworks */,
 				549D23CB233C7779008EF4D7 /* FloatingPanel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -154,6 +157,7 @@
 				545DBA0121511E6400CA77B8 /* Tests */,
 				545DBA0C21511E6400CA77B8 /* UITests */,
 				545DB9EB21511E6300CA77B8 /* Products */,
+				5D82A6AB28D18438006A44BA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -212,6 +216,14 @@
 				54EAD364263A765F006A36EA /* PagePanelController.swift */,
 			);
 			path = UseCases;
+			sourceTree = "<group>";
+		};
+		5D82A6AB28D18438006A44BA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5D82A6AC28D18438006A44BA /* libswiftCoreGraphics.tbd */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -550,6 +562,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/swift",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = example.Samples;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -568,6 +584,10 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/swift",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = example.Samples;
 				PRODUCT_NAME = "$(TARGET_NAME)";
