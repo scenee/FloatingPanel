@@ -485,7 +485,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             let translation = panGesture.translation(in: panGestureRecognizer.view!.superview)
             let velocity = panGesture.velocity(in: panGesture.view)
             let location = panGesture.location(in: panGesture.view)
-
+            if state == .full && translation.y <= 0 { return }
+            
             log.debug("""
                 panel gesture(\(state):\(panGesture.state)) -- \
                 translation =  \(value(of: translation)), \
