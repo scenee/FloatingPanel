@@ -387,7 +387,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
             let velocity = value(of: panGesture.velocity(in: panGesture.view))
             let location = panGesture.location(in: surfaceView)
-
+            let offsetDiff = value(of: scrollView.contentOffset - contentOffsetForPinning(of: scrollView))
+            
             let belowEdgeMost = 0 > layoutAdapter.offsetFromMostExpandedAnchor + (1.0 / surfaceView.fp_displayScale)
 
             log.debug("""
@@ -397,8 +398,6 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 scroll offset = \(value(of: scrollView.contentOffset)), \
                 location = \(value(of: location)), velocity = \(velocity)
                 """)
-
-            let offsetDiff = value(of: scrollView.contentOffset - contentOffsetForPinning(of: scrollView))
 
             if belowEdgeMost {
                 // Scroll offset pinning
@@ -1030,7 +1029,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         log.debug("unlock scroll view")
 
         scrollView.isDirectionalLockEnabled = false
-        scrollView.bounces = scrollBounce
+        scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = scrollIndictorVisible
     }
 
