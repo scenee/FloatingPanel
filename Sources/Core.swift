@@ -1029,7 +1029,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         log.debug("unlock scroll view")
 
         scrollView.isDirectionalLockEnabled = false
-        scrollView.bounces = false
+//        scrollView.bounces = false
+        scrollView.alwaysBounceVertical = true
         scrollView.showsVerticalScrollIndicator = scrollIndictorVisible
     }
 
