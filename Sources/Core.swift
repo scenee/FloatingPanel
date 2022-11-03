@@ -1025,7 +1025,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     private func unlockScrollView() {
-        guard let scrollView = scrollView, scrollView.isLocked else { return }
+        guard let scrollView = scrollView else { return }
         log.debug("unlock scroll view")
 
         scrollView.isDirectionalLockEnabled = false
