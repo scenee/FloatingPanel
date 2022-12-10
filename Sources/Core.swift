@@ -96,11 +96,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
         panGestureRecognizer.delegate = self
 
-        // Set tap-to-dismiss in the backdrop view
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
-        tapGesture.isEnabled = false
-        backdropView.dismissalTapGestureRecognizer = tapGesture
-        backdropView.addGestureRecognizer(tapGesture)
+        // Set the tap-to-dismiss action of the backdrop view.
+        // It's disabled by default. See also BackdropView.dismissalTapGestureRecognizer.
+        backdropView.dismissalTapGestureRecognizer.addTarget(self, action: #selector(handleBackdrop(tapGesture:)))
     }
 
     deinit {
