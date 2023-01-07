@@ -8,30 +8,27 @@ final class AdaptiveLayoutTestViewController: UIViewController, UITableViewDeleg
         let position: FloatingPanelPosition = .bottom
         let initialState: FloatingPanelState = .full
 
-        private weak var targetGuide: UILayoutGuide?
-        init(targetGuide: UILayoutGuide?) {
+        private unowned var targetGuide: UILayoutGuide
+
+        init(targetGuide: UILayoutGuide) {
             self.targetGuide = targetGuide
         }
-        var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-            if let targetGuide = targetGuide {
-                return [
-                    .full: FloatingPanelAdaptiveLayoutAnchor(absoluteOffset: 0.0,
-                                                             contentLayout: targetGuide,
-                                                             referenceGuide: .superview,
-                                                             boundingGuide: .superview),
-                    .half: FloatingPanelAdaptiveLayoutAnchor(fractionalOffset: 0.5,
-                                                             contentLayout: targetGuide,
-                                                             referenceGuide: .superview,
-                                                             boundingGuide: .safeArea),
 
-                ]
-            } else {
-                return [
-                    .full: FloatingPanelLayoutAnchor(absoluteInset: 500,
-                                                     edge: .bottom,
-                                                     referenceGuide: .superview)
-                ]
-            }
+        var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+            return [
+                .full: FloatingPanelAdaptiveLayoutAnchor(
+                    absoluteOffset: 0.0,
+                    contentLayout: targetGuide,
+                    referenceGuide: .superview,
+                    boundingGuide: .superview
+                ),
+                .half: FloatingPanelAdaptiveLayoutAnchor(
+                    fractionalOffset: 0.5,
+                    contentLayout: targetGuide,
+                    referenceGuide: .superview,
+                    boundingGuide: .safeArea
+                ),
+            ]
         }
     }
 
@@ -50,8 +47,18 @@ final class AdaptiveLayoutTestViewController: UIViewController, UITableViewDeleg
         return cell
     }
 
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = UIView()
+        headerView.backgroundColor = .orange
+        return headerView
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        44.0
+    }
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 40
+        40
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -67,12 +74,12 @@ class IntrinsicTableView: UITableView {
 
     override var contentSize:CGSize {
         didSet {
-            self.invalidateIntrinsicContentSize()
+            invalidateIntrinsicContentSize()
         }
     }
 
     override var intrinsicContentSize: CGSize {
-        self.layoutIfNeeded()
+        layoutIfNeeded()
         return CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
     }
 }
