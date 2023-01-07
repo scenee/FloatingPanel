@@ -171,7 +171,7 @@ public extension FloatingPanelIntrinsicLayoutAnchor {
     ///     - absoluteOffset: An absolute offset from the content size in the main dimension(i.e. y axis for a bottom panel) to attach the panel.
     ///     - contentLayout: The content layout guide to calculate the content size in the panel.
     ///     - referenceGuide: The rectangular area to lay out the content. If it's set to `.safeArea`, the panel content lays out inside the safe area of its ``FloatingPanelController``'s view.
-    ///     - boundingGuide: The bounding guid to restrict a panel size in the main dimension(i.e. y axis for a bottom panel)
+    ///     - boundingGuide: The rectangular area to restrict a panel size in the main dimension(i.e. y axis for a bottom panel)
     @objc public init(absoluteOffset offset: CGFloat,
                       contentLayout: UILayoutGuide,
                       referenceGuide: FloatingPanelLayoutReferenceGuide = .safeArea,
@@ -192,7 +192,7 @@ public extension FloatingPanelIntrinsicLayoutAnchor {
     ///     - fractionalOffset: A fractional offset of the content size in the main dimension(i.e. y axis for a bottom panel) to attach the panel.
     ///     - contentLayout: The content layout guide to calculate the content size in the panel.
     ///     - referenceGuide: The rectangular area to lay out the content. If it's set to `.safeArea`, the panel content lays out inside the safe area of its ``FloatingPanelController``'s view.
-    ///     - boundingGuide: The rectangular area to restrict a panel size in the main dimension(i.e. y axis for a bottom panel)```````
+    ///     - boundingGuide: The rectangular area to restrict a panel size in the main dimension(i.e. y axis for a bottom panel)
     @objc public init(fractionalOffset offset: CGFloat,
                       contentLayout: UILayoutGuide,
                       referenceGuide: FloatingPanelLayoutReferenceGuide = .safeArea,
