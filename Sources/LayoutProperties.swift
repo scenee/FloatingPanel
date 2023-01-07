@@ -27,7 +27,7 @@ extension FloatingPanelReferenceEdge {
     }
 }
 
-/// Constants that specify a layout guide to lay out a panel.
+/// A representation to specify a layout guide to lay out a panel.
 @objc public enum FloatingPanelLayoutReferenceGuide: Int {
     case superview = 0
     case safeArea = 1
@@ -44,14 +44,14 @@ extension FloatingPanelLayoutReferenceGuide {
     }
 }
 
-/// Constants that specify a layout guide to lay out a panel.
-@objc public enum FloatingPanelLayoutBoundingGuide: Int {
+/// A representation to specify a bounding box which limit the content size of a panel.
+@objc public enum FloatingPanelLayoutContentBoundingGuide: Int {
     case none = 0
     case superview = 1
     case safeArea = 2
 }
 
-extension FloatingPanelLayoutBoundingGuide {
+extension FloatingPanelLayoutContentBoundingGuide {
     func layoutGuide(_ fpc: FloatingPanelController) -> LayoutGuideProvider? {
         switch self {
         case .superview:

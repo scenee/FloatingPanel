@@ -162,72 +162,69 @@ public extension FloatingPanelIntrinsicLayoutAnchor {
 /// An object that defines how to settles a panel with a layout guide of a content view.
 @objc final public class FloatingPanelAdaptiveLayoutAnchor: NSObject, FloatingPanelLayoutAnchoring /*, NSCopying */ {
 
-    /// Returns a layout anchor with the specified offset by an absolute value, layout guide to display content and reference guide for a panel.
+    /// Returns a layout anchor with the specified offset by an absolute value to display a panel with its intrinsic content size.
     ///
     /// The offset is an amount to offset a position of panel that displays the entire content of the specified guide from an edge of
     /// the reference guide.  The edge refers to a panel positioning.
     ///
+    ///  ``contentBoundingGuide`` restricts the content size which a panel displays. For example, given ``referenceGuide`` is `.superview` and ``contentBoundingGuide`` is `.safeArea` for a bottom positioned panel, the panel content is laid out inside the superview of the view of FloatingPanelController(not its safe area), but its content size is limited to its safe area size.
+    ///
     /// - Parameters:
     ///     - absoluteOffset: An absolute offset from the content size in the main dimension(i.e. y axis for a bottom panel) to attach the panel.
     ///     - contentLayout: The content layout guide to calculate the content size in the panel.
-    ///     - referenceGuide: The rectangular area to lay out the content. If it's set to `.safeArea`, the panel content lays out inside the safe area of its ``FloatingPanelController``'s view.
-    ///     - boundingGuide: The rectangular area to restrict a panel size in the main dimension(i.e. y axis for a bottom panel)
-    @objc public init(absoluteOffset offset: CGFloat,
-                      contentLayout: UILayoutGuide,
-                      referenceGuide: FloatingPanelLayoutReferenceGuide = .safeArea,
-                      boundingGuide: FloatingPanelLayoutBoundingGuide = .none) {
+    ///     - referenceGuide: The rectangular area to lay out the content of a panel. If it's set to `.safeArea`, the panel content displays inside the safe area of its ``FloatingPanelController``'s view. This argument doesn't limit its content size.
+    ///     - contentBoundingGuide: The rectangular area to restrict the content size of a panel in the main dimension(i.e. y axis is the main dimension for a bottom panel).
+    ///
+    /// - Warning: If ``contentBoundingGuide`` is set to none, the panel may expand out of the screen size, depending on the intrinsic size of its content.
+    @objc public init(
+        absoluteOffset offset: CGFloat,
+        contentLayout: UILayoutGuide,
+        referenceGuide: FloatingPanelLayoutReferenceGuide,
+        contentBoundingGuide: FloatingPanelLayoutContentBoundingGuide = .none
+    ) {
         self.offset = offset
         self.contentLayoutGuide = contentLayout
         self.referenceGuide = referenceGuide
-        self.boundingGuide = boundingGuide
+        self.contentBoundingGuide = contentBoundingGuide
         self.isAbsolute = true
     }
 
-    /// Returns a layout anchor with the specified offset by a fractional value, layout guide to display content and reference guide for a panel.
+    /// Returns a layout anchor with the specified offset by a fractional value to display a panel with its intrinsic content size.
     ///
     /// The offset value is a floating-point number in the range 0.0 to 1.0, where 0.0 represents the full content
     /// is displayed and 0.5 represents the half of content is displayed.
     ///
+    ///  ``contentBoundingGuide`` restricts the content size which a panel displays. For example, given ``referenceGuide`` is `.superview` and ``contentBoundingGuide`` is `.safeArea` for a bottom positioned panel, the panel content is laid out inside the superview of the view of FloatingPanelController(not its safe area), but its content size is limited to its safe area size.
+    ///
     /// - Parameters:
     ///     - fractionalOffset: A fractional offset of the content size in the main dimension(i.e. y axis for a bottom panel) to attach the panel.
     ///     - contentLayout: The content layout guide to calculate the content size in the panel.
-    ///     - referenceGuide: The rectangular area to lay out the content. If it's set to `.safeArea`, the panel content lays out inside the safe area of its ``FloatingPanelController``'s view.
-    ///     - boundingGuide: The rectangular area to restrict a panel size in the main dimension(i.e. y axis for a bottom panel)
-    @objc public init(fractionalOffset offset: CGFloat,
-                      contentLayout: UILayoutGuide,
-                      referenceGuide: FloatingPanelLayoutReferenceGuide = .safeArea,
-                      boundingGuide: FloatingPanelLayoutBoundingGuide = .none) {
+    ///     - referenceGuide: The rectangular area to lay out the content of a panel. If it's set to `.safeArea`, the panel content displays inside the safe area of its ``FloatingPanelController``'s view. This argument doesn't limit its content size.
+    ///     - contentBoundingGuide: The rectangular area to restrict the content size of a panel in the main dimension(i.e. y axis is the main dimension for a bottom panel).
+    ///
+    /// - Warning: If ``contentBoundingGuide`` is set to none, the panel may expand out of the screen size, depending on the intrinsic size of its content.
+    @objc public init(
+        fractionalOffset offset: CGFloat,
+        contentLayout: UILayoutGuide,
+        referenceGuide: FloatingPanelLayoutReferenceGuide,
+        contentBoundingGuide: FloatingPanelLayoutContentBoundingGuide = .none
+    ) {
         self.offset = offset
         self.contentLayoutGuide = contentLayout
         self.referenceGuide = referenceGuide
-        self.boundingGuide = boundingGuide
+        self.contentBoundingGuide = contentBoundingGuide
         self.isAbsolute = false
     }
     let offset: CGFloat
     let isAbsolute: Bool
     let contentLayoutGuide: UILayoutGuide
     @objc public let referenceGuide: FloatingPanelLayoutReferenceGuide
-    @objc public let boundingGuide: FloatingPanelLayoutBoundingGuide
+    @objc public let contentBoundingGuide: FloatingPanelLayoutContentBoundingGuide
 }
 
 public extension FloatingPanelAdaptiveLayoutAnchor {
     func layoutConstraints(_ vc: FloatingPanelController, for position: FloatingPanelPosition) -> [NSLayoutConstraint] {
         var constraints = [NSLayoutConstraint]()
-
-        let boundingConstraint: NSLayoutConstraint
-        if let boundingLayoutGuide = boundingGuide.layoutGuide(vc) {
-            switch position {
-            case .top:
-                boundingConstraint = vc.surfaceView.bottomAnchor.constraint(greaterThanOrEqualTo: boundingLayoutGuide.bottomAnchor)
-            case .left:
-                boundingConstraint = vc.surfaceView.rightAnchor.constraint(greaterThanOrEqualTo: boundingLayoutGuide.rightAnchor)
-            case .bottom:
-                boundingConstraint = vc.surfaceView.topAnchor.constraint(greaterThanOrEqualTo: boundingLayoutGuide.topAnchor)
-            case .right:
-                boundingConstraint = vc.surfaceView.leftAnchor.constraint(greaterThanOrEqualTo: boundingLayoutGuide.leftAnchor)
-            }
-            constraints.append(boundingConstraint)
-        }
 
         let layoutGuide = referenceGuide.layoutGuide(vc: vc)
         let offsetConstraint: NSLayoutConstraint

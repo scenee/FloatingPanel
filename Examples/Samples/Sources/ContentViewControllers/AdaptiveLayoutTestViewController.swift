@@ -20,13 +20,13 @@ final class AdaptiveLayoutTestViewController: UIViewController, UITableViewDeleg
                     absoluteOffset: 0.0,
                     contentLayout: targetGuide,
                     referenceGuide: .superview,
-                    boundingGuide: .superview
+                    contentBoundingGuide: .safeArea
                 ),
                 .half: FloatingPanelAdaptiveLayoutAnchor(
                     fractionalOffset: 0.5,
                     contentLayout: targetGuide,
                     referenceGuide: .superview,
-                    boundingGuide: .safeArea
+                    contentBoundingGuide: .safeArea
                 ),
             ]
         }

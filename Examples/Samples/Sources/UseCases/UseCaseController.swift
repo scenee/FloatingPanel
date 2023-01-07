@@ -224,13 +224,9 @@ extension UseCaseController {
             fpc.set(contentViewController: contentVC)
             fpc.ext_trackScrollView(in: contentVC)
             if case let contentVC as ImageViewController = contentVC {
-                if #available(iOS 11.0, *) {
-                    let mode: ImageViewController.Mode = (useCase == .showAdaptivePanelWithCustomGuide) ? .withHeaderFooter : .onlyImage
-                    let layoutGuide = contentVC.layoutGuideFor(mode: mode)
-                    fpc.layout = ImageViewController.PanelLayout(targetGuide: layoutGuide)
-                } else {
-                    fpc.layout = ImageViewController.PanelLayout(targetGuide: nil)
-                }
+                let mode: ImageViewController.Mode = (useCase == .showAdaptivePanelWithCustomGuide) ? .withHeaderFooter : .onlyImage
+                let layoutGuide = contentVC.layoutGuideFor(mode: mode)
+                fpc.layout = ImageViewController.PanelLayout(targetGuide: layoutGuide)
             }
             addMain(panel: fpc)
 

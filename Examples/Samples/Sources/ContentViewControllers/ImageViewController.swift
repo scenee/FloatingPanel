@@ -5,29 +5,25 @@ import FloatingPanel
 
 final class ImageViewController: UIViewController {
     class PanelLayout: FloatingPanelLayout {
-        weak var targetGuide: UILayoutGuide?
-        init(targetGuide: UILayoutGuide?) {
+        private unowned var targetGuide: UILayoutGuide
+        init(targetGuide: UILayoutGuide) {
             self.targetGuide = targetGuide
         }
         let position: FloatingPanelPosition = .bottom
         let initialState: FloatingPanelState = .full
         var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-            if #available(iOS 11.0, *), let targetGuide = targetGuide {
-                return [
-                    .full: FloatingPanelAdaptiveLayoutAnchor(absoluteOffset: 0,
-                                                             contentLayout: targetGuide,
-                                                             referenceGuide: .superview),
-                    .half: FloatingPanelAdaptiveLayoutAnchor(fractionalOffset: 0.5,
-                                                             contentLayout: targetGuide,
-                                                             referenceGuide: .superview)
-                ]
-            } else {
-                return [
-                    .full: FloatingPanelLayoutAnchor(absoluteInset: 500,
-                                                     edge: .bottom,
-                                                     referenceGuide: .superview)
-                ]
-            }
+            return [
+                .full: FloatingPanelAdaptiveLayoutAnchor(
+                    absoluteOffset: 0,
+                    contentLayout: targetGuide,
+                    referenceGuide: .superview
+                ),
+                .half: FloatingPanelAdaptiveLayoutAnchor(
+                    fractionalOffset: 0.5,
+                    contentLayout: targetGuide,
+                    referenceGuide: .superview
+                )
+            ]
         }
     }
 
