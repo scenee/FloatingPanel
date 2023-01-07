@@ -13,7 +13,7 @@ final class AdaptiveLayoutTestViewController: UIViewController, UITableViewDeleg
             self.targetGuide = targetGuide
         }
         var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
-            if #available(iOS 11.0, *), let targetGuide = targetGuide {
+            if let targetGuide = targetGuide {
                 return [
                     .full: FloatingPanelAdaptiveLayoutAnchor(absoluteOffset: 0.0,
                                                              contentLayout: targetGuide,
