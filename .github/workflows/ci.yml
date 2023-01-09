@@ -17,6 +17,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - swift: "5.7"
+            xcode: "14.1"
+            runsOn: macos-12
           - swift: "5.6"
             xcode: "13.3.1"
             runsOn: macos-12
@@ -48,6 +51,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - os: "16.1"
+            xcode: "14.1"
+            sim: "iPhone 14 Pro"
+            runsOn: macos-12
           - os: "15.4"
             xcode: "13.3.1"
             sim: "iPhone 13 Pro"
@@ -76,7 +83,7 @@ jobs:
   example:
     runs-on: macos-12
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.3.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_14.1.app/Contents/Developer
     strategy:
       fail-fast: false
       matrix:
@@ -92,13 +99,17 @@ jobs:
   swiftpm:
     runs-on: macos-12
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.3.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_14.1.app/Contents/Developer
     strategy:
       fail-fast: false
       matrix:
         include:
-          - target: "arm64-apple-ios15.4-simulator"
-          - target: "x86_64-apple-ios15.4-simulator"
+          # 15.7
+          - target: "x86_64-apple-ios15.7-simulator"
+          - target: "arm64-apple-ios15.7-simulator"
+          # 16.1
+          - target: "x86_64-apple-ios16.1-simulator"
+          - target: "arm64-apple-ios16.1-simulator"
     steps:
     - uses: actions/checkout@v2
     - name: "Swift Package Manager build"
