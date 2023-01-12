@@ -37,9 +37,9 @@ import UIKit
     @objc optional
     func floatingPanelShouldBeginDragging(_ fpc: FloatingPanelController) -> Bool
 
-    /// Called when the user drags the surface or the surface is attracted to a state anchor.
+    /// Called while the user drags the surface or the surface moves to a state anchor.
     @objc optional
-    func floatingPanelDidMove(_ fpc: FloatingPanelController) // any surface frame changes in dragging
+    func floatingPanelDidMove(_ fpc: FloatingPanelController)
 
     /// Called on start of dragging (may require some time and or distance to move)
     @objc optional
