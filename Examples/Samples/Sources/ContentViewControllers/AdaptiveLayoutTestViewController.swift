@@ -3,7 +3,7 @@
 import UIKit
 import FloatingPanel
 
-final class AdaptiveLayoutTestViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+final class AdaptiveLayoutTestViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     class PanelLayout: FloatingPanelLayout {
         let position: FloatingPanelPosition = .bottom
         let initialState: FloatingPanelState = .full
@@ -33,19 +33,31 @@ final class AdaptiveLayoutTestViewController: UIViewController, UITableViewDeleg
     }
 
     @IBOutlet weak var tableView: IntrinsicTableView!
-    let cellResuseID = "Cell"
+    private let cellID = "Cell"
 
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellResuseID)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellID)
+    }
+
+    // MARK: - UITableViewDataSource
+
+    func numberOfSections(in tableView: UITableView) -> Int {
+        1
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        50
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellResuseID, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
         cell.textLabel?.text = "\(indexPath.row)"
         return cell
     }
+
+    // MARK: - UITableViewDelegate
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = UIView()
@@ -59,14 +71,6 @@ final class AdaptiveLayoutTestViewController: UIViewController, UITableViewDeleg
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         40
-    }
-
-    func numberOfSections(in tableView: UITableView) -> Int {
-        1
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        50
     }
 }
 
