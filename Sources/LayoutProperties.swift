@@ -27,7 +27,7 @@ extension FloatingPanelReferenceEdge {
     }
 }
 
-/// A representation to specify a layout guide to lay out a panel.
+/// A representation to specify a rectangular area to lay out a panel.
 @objc public enum FloatingPanelLayoutReferenceGuide: Int {
     case superview = 0
     case safeArea = 1

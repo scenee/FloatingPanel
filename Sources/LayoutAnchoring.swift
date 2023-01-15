@@ -167,7 +167,7 @@ public extension FloatingPanelIntrinsicLayoutAnchor {
     /// The offset is an amount to offset a position of panel that displays the entire content of the specified guide from an edge of
     /// the reference guide.  The edge refers to a panel positioning.
     ///
-    ///  ``contentBoundingGuide`` restricts the content size which a panel displays. For example, given ``referenceGuide`` is `.superview` and ``contentBoundingGuide`` is `.safeArea` for a bottom positioned panel, the panel content is laid out inside the superview of the view of FloatingPanelController(not its safe area), but its content size is limited to its safe area size.
+    ///  ``contentBoundingGuide`` restricts the content size which a panel displays. For example, given ``referenceGuide`` is `.superview` and ``contentBoundingGuide`` is `.safeArea` for a bottom positioned panel, the panel content is laid out inside the superview of the view of FloatingPanelController(not its safe area), but its content size is limited to its safe area size. Normally both of ``referenceGuide`` and ``contentBoundingGuide`` are specified with the same rectangle area.
     ///
     /// - Parameters:
     ///     - absoluteOffset: An absolute offset from the content size in the main dimension(i.e. y axis for a bottom panel) to attach the panel.
@@ -194,7 +194,7 @@ public extension FloatingPanelIntrinsicLayoutAnchor {
     /// The offset value is a floating-point number in the range 0.0 to 1.0, where 0.0 represents the full content
     /// is displayed and 0.5 represents the half of content is displayed.
     ///
-    ///  ``contentBoundingGuide`` restricts the content size which a panel displays. For example, given ``referenceGuide`` is `.superview` and ``contentBoundingGuide`` is `.safeArea` for a bottom positioned panel, the panel content is laid out inside the superview of the view of FloatingPanelController(not its safe area), but its content size is limited to its safe area size.
+    ///  ``contentBoundingGuide`` restricts the content size which a panel displays. For example, given ``referenceGuide`` is `.superview` and ``contentBoundingGuide`` is `.safeArea` for a bottom positioned panel, the panel content is laid out inside the superview of the view of FloatingPanelController(not its safe area), but its content size is limited to its safe area size. Normally both of ``referenceGuide`` and ``contentBoundingGuide`` are specified with the same rectangle area.
     ///
     /// - Parameters:
     ///     - fractionalOffset: A fractional offset of the content size in the main dimension(i.e. y axis for a bottom panel) to attach the panel.

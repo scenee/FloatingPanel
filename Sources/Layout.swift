@@ -92,7 +92,7 @@ class LayoutAdapter {
 
     private var staticConstraint: NSLayoutConstraint?
 
-    /// A layout constraint to limit the content size on ``FloatingPanelAdaptiveLayoutAnchor``.
+    /// A layout constraint to limit the content size in ``FloatingPanelAdaptiveLayoutAnchor``.
     private var contentBoundingConstraint: NSLayoutConstraint?
 
     private var anchorStates: Set<FloatingPanelState> {
