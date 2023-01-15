@@ -18,6 +18,7 @@
 		5442E24A25FC53C100A26F43 /* DebugTextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E24925FC53C100A26F43 /* DebugTextViewController.swift */; };
 		5442E25225FC541700A26F43 /* NestedScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E25125FC541700A26F43 /* NestedScrollViewController.swift */; };
 		54496C59263A7E5A0031E0C8 /* UseCaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54496C58263A7E5A0031E0C8 /* UseCaseController.swift */; };
+		544BC56826CC918200D0A436 /* AdaptiveLayoutTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544BC56726CC918200D0A436 /* AdaptiveLayoutTestViewController.swift */; };
 		545DB9EE21511E6300CA77B8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9ED21511E6300CA77B8 /* AppDelegate.swift */; };
 		545DB9F021511E6300CA77B8 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9EF21511E6300CA77B8 /* MainViewController.swift */; };
 		545DB9F321511E6300CA77B8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 545DB9F121511E6300CA77B8 /* Main.storyboard */; };
@@ -79,6 +80,7 @@
 		5442E24925FC53C100A26F43 /* DebugTextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugTextViewController.swift; sourceTree = "<group>"; };
 		5442E25125FC541700A26F43 /* NestedScrollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestedScrollViewController.swift; sourceTree = "<group>"; };
 		54496C58263A7E5A0031E0C8 /* UseCaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseCaseController.swift; sourceTree = "<group>"; };
+		544BC56726CC918200D0A436 /* AdaptiveLayoutTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveLayoutTestViewController.swift; sourceTree = "<group>"; };
 		545DB9EA21511E6300CA77B8 /* Samples.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Samples.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		545DB9ED21511E6300CA77B8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		545DB9EF21511E6300CA77B8 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 				5442E22725FC51E200A26F43 /* MultiPanelController.swift */,
 				5442E22B25FC521F00A26F43 /* SettingsViewController.swift */,
 				5442E22F25FC525200A26F43 /* TabBarViewController.swift */,
+				544BC56726CC918200D0A436 /* AdaptiveLayoutTestViewController.swift */,
 			);
 			path = ContentViewControllers;
 			sourceTree = "<group>";
@@ -359,6 +362,7 @@
 				54496C59263A7E5A0031E0C8 /* UseCaseController.swift in Sources */,
 				54CDC5D8215BBE23007D205C /* SupplementaryViews.swift in Sources */,
 				54B51116216AFE5F0033A6F3 /* Extensions.swift in Sources */,
+				544BC56826CC918200D0A436 /* AdaptiveLayoutTestViewController.swift in Sources */,
 				5442E24A25FC53C100A26F43 /* DebugTextViewController.swift in Sources */,
 				546341AC25C6426500CA0596 /* CustomState.swift in Sources */,
 				5442E23A25FC52CD00A26F43 /* ModalViewController.swift in Sources */,
@@ -553,7 +557,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Sources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -576,7 +580,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Sources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -50,7 +50,9 @@ extension UseCase {
         case .showCustomStatePanel: return "Show Panel with Custom state"
         }
     }
+}
 
+extension UseCase {
     private enum Content {
         case storyboard(String)
         case viewController(UIViewController)
@@ -76,7 +78,7 @@ extension UseCase {
         case .showNavigationController: return .storyboard("RootNavigationController") // Storyboard only
         case .showTopPositionedPanel: return .viewController(DebugTableViewController())
         case .showAdaptivePanel: return .storyboard(String(describing: ImageViewController.self))
-        case .showAdaptivePanelWithCustomGuide: return .storyboard(String(describing: ImageViewController.self))
+        case .showAdaptivePanelWithCustomGuide: return .storyboard(String(describing: AdaptiveLayoutTestViewController.self))
         case .showCustomStatePanel: return .viewController(DebugTableViewController())
         }
     }
@@ -86,6 +88,7 @@ extension UseCase {
         case .storyboard(let id):
             return storyboard.instantiateViewController(withIdentifier: id)
         case .viewController(let vc):
+            vc.loadViewIfNeeded()
             return vc
         }
     }

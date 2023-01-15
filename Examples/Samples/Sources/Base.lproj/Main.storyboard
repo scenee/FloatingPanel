@@ -39,7 +39,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" textLabel="M0G-C8-hAO" style="IBUITableViewCellStyleDefault" id="ySY-oA-g81">
-                                        <rect key="frame" x="0.0" y="50" width="414" height="43.5"/>
+                                        <rect key="frame" x="0.0" y="44.5" width="414" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ySY-oA-g81" id="sXB-nH-2g2">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
@@ -781,6 +781,51 @@ Section 1.10.33 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x1h-y1-h8q" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1" y="734"/>
+        </scene>
+        <!--Adaptive Layout Test View Controller-->
+        <scene sceneID="rDI-lU-wEx">
+            <objects>
+                <viewController storyboardIdentifier="AdaptiveLayoutTestViewController" id="5nC-6E-bXf" customClass="AdaptiveLayoutTestViewController" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="jXL-Ss-NCJ">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="W7W-ET-Wco" customClass="IntrinsicTableView" customModule="Samples" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="Cell" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="Mqi-zK-WA7">
+                                        <rect key="frame" x="0.0" y="44.5" width="375" height="43.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Mqi-zK-WA7" id="X46-Fp-6Hr">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="5nC-6E-bXf" id="RHg-aY-HNW"/>
+                                    <outlet property="delegate" destination="5nC-6E-bXf" id="0YX-fh-bB8"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="ZfG-sd-dcQ"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="W7W-ET-Wco" firstAttribute="trailing" secondItem="ZfG-sd-dcQ" secondAttribute="trailing" id="3kP-rg-7c6"/>
+                            <constraint firstAttribute="bottom" secondItem="W7W-ET-Wco" secondAttribute="bottom" id="FdS-X9-D1D"/>
+                            <constraint firstItem="W7W-ET-Wco" firstAttribute="leading" secondItem="ZfG-sd-dcQ" secondAttribute="leading" id="HXa-oO-jag"/>
+                            <constraint firstItem="W7W-ET-Wco" firstAttribute="top" secondItem="jXL-Ss-NCJ" secondAttribute="top" id="gMX-Wq-7G8"/>
+                        </constraints>
+                    </view>
+                    <size key="freeformSize" width="375" height="778"/>
+                    <connections>
+                        <outlet property="tableView" destination="W7W-ET-Wco" id="N54-Fv-2Jq"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7hJ-XW-9az" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4005" y="734"/>
         </scene>
     </scenes>
     <designables>

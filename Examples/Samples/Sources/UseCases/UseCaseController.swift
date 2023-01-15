@@ -218,20 +218,32 @@ extension UseCaseController {
             fpc.set(contentViewController: contentVC)
             addMain(panel: fpc)
 
-        case .showAdaptivePanel, .showAdaptivePanelWithCustomGuide:
+        case .showAdaptivePanel:
             let fpc = FloatingPanelController()
             fpc.isRemovalInteractionEnabled = true
             fpc.set(contentViewController: contentVC)
             fpc.ext_trackScrollView(in: contentVC)
             if case let contentVC as ImageViewController = contentVC {
-                if #available(iOS 11.0, *) {
-                    let mode: ImageViewController.Mode = (useCase == .showAdaptivePanelWithCustomGuide) ? .withHeaderFooter : .onlyImage
-                    let layoutGuide = contentVC.layoutGuideFor(mode: mode)
-                    fpc.layout = ImageViewController.PanelLayout(targetGuide: layoutGuide)
-                } else {
-                    fpc.layout = ImageViewController.PanelLayout(targetGuide: nil)
-                }
+                let mode: ImageViewController.Mode = (useCase == .showAdaptivePanelWithCustomGuide) ? .withHeaderFooter : .onlyImage
+                let layoutGuide = contentVC.layoutGuideFor(mode: mode)
+                fpc.layout = ImageViewController.PanelLayout(targetGuide: layoutGuide)
             }
+            addMain(panel: fpc)
+
+        case .showAdaptivePanelWithCustomGuide:
+            let fpc = FloatingPanelController()
+            fpc.isRemovalInteractionEnabled = true
+            fpc.contentInsetAdjustmentBehavior = .always
+            fpc.surfaceView.appearance = {
+                let appearance = SurfaceAppearance()
+                appearance.cornerRadius = 6.0
+                return appearance
+            }()
+
+
+            fpc.set(contentViewController: contentVC)
+            fpc.ext_trackScrollView(in: contentVC)
+            fpc.layout = AdaptiveLayoutTestViewController.PanelLayout(targetGuide: contentVC.view.makeBoundsLayoutGuide())
             addMain(panel: fpc)
 
         case .showCustomStatePanel:
@@ -283,7 +295,7 @@ extension UseCaseController {
         }
     }
 
-   @objc
+    @objc
     private func handleSurface(tapGesture: UITapGestureRecognizer) {
         switch mainPanelVC.state {
         case .full:
@@ -376,6 +388,9 @@ private extension FloatingPanelController {
 
         case let contentVC as ImageViewController:
             track(scrollView: contentVC.scrollView)
+
+        case let contentVC as AdaptiveLayoutTestViewController:
+            track(scrollView: contentVC.tableView)
 
         default:
             break

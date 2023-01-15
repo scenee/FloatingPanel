@@ -44,6 +44,7 @@ The new interface displays the related contents and utilities in parallel as a u
 - ``FloatingPanelPosition``
 - ``FloatingPanelReferenceEdge``
 - ``FloatingPanelLayoutReferenceGuide``
+- ``FloatingPanelLayoutContentBoundingGuide``
 
 ### Behaviors
 
