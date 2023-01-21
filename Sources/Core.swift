@@ -802,16 +802,21 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             if surfaceView.grabberAreaContains(location) {
                 initialScrollOffset = scrollView.contentOffset
             } else {
-                initialScrollOffset = scrollView.contentOffset
-                let offsetDiff = scrollView.contentOffset - contentOffsetForPinning(of: scrollView)
+                let pinningOffset = contentOffsetForPinning(of: scrollView)
+
+                // `scrollView.contentOffset` can be a value in [-30, 0) at this time by `allowScrollPanGesture(for:)`.
+                // Therefore the initial scroll offset must be reset to the pinning offset. Otherwise, the following
+                // `Fit the surface bounds` logic don't working and also the scroll content offset can be invalid.
+                initialScrollOffset = pinningOffset
+
+                // Fit the surface bounds to a scroll offset content by startInteraction(at:offset:)
+                let offsetDiff = scrollView.contentOffset - pinningOffset
                 switch layoutAdapter.position {
                 case .top, .left:
-                    // Fit the surface bounds to a scroll offset content by startInteraction(at:offset:)
                     if value(of: offsetDiff) > 0 {
                         offset = -offsetDiff
                     }
                 case .bottom, .right:
-                    // Fit the surface bounds to a scroll offset content by startInteraction(at:offset:)
                     if value(of: offsetDiff) < 0 {
                         offset = -offsetDiff
                     }
