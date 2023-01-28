@@ -1,6 +1,7 @@
 // Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
 
 import XCTest
+
 @testable import FloatingPanel
 
 class ControllerTests: XCTestCase {
@@ -9,8 +10,8 @@ class ControllerTests: XCTestCase {
 
     func test_warningRetainCycle() {
         let exp = expectation(description: "Warning retain cycle")
-        exp.expectedFulfillmentCount = 2 // For layout & behavior logs
-        log.hook = {(log, level) in
+        exp.expectedFulfillmentCount = 2  // For layout & behavior logs
+        log.hook = { (log, level) in
             if log.contains("A memory leak will occur by a retain cycle because") {
                 XCTAssert(level == .warning)
                 exp.fulfill()
@@ -25,7 +26,6 @@ class ControllerTests: XCTestCase {
         let rootVC = UIViewController()
         rootVC.loadViewIfNeeded()
         rootVC.view.bounds = .init(origin: .zero, size: .init(width: 390, height: 844))
-
 
         let fpc = FloatingPanelController()
         fpc.addPanel(toParent: rootVC)
@@ -46,8 +46,7 @@ class ControllerTests: XCTestCase {
         }
         let myDelegate = MyDelegate()
         let fpc = FloatingPanelController(delegate: myDelegate)
-        let traitCollection = UITraitCollection(traitsFrom: [fpc.traitCollection,
-                                                             UITraitCollection(userInterfaceStyle: .dark)])
+        let traitCollection = UITraitCollection(traitsFrom: [fpc.traitCollection, UITraitCollection(userInterfaceStyle: .dark)])
         XCTAssertEqual(traitCollection.userInterfaceStyle, .dark)
     }
 
@@ -60,7 +59,7 @@ class ControllerTests: XCTestCase {
 
         fpc.hide()
         XCTAssertEqual(delegate.position, .hidden)
-        
+
         fpc.move(to: .full, animated: false)
         XCTAssertEqual(fpc.state, .full)
         XCTAssertEqual(delegate.position, .full)
@@ -193,18 +192,18 @@ class ControllerTests: XCTestCase {
         XCTAssertEqual(delegate.position, .hidden)
         XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .hidden).y)
     }
-    
+
     func test_moveWithNearbyPosition() {
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
         XCTAssertEqual(delegate.position, .hidden)
         fpc.showForTest()
-        
+
         XCTAssertEqual(fpc.nearbyState, .half)
-        
+
         fpc.hide()
         XCTAssertEqual(fpc.nearbyState, .tip)
-        
+
         fpc.move(to: .full, animated: false)
         XCTAssertEqual(fpc.nearbyState, .full)
         XCTAssertEqual(fpc.surfaceView.frame.minY, fpc.surfaceLocation(for: .full).y)
@@ -340,15 +339,21 @@ private class MyZombieViewController: UIViewController, FloatingPanelLayout, Flo
         return .half
     }
 
-    let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
-            .full: FloatingPanelLayoutAnchor(absoluteInset: UIScreen.main.bounds.height == 667.0 ? 18.0 : 16.0,
-                                             edge: .top,
-                                             referenceGuide: .superview),
-            .half: FloatingPanelLayoutAnchor(absoluteInset: 250.0,
-                                             edge: .bottom,
-                                             referenceGuide: .superview),
-            .tip: FloatingPanelLayoutAnchor(absoluteInset: 60.0,
-                                            edge: .bottom,
-                                            referenceGuide: .superview),
+    let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelLayoutAnchor(
+            absoluteInset: UIScreen.main.bounds.height == 667.0 ? 18.0 : 16.0,
+            edge: .top,
+            referenceGuide: .superview
+        ),
+        .half: FloatingPanelLayoutAnchor(
+            absoluteInset: 250.0,
+            edge: .bottom,
+            referenceGuide: .superview
+        ),
+        .tip: FloatingPanelLayoutAnchor(
+            absoluteInset: 60.0,
+            edge: .bottom,
+            referenceGuide: .superview
+        ),
     ]
 }

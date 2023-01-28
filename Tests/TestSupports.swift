@@ -1,6 +1,7 @@
 // Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
 
 import Foundation
+
 @testable import FloatingPanel
 
 func waitRunLoop(secs: TimeInterval = 0) {
@@ -40,7 +41,7 @@ class FloatingPanelTestLayout: FloatingPanelLayout {
     var referenceGuide: FloatingPanelLayoutReferenceGuide {
         return .superview
     }
-    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+    var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
         return [
             .full: FloatingPanelLayoutAnchor(absoluteInset: fullInset, edge: .top, referenceGuide: referenceGuide),
             .half: FloatingPanelLayoutAnchor(absoluteInset: halfInset, edge: .bottom, referenceGuide: referenceGuide),
@@ -63,7 +64,7 @@ class FloatingPanelTop2BottomTestLayout: FloatingPanelLayout {
     var referenceGuide: FloatingPanelLayoutReferenceGuide {
         return .superview
     }
-    var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+    var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
         return [
             .full: FloatingPanelLayoutAnchor(absoluteInset: fullInset, edge: .bottom, referenceGuide: referenceGuide),
             .half: FloatingPanelLayoutAnchor(absoluteInset: halfInset, edge: .top, referenceGuide: referenceGuide),
@@ -98,4 +99,3 @@ class MockTransitionCoordinator: NSObject, UIViewControllerTransitionCoordinator
     var containerView: UIView { UIView() }
     var targetTransform: CGAffineTransform = .identity
 }
-

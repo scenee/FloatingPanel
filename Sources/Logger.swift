@@ -80,21 +80,21 @@ struct Logger {
         }
     }
 
-    func debug(_ log: Any, _ arguments: Any..., tag: String = "", function: String = #function, file: String  = #file, line: UInt = #line) {
+    func debug(_ log: Any, _ arguments: Any..., tag: String = "", function: String = #function, file: String = #file, line: UInt = #line) {
         #if __FP_LOG
         self.log(.debug, log, arguments, tag: tag, function: getPrettyFunction(function, file), line: line)
         #endif
     }
 
-    func info(_ log: Any, _ arguments: Any..., tag: String = "",  function: String = #function, file: String  = #file, line: UInt = #line) {
+    func info(_ log: Any, _ arguments: Any..., tag: String = "", function: String = #function, file: String = #file, line: UInt = #line) {
         self.log(.info, log, arguments, tag: tag, function: getPrettyFunction(function, file), line: line)
     }
 
-    func warning(_ log: Any, _ arguments: Any..., function: String = #function, file: String  = #file, line: UInt = #line) {
+    func warning(_ log: Any, _ arguments: Any..., function: String = #function, file: String = #file, line: UInt = #line) {
         self.log(.warning, log, arguments, tag: "", function: getPrettyFunction(function, file), line: line)
     }
 
-    func error(_ log: Any, _ arguments: Any..., function: String = #function, file: String  = #file, line: UInt = #line) {
+    func error(_ log: Any, _ arguments: Any..., function: String = #function, file: String = #file, line: UInt = #line) {
         self.log(.error, log, arguments, tag: "", function: getPrettyFunction(function, file), line: line)
     }
 }

@@ -3,13 +3,15 @@
 import UIKit
 
 /// An interface for implementing custom layout anchor objects.
-@objc public protocol FloatingPanelLayoutAnchoring {
+@objc
+public protocol FloatingPanelLayoutAnchoring {
     var referenceGuide: FloatingPanelLayoutReferenceGuide { get }
     func layoutConstraints(_ fpc: FloatingPanelController, for position: FloatingPanelPosition) -> [NSLayoutConstraint]
 }
 
 /// An object that defines how to settles a panel with insets from an edge of a reference rectangle.
-@objc final public class FloatingPanelLayoutAnchor: NSObject, FloatingPanelLayoutAnchoring /*, NSCopying */ {
+@objc
+public final class FloatingPanelLayoutAnchor: NSObject, FloatingPanelLayoutAnchoring {
 
     /// Returns a layout anchor with the specified inset by an absolute value, edge and reference guide for a panel.
     ///
@@ -50,8 +52,8 @@ import UIKit
     @objc let referenceEdge: FloatingPanelReferenceEdge
 }
 
-public extension FloatingPanelLayoutAnchor {
-    func layoutConstraints(_ vc: FloatingPanelController, for position: FloatingPanelPosition) -> [NSLayoutConstraint] {
+extension FloatingPanelLayoutAnchor {
+    public func layoutConstraints(_ vc: FloatingPanelController, for position: FloatingPanelPosition) -> [NSLayoutConstraint] {
         let layoutGuide = referenceGuide.layoutGuide(vc: vc)
         switch position {
         case .top:
@@ -72,7 +74,7 @@ public extension FloatingPanelLayoutAnchor {
                 return [edgeAnchor.constraint(equalTo: layoutGuide.topAnchor, constant: inset)]
             }
             let offsetAnchor = layoutGuide.topAnchor.anchorWithOffset(to: edgeAnchor)
-            return [offsetAnchor.constraint(equalTo:layoutGuide.heightAnchor, multiplier: inset)]
+            return [offsetAnchor.constraint(equalTo: layoutGuide.heightAnchor, multiplier: inset)]
         case .bottom:
             if isAbsolute {
                 return [layoutGuide.bottomAnchor.constraint(equalTo: edgeAnchor, constant: inset)]
@@ -105,7 +107,8 @@ public extension FloatingPanelLayoutAnchor {
 }
 
 /// An object that defines how to settles a panel with the intrinsic size for a content.
-@objc final public class FloatingPanelIntrinsicLayoutAnchor: NSObject, FloatingPanelLayoutAnchoring /*, NSCopying */ {
+@objc
+public final class FloatingPanelIntrinsicLayoutAnchor: NSObject, FloatingPanelLayoutAnchoring {
 
     /// Returns a layout anchor with the specified offset by an absolute value and reference guide for a panel.
     ///
@@ -141,8 +144,8 @@ public extension FloatingPanelLayoutAnchor {
     @objc public let referenceGuide: FloatingPanelLayoutReferenceGuide
 }
 
-public extension FloatingPanelIntrinsicLayoutAnchor {
-    func layoutConstraints(_ vc: FloatingPanelController, for position: FloatingPanelPosition) -> [NSLayoutConstraint] {
+extension FloatingPanelIntrinsicLayoutAnchor {
+    public func layoutConstraints(_ vc: FloatingPanelController, for position: FloatingPanelPosition) -> [NSLayoutConstraint] {
         let surfaceIntrinsicLength = position.mainDimension(vc.surfaceView.intrinsicContentSize)
         let constant = isAbsolute ? surfaceIntrinsicLength - offset : surfaceIntrinsicLength * (1 - offset)
         let layoutGuide = referenceGuide.layoutGuide(vc: vc)
@@ -160,7 +163,8 @@ public extension FloatingPanelIntrinsicLayoutAnchor {
 }
 
 /// An object that defines how to settles a panel with a layout guide of a content view.
-@objc final public class FloatingPanelAdaptiveLayoutAnchor: NSObject, FloatingPanelLayoutAnchoring /*, NSCopying */ {
+@objc
+public final class FloatingPanelAdaptiveLayoutAnchor: NSObject, FloatingPanelLayoutAnchoring {
 
     /// Returns a layout anchor with the specified offset by an absolute value to display a panel with its intrinsic content size.
     ///
@@ -222,8 +226,8 @@ public extension FloatingPanelIntrinsicLayoutAnchor {
     @objc public let contentBoundingGuide: FloatingPanelLayoutContentBoundingGuide
 }
 
-public extension FloatingPanelAdaptiveLayoutAnchor {
-    func layoutConstraints(_ vc: FloatingPanelController, for position: FloatingPanelPosition) -> [NSLayoutConstraint] {
+extension FloatingPanelAdaptiveLayoutAnchor {
+    public func layoutConstraints(_ vc: FloatingPanelController, for position: FloatingPanelPosition) -> [NSLayoutConstraint] {
         var constraints = [NSLayoutConstraint]()
 
         let layoutGuide = referenceGuide.layoutGuide(vc: vc)

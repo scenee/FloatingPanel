@@ -1,6 +1,7 @@
 // Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
 
 import XCTest
+
 @testable import FloatingPanel
 
 class SurfaceViewTests: XCTestCase {
@@ -68,12 +69,14 @@ class SurfaceViewTests: XCTestCase {
 
             switch position {
             case .top:
-                XCTAssertEqual(surface.containerView.frame,
-                               CGRect(x: 0.0, y: -height, width: 320.0, height: 480.0 * 3),
-                               line: line)
-                XCTAssertEqual(surface.convert(surface.contentView?.frame ?? .zero, from: surface.containerView),
-                               surface.bounds,
-                               line: line)
+                XCTAssertEqual(
+                    surface.containerView.frame,
+                    CGRect(x: 0.0, y: -height, width: 320.0, height: 480.0 * 3),
+                    line: line)
+                XCTAssertEqual(
+                    surface.convert(surface.contentView?.frame ?? .zero, from: surface.containerView),
+                    surface.bounds,
+                    line: line)
             case .bottom:
                 XCTAssertEqual(surface.contentView?.frame ?? .zero, surface.bounds, line: line)
             default:
@@ -82,14 +85,13 @@ class SurfaceViewTests: XCTestCase {
         }
     }
 
-
     func test_surfaceView_grabberHandle() {
         XCTContext.runActivity(named: "Bottom sheet") { _ in
             let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
             XCTAssertNil(surface.contentView)
             surface.layoutIfNeeded()
 
-            XCTAssertEqual(surface.grabberHandle.frame.minY,  6.0)
+            XCTAssertEqual(surface.grabberHandle.frame.minY, 6.0)
             XCTAssertEqual(surface.grabberHandle.frame.width, surface.grabberHandleSize.width)
             XCTAssertEqual(surface.grabberHandle.frame.height, surface.grabberHandleSize.height)
 
@@ -97,7 +99,7 @@ class SurfaceViewTests: XCTestCase {
             surface.grabberHandleSize = CGSize(width: 44.0, height: 12.0)
             surface.setNeedsLayout()
             surface.layoutIfNeeded()
-            XCTAssertEqual(surface.grabberHandle.frame.minY,  surface.grabberHandlePadding)
+            XCTAssertEqual(surface.grabberHandle.frame.minY, surface.grabberHandlePadding)
             XCTAssertEqual(surface.grabberHandle.frame.width, surface.grabberHandleSize.width)
             XCTAssertEqual(surface.grabberHandle.frame.height, surface.grabberHandleSize.height)
         }
@@ -115,7 +117,7 @@ class SurfaceViewTests: XCTestCase {
             surface.grabberHandlePadding = 10.0
             surface.setNeedsLayout()
             surface.layoutIfNeeded()
-            XCTAssertEqual(surface.grabberHandle.frame.maxY,  surface.bounds.maxY - surface.grabberHandlePadding)
+            XCTAssertEqual(surface.grabberHandle.frame.maxY, surface.bounds.maxY - surface.grabberHandlePadding)
         }
     }
 
@@ -204,7 +206,7 @@ class SurfaceViewTests: XCTestCase {
         XCTAssert(surface.containerView.layer.cornerRadius == 0.0)
         XCTAssert(surface.containerView.layer.masksToBounds == false)
 
-        surface.containerView.layer.cornerRadius = 12.0 // Don't change it directly
+        surface.containerView.layer.cornerRadius = 12.0  // Don't change it directly
         XCTAssert(surface.containerView.layer.cornerRadius == 12.0)
         XCTAssertFalse(surface.containerView.layer.masksToBounds == true)
 
@@ -231,49 +233,65 @@ class SurfaceViewTests: XCTestCase {
 
     func test_surfaceView_grabberArea() {
         let sv = SurfaceView()
-        sv.bounds  = .init(x: 0, y: 0, width: 375, height: 500)
+        sv.bounds = .init(x: 0, y: 0, width: 375, height: 500)
         sv.grabberAreaOffset = 44.0
         // Top
         do {
             sv.position = .top
-            XCTAssertEqual(sv.grabberAreaFrame,
-                           .init(x: 0,
-                                 y: sv.bounds.height - sv.grabberAreaOffset,
-                                 width: sv.bounds.width,
-                                 height: sv.grabberAreaOffset))
+            XCTAssertEqual(
+                sv.grabberAreaFrame,
+                .init(
+                    x: 0,
+                    y: sv.bounds.height - sv.grabberAreaOffset,
+                    width: sv.bounds.width,
+                    height: sv.grabberAreaOffset
+                )
+            )
         }
         // Bottom
         do {
             sv.position = .bottom
-            XCTAssertEqual(sv.grabberAreaFrame,
-                           .init(x: 0,
-                                 y: 0,
-                                 width: sv.bounds.width,
-                                 height: sv.grabberAreaOffset))
+            XCTAssertEqual(
+                sv.grabberAreaFrame,
+                .init(
+                    x: 0,
+                    y: 0,
+                    width: sv.bounds.width,
+                    height: sv.grabberAreaOffset
+                )
+            )
         }
         // Left
         do {
             sv.position = .left
-            XCTAssertEqual(sv.grabberAreaFrame,
-                           .init(x: sv.bounds.width - sv.grabberAreaOffset,
-                                 y: 0,
-                                 width: sv.grabberAreaOffset,
-                                 height: sv.bounds.height))
+            XCTAssertEqual(
+                sv.grabberAreaFrame,
+                .init(
+                    x: sv.bounds.width - sv.grabberAreaOffset,
+                    y: 0,
+                    width: sv.grabberAreaOffset,
+                    height: sv.bounds.height
+                )
+            )
         }
         // Right
         do {
             sv.position = .right
-            XCTAssertEqual(sv.grabberAreaFrame,
-                           .init(x: 0,
-                                 y: 0,
-                                 width: sv.grabberAreaOffset,
-                                 height: sv.bounds.height))
+            XCTAssertEqual(
+                sv.grabberAreaFrame,
+                .init(
+                    x: 0,
+                    y: 0,
+                    width: sv.grabberAreaOffset,
+                    height: sv.bounds.height
+                )
+            )
         }
     }
 
     func test_surfaceView_grabberAreaDetection() {
         let sv = SurfaceView()
-        sv.bounds  = .init(x: 0, y: 0, width: 375, height: 500)
+        sv.bounds = .init(x: 0, y: 0, width: 375, height: 500)
         // Top
         do {
             sv.position = .top

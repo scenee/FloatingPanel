@@ -1,6 +1,7 @@
 // Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
 
 import XCTest
+
 @testable import FloatingPanel
 
 class CoreTests: XCTestCase {
@@ -53,7 +54,7 @@ class CoreTests: XCTestCase {
         class FloatingPanelLayout1Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .full
             let position: FloatingPanelPosition = .bottom
-            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] =
+            let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] =
                 [.full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview)]
         }
 
@@ -73,9 +74,9 @@ class CoreTests: XCTestCase {
     func test_getBackdropAlpha_1positionsWithInitialHidden() {
         class FloatingPanelLayout2Positions: FloatingPanelTestLayout {
             override var initialState: FloatingPanelState { .hidden }
-            override var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+            override var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
                 return [
-                    .full: FloatingPanelLayoutAnchor(absoluteInset: fullInset, edge: .top, referenceGuide: referenceGuide),
+                    .full: FloatingPanelLayoutAnchor(absoluteInset: fullInset, edge: .top, referenceGuide: referenceGuide)
                 ]
             }
         }
@@ -88,7 +89,7 @@ class CoreTests: XCTestCase {
         let fullPos = fpc.surfaceLocation(for: .full).y
         let hiddenPos = fpc.surfaceLocation(for: .hidden).y
 
-        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos - 100.0, with:  -100.0), 0.3)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos - 100.0, with: -100.0), 0.3)
         XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos, with: 0.0), 0.3)
         XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: hiddenPos, with: 100.0), 0.0)
     }
@@ -97,7 +98,7 @@ class CoreTests: XCTestCase {
         class FloatingPanelLayout2Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .half
             let position: FloatingPanelPosition = .bottom
-            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+            let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
                 .full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview),
                 .half: FloatingPanelLayoutAnchor(absoluteInset: 250.0, edge: .bottom, referenceGuide: .superview),
             ]
@@ -127,7 +128,7 @@ class CoreTests: XCTestCase {
     func test_getBackdropAlpha_2positionsWithHidden() {
         class FloatingPanelLayout2Positions: FloatingPanelTestLayout {
             override var initialState: FloatingPanelState { .hidden }
-            override var anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] {
+            override var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
                 return [
                     .full: FloatingPanelLayoutAnchor(absoluteInset: fullInset, edge: .top, referenceGuide: referenceGuide),
                     .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0.0, edge: .bottom, referenceGuide: referenceGuide),
@@ -143,7 +144,7 @@ class CoreTests: XCTestCase {
         let fullPos = fpc.surfaceLocation(for: .full).y
         let hiddenPos = fpc.surfaceLocation(for: .hidden).y
 
-        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos - 100.0, with:  -100.0), 0.3)
+        XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos - 100.0, with: -100.0), 0.3)
         XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: fullPos, with: 0.0), 0.3)
         XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: hiddenPos, with: 100.0), 0.0)
     }
@@ -173,7 +174,6 @@ class CoreTests: XCTestCase {
         XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: halfPos + distance2 * 0.5, with: -0.5 * distance2), 0.0)
         XCTAssertEqual(fpc.floatingPanel.getBackdropAlpha(at: halfPos, with: -1 * distance2), 0.0)
     }
-
 
     func test_updateBackdropAlpha() {
         class BackdropTestLayout: FloatingPanelTestLayout {
@@ -246,7 +246,7 @@ class CoreTests: XCTestCase {
         fpc.move(to: .full, animated: false)
         XCTAssertEqual(_floor(fpc.backdropView.alpha), 0.3)
         fpc.willTransition(to: UITraitCollection(horizontalSizeClass: .regular), with: MockTransitionCoordinator())
-        XCTAssertEqual(fpc.backdropView.alpha, 0.0) // Must update the alpha by BackdropTestLayout2 in TestDelegate.
+        XCTAssertEqual(fpc.backdropView.alpha, 0.0)  // Must update the alpha by BackdropTestLayout2 in TestDelegate.
 
         // Test a view size change of FloatingPanelController.view
 
@@ -257,7 +257,7 @@ class CoreTests: XCTestCase {
 
         delegate.layout = BackdropTestLayout2()
         fpc.viewWillTransition(to: CGSize.zero, with: MockTransitionCoordinator())
-        XCTAssertEqual(fpc.backdropView.alpha, 0.0) // Must update the alpha by BackdropTestLayout2 in TestDelegate.
+        XCTAssertEqual(fpc.backdropView.alpha, 0.0)  // Must update the alpha by BackdropTestLayout2 in TestDelegate.
     }
 
     func test_initial_surface_position() {
@@ -265,8 +265,9 @@ class CoreTests: XCTestCase {
             class Layout: FloatingPanelLayout {
                 let initialState: FloatingPanelState = .full
                 let position: FloatingPanelPosition = .top
-                let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring]
-                    = [.full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .bottom, referenceGuide: .superview)]
+                let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
+                    .full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .bottom, referenceGuide: .superview)
+                ]
             }
             func floatingPanel(_ fpc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout {
                 Layout()
@@ -288,8 +289,9 @@ class CoreTests: XCTestCase {
         class FloatingPanelLayout1Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .full
             let position: FloatingPanelPosition = .bottom
-            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring]
-                = [.full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview)]
+            let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
+                .full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview)
+            ]
         }
 
         let delegate = FloatingPanelTestDelegate()
@@ -301,22 +303,25 @@ class CoreTests: XCTestCase {
         let fullPos = fpc.surfaceLocation(for: .full).y
 
         fpc.move(to: .full, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .full), // redirect
-            (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full), // redirect
-            (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full), // redirect
-            (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 100.0), .full), // redirect
-            (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .full), // redirect
-            (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full), // redirect
-            ])
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .full),  // redirect
+                (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full),  // redirect
+                (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),  // redirect
+                (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 100.0), .full),  // redirect
+                (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .full),  // redirect
+                (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full),  // redirect
+            ]
+        )
     }
 
     func test_targetPosition_2positions() {
         class FloatingPanelLayout2Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .half
             let position: FloatingPanelPosition = .bottom
-            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+            let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
                 .full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview),
                 .half: FloatingPanelLayoutAnchor(absoluteInset: 250.0, edge: .bottom, referenceGuide: .superview),
             ]
@@ -332,46 +337,52 @@ class CoreTests: XCTestCase {
         let halfPos = fpc.surfaceLocation(for: .half).y
 
         fpc.move(to: .full, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .half), // project to half
-            (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full), // redirect
-            (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 100.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .half), // project to half
-            (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full), // redirect
-            (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half), // redirect
-            (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .full),  // project to full
-            (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 100.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .half), // redirect
-            (#line, halfPos + 10.0, CGPoint(x: 0.0, y: -1000.0), .full), // project to full
-            ])
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .half),  // project to half
+                (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full),  // redirect
+                (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 100.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .half),  // project to half
+                (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full),  // redirect
+                (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half),  // redirect
+                (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .full),  // project to full
+                (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 100.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .half),  // redirect
+                (#line, halfPos + 10.0, CGPoint(x: 0.0, y: -1000.0), .full),  // project to full
+            ]
+        )
         fpc.move(to: .half, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .half), // project to half
-            (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full), // redirect
-            (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 100.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .half), // project to half
-            (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full), // redirect
-            (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half), // redirect
-            (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .full),  // project to full
-            (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 100.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .half), // redirect
-            (#line, halfPos + 10.0, CGPoint(x: 0.0, y: -1000.0), .full), // project to full
-            ])
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .half),  // project to half
+                (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full),  // redirect
+                (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 100.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .half),  // project to half
+                (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full),  // redirect
+                (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half),  // redirect
+                (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .full),  // project to full
+                (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 100.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .half),  // redirect
+                (#line, halfPos + 10.0, CGPoint(x: 0.0, y: -1000.0), .full),  // project to full
+            ]
+        )
     }
 
     func test_targetPosition_2positionsWithHidden() {
         class FloatingPanelLayout2Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .hidden
             let position: FloatingPanelPosition = .bottom
-            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+            let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
                 .full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview),
                 .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .bottom, referenceGuide: .superview),
             ]
@@ -387,38 +398,42 @@ class CoreTests: XCTestCase {
         let hiddenPos = fpc.surfaceLocation(for: .hidden).y
 
         fpc.move(to: .full, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .hidden), // project to hidden
-            (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full), // redirect
-            (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 100.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .hidden), // project to hidden
-            (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full), // redirect
-            (#line, hiddenPos - 10.0, CGPoint(x: 0.0, y: -100.0), .hidden), // redirect
-            (#line, hiddenPos, CGPoint(x: 0.0, y: -1000.0), .full),  // project to full
-            (#line, hiddenPos, CGPoint(x: 0.0, y: -100.0), .hidden),
-            (#line, hiddenPos, CGPoint(x: 0.0, y: 0.0), .hidden),
-            (#line, hiddenPos, CGPoint(x: 0.0, y: 100.0), .hidden),
-            (#line, hiddenPos, CGPoint(x: 0.0, y: 1000.0), .hidden), // redirect
-            (#line, hiddenPos + 10.0, CGPoint(x: 0.0, y: -1000.0), .full), // project to full
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .hidden),  // project to hidden
+                (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full),  // redirect
+                (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 100.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .hidden),  // project to hidden
+                (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full),  // redirect
+                (#line, hiddenPos - 10.0, CGPoint(x: 0.0, y: -100.0), .hidden),  // redirect
+                (#line, hiddenPos, CGPoint(x: 0.0, y: -1000.0), .full),  // project to full
+                (#line, hiddenPos, CGPoint(x: 0.0, y: -100.0), .hidden),
+                (#line, hiddenPos, CGPoint(x: 0.0, y: 0.0), .hidden),
+                (#line, hiddenPos, CGPoint(x: 0.0, y: 100.0), .hidden),
+                (#line, hiddenPos, CGPoint(x: 0.0, y: 1000.0), .hidden),  // redirect
+                (#line, hiddenPos + 10.0, CGPoint(x: 0.0, y: -1000.0), .full),  // project to full
             ])
         fpc.move(to: .hidden, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .hidden), // project to hidden
-            (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full), // redirect
-            (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 100.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .hidden), // project to hidden
-            (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full), // redirect
-            (#line, hiddenPos - 10.0, CGPoint(x: 0.0, y: -100.0), .hidden), // redirect
-            (#line, hiddenPos, CGPoint(x: 0.0, y: -1000.0), .full),  // project to full
-            (#line, hiddenPos, CGPoint(x: 0.0, y: -100.0), .hidden),
-            (#line, hiddenPos, CGPoint(x: 0.0, y: 0.0), .hidden),
-            (#line, hiddenPos, CGPoint(x: 0.0, y: 100.0), .hidden),
-            (#line, hiddenPos, CGPoint(x: 0.0, y: 1000.0), .hidden), // redirect
-            (#line, hiddenPos + 10.0, CGPoint(x: 0.0, y: -1000.0), .full), // project to full
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .hidden),  // project to hidden
+                (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full),  // redirect
+                (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 100.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .hidden),  // project to hidden
+                (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full),  // redirect
+                (#line, hiddenPos - 10.0, CGPoint(x: 0.0, y: -100.0), .hidden),  // redirect
+                (#line, hiddenPos, CGPoint(x: 0.0, y: -1000.0), .full),  // project to full
+                (#line, hiddenPos, CGPoint(x: 0.0, y: -100.0), .hidden),
+                (#line, hiddenPos, CGPoint(x: 0.0, y: 0.0), .hidden),
+                (#line, hiddenPos, CGPoint(x: 0.0, y: 100.0), .hidden),
+                (#line, hiddenPos, CGPoint(x: 0.0, y: 1000.0), .hidden),  // redirect
+                (#line, hiddenPos + 10.0, CGPoint(x: 0.0, y: -1000.0), .full),  // project to full
             ])
     }
 
@@ -434,36 +449,38 @@ class CoreTests: XCTestCase {
         let tipPos = fpc.surfaceLocation(for: .tip).y
         // From .full
         fpc.move(to: .full, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, fullPos - 500.0, CGPoint(x: 0.0, y: -100.0), .full), // far from topMostState
-            (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 0.0), .full), // far from topMostState
-            (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 100.0), .full), // far from topMostState
-            (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 3000.0), .half), // block projecting to tip at half
-            (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 500.0), .half), // project to half
-            (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .half), // block projecting to tip at half
-            (#line, fullPos, CGPoint(x: 0.0, y: 3000.0), .half), // block projecting to tip at half
-            (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full), // redirect
-            (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half), // redirect
-            (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .full), //project to full
-            (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 100.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .tip), // project to tip
-            (#line, halfPos + 10.0, CGPoint(x: 0.0, y: 100.0), .half), // redirect
-            (#line, tipPos - 10.0, CGPoint(x: 0.0, y: -100.0), .tip), // redirect
-            (#line, tipPos, CGPoint(x: 0.0, y: -3000.0), .half), // block projecting to full at half
-            (#line, tipPos, CGPoint(x: 0.0, y: -1000.0), .half), // block projecting to full at half
-            (#line, tipPos, CGPoint(x: 0.0, y: -500.0), .half), // project to half
-            (#line, tipPos, CGPoint(x: 0.0, y: -100.0), .tip),
-            (#line, tipPos, CGPoint(x: 0.0, y: 0.0), .tip),
-            (#line, tipPos, CGPoint(x: 0.0, y: 100.0), .tip),
-            (#line, tipPos + 10.0, CGPoint(x: 0.0, y: -3000.0), .half), // block projecting to full at half
-            (#line, tipPos + 500.0, CGPoint(x: 0.0, y: -100.0), .tip), // far from bottomMostState
-            (#line, tipPos + 500.0, CGPoint(x: 0.0, y: 0.0), .tip), // far from bottomMostState
-            (#line, tipPos + 500.0, CGPoint(x: 0.0, y: 100.0), .tip), // far from bottomMostState
-        ])
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, fullPos - 500.0, CGPoint(x: 0.0, y: -100.0), .full),  // far from topMostState
+                (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 0.0), .full),  // far from topMostState
+                (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 100.0), .full),  // far from topMostState
+                (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 3000.0), .half),  // block projecting to tip at half
+                (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 500.0), .half),  // project to half
+                (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .half),  // block projecting to tip at half
+                (#line, fullPos, CGPoint(x: 0.0, y: 3000.0), .half),  // block projecting to tip at half
+                (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full),  // redirect
+                (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half),  // redirect
+                (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .full),  //project to full
+                (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 100.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .tip),  // project to tip
+                (#line, halfPos + 10.0, CGPoint(x: 0.0, y: 100.0), .half),  // redirect
+                (#line, tipPos - 10.0, CGPoint(x: 0.0, y: -100.0), .tip),  // redirect
+                (#line, tipPos, CGPoint(x: 0.0, y: -3000.0), .half),  // block projecting to full at half
+                (#line, tipPos, CGPoint(x: 0.0, y: -1000.0), .half),  // block projecting to full at half
+                (#line, tipPos, CGPoint(x: 0.0, y: -500.0), .half),  // project to half
+                (#line, tipPos, CGPoint(x: 0.0, y: -100.0), .tip),
+                (#line, tipPos, CGPoint(x: 0.0, y: 0.0), .tip),
+                (#line, tipPos, CGPoint(x: 0.0, y: 100.0), .tip),
+                (#line, tipPos + 10.0, CGPoint(x: 0.0, y: -3000.0), .half),  // block projecting to full at half
+                (#line, tipPos + 500.0, CGPoint(x: 0.0, y: -100.0), .tip),  // far from bottomMostState
+                (#line, tipPos + 500.0, CGPoint(x: 0.0, y: 0.0), .tip),  // far from bottomMostState
+                (#line, tipPos + 500.0, CGPoint(x: 0.0, y: 100.0), .tip),  // far from bottomMostState
+            ])
     }
 
     func test_targetPosition_3positionsFromFull_bottomEdge() {
@@ -478,36 +495,38 @@ class CoreTests: XCTestCase {
         let tipPos = fpc.surfaceLocation(for: .tip).y
         // From .full
         fpc.move(to: .full, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, tipPos - 500.0, CGPoint(x: 0.0, y: -100.0), .tip), // far from topMostState
-            (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 0.0), .tip), // far from topMostState
-            (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 100.0), .tip), // far from topMostState
-            (#line, tipPos - 10.0, CGPoint(x: 0.0, y: 3000.0), .half), // block projecting to full at half
-            (#line, tipPos, CGPoint(x: 0.0, y: -100.0), .tip),
-            (#line, tipPos, CGPoint(x: 0.0, y: 0.0), .tip),
-            (#line, tipPos, CGPoint(x: 0.0, y: 500.0), .half), // project to half
-            (#line, tipPos, CGPoint(x: 0.0, y: 1000.0), .half), // block projecting to full at half
-            (#line, tipPos, CGPoint(x: 0.0, y: 3000.0), .half), // block projecting to full at half
-            (#line, tipPos + 10.0, CGPoint(x: 0.0, y: 100.0), .tip), // redirect
-            (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half), // redirect
-            (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .tip), //project to tip
-            (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 100.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .full), // project to full
-            (#line, halfPos + 10.0, CGPoint(x: 0.0, y: 100.0), .half), // redirect
-            (#line, fullPos - 10.0, CGPoint(x: 0.0, y: -100.0), .full), // redirect
-            (#line, fullPos, CGPoint(x: 0.0, y: -3000.0), .half), // block projecting to tip at half
-            (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .half), // block projecting to tip at half
-            (#line, fullPos, CGPoint(x: 0.0, y: -500.0), .half), // project to half
-            (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 100.0), .full),
-            (#line, fullPos + 10.0, CGPoint(x: 0.0, y: -3000.0), .half), // block projecting to tip at half
-            (#line, fullPos + 500.0, CGPoint(x: 0.0, y: -100.0), .full), // far from bottomMostState
-            (#line, fullPos + 500.0, CGPoint(x: 0.0, y: 0.0), .full), // far from bottomMostState
-            (#line, fullPos + 500.0, CGPoint(x: 0.0, y: 100.0), .full), // far from bottomMostState
-        ])
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, tipPos - 500.0, CGPoint(x: 0.0, y: -100.0), .tip),  // far from topMostState
+                (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 0.0), .tip),  // far from topMostState
+                (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 100.0), .tip),  // far from topMostState
+                (#line, tipPos - 10.0, CGPoint(x: 0.0, y: 3000.0), .half),  // block projecting to full at half
+                (#line, tipPos, CGPoint(x: 0.0, y: -100.0), .tip),
+                (#line, tipPos, CGPoint(x: 0.0, y: 0.0), .tip),
+                (#line, tipPos, CGPoint(x: 0.0, y: 500.0), .half),  // project to half
+                (#line, tipPos, CGPoint(x: 0.0, y: 1000.0), .half),  // block projecting to full at half
+                (#line, tipPos, CGPoint(x: 0.0, y: 3000.0), .half),  // block projecting to full at half
+                (#line, tipPos + 10.0, CGPoint(x: 0.0, y: 100.0), .tip),  // redirect
+                (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half),  // redirect
+                (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .tip),  //project to tip
+                (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 100.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .full),  // project to full
+                (#line, halfPos + 10.0, CGPoint(x: 0.0, y: 100.0), .half),  // redirect
+                (#line, fullPos - 10.0, CGPoint(x: 0.0, y: -100.0), .full),  // redirect
+                (#line, fullPos, CGPoint(x: 0.0, y: -3000.0), .half),  // block projecting to tip at half
+                (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .half),  // block projecting to tip at half
+                (#line, fullPos, CGPoint(x: 0.0, y: -500.0), .half),  // project to half
+                (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 100.0), .full),
+                (#line, fullPos + 10.0, CGPoint(x: 0.0, y: -3000.0), .half),  // block projecting to tip at half
+                (#line, fullPos + 500.0, CGPoint(x: 0.0, y: -100.0), .full),  // far from bottomMostState
+                (#line, fullPos + 500.0, CGPoint(x: 0.0, y: 0.0), .full),  // far from bottomMostState
+                (#line, fullPos + 500.0, CGPoint(x: 0.0, y: 100.0), .full),  // far from bottomMostState
+            ])
     }
 
     func test_targetPosition_3positionsFromHalf() {
@@ -522,34 +541,36 @@ class CoreTests: XCTestCase {
         let tipPos = fpc.surfaceLocation(for: .tip).y
         // From .half
         fpc.move(to: .half, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, fullPos - 500.0, CGPoint(x: 0.0, y: -100.0), .full), // far from topMostState
-            (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 0.0), .full), // far from topMostState
-            (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 100.0), .full), // far from topMostState
-            (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 500.0), .half), // project to half
-            (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .half), // block projecting to tip at half
-            (#line, fullPos, CGPoint(x: 0.0, y: 3000.0), .half), // block projecting to tip at half
-            (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full), // redirect
-            (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half), // redirect
-            (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .full),// project to full
-            (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 100.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .tip), // project to tip
-            (#line, halfPos + 10.0, CGPoint(x: 0.0, y: 100.0), .half), // redirect
-            (#line, tipPos - 10.0, CGPoint(x: 0.0, y: -100.0), .tip), // redirect
-            (#line, tipPos, CGPoint(x: 0.0, y: -3000.0), .half), // block projecting to full at half
-            (#line, tipPos, CGPoint(x: 0.0, y: -1000.0), .half), // block projecting to full at half
-            (#line, tipPos, CGPoint(x: 0.0, y: -500.0), .half), // project to half
-            (#line, tipPos, CGPoint(x: 0.0, y: -100.0), .tip),
-            (#line, tipPos, CGPoint(x: 0.0, y: 0.0), .tip),
-            (#line, tipPos, CGPoint(x: 0.0, y: 100.0), .tip),
-            (#line, tipPos + 500.0, CGPoint(x: 0.0, y: -100.0), .tip), // far from bottomMostState
-            (#line, tipPos + 500.0, CGPoint(x: 0.0, y: 0.0), .tip), // far from bottomMostState
-            (#line, tipPos + 500.0, CGPoint(x: 0.0, y: 100.0), .tip), // far from bottomMostState
-        ])
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, fullPos - 500.0, CGPoint(x: 0.0, y: -100.0), .full),  // far from topMostState
+                (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 0.0), .full),  // far from topMostState
+                (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 100.0), .full),  // far from topMostState
+                (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 500.0), .half),  // project to half
+                (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .half),  // block projecting to tip at half
+                (#line, fullPos, CGPoint(x: 0.0, y: 3000.0), .half),  // block projecting to tip at half
+                (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full),  // redirect
+                (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half),  // redirect
+                (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .full),  // project to full
+                (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 100.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .tip),  // project to tip
+                (#line, halfPos + 10.0, CGPoint(x: 0.0, y: 100.0), .half),  // redirect
+                (#line, tipPos - 10.0, CGPoint(x: 0.0, y: -100.0), .tip),  // redirect
+                (#line, tipPos, CGPoint(x: 0.0, y: -3000.0), .half),  // block projecting to full at half
+                (#line, tipPos, CGPoint(x: 0.0, y: -1000.0), .half),  // block projecting to full at half
+                (#line, tipPos, CGPoint(x: 0.0, y: -500.0), .half),  // project to half
+                (#line, tipPos, CGPoint(x: 0.0, y: -100.0), .tip),
+                (#line, tipPos, CGPoint(x: 0.0, y: 0.0), .tip),
+                (#line, tipPos, CGPoint(x: 0.0, y: 100.0), .tip),
+                (#line, tipPos + 500.0, CGPoint(x: 0.0, y: -100.0), .tip),  // far from bottomMostState
+                (#line, tipPos + 500.0, CGPoint(x: 0.0, y: 0.0), .tip),  // far from bottomMostState
+                (#line, tipPos + 500.0, CGPoint(x: 0.0, y: 100.0), .tip),  // far from bottomMostState
+            ])
     }
 
     func test_targetPosition_3positionsFromHalf_bottomEdge() {
@@ -557,40 +578,42 @@ class CoreTests: XCTestCase {
         let fpc = FloatingPanelController(delegate: delegate)
         fpc.layout = FloatingPanelLayout3PositionsBottomEdge()
 
-            fpc.showForTest()
+        fpc.showForTest()
 
-            let fullPos = fpc.surfaceLocation(for: .full).y
-            let halfPos = fpc.surfaceLocation(for: .half).y
-            let tipPos = fpc.surfaceLocation(for: .tip).y
-            // From .half
-            fpc.move(to: .half, animated: false)
-            assertTargetPosition(fpc.floatingPanel, with: [
-                (#line, tipPos - 500.0, CGPoint(x: 0.0, y: -100.0), .tip), // far from topMostState
-                (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 0.0), .tip), // far from topMostState
-                (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 100.0), .tip), // far from topMostState
+        let fullPos = fpc.surfaceLocation(for: .full).y
+        let halfPos = fpc.surfaceLocation(for: .half).y
+        let tipPos = fpc.surfaceLocation(for: .tip).y
+        // From .half
+        fpc.move(to: .half, animated: false)
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, tipPos - 500.0, CGPoint(x: 0.0, y: -100.0), .tip),  // far from topMostState
+                (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 0.0), .tip),  // far from topMostState
+                (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 100.0), .tip),  // far from topMostState
                 (#line, tipPos, CGPoint(x: 0.0, y: -100.0), .tip),
                 (#line, tipPos, CGPoint(x: 0.0, y: 0.0), .tip),
-                (#line, tipPos, CGPoint(x: 0.0, y: 500.0), .half), // project to half
-                (#line, tipPos, CGPoint(x: 0.0, y: 1000.0), .half), // block projecting to full at half
-                (#line, tipPos, CGPoint(x: 0.0, y: 3000.0), .half), // block projecting to full at half
-                (#line, tipPos + 10.0, CGPoint(x: 0.0, y: 100.0), .tip), // redirect
-                (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half), // redirect
-                (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .tip),// project to tip
+                (#line, tipPos, CGPoint(x: 0.0, y: 500.0), .half),  // project to half
+                (#line, tipPos, CGPoint(x: 0.0, y: 1000.0), .half),  // block projecting to full at half
+                (#line, tipPos, CGPoint(x: 0.0, y: 3000.0), .half),  // block projecting to full at half
+                (#line, tipPos + 10.0, CGPoint(x: 0.0, y: 100.0), .tip),  // redirect
+                (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half),  // redirect
+                (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .tip),  // project to tip
                 (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
                 (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
                 (#line, halfPos, CGPoint(x: 0.0, y: 100.0), .half),
-                (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .full), // project to full
-                (#line, halfPos + 10.0, CGPoint(x: 0.0, y: 100.0), .half), // redirect
-                (#line, fullPos - 10.0, CGPoint(x: 0.0, y: -100.0), .full), // redirect
-                (#line, fullPos, CGPoint(x: 0.0, y: -3000.0), .half), // block projecting to tip at half
-                (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .half), // block projecting to tip at half
-                (#line, fullPos, CGPoint(x: 0.0, y: -500.0), .half), // project to half
+                (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .full),  // project to full
+                (#line, halfPos + 10.0, CGPoint(x: 0.0, y: 100.0), .half),  // redirect
+                (#line, fullPos - 10.0, CGPoint(x: 0.0, y: -100.0), .full),  // redirect
+                (#line, fullPos, CGPoint(x: 0.0, y: -3000.0), .half),  // block projecting to tip at half
+                (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .half),  // block projecting to tip at half
+                (#line, fullPos, CGPoint(x: 0.0, y: -500.0), .half),  // project to half
                 (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
                 (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
                 (#line, fullPos, CGPoint(x: 0.0, y: 100.0), .full),
-                (#line, fullPos + 500.0, CGPoint(x: 0.0, y: -100.0), .full), // far from bottomMostState
-                (#line, fullPos + 500.0, CGPoint(x: 0.0, y: 0.0), .full), // far from bottomMostState
-                (#line, fullPos + 500.0, CGPoint(x: 0.0, y: 100.0), .full), // far from bottomMostState
+                (#line, fullPos + 500.0, CGPoint(x: 0.0, y: -100.0), .full),  // far from bottomMostState
+                (#line, fullPos + 500.0, CGPoint(x: 0.0, y: 0.0), .full),  // far from bottomMostState
+                (#line, fullPos + 500.0, CGPoint(x: 0.0, y: 100.0), .full),  // far from bottomMostState
             ])
     }
 
@@ -607,34 +630,36 @@ class CoreTests: XCTestCase {
 
         // From .tip
         fpc.move(to: .tip, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, fullPos - 500.0, CGPoint(x: 0.0, y: -100.0), .full), // far from topMostState
-            (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 0.0), .full), // far from topMostState
-            (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 100.0), .full), // far from topMostState
-            (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
-            (#line, fullPos, CGPoint(x: 0.0, y: 500.0), .half), // project to half
-            (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .half), // block projecting to tip at half
-            (#line, fullPos, CGPoint(x: 0.0, y: 3000.0), .half), // block projecting to tip at half
-            (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full), // redirect
-            (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half), // redirect
-            (#line, halfPos, CGPoint(x: 0.0, y: -3000.0), .full), // project to full
-            (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 100.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .tip), // project to tip
-            (#line, halfPos + 10.0, CGPoint(x: 0.0, y: 100.0), .half), // redirect
-            (#line, tipPos - 10.0, CGPoint(x: 0.0, y: -100.0), .tip), // redirect
-            (#line, tipPos, CGPoint(x: 0.0, y: -3000.0), .half), // block projecting to full at half
-            (#line, tipPos, CGPoint(x: 0.0, y: -1000.0), .half), // block projecting to full at half
-            (#line, tipPos, CGPoint(x: 0.0, y: -500.0), .half), // project to half
-            (#line, tipPos, CGPoint(x: 0.0, y: -100.0), .tip),
-            (#line, tipPos, CGPoint(x: 0.0, y: 0.0), .tip),
-            (#line, tipPos, CGPoint(x: 0.0, y: 100.0), .tip),
-            (#line, tipPos + 500.0, CGPoint(x: 0.0, y: -100.0), .tip), // far from bottomMostState
-            (#line, tipPos + 500.0, CGPoint(x: 0.0, y: 0.0), .tip), // far from bottomMostState
-            (#line, tipPos + 500.0, CGPoint(x: 0.0, y: 100.0), .tip), // far from bottomMostState
-        ])
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, fullPos - 500.0, CGPoint(x: 0.0, y: -100.0), .full),  // far from topMostState
+                (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 0.0), .full),  // far from topMostState
+                (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 100.0), .full),  // far from topMostState
+                (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
+                (#line, fullPos, CGPoint(x: 0.0, y: 500.0), .half),  // project to half
+                (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .half),  // block projecting to tip at half
+                (#line, fullPos, CGPoint(x: 0.0, y: 3000.0), .half),  // block projecting to tip at half
+                (#line, fullPos + 10.0, CGPoint(x: 0.0, y: 100.0), .full),  // redirect
+                (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half),  // redirect
+                (#line, halfPos, CGPoint(x: 0.0, y: -3000.0), .full),  // project to full
+                (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 100.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .tip),  // project to tip
+                (#line, halfPos + 10.0, CGPoint(x: 0.0, y: 100.0), .half),  // redirect
+                (#line, tipPos - 10.0, CGPoint(x: 0.0, y: -100.0), .tip),  // redirect
+                (#line, tipPos, CGPoint(x: 0.0, y: -3000.0), .half),  // block projecting to full at half
+                (#line, tipPos, CGPoint(x: 0.0, y: -1000.0), .half),  // block projecting to full at half
+                (#line, tipPos, CGPoint(x: 0.0, y: -500.0), .half),  // project to half
+                (#line, tipPos, CGPoint(x: 0.0, y: -100.0), .tip),
+                (#line, tipPos, CGPoint(x: 0.0, y: 0.0), .tip),
+                (#line, tipPos, CGPoint(x: 0.0, y: 100.0), .tip),
+                (#line, tipPos + 500.0, CGPoint(x: 0.0, y: -100.0), .tip),  // far from bottomMostState
+                (#line, tipPos + 500.0, CGPoint(x: 0.0, y: 0.0), .tip),  // far from bottomMostState
+                (#line, tipPos + 500.0, CGPoint(x: 0.0, y: 100.0), .tip),  // far from bottomMostState
+            ])
     }
 
     func test_targetPosition_3positionsFromTip_bottomEdge() {
@@ -644,39 +669,41 @@ class CoreTests: XCTestCase {
 
         fpc.showForTest()
 
-            let fullPos = fpc.surfaceLocation(for: .full).y
-            let halfPos = fpc.surfaceLocation(for: .half).y
-            let tipPos = fpc.surfaceLocation(for: .tip).y
+        let fullPos = fpc.surfaceLocation(for: .full).y
+        let halfPos = fpc.surfaceLocation(for: .half).y
+        let tipPos = fpc.surfaceLocation(for: .tip).y
 
-            // From .tip
-            fpc.move(to: .tip, animated: false)
-            assertTargetPosition(fpc.floatingPanel, with: [
-                (#line, tipPos - 500.0, CGPoint(x: 0.0, y: -100.0), .tip), // far from topMostState
-                (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 0.0), .tip), // far from topMostState
-                (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 100.0), .tip), // far from topMostState
+        // From .tip
+        fpc.move(to: .tip, animated: false)
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, tipPos - 500.0, CGPoint(x: 0.0, y: -100.0), .tip),  // far from topMostState
+                (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 0.0), .tip),  // far from topMostState
+                (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 100.0), .tip),  // far from topMostState
                 (#line, tipPos, CGPoint(x: 0.0, y: -100.0), .tip),
                 (#line, tipPos, CGPoint(x: 0.0, y: 0.0), .tip),
-                (#line, tipPos, CGPoint(x: 0.0, y: 500.0), .half), // project to half
-                (#line, tipPos, CGPoint(x: 0.0, y: 1000.0), .half), // block projecting to tip at half
-                (#line, tipPos, CGPoint(x: 0.0, y: 3000.0), .half), // block projecting to tip at half
-                (#line, tipPos + 10.0, CGPoint(x: 0.0, y: 100.0), .tip), // redirect
-                (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half), // redirect
-                (#line, halfPos, CGPoint(x: 0.0, y: -3000.0), .tip), // project to full
+                (#line, tipPos, CGPoint(x: 0.0, y: 500.0), .half),  // project to half
+                (#line, tipPos, CGPoint(x: 0.0, y: 1000.0), .half),  // block projecting to tip at half
+                (#line, tipPos, CGPoint(x: 0.0, y: 3000.0), .half),  // block projecting to tip at half
+                (#line, tipPos + 10.0, CGPoint(x: 0.0, y: 100.0), .tip),  // redirect
+                (#line, halfPos - 10.0, CGPoint(x: 0.0, y: -100.0), .half),  // redirect
+                (#line, halfPos, CGPoint(x: 0.0, y: -3000.0), .tip),  // project to full
                 (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
                 (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
                 (#line, halfPos, CGPoint(x: 0.0, y: 100.0), .half),
-                (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .full), // project to tip
-                (#line, halfPos + 10.0, CGPoint(x: 0.0, y: 100.0), .half), // redirect
-                (#line, fullPos - 10.0, CGPoint(x: 0.0, y: -100.0), .full), // redirect
-                (#line, fullPos, CGPoint(x: 0.0, y: -3000.0), .half), // block projecting to full at half
-                (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .half), // block projecting to full at half
-                (#line, fullPos, CGPoint(x: 0.0, y: -500.0), .half), // project to half
+                (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .full),  // project to tip
+                (#line, halfPos + 10.0, CGPoint(x: 0.0, y: 100.0), .half),  // redirect
+                (#line, fullPos - 10.0, CGPoint(x: 0.0, y: -100.0), .full),  // redirect
+                (#line, fullPos, CGPoint(x: 0.0, y: -3000.0), .half),  // block projecting to full at half
+                (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .half),  // block projecting to full at half
+                (#line, fullPos, CGPoint(x: 0.0, y: -500.0), .half),  // project to half
                 (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
                 (#line, fullPos, CGPoint(x: 0.0, y: 0.0), .full),
                 (#line, fullPos, CGPoint(x: 0.0, y: 100.0), .full),
-                (#line, fullPos + 500.0, CGPoint(x: 0.0, y: -100.0), .full), // far from bottomMostState
-                (#line, fullPos + 500.0, CGPoint(x: 0.0, y: 0.0), .full), // far from bottomMostState
-                (#line, fullPos + 500.0, CGPoint(x: 0.0, y: 100.0), .full), // far from bottomMostState
+                (#line, fullPos + 500.0, CGPoint(x: 0.0, y: -100.0), .full),  // far from bottomMostState
+                (#line, fullPos + 500.0, CGPoint(x: 0.0, y: 0.0), .full),  // far from bottomMostState
+                (#line, fullPos + 500.0, CGPoint(x: 0.0, y: 100.0), .full),  // far from bottomMostState
             ])
     }
 
@@ -694,37 +721,43 @@ class CoreTests: XCTestCase {
 
         // From .full
         fpc.move(to: .full, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 3000.0), .tip),
-            (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .tip),
-            (#line, fullPos, CGPoint(x: 0.0, y: 3000.0), .tip),
-            (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .tip),
-            (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .full),
-            (#line, tipPos, CGPoint(x: 0.0, y: -3000.0), .full),
-            (#line, tipPos, CGPoint(x: 0.0, y: -1000.0), .full),
-            (#line, tipPos + 10.0, CGPoint(x: 0.0, y: -3000.0), .full),
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 3000.0), .tip),
+                (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .tip),
+                (#line, fullPos, CGPoint(x: 0.0, y: 3000.0), .tip),
+                (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .tip),
+                (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .full),
+                (#line, tipPos, CGPoint(x: 0.0, y: -3000.0), .full),
+                (#line, tipPos, CGPoint(x: 0.0, y: -1000.0), .full),
+                (#line, tipPos + 10.0, CGPoint(x: 0.0, y: -3000.0), .full),
             ])
 
         // From .half
         fpc.move(to: .tip, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .tip),
-            (#line, fullPos, CGPoint(x: 0.0, y: 3000.0), .tip),
-            (#line, tipPos, CGPoint(x: 0.0, y: -3000.0), .full),
-            (#line, tipPos, CGPoint(x: 0.0, y: -1000.0), .full),
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .tip),
+                (#line, fullPos, CGPoint(x: 0.0, y: 3000.0), .tip),
+                (#line, tipPos, CGPoint(x: 0.0, y: -3000.0), .full),
+                (#line, tipPos, CGPoint(x: 0.0, y: -1000.0), .full),
             ])
 
         // From .tip
         fpc.move(to: .tip, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 3000.0), .tip),
-            (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .tip),
-            (#line, fullPos, CGPoint(x: 0.0, y: 3000.0), .tip),
-            (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .tip),
-            (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .full),
-            (#line, tipPos, CGPoint(x: 0.0, y: -3000.0), .full),
-            (#line, tipPos, CGPoint(x: 0.0, y: -1000.0), .full),
-            (#line, tipPos + 10.0, CGPoint(x: 0.0, y: -3000.0), .full),
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 3000.0), .tip),
+                (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .tip),
+                (#line, fullPos, CGPoint(x: 0.0, y: 3000.0), .tip),
+                (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .tip),
+                (#line, halfPos, CGPoint(x: 0.0, y: -1000.0), .full),
+                (#line, tipPos, CGPoint(x: 0.0, y: -3000.0), .full),
+                (#line, tipPos, CGPoint(x: 0.0, y: -1000.0), .full),
+                (#line, tipPos + 10.0, CGPoint(x: 0.0, y: -3000.0), .full),
             ])
     }
 
@@ -732,7 +765,7 @@ class CoreTests: XCTestCase {
         class FloatingPanelLayout3PositionsWithHidden: FloatingPanelLayout {
             let initialState: FloatingPanelState = .hidden
             let position: FloatingPanelPosition = .bottom
-            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+            let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
                 .full: FloatingPanelLayoutAnchor(absoluteInset: 20.0, edge: .top, referenceGuide: .superview),
                 .half: FloatingPanelLayoutAnchor(absoluteInset: 250.0, edge: .bottom, referenceGuide: .superview),
                 .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .bottom, referenceGuide: .superview),
@@ -746,15 +779,19 @@ class CoreTests: XCTestCase {
         XCTAssertEqual(fpc.state, .hidden)
 
         fpc.move(to: .full, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, fpc.surfaceView.frame.minY, CGPoint(x: 0.0, y: 1000.0), .half),
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, fpc.surfaceView.frame.minY, CGPoint(x: 0.0, y: 1000.0), .half)
             ])
         fpc.move(to: .half, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, fpc.surfaceView.frame.minY, CGPoint(x: 0.0, y: -100.0), .half),
-            (#line, fpc.surfaceView.frame.minY, CGPoint(x: 0.0, y: -1000.0), .full),
-            (#line, fpc.surfaceView.frame.minY, CGPoint(x: 0.0, y: 0.0), .half),
-            (#line, fpc.surfaceView.frame.minY, CGPoint(x: 0.0, y: 1000.0), .hidden),
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, fpc.surfaceView.frame.minY, CGPoint(x: 0.0, y: -100.0), .half),
+                (#line, fpc.surfaceView.frame.minY, CGPoint(x: 0.0, y: -1000.0), .full),
+                (#line, fpc.surfaceView.frame.minY, CGPoint(x: 0.0, y: 0.0), .half),
+                (#line, fpc.surfaceView.frame.minY, CGPoint(x: 0.0, y: 1000.0), .hidden),
             ])
     }
 
@@ -762,7 +799,7 @@ class CoreTests: XCTestCase {
         class FloatingPanelLayout3Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .hidden
             let position: FloatingPanelPosition = .bottom
-            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+            let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
                 .half: FloatingPanelLayoutAnchor(absoluteInset: 250.0, edge: .bottom, referenceGuide: .superview),
                 .tip: FloatingPanelLayoutAnchor(absoluteInset: 60.0, edge: .bottom, referenceGuide: .superview),
                 .hidden: FloatingPanelLayoutAnchor(absoluteInset: 0, edge: .bottom, referenceGuide: .superview),
@@ -782,27 +819,31 @@ class CoreTests: XCTestCase {
         //let hiddenPos = fpc.surfaceLocation(for: .hidden)
 
         fpc.move(to: .half, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
-            (#line, halfPos, CGPoint(x: 0.0, y: 385.0), .tip), // projection
-            (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .hidden), // projection
-            (#line, halfPos + 10.0, CGPoint(x: 0.0, y: 100.0), .half), // redirection
-            (#line, tipPos - 10.0, CGPoint(x: 0.0, y: -100.0), .tip), // redirection
-            (#line, tipPos, CGPoint(x: 0.0, y: -3000.0), .half), //projection
-            (#line, tipPos, CGPoint(x: 0.0, y: -10.0), .tip),
-            (#line, tipPos, CGPoint(x: 0.0, y: 0.0), .tip),
-            (#line, tipPos, CGPoint(x: 0.0, y: 10.0), .tip),
-            (#line, tipPos, CGPoint(x: 0.0, y: 1000.0), .hidden), //projection
-            (#line, tipPos + 10.0, CGPoint(x: 0.0, y: 10.0), .tip), // redirection
-            (#line, tipPos - 10.0, CGPoint(x: 0.0, y: 10.0), .tip), // redirection
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
+                (#line, halfPos, CGPoint(x: 0.0, y: 385.0), .tip),  // projection
+                (#line, halfPos, CGPoint(x: 0.0, y: 1000.0), .hidden),  // projection
+                (#line, halfPos + 10.0, CGPoint(x: 0.0, y: 100.0), .half),  // redirection
+                (#line, tipPos - 10.0, CGPoint(x: 0.0, y: -100.0), .tip),  // redirection
+                (#line, tipPos, CGPoint(x: 0.0, y: -3000.0), .half),  //projection
+                (#line, tipPos, CGPoint(x: 0.0, y: -10.0), .tip),
+                (#line, tipPos, CGPoint(x: 0.0, y: 0.0), .tip),
+                (#line, tipPos, CGPoint(x: 0.0, y: 10.0), .tip),
+                (#line, tipPos, CGPoint(x: 0.0, y: 1000.0), .hidden),  //projection
+                (#line, tipPos + 10.0, CGPoint(x: 0.0, y: 10.0), .tip),  // redirection
+                (#line, tipPos - 10.0, CGPoint(x: 0.0, y: 10.0), .tip),  // redirection
             ])
         fpc.move(to: .tip, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
-            (#line, tipPos, CGPoint(x: 0.0, y: -100.0), .tip),
-            (#line, tipPos, CGPoint(x: 0.0, y: -1000.0), .half),
-            (#line, tipPos, CGPoint(x: 0.0, y: 0.0), .tip),
-            (#line, tipPos, CGPoint(x: 0.0, y: 1000.0), .hidden),
+        assertTargetPosition(
+            fpc.floatingPanel,
+            with: [
+                (#line, tipPos, CGPoint(x: 0.0, y: -100.0), .tip),
+                (#line, tipPos, CGPoint(x: 0.0, y: -1000.0), .half),
+                (#line, tipPos, CGPoint(x: 0.0, y: 0.0), .tip),
+                (#line, tipPos, CGPoint(x: 0.0, y: 1000.0), .hidden),
             ])
     }
 
@@ -826,7 +867,7 @@ private class FloatingPanelLayout3PositionsBottomEdge: FloatingPanelTop2BottomTe
     }
 }
 
-private typealias TestParameter = (UInt, CGFloat,  CGPoint, FloatingPanelState)
+private typealias TestParameter = (UInt, CGFloat, CGPoint, FloatingPanelState)
 private func assertTargetPosition(_ floatingPanel: Core, with params: [TestParameter]) {
     params.forEach { (line, pos, velocity, result) in
         floatingPanel.surfaceView.frame.origin.y = pos

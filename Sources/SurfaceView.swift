@@ -81,9 +81,11 @@ public class SurfaceView: UIView {
     public let grabberHandle = GrabberView()
 
     /// Offset of the grabber handle from the interactive edge.
-    public var grabberHandlePadding: CGFloat = 6.0 { didSet {
-        setNeedsUpdateConstraints()
-    } }
+    public var grabberHandlePadding: CGFloat = 6.0 {
+        didSet {
+            setNeedsUpdateConstraints()
+        }
+    }
 
     /// The offset from the move edge to prevent the content scroll
     public var grabberAreaOffset: CGFloat = 36.0
@@ -91,9 +93,11 @@ public class SurfaceView: UIView {
     /// The grabber handle size
     ///
     /// On left/right positioned panel the width dimension is used as the height of ``grabberHandle``, and vice versa.
-    public var grabberHandleSize: CGSize = CGSize(width: 36.0, height: 5.0) { didSet {
-        setNeedsUpdateConstraints()
-    } }
+    public var grabberHandleSize: CGSize = CGSize(width: 36.0, height: 5.0) {
+        didSet {
+            setNeedsUpdateConstraints()
+        }
+    }
 
     /// The content view to be assigned a view of the content view controller of `FloatingPanelController`
     public weak var contentView: UIView?
@@ -108,19 +112,26 @@ public class SurfaceView: UIView {
 
     public override var backgroundColor: UIColor? {
         get { return appearance.backgroundColor }
-        set { appearance.backgroundColor = newValue; setNeedsLayout() }
+        set {
+            appearance.backgroundColor = newValue
+            setNeedsLayout()
+        }
     }
 
     /// The appearance settings for a surface view.
-    public var appearance = SurfaceAppearance() { didSet {
-        shadowLayers = appearance.shadows.map { _ in CAShapeLayer() }
-        setNeedsLayout()
-    }}
+    public var appearance = SurfaceAppearance() {
+        didSet {
+            shadowLayers = appearance.shadows.map { _ in CAShapeLayer() }
+            setNeedsLayout()
+        }
+    }
 
     /// The margins to use when laying out the container view wrapping content.
-    public var containerMargins: UIEdgeInsets = .zero { didSet {
-        setNeedsUpdateConstraints()
-    } }
+    public var containerMargins: UIEdgeInsets = .zero {
+        didSet {
+            setNeedsUpdateConstraints()
+        }
+    }
 
     /// The view that displays an actual surface shape.
     ///
@@ -130,7 +141,7 @@ public class SurfaceView: UIView {
     /// content view.
     public let containerView: UIView = UIView()
 
-    var containerOverflow: CGFloat = 0.0 { // Must not call setNeedsLayout()
+    var containerOverflow: CGFloat = 0.0 {  // Must not call setNeedsLayout()
         didSet {
             // Calling setNeedsUpdateConstraints() is necessary to fix a layout break
             // when the contentMode is changed after laying out a panel, for instance,
@@ -142,10 +153,12 @@ public class SurfaceView: UIView {
     var position: FloatingPanelPosition = .bottom {
         didSet {
             guard position != oldValue else { return }
-            NSLayoutConstraint.deactivate([grabberHandleEdgePaddingConstraint,
-                                           grabberHandleCenterConstraint,
-                                           grabberHandleWidthConstraint,
-                                           grabberHandleHeightConstraint])
+            NSLayoutConstraint.deactivate([
+                grabberHandleEdgePaddingConstraint,
+                grabberHandleCenterConstraint,
+                grabberHandleWidthConstraint,
+                grabberHandleHeightConstraint,
+            ])
             switch position {
             case .top:
                 grabberHandleEdgePaddingConstraint = grabberHandle.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -grabberHandlePadding)
@@ -168,10 +181,12 @@ public class SurfaceView: UIView {
                 grabberHandleWidthConstraint = grabberHandle.widthAnchor.constraint(equalToConstant: grabberHandleSize.height)
                 grabberHandleHeightConstraint = grabberHandle.heightAnchor.constraint(equalToConstant: grabberHandleSize.width)
             }
-            NSLayoutConstraint.activate([grabberHandleEdgePaddingConstraint,
-                                         grabberHandleCenterConstraint,
-                                         grabberHandleWidthConstraint,
-                                         grabberHandleHeightConstraint])
+            NSLayoutConstraint.activate([
+                grabberHandleEdgePaddingConstraint,
+                grabberHandleCenterConstraint,
+                grabberHandleWidthConstraint,
+                grabberHandleHeightConstraint,
+            ])
             setNeedsUpdateConstraints()
         }
     }
@@ -179,17 +194,25 @@ public class SurfaceView: UIView {
     var grabberAreaFrame: CGRect {
         switch position {
         case .top:
-            return CGRect(origin: .init(x: bounds.minX, y: bounds.maxY - grabberAreaOffset),
-                          size: .init(width: bounds.width, height: grabberAreaOffset))
+            return CGRect(
+                origin: .init(x: bounds.minX, y: bounds.maxY - grabberAreaOffset),
+                size: .init(width: bounds.width, height: grabberAreaOffset)
+            )
         case .left:
-            return CGRect(origin: .init(x: bounds.maxX - grabberAreaOffset, y: bounds.minY),
-                          size: .init(width: grabberAreaOffset, height: bounds.height))
+            return CGRect(
+                origin: .init(x: bounds.maxX - grabberAreaOffset, y: bounds.minY),
+                size: .init(width: grabberAreaOffset, height: bounds.height)
+            )
         case .bottom:
-            return CGRect(origin: CGPoint(x: bounds.minX, y: bounds.minY),
-                          size: CGSize(width: bounds.width, height: grabberAreaOffset))
+            return CGRect(
+                origin: CGPoint(x: bounds.minX, y: bounds.minY),
+                size: CGSize(width: bounds.width, height: grabberAreaOffset)
+            )
         case .right:
-            return CGRect(origin: .init(x: bounds.minX, y: bounds.minY),
-                          size: .init(width: grabberAreaOffset, height: bounds.height))
+            return CGRect(
+                origin: .init(x: bounds.minX, y: bounds.minY),
+                size: .init(width: grabberAreaOffset, height: bounds.height)
+            )
         }
     }
 
@@ -209,7 +232,7 @@ public class SurfaceView: UIView {
 
     private lazy var grabberHandleWidthConstraint = grabberHandle.widthAnchor.constraint(equalToConstant: grabberHandleSize.width)
     private lazy var grabberHandleHeightConstraint = grabberHandle.heightAnchor.constraint(equalToConstant: grabberHandleSize.height)
-    private lazy var grabberHandleCenterConstraint =  grabberHandle.centerXAnchor.constraint(equalTo: centerXAnchor)
+    private lazy var grabberHandleCenterConstraint = grabberHandle.centerXAnchor.constraint(equalTo: centerXAnchor)
     private lazy var grabberHandleEdgePaddingConstraint = grabberHandle.topAnchor.constraint(equalTo: topAnchor, constant: grabberHandlePadding)
 
     private var shadowLayers: [CALayer] = [] {
@@ -243,27 +266,31 @@ public class SurfaceView: UIView {
 
         addSubview(containerView)
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            containerViewTopConstraint,
-            containerViewLeftConstraint,
-            containerViewBottomConstraint,
-            containerViewRightConstraint,
-        ].map {
-            $0.identifier = "FloatingPanel-surface-container"
-            return $0;
-        })
+        NSLayoutConstraint.activate(
+            [
+                containerViewTopConstraint,
+                containerViewLeftConstraint,
+                containerViewBottomConstraint,
+                containerViewRightConstraint,
+            ].map {
+                $0.identifier = "FloatingPanel-surface-container"
+                return $0
+            }
+        )
 
         addSubview(grabberHandle)
         grabberHandle.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            grabberHandleEdgePaddingConstraint,
-            grabberHandleCenterConstraint,
-            grabberHandleWidthConstraint,
-            grabberHandleHeightConstraint,
-        ].map {
-            $0.identifier = "FloatingPanel-surface-grabber"
-            return $0;
-        })
+        NSLayoutConstraint.activate(
+            [
+                grabberHandleEdgePaddingConstraint,
+                grabberHandleCenterConstraint,
+                grabberHandleWidthConstraint,
+                grabberHandleHeightConstraint,
+            ].map {
+                $0.identifier = "FloatingPanel-surface-grabber"
+                return $0
+            }
+        )
 
         shadowLayers = appearance.shadows.map { _ in CALayer() }
     }
@@ -311,7 +338,7 @@ public class SurfaceView: UIView {
         case .left, .right:
             grabberHandleWidthConstraint.constant = grabberHandleSize.height
             grabberHandleHeightConstraint.constant = grabberHandleSize.width
-       }
+        }
 
         super.updateConstraints()
     }
@@ -332,8 +359,10 @@ public class SurfaceView: UIView {
     public override var intrinsicContentSize: CGSize {
         let fittingSize = UIView.layoutFittingCompressedSize
         let contentSize = contentView?.systemLayoutSizeFitting(fittingSize) ?? .zero
-        return CGSize(width: containerMargins.horizontalInset + contentPadding.horizontalInset + contentSize.width,
-                      height: containerMargins.verticalInset + contentPadding.verticalInset + contentSize.height)
+        return CGSize(
+            width: containerMargins.horizontalInset + contentPadding.horizontalInset + contentSize.width,
+            height: containerMargins.verticalInset + contentPadding.verticalInset + contentSize.height
+        )
     }
 
     private func updateShadow() {
@@ -348,8 +377,10 @@ public class SurfaceView: UIView {
 
             let spread = shadow.spread
             let shadowRect = containerView.frame.insetBy(dx: -spread, dy: -spread)
-            let shadowPath = UIBezierPath.path(roundedRect: shadowRect,
-                                               appearance: appearance)
+            let shadowPath = UIBezierPath.path(
+                roundedRect: shadowRect,
+                appearance: appearance
+            )
             shadowLayer.shadowPath = shadowPath.cgPath
             shadowLayer.shadowColor = shadow.color.cgColor
             shadowLayer.shadowOffset = shadow.offset
@@ -358,11 +389,19 @@ public class SurfaceView: UIView {
             shadowLayer.shadowOpacity = shadow.opacity
 
             let mask = CAShapeLayer()
-            let path = UIBezierPath.path(roundedRect: containerView.frame,
-                                         appearance: appearance)
+            let path = UIBezierPath.path(
+                roundedRect: containerView.frame,
+                appearance: appearance
+            )
             let size = window?.bounds.size ?? CGSize(width: 1000.0, height: 1000.0)
-            path.append(UIBezierPath(rect: layer.bounds.insetBy(dx: -size.width,
-                                                                dy: -size.height)))
+            path.append(
+                UIBezierPath(
+                    rect: layer.bounds.insetBy(
+                        dx: -size.width,
+                        dy: -size.height
+                    )
+                )
+            )
             mask.fillRule = .evenOdd
             mask.path = path.cgPath
             if #available(iOS 13.0, *) {
@@ -383,8 +422,10 @@ public class SurfaceView: UIView {
         containerView.layer.masksToBounds = true
         if position.inset(containerMargins) != 0 {
             if #available(iOS 11, *) {
-                containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,
-                                                     .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+                containerView.layer.maskedCorners = [
+                    .layerMinXMinYCorner, .layerMaxXMinYCorner,
+                    .layerMinXMaxYCorner, .layerMaxXMaxYCorner,
+                ]
             }
             return
         }
@@ -416,28 +457,33 @@ public class SurfaceView: UIView {
     func set(contentView: UIView, mode: FloatingPanelController.ContentMode) {
         containerView.addSubview(contentView)
         self.contentView = contentView
-        /* contentView.frame = bounds */ // MUST NOT: Because the top safe area inset of a content VC will be incorrect.
+        /**
+         // MUST NOT: Because the top safe area inset of a content VC will be incorrect.
+         contentView.frame = bounds
+         */
         contentView.translatesAutoresizingMaskIntoConstraints = false
         let topConstraint = contentView.topAnchor.constraint(equalTo: topAnchor, constant: containerMargins.top + contentPadding.top)
         let leftConstraint = contentView.leftAnchor.constraint(equalTo: leftAnchor, constant: containerMargins.left + contentPadding.left)
         let rightConstraint = rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: containerMargins.right + contentPadding.right)
         let bottomConstraint = bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: containerMargins.bottom + contentPadding.bottom)
-        NSLayoutConstraint.activate([
-            topConstraint,
-            leftConstraint,
-            rightConstraint,
-            bottomConstraint,
-        ].map {
-            switch mode {
-            case .static:
-                $0.priority = .required
-            // The reason why this priority is set to .required - 1 is #359, which fixed #294.
-            case .fitToBounds:
-                $0.priority = .required - 1
+        NSLayoutConstraint.activate(
+            [
+                topConstraint,
+                leftConstraint,
+                rightConstraint,
+                bottomConstraint,
+            ].map {
+                switch mode {
+                case .static:
+                    $0.priority = .required
+                // The reason why this priority is set to .required - 1 is #359, which fixed #294.
+                case .fitToBounds:
+                    $0.priority = .required - 1
+                }
+                $0.identifier = "FloatingPanel-surface-content"
+                return $0
             }
-            $0.identifier = "FloatingPanel-surface-content"
-            return $0
-        })
+        )
         self.contentViewTopConstraint = topConstraint
         self.contentViewLeftConstraint = leftConstraint
         self.contentViewRightConstraint = rightConstraint

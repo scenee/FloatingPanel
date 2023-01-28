@@ -7,78 +7,76 @@ import UIKit
 /// dragging, attracting a panel, layout of a panel and the content, and transition animations.
 @objc public protocol FloatingPanelControllerDelegate {
     /// Returns a FloatingPanelLayout object. If you use the default one, you can use a `FloatingPanelBottomLayout` object.
-    @objc(floatingPanel:layoutForTraitCollection:) optional
-    func floatingPanel(_ fpc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout
+    @objc(floatingPanel:layoutForTraitCollection:)
+    optional func floatingPanel(_ fpc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout
 
     /// Returns a FloatingPanelLayout object. If you use the default one, you can use a `FloatingPanelBottomLayout` object.
-    @objc(floatingPanel:layoutForSize:) optional
-    func floatingPanel(_ fpc: FloatingPanelController, layoutFor size: CGSize) -> FloatingPanelLayout
+    @objc(floatingPanel:layoutForSize:)
+    optional func floatingPanel(_ fpc: FloatingPanelController, layoutFor size: CGSize) -> FloatingPanelLayout
 
     /// Returns a UIViewPropertyAnimator object to add/present the  panel to a position.
     ///
     /// Default is the spring animation with 0.25 secs.
-    @objc(floatingPanel:animatorForPresentingToState:) optional
-    func floatingPanel(_ fpc: FloatingPanelController, animatorForPresentingTo state: FloatingPanelState) -> UIViewPropertyAnimator
+    @objc(floatingPanel:animatorForPresentingToState:)
+    optional func floatingPanel(_ fpc: FloatingPanelController, animatorForPresentingTo state: FloatingPanelState) -> UIViewPropertyAnimator
 
     /// Returns a UIViewPropertyAnimator object to remove/dismiss a panel from a position.
     ///
     /// Default is the spring animator with 0.25 secs.
-    @objc(floatingPanel:animatorForDismissingWithVelocity:) optional
-    func floatingPanel(_ fpc: FloatingPanelController, animatorForDismissingWith velocity: CGVector) -> UIViewPropertyAnimator
+    @objc(floatingPanel:animatorForDismissingWithVelocity:)
+    optional func floatingPanel(_ fpc: FloatingPanelController, animatorForDismissingWith velocity: CGVector) -> UIViewPropertyAnimator
 
     /// Called when a panel has changed to a new state.
     ///
     /// This can be called inside an animation block for presenting, dismissing a panel or moving a panel with your
     /// animation. So any view properties set inside this function will be automatically animated alongside a panel.
-    @objc optional
-    func floatingPanelDidChangeState(_ fpc: FloatingPanelController)
+    @objc
+    optional func floatingPanelDidChangeState(_ fpc: FloatingPanelController)
 
     /// Asks the delegate if dragging should begin by the pan gesture recognizer.
-    @objc optional
-    func floatingPanelShouldBeginDragging(_ fpc: FloatingPanelController) -> Bool
+    @objc
+    optional func floatingPanelShouldBeginDragging(_ fpc: FloatingPanelController) -> Bool
 
     /// Called while the user drags the surface or the surface moves to a state anchor.
-    @objc optional
-    func floatingPanelDidMove(_ fpc: FloatingPanelController)
+    @objc
+    optional func floatingPanelDidMove(_ fpc: FloatingPanelController)
 
     /// Called on start of dragging (may require some time and or distance to move)
-    @objc optional
-    func floatingPanelWillBeginDragging(_ fpc: FloatingPanelController)
+    @objc
+    optional func floatingPanelWillBeginDragging(_ fpc: FloatingPanelController)
 
     /// Called on finger up if the user dragged. velocity is in points/second.
-    @objc optional
-    func floatingPanelWillEndDragging(_ fpc: FloatingPanelController, withVelocity velocity: CGPoint, targetState: UnsafeMutablePointer<FloatingPanelState>)
+    @objc
+    optional func floatingPanelWillEndDragging(_ fpc: FloatingPanelController, withVelocity velocity: CGPoint, targetState: UnsafeMutablePointer<FloatingPanelState>)
 
     /// Called on finger up if the user dragged.
     ///
     /// If `attract` is true, it will continue moving afterwards to a nearby state anchor.
-    @objc optional
-    func floatingPanelDidEndDragging(_ fpc: FloatingPanelController, willAttract attract: Bool)
+    @objc
+    optional func floatingPanelDidEndDragging(_ fpc: FloatingPanelController, willAttract attract: Bool)
 
     /// Called when it is about to be attracted to a state anchor.
-    @objc optional
-    func floatingPanelWillBeginAttracting(_ fpc: FloatingPanelController, to state: FloatingPanelState) // called on finger up as a panel are moving
+    @objc
+    optional func floatingPanelWillBeginAttracting(_ fpc: FloatingPanelController, to state: FloatingPanelState)  // called on finger up as a panel are moving
 
     /// Called when attracting it is completed.
-    @objc optional
-    func floatingPanelDidEndAttracting(_ fpc: FloatingPanelController) // called when a panel stops
+    @objc
+    optional func floatingPanelDidEndAttracting(_ fpc: FloatingPanelController)  // called when a panel stops
 
     /// Asks the delegate whether a panel should be removed when dragging ended at the specified location
     ///
     /// This delegate method is called only where ``FloatingPanel/FloatingPanelController/isRemovalInteractionEnabled``  is `true`.
     /// The velocity vector is calculated from the distance to a point of the hidden state and the pan gesture's velocity.
     @objc(floatingPanel:shouldRemoveAtLocation:withVelocity:)
-    optional
-    func floatingPanel(_ fpc: FloatingPanelController, shouldRemoveAt location: CGPoint, with velocity: CGVector) -> Bool
+    optional func floatingPanel(_ fpc: FloatingPanelController, shouldRemoveAt location: CGPoint, with velocity: CGVector) -> Bool
 
     /// Called on start to remove its view controller from the parent view controller.
     @objc(floatingPanelWillRemove:)
-    optional
-    func floatingPanelWillRemove(_ fpc: FloatingPanelController)
+    optional func floatingPanelWillRemove(_ fpc: FloatingPanelController)
 
     /// Called when a panel is removed from the parent view controller.
-    @objc optional
-    func floatingPanelDidRemove(_ fpc: FloatingPanelController)
+    @objc
+    optional func floatingPanelDidRemove(_ fpc: FloatingPanelController)
 
     /// Asks the delegate for a content offset of the tracking scroll view to be pinned when a panel moves
     ///
@@ -88,8 +86,7 @@ import UIKit
     ///
     /// This method will not be called if the controller doesn't track any scroll view.
     @objc(floatingPanel:contentOffsetForPinningScrollView:)
-    optional
-    func floatingPanel(_ fpc: FloatingPanelController, contentOffsetForPinning trackingScrollView: UIScrollView) -> CGPoint
+    optional func floatingPanel(_ fpc: FloatingPanelController, contentOffsetForPinning trackingScrollView: UIScrollView) -> CGPoint
 }
 
 ///
@@ -114,9 +111,9 @@ open class FloatingPanelController: UIViewController {
     }
 
     /// The delegate of a panel controller object.
-    @objc 
-    public weak var delegate: FloatingPanelControllerDelegate?{
-        didSet{
+    @objc
+    public weak var delegate: FloatingPanelControllerDelegate? {
+        didSet {
             didUpdateDelegate()
         }
     }
@@ -193,7 +190,7 @@ open class FloatingPanelController: UIViewController {
     /// The behavior for determining the adjusted content offsets.
     ///
     /// This property specifies how the content area of the tracking scroll view is modified using ``adjustedContentInsets``. The default value of this property is FloatingPanelController.ContentInsetAdjustmentBehavior.always.
-    @objc 
+    @objc
     public var contentInsetAdjustmentBehavior: ContentInsetAdjustmentBehavior = .always
 
     /// A Boolean value that determines whether the removal interaction is enabled.
@@ -228,7 +225,7 @@ open class FloatingPanelController: UIViewController {
     private var _contentViewController: UIViewController?
 
     private(set) var floatingPanel: Core!
-    private var preSafeAreaInsets: UIEdgeInsets = .zero // Capture the latest one
+    private var preSafeAreaInsets: UIEdgeInsets = .zero  // Capture the latest one
     private var safeAreaInsetsObservation: NSKeyValueObservation?
     private let modalTransition = ModalTransition()
 
@@ -267,7 +264,7 @@ open class FloatingPanelController: UIViewController {
         floatingPanel = Core(self, layout: initialLayout, behavior: initialBehavior)
     }
 
-    private func didUpdateDelegate(){
+    private func didUpdateDelegate() {
         if let layout = delegate?.floatingPanel?(self, layoutFor: traitCollection) {
             _layout = layout
         }
@@ -373,7 +370,7 @@ open class FloatingPanelController: UIViewController {
     private func update(safeAreaInsets: UIEdgeInsets) {
         guard
             preSafeAreaInsets != safeAreaInsets
-            else { return }
+        else { return }
 
         log.debug("Update safeAreaInsets", safeAreaInsets)
 
@@ -454,17 +451,21 @@ open class FloatingPanelController: UIViewController {
             // Instead, update(safeAreaInsets:) is called at `viewDidLayoutSubviews()`
         }
 
-        move(to: floatingPanel.layoutAdapter.initialState,
-             animated: animated,
-             completion: completion)
+        move(
+            to: floatingPanel.layoutAdapter.initialState,
+            animated: animated,
+            completion: completion
+        )
     }
 
     /// Hides the surface view to the hidden position
     @objc(hide:completion:)
     public func hide(animated: Bool = false, completion: (() -> Void)? = nil) {
-        move(to: .hidden,
-             animated: animated,
-             completion: completion)
+        move(
+            to: .hidden,
+            animated: animated,
+            completion: completion
+        )
     }
 
     /// Adds the view managed by the controller as a child of the specified view controller.
@@ -493,14 +494,14 @@ open class FloatingPanelController: UIViewController {
 
         parent.addChild(self)
 
-        view.frame = parent.view.bounds // Needed for a correct safe area configuration
+        view.frame = parent.view.bounds  // Needed for a correct safe area configuration
         view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             self.view.topAnchor.constraint(equalTo: parent.view.topAnchor, constant: 0.0),
             self.view.leftAnchor.constraint(equalTo: parent.view.leftAnchor, constant: 0.0),
             self.view.rightAnchor.constraint(equalTo: parent.view.rightAnchor, constant: 0.0),
             self.view.bottomAnchor.constraint(equalTo: parent.view.bottomAnchor, constant: 0.0),
-            ])
+        ])
 
         show(animated: animated) { [weak self] in
             guard let self = self else { return }
@@ -594,7 +595,7 @@ open class FloatingPanelController: UIViewController {
             break
         }
     }
-    
+
     /// [Experimental] Allows the panel to move as its tracking scroll view bounces.
     ///
     /// This method must be called in the delegate method, `UIScrollViewDelegate.scrollViewDidScroll(_:)`,
@@ -674,21 +675,27 @@ extension FloatingPanelController {
         if let animator = delegate?.floatingPanel?(self, animatorForPresentingTo: to) {
             return animator
         }
-        let timingParameters = UISpringTimingParameters(decelerationRate: UIScrollView.DecelerationRate.fast.rawValue,
-                                                       frequencyResponse: 0.25)
-        return UIViewPropertyAnimator(duration: 0.0,
-                                      timingParameters: timingParameters)
+        let timingParameters = UISpringTimingParameters(
+            decelerationRate: UIScrollView.DecelerationRate.fast.rawValue,
+            frequencyResponse: 0.25)
+        return UIViewPropertyAnimator(
+            duration: 0.0,
+            timingParameters: timingParameters
+        )
     }
 
     func animatorForDismissing(with velocity: CGVector) -> UIViewPropertyAnimator {
         if let animator = delegate?.floatingPanel?(self, animatorForDismissingWith: velocity) {
             return animator
         }
-        let timingParameters = UISpringTimingParameters(decelerationRate: UIScrollView.DecelerationRate.fast.rawValue,
-                                                       frequencyResponse: 0.25,
-                                                       initialVelocity: velocity)
-        return UIViewPropertyAnimator(duration: 0.0,
-                                      timingParameters: timingParameters)
+        let timingParameters = UISpringTimingParameters(
+            decelerationRate: UIScrollView.DecelerationRate.fast.rawValue,
+            frequencyResponse: 0.25,
+            initialVelocity: velocity)
+        return UIViewPropertyAnimator(
+            duration: 0.0,
+            timingParameters: timingParameters
+        )
     }
 }
 
@@ -698,10 +705,11 @@ private var originalDismissImp: IMP?
 private typealias __dismissFunction = @convention(c) (AnyObject, Selector, Bool, (() -> Void)?) -> Void
 extension FloatingPanelController {
     private static let dismissSwizzling: Void = {
-        let aClass: AnyClass! = UIViewController.self //object_getClass(vc)
+        let aClass: AnyClass! = UIViewController.self  //object_getClass(vc)
         if let originalMethod = class_getInstanceMethod(aClass, #selector(dismiss(animated:completion:))),
-           let swizzledImp = class_getMethodImplementation(aClass, #selector(__swizzled_dismiss(animated:completion:))) {
-           originalDismissImp = method_setImplementation(originalMethod, swizzledImp)
+            let swizzledImp = class_getMethodImplementation(aClass, #selector(__swizzled_dismiss(animated:completion:)))
+        {
+            originalDismissImp = method_setImplementation(originalMethod, swizzledImp)
         }
     }()
 }
