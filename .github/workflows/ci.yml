@@ -9,6 +9,34 @@ on:
       - '*'
 
 jobs:
+  lint:
+    runs-on: ${{ matrix.runsOn }}
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer
+      SWIFT_FORMAT: build-tools/.build/release/swift-format
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - xcode: "14.3"
+            runsOn: macos-13
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache swift-format
+        id: cache_swift-format
+        uses: actions/cache@v3
+        env:
+          cache-name: cache_swift-format
+        with:
+          path: ${{ env.SWIFT_FORMAT }}
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('build-tools/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('build-tools/Package.resolved') }}
+      - name: Run swift-format
+        run: |
+          [[ -f $SWIFT_FORMAT ]] || xcrun swift build --package-path "build-tools" -c release
+          $SWIFT_FORMAT lint --configuration .swift-format -s -r Sources Tests
+
   build:
     runs-on: ${{ matrix.runsOn }}
     env:

@@ -190,6 +190,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				54B58FC929EB95880009567E /* PBXTargetDependency */,
 			);
 			name = FloatingPanel;
 			productName = FloatingModalController;
@@ -242,6 +243,8 @@
 				Base,
 			);
 			mainGroup = 545DB9B72151169500CA77B8;
+			packageReferences = (
+			);
 			productRefGroup = 545DB9C22151169500CA77B8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -314,6 +317,10 @@
 			isa = PBXTargetDependency;
 			target = 545DB9C02151169500CA77B8 /* FloatingPanel */;
 			targetProxy = 545DB9CC2151169500CA77B8 /* PBXContainerItemProxy */;
+		};
+		54B58FC929EB95880009567E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 54B58FC829EB95880009567E /* SwiftFormatBuildTool */;
 		};
 /* End PBXTargetDependency section */
 
@@ -694,6 +701,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		54B58FC829EB95880009567E /* SwiftFormatBuildTool */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "plugin:SwiftFormatBuildTool";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 545DB9B82151169500CA77B8 /* Project object */;
 }
