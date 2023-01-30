@@ -130,16 +130,16 @@ class SearchViewController: UIViewController, UITableViewDataSource {
     }
 
     func showHeader(animated: Bool) {
-        changeHeader(height: 116.0, aniamted: animated)
+        changeHeader(height: 116.0, animated: animated)
     }
 
     func hideHeader(animated: Bool) {
-        changeHeader(height: 0.0, aniamted: animated)
+        changeHeader(height: 0.0, animated: animated)
     }
 
-    private func changeHeader(height: CGFloat, aniamted: Bool) {
+    private func changeHeader(height: CGFloat, animated: Bool) {
         guard let headerView = tableView.tableHeaderView, headerView.bounds.height != height else { return }
-        if aniamted == false {
+        if animated == false {
             updateHeader(height: height)
             return
         }
