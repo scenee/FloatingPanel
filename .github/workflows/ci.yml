@@ -39,7 +39,7 @@ jobs:
             xcode: "11.3.1"
             runsOn: macos-10.15
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Building in Swift ${{ matrix.swift }}
         run: xcodebuild -scheme FloatingPanel SWIFT_VERSION=${{ matrix.swift }} clean build
 
@@ -76,7 +76,7 @@ jobs:
             sim: "iPhone 11 Pro"
             runsOn: macos-10.15
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Testing in iOS ${{ matrix.os }}
       run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=${{ matrix.os }},name=${{ matrix.sim }}'
 
@@ -92,7 +92,7 @@ jobs:
           - example: "Stocks"
           - example: "Samples"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Building ${{ matrix.example }}
       run: xcodebuild -workspace FloatingPanel.xcworkspace -scheme ${{ matrix.example }} -sdk iphonesimulator clean build
 
@@ -111,21 +111,21 @@ jobs:
           - target: "x86_64-apple-ios16.1-simulator"
           - target: "arm64-apple-ios16.1-simulator"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: "Swift Package Manager build"
       run: swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk iphonesimulator --show-sdk-path`" -Xswiftc "-target" -Xswiftc "${{ matrix.target }}"
 
   carthage:
     runs-on: macos-11
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: "Carthage build"
       run: carthage build --use-xcframeworks --no-skip-current
 
   cocoapods:
     runs-on: macos-12
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: "CocoaPods: pod lib lint"
       run: pod lib lint --allow-warnings
     - name: "CocoaPods: pod spec lint"
