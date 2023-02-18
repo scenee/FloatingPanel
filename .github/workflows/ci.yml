@@ -21,7 +21,7 @@ jobs:
             xcode: "14.1"
             runsOn: macos-12
           - swift: "5.6"
-            xcode: "13.3.1"
+            xcode: "13.4.1"
             runsOn: macos-12
           - swift: "5.5"
             xcode: "13.2.1"
@@ -52,8 +52,8 @@ jobs:
             xcode: "14.1"
             sim: "iPhone 14 Pro"
             runsOn: macos-12
-          - os: "15.4"
-            xcode: "13.3.1"
+          - os: "15.5"
+            xcode: "13.4.1"
             sim: "iPhone 13 Pro"
             runsOn: macos-12
           - os: "15.2"
