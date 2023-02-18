@@ -87,7 +87,7 @@
             <objects>
                 <viewController storyboardIdentifier="SettingsViewController" id="C1X-9Z-TyQ" customClass="SettingsViewController" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="af9-Zr-Ppc">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="197"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="197.5"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="n93-ZL-fmC">
@@ -598,7 +598,7 @@
                                 </constraints>
                             </view>
                             <view alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kva-Z7-0qY" customClass="OnSafeAreaView" customModule="Samples" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="48" width="375" height="730"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
                                 <color key="backgroundColor" red="0.0078431372550000003" green="0.72156862749999995" blue="0.45882352939999999" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="noi-1a-5bZ" customClass="CloseButton" customModule="Samples" customModuleProvider="target">
@@ -660,9 +660,9 @@
                         <color key="backgroundColor" red="1" green="0.83234566450000003" blue="0.47320586440000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>
                         <constraints>
+                            <constraint firstItem="Kva-Z7-0qY" firstAttribute="top" secondItem="g7l-kO-y7q" secondAttribute="top" id="A4b-Le-m4I"/>
                             <constraint firstItem="noi-1a-5bZ" firstAttribute="top" secondItem="aOK-7l-cA6" secondAttribute="top" priority="750" id="EQy-cr-F2Y"/>
                             <constraint firstItem="tP3-oJ-4EB" firstAttribute="centerX" secondItem="aOK-7l-cA6" secondAttribute="centerX" id="EsD-Vf-dNZ"/>
-                            <constraint firstItem="Kva-Z7-0qY" firstAttribute="top" secondItem="aOK-7l-cA6" secondAttribute="top" id="Fff-HL-4mo"/>
                             <constraint firstItem="8yw-OC-Ubk" firstAttribute="bottom" secondItem="g7l-kO-y7q" secondAttribute="bottom" priority="750" id="JOL-wC-w74"/>
                             <constraint firstItem="8yw-OC-Ubk" firstAttribute="leading" secondItem="aOK-7l-cA6" secondAttribute="leading" id="RiJ-Hb-OOZ"/>
                             <constraint firstItem="8yw-OC-Ubk" firstAttribute="trailing" secondItem="aOK-7l-cA6" secondAttribute="trailing" id="Sof-yL-mwK"/>
