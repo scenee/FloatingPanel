@@ -31,13 +31,10 @@ jobs:
             runsOn: macos-11
           - swift: "5.3"
             xcode: "12.4"
-            runsOn: macos-10.15
+            runsOn: macos-11
           - swift: "5.2"
             xcode: "11.7"
-            runsOn: macos-10.15
-          - swift: "5.1"
-            xcode: "11.3.1"
-            runsOn: macos-10.15
+            runsOn: macos-11
     steps:
       - uses: actions/checkout@v3
       - name: Building in Swift ${{ matrix.swift }}
@@ -70,11 +67,11 @@ jobs:
           - os: "14.4"
             xcode: "12.4"
             sim: "iPhone 12 Pro"
-            runsOn: macos-10.15
+            runsOn: macos-11
           - os: "13.7"
             xcode: "11.7"
             sim: "iPhone 11 Pro"
-            runsOn: macos-10.15
+            runsOn: macos-11
     steps:
     - uses: actions/checkout@v3
     - name: Testing in iOS ${{ matrix.os }}
