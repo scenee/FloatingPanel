@@ -1007,8 +1007,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     // MARK: - ScrollView handling
-    
-    func trackingScrollViewDidScroll() {
+
+    func followScrollViewBouncing() {
         guard let scrollView = scrollView else {
             return
         }

@@ -251,7 +251,7 @@ extension DebugTableViewController: UITableViewDataSource {
 
 extension DebugTableViewController: UITableViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        fpc?.trackingScrollViewDidScroll()
+        fpc?.followScrollViewBouncing()
         print("TableView --- ", scrollView.contentOffset, scrollView.contentInset)
     }
 

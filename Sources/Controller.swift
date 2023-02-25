@@ -595,10 +595,14 @@ open class FloatingPanelController: UIViewController {
         }
     }
     
-    /// Tracks the specified scroll view scrolling.
+    /// [Experimental] Allows the panel to move as its tracking scroll view bounces.
     ///
-    public func trackingScrollViewDidScroll() {
-        floatingPanel.trackingScrollViewDidScroll()
+    /// This method must be called in the delegate method, `UIScrollViewDelegate.scrollViewDidScroll(_:)`,
+    /// of its tracking scroll view. This method only supports a bottom positioned panel for now.
+    ///
+    /// - TODO: Support top, left and right positioned panels.
+    public func followScrollViewBouncing() {
+        floatingPanel.followScrollViewBouncing()
     }
 
     /// Cancel tracking the specify scroll view.
