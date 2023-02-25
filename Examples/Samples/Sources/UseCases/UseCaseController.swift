@@ -375,7 +375,6 @@ private extension FloatingPanelController {
                 self?.panGestureRecognizer.isEnabled = !tableView.isEditing
             }
             contentVC.kvoObservers.append(ob)
-            contentVC.fpc = self
             track(scrollView: contentVC.tableView)
 
         case let contentVC as NestedScrollViewController:

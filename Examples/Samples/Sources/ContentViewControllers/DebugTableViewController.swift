@@ -18,7 +18,7 @@ class DebugTableViewController: InspectableViewController {
         stackView.axis = .vertical
         stackView.distribution = .fillEqually
         stackView.alignment = .trailing
-        stackView.spacing = 10.0
+        stackView.spacing = 4
         return stackView
     }()
     private lazy var reorderButton: UIButton = {
@@ -28,41 +28,48 @@ class DebugTableViewController: InspectableViewController {
         button.addTarget(self, action: #selector(reorderItems), for: .touchUpInside)
         return button
     }()
-    private lazy var trackingSwitchWrapper: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.distribution = .fillProportionally
-        stackView.alignment = .center
-        stackView.spacing = 8.0
-        stackView.addArrangedSubview(trackingLabel)
-        stackView.addArrangedSubview(trackingSwitch)
-        return stackView
+    private lazy var trackingButton: UIButton = {
+        let button = UIButton()
+        button.setTitle(Menu.trackScrolling.rawValue, for: .normal)
+        button.setTitleColor(view.tintColor, for: .normal)
+        button.addTarget(self, action: #selector(toggleTrackingScroll), for: .touchUpInside)
+        return button
     }()
-    private lazy var trackingLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Tracking"
-        label.font = UIFont.systemFont(ofSize: 17.0, weight: .regular)
-        return label
-    }()
-    private lazy var trackingSwitch: UISwitch = {
-        let trackingSwitch = UISwitch()
-        trackingSwitch.isOn = true
-        trackingSwitch.addTarget(self, action: #selector(turnTrackingOn), for: .touchUpInside)
-        return trackingSwitch
+    private lazy var followingButton: UIButton = {
+        let button = UIButton()
+        button.setTitleColor(view.tintColor, for: .normal)
+        button.addTarget(self, action: #selector(toggleFollowingScroll), for: .touchUpInside)
+        return button
     }()
 
     // MARK: - Properties
 
-    var fpc: FloatingPanelController?
     var kvoObservers: [NSKeyValueObservation] = []
+
+    private var fpc: FloatingPanelController? { parent as? FloatingPanelController }
     private lazy var items: [String] = {
         let items = (0..<100).map { "Items \($0)" }
         return Command.replace(items: items)
     }()
     private var itemHeight: CGFloat = 66.0
 
+    // MARK: Flags
+    private var tracksScrollView: Bool = false {
+        didSet {
+            let title = "\(Menu.trackScrolling.rawValue): \(tracksScrollView ? "on" : "off")"
+            trackingButton.setTitle(title, for: .normal)
+        }
+    }
+    private var followsScrollViewBouncing: Bool = false {
+        didSet {
+            let title = "\(Menu.followScrolling.rawValue): \(followsScrollViewBouncing ? "on" : "off")"
+            followingButton.setTitle(title, for: .normal)
+        }
+    }
+
     enum Menu: String, CaseIterable {
-        case turnOffTracking = "Tracking"
+        case trackScrolling = "Tracking"
+        case followScrolling = "Following"
         case reorder = "Reorder"
     }
 
@@ -137,13 +144,19 @@ class DebugTableViewController: InspectableViewController {
             switch menu {
             case .reorder:
                 buttonStackView.addArrangedSubview(reorderButton)
-            case .turnOffTracking:
-                buttonStackView.addArrangedSubview(trackingSwitchWrapper)
+            case .trackScrolling:
+                buttonStackView.addArrangedSubview(trackingButton)
+            case .followScrolling:
+                buttonStackView.addArrangedSubview(followingButton)
             }
         }
+        // Set titles
+        tracksScrollView = false
+        followsScrollViewBouncing = false
     }
 
     // MARK: - Menu
+
     @objc
     private func reorderItems() {
         if reorderButton.titleLabel?.text == Menu.reorder.rawValue {
@@ -156,13 +169,19 @@ class DebugTableViewController: InspectableViewController {
     }
 
     @objc
-    private func turnTrackingOn(_ sender: UISwitch) {
-        guard let fpc = self.parent as? FloatingPanelController else { return }
-        if sender.isOn {
+    private func toggleTrackingScroll() {
+        tracksScrollView.toggle()
+        guard let fpc = fpc else { return }
+        if tracksScrollView {
             fpc.track(scrollView: tableView)
         } else {
             fpc.untrack(scrollView: tableView)
         }
+    }
+
+    @objc
+    private func toggleFollowingScroll() {
+        followsScrollViewBouncing.toggle()
     }
 
     // MARK: - Actions
@@ -251,7 +270,9 @@ extension DebugTableViewController: UITableViewDataSource {
 
 extension DebugTableViewController: UITableViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        fpc?.followScrollViewBouncing()
+        if followsScrollViewBouncing {
+            fpc?.followScrollViewBouncing()
+        }
         print("TableView --- ", scrollView.contentOffset, scrollView.contentInset)
     }
 
