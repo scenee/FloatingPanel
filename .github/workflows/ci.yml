@@ -86,6 +86,7 @@ jobs:
       matrix:
         include:
           - example: "Maps"
+          - example: "Maps-SwiftUI"
           - example: "Stocks"
           - example: "Samples"
     steps:
