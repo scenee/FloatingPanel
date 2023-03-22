@@ -6,10 +6,10 @@
 
 # FloatingPanel
 
-FloatingPanel is a simple and easy-to-use UI component for a new interface introduced in Apple Maps, Shortcuts and Stocks app.
-The new interface displays the related contents and utilities in parallel as a user wants.
+FloatingPanel is a simple and easy-to-use UI component designed for the new interface featured in Apple Maps, Shortcuts and Stocks app.
+This new interface displays related content and utilities alongside the main content.
 
-📝[Here](https://docs.scenee.com/documentation/floatingpanel) is the API references for the latest version powered by [DocC](https://developer.apple.com/documentation/docc).
+📝[Here](https://docs.scenee.com/documentation/floatingpanel) is the API references for the latest version, powered by [DocC](https://developer.apple.com/documentation/docc).
 
 ![Maps](https://github.com/SCENEE/FloatingPanel/blob/master/assets/maps.gif)
 ![Stocks](https://github.com/SCENEE/FloatingPanel/blob/master/assets/stocks.gif)
@@ -75,14 +75,14 @@ The new interface displays the related contents and utilities in parallel as a u
 - [x] Removal interaction
 - [x] Multi panel support
 - [x] Modal presentation
-- [x] 4 positioning support(top, left, bottom, right)
+- [x] Support for 4 positions (top, left, bottom, right)
 - [x] 1 or more magnetic anchors(full, half, tip and more)
 - [x] Layout support for all trait environments(i.e. Landscape orientation)
 - [x] Common UI elements: surface, backdrop and grabber handle
-- [x] Free from common issues of Auto Layout and gesture handling
+- [x] Free from common Auto Layout and gesture handling issues
 - [x] Compatible with Objective-C
 
-Examples are here.
+Examples can be found here:
 
 - [Examples/Maps](https://github.com/SCENEE/FloatingPanel/tree/master/Examples/Maps) like Apple Maps.app.
 - [Examples/Stocks](https://github.com/SCENEE/FloatingPanel/tree/master/Examples/Stocks) like Apple Stocks.app.
@@ -91,11 +91,11 @@ Examples are here.
 
 ## Requirements
 
-FloatingPanel is written in Swift 5.0+. Compatible with iOS 11.0+.
+FloatingPanel is written in Swift 5.0+ and compatible with iOS 11.0+. 
 
-The deployment is still iOS 10, but it is recommended to use this library on iOS 11+.
+While it still supports iOS 10, it is recommended to use this library on iOS 11+.
 
-:pencil2: You would like to use Swift 4.0. Please use FloatingPanel v1. 
+:pencil2: If you'd like to use Swift 4.0, please use FloatingPanel v1.
 
 ## Installation
 
