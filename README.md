@@ -1,8 +1,8 @@
-[![Build Status](https://travis-ci.org/SCENEE/FloatingPanel.svg?branch=master)](https://travis-ci.org/SCENEE/FloatingPanel)
-[![Version](https://img.shields.io/cocoapods/v/FloatingPanel.svg)](https://cocoapods.org/pods/FloatingPanel)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Swift 5](https://img.shields.io/badge/swift-5-orange.svg?style=flat)](https://swift.org/)
 [![Platform](https://img.shields.io/cocoapods/p/FloatingPanel.svg)](https://cocoapods.org/pods/FloatingPanel)
-[![Swift 5](https://img.shields.io/badge/Swift-5-orange.svg?style=flat)](https://swift.org/)
+[![Version](https://img.shields.io/cocoapods/v/FloatingPanel.svg)](https://cocoapods.org/pods/FloatingPanel)
+![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/scenee/FloatingPanel/ci.yml?branch=master)
+[![Carthage compatible](https://img.shields.io/badge/carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 # FloatingPanel
 
