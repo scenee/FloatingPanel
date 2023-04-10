@@ -6,8 +6,8 @@
 
 # FloatingPanel
 
-FloatingPanel is a simple and easy-to-use UI component designed for the new interface featured in Apple Maps, Shortcuts and Stocks app.
-This new interface displays related content and utilities alongside the main content.
+FloatingPanel is a simple and easy-to-use UI component designed for a user interface featured in Apple Maps, Shortcuts and Stocks app.
+The user interface displays related content and utilities alongside the main content.
 
 Please see also [the API reference](https://floatingpanel.github.io/v2.6.1/documentation/floatingpanel/) for more details, powered by [DocC](https://developer.apple.com/documentation/docc).
 

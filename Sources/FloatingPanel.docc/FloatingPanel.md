@@ -1,11 +1,12 @@
 # ``FloatingPanel``
 
-The new interface displays the related contents and utilities in parallel as a user wants.
+Create a user interface to display the related content and utilities alongside the main content.
 
 ## Overview
 
-FloatingPanel is a simple and easy-to-use UI component for a new interface introduced in Apple Maps, Shortcuts and Stocks app.
-The new interface displays the related contents and utilities in parallel as a user wants.
+
+FloatingPanel is a simple and easy-to-use UI component designed for a user interface featured in the Apple Maps, Shortcuts and Stocks app.
+The user interface displays related content and utilities alongside the main content.
 
 
 ## Topics
