@@ -17,8 +17,6 @@
 		545DB9E021511AC100CA77B8 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9DF21511AC100CA77B8 /* Controller.swift */; };
 		545DBA2B2152383100CA77B8 /* GrabberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DBA2A2152383100CA77B8 /* GrabberView.swift */; };
 		546055BF2333C4740069F400 /* TestSupports.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542753C722C49A8F00D17955 /* TestSupports.swift */; };
-		5469F4A224B003EF00537F8A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5469F49F24B003EF00537F8A /* LaunchScreen.storyboard */; };
-		5469F4A324B003EF00537F8A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5469F4A024B003EF00537F8A /* AppDelegate.swift */; };
 		5469F4AE24B30D7E00537F8A /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5469F4AD24B30D7E00537F8A /* State.swift */; };
 		5469F4B024B30E1500537F8A /* LayoutAnchoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5469F4AF24B30E1500537F8A /* LayoutAnchoring.swift */; };
 		5469F4B224B30F1100537F8A /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5469F4B124B30F1100537F8A /* Position.swift */; };
@@ -45,13 +43,6 @@
 			remoteGlobalIDString = 545DB9C02151169500CA77B8;
 			remoteInfo = FloatingModalController;
 		};
-		54E740DC218AFE9F005C1A34 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 545DB9B82151169500CA77B8 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 54E740C9218AFD67005C1A34;
-			remoteInfo = TestingHost;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -68,9 +59,6 @@
 		545DB9D12151169500CA77B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		545DB9DF21511AC100CA77B8 /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		545DBA2A2152383100CA77B8 /* GrabberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrabberView.swift; sourceTree = "<group>"; };
-		5469F49F24B003EF00537F8A /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		5469F4A024B003EF00537F8A /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		5469F4A124B003EF00537F8A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5469F4AD24B30D7E00537F8A /* State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
 		5469F4AF24B30E1500537F8A /* LayoutAnchoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutAnchoring.swift; sourceTree = "<group>"; };
 		5469F4B124B30F1100537F8A /* Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
@@ -86,7 +74,6 @@
 		54CFBFC4215CD09C006B5735 /* Core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; };
 		54DBA3DB262E938500D75969 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		54E3992627141F5100A8F9ED /* FloatingPanel.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = FloatingPanel.docc; sourceTree = "<group>"; };
-		54E740CA218AFD67005C1A34 /* FloatingPanelTesting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FloatingPanelTesting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D82A6B428D18461006A44BA /* libswiftCoreGraphics.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswiftCoreGraphics.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/swift/libswiftCoreGraphics.tbd; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
@@ -104,13 +91,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				545DB9CB2151169500CA77B8 /* FloatingPanel.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		54E740C7218AFD67005C1A34 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,7 +112,6 @@
 			children = (
 				545DB9C12151169500CA77B8 /* FloatingPanel.framework */,
 				545DB9CA2151169500CA77B8 /* FloatingPanelTests.xctest */,
-				54E740CA218AFD67005C1A34 /* FloatingPanelTesting.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -165,7 +144,6 @@
 		545DB9CE2151169500CA77B8 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				5469F49E24B003EF00537F8A /* TestingApp */,
 				54A6B6B022968B530077F348 /* CoreTests.swift */,
 				545DB9CF2151169500CA77B8 /* ControllerTests.swift */,
 				542753C522C49A6E00D17955 /* LayoutTests.swift */,
@@ -176,16 +154,6 @@
 				545DB9D12151169500CA77B8 /* Info.plist */,
 			);
 			path = Tests;
-			sourceTree = "<group>";
-		};
-		5469F49E24B003EF00537F8A /* TestingApp */ = {
-			isa = PBXGroup;
-			children = (
-				5469F49F24B003EF00537F8A /* LaunchScreen.storyboard */,
-				5469F4A024B003EF00537F8A /* AppDelegate.swift */,
-				5469F4A124B003EF00537F8A /* Info.plist */,
-			);
-			path = TestingApp;
 			sourceTree = "<group>";
 		};
 		5D82A6B328D18460006A44BA /* Frameworks */ = {
@@ -240,29 +208,11 @@
 			);
 			dependencies = (
 				545DB9CD2151169500CA77B8 /* PBXTargetDependency */,
-				54E740DD218AFE9F005C1A34 /* PBXTargetDependency */,
 			);
 			name = FloatingPanelTests;
 			productName = FloatingModalControllerTests;
 			productReference = 545DB9CA2151169500CA77B8 /* FloatingPanelTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		54E740C9218AFD67005C1A34 /* TestingApp */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 54E740D9218AFD6A005C1A34 /* Build configuration list for PBXNativeTarget "TestingApp" */;
-			buildPhases = (
-				54E740C6218AFD67005C1A34 /* Sources */,
-				54E740C7218AFD67005C1A34 /* Frameworks */,
-				54E740C8218AFD67005C1A34 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = TestingApp;
-			productName = TestingHost;
-			productReference = 54E740CA218AFD67005C1A34 /* FloatingPanelTesting.app */;
-			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
@@ -280,10 +230,6 @@
 					};
 					545DB9C92151169500CA77B8 = {
 						CreatedOnToolsVersion = 10.0;
-						TestTargetID = 54E740C9218AFD67005C1A34;
-					};
-					54E740C9218AFD67005C1A34 = {
-						CreatedOnToolsVersion = 10.1;
 					};
 				};
 			};
@@ -302,7 +248,6 @@
 			targets = (
 				545DB9C02151169500CA77B8 /* FloatingPanel */,
 				545DB9C92151169500CA77B8 /* FloatingPanelTests */,
-				54E740C9218AFD67005C1A34 /* TestingApp */,
 			);
 		};
 /* End PBXProject section */
@@ -319,14 +264,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		54E740C8218AFD67005C1A34 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5469F4A224B003EF00537F8A /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,14 +307,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		54E740C6218AFD67005C1A34 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5469F4A324B003EF00537F8A /* AppDelegate.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -385,11 +314,6 @@
 			isa = PBXTargetDependency;
 			target = 545DB9C02151169500CA77B8 /* FloatingPanel */;
 			targetProxy = 545DB9CC2151169500CA77B8 /* PBXContainerItemProxy */;
-		};
-		54E740DD218AFE9F005C1A34 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 54E740C9218AFD67005C1A34 /* TestingApp */;
-			targetProxy = 54E740DC218AFE9F005C1A34 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -593,11 +517,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingModalControllerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingPanelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FloatingPanelTesting.app/FloatingPanelTesting";
 			};
 			name = Debug;
 		};
@@ -614,45 +537,8 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingModalControllerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingPanelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FloatingPanelTesting.app/FloatingPanelTesting";
-			};
-			name = Release;
-		};
-		54E740DA218AFD6A005C1A34 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = Tests/TestingApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingPanelTesting;
-				PRODUCT_NAME = FloatingPanelTesting;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		54E740DB218AFD6A005C1A34 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = Tests/TestingApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingPanelTesting;
-				PRODUCT_NAME = FloatingPanelTesting;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -767,23 +653,8 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingModalControllerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingPanelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FloatingPanelTesting.app/FloatingPanelTesting";
-			};
-			name = Test;
-		};
-		54E8AC6A2286CFB6000C5A12 /* Test */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = Tests/TestingApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingPanelTesting;
-				PRODUCT_NAME = FloatingPanelTesting;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -818,16 +689,6 @@
 				545DB9D92151169500CA77B8 /* Debug */,
 				54E79AE1224F6C9800717BC6 /* Test */,
 				545DB9DA2151169500CA77B8 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		54E740D9218AFD6A005C1A34 /* Build configuration list for PBXNativeTarget "TestingApp" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				54E740DA218AFD6A005C1A34 /* Debug */,
-				54E740DB218AFD6A005C1A34 /* Release */,
-				54E8AC6A2286CFB6000C5A12 /* Test */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
