@@ -76,6 +76,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: Testing in iOS ${{ matrix.os }}
       run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=${{ matrix.os }},name=${{ matrix.sim }}'
+    timeout-minutes: 20
 
   example:
     runs-on: macos-12
