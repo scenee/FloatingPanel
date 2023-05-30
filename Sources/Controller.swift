@@ -692,30 +692,30 @@ extension FloatingPanelController {
     }
 }
 
+// MARK: - Swizzling
+
+private var originalDismissImp: IMP?
+private typealias __dismissFunction = @convention(c) (AnyObject, Selector, Bool, (() -> Void)?) -> Void
 extension FloatingPanelController {
     private static let dismissSwizzling: Void = {
         let aClass: AnyClass! = UIViewController.self //object_getClass(vc)
-        if let imp = class_getMethodImplementation(aClass, #selector(dismiss(animated:completion:))),
-            let originalAltMethod = class_getInstanceMethod(aClass, #selector(fp_original_dismiss(animated:completion:))) {
-            method_setImplementation(originalAltMethod, imp)
-        }
-        let originalMethod = class_getInstanceMethod(aClass, #selector(dismiss(animated:completion:)))
-        let swizzledMethod = class_getInstanceMethod(aClass, #selector(fp_dismiss(animated:completion:)))
-        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
-            method_exchangeImplementations(originalMethod, swizzledMethod)
+        if let originalMethod = class_getInstanceMethod(aClass, #selector(dismiss(animated:completion:))),
+           let swizzledImp = class_getMethodImplementation(aClass, #selector(__swizzled_dismiss(animated:completion:))) {
+           originalDismissImp = method_setImplementation(originalMethod, swizzledImp)
         }
     }()
 }
 
-public extension UIViewController {
-    @objc func fp_original_dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        // Implementation will be replaced by IMP of self.dismiss(animated:completion:)
-    }
-    @objc func fp_dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+extension UIViewController {
+    @objc
+    fileprivate func __swizzled_dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        let dismissImp = unsafeBitCast(originalDismissImp, to: __dismissFunction.self)
+        let sel = #selector(UIViewController.dismiss(animated:completion:))
+
         // Call dismiss(animated:completion:) to a content view controller
         if let fpc = parent as? FloatingPanelController {
             if fpc.presentingViewController != nil {
-                self.fp_original_dismiss(animated: flag, completion: completion)
+                dismissImp(self, sel, flag, completion)
             } else {
                 fpc.removePanelFromParent(animated: flag, completion: completion)
             }
@@ -725,7 +725,7 @@ public extension UIViewController {
         if let fpc = self as? FloatingPanelController {
             // When a panel is presented modally and it's not a child view controller of the presented view controller.
             if fpc.presentingViewController != nil, fpc.parent == nil {
-                self.fp_original_dismiss(animated: flag, completion: completion)
+                dismissImp(self, sel, flag, completion)
             } else {
                 fpc.removePanelFromParent(animated: flag, completion: completion)
             }
@@ -733,6 +733,6 @@ public extension UIViewController {
         }
 
         // For other view controllers
-        self.fp_original_dismiss(animated: flag, completion: completion)
+        dismissImp(self, sel, flag, completion)
     }
 }
