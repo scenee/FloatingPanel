@@ -85,7 +85,7 @@ extension UIViewController {
 
     var fp_safeAreaLayoutGuide: LayoutGuideProvider {
         if #available(iOS 11.0, *) {
-            return view!.safeAreaLayoutGuide
+            return view?.safeAreaLayoutGuide ?? view
         } else {
             return CustomLayoutGuide(
                 topAnchor: topLayoutGuide.bottomAnchor,

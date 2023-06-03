@@ -681,7 +681,10 @@ class LayoutAdapter {
             return
         }
 
-        let anchor = layout.anchors[self.mostExpandedState]!
+        guard let anchor = layout.anchors[mostExpandedState] else {
+            return
+        }
+
         let surfaceAnchor = position.mainDimensionAnchor(surfaceView)
         switch anchor {
         case let anchor as FloatingPanelIntrinsicLayoutAnchor:

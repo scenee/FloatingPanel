@@ -141,7 +141,10 @@ class ModalDismissTransition: NSObject, UIViewControllerAnimatedTransitioning {
             fpc?.suspendTransitionAnimator(false)
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
-        return fpc.transitionAnimator!
+        guard let transitionAnimator = fpc.transitionAnimator else {
+            fatalError("Something wrong happened in Core.move(from:to:animated:completion)")
+        }
+        return transitionAnimator
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {

@@ -483,7 +483,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 }
             }
         case panGestureRecognizer:
-            let translation = panGesture.translation(in: panGestureRecognizer.view!.superview)
+            let translation = panGesture.translation(in: panGesture.view?.superview)
             let velocity = panGesture.velocity(in: panGesture.view)
             let location = panGesture.location(in: panGesture.view)
 
@@ -966,7 +966,11 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
         let sortedPositions = layoutAdapter.sortedAnchorStatesByCoordinate
 
-        guard sortedPositions.count > 1 else {
+        guard
+            sortedPositions.count > 1,
+            let firstPosition = sortedPositions.first,
+            let lastPosition = sortedPositions.last
+        else {
             return state
         }
 
@@ -984,13 +988,13 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         var fromPos: FloatingPanelState
         var toPos: FloatingPanelState
 
-        let (lowerPos, upperPos) = (segment.lower ?? sortedPositions.first!, segment.upper ?? sortedPositions.last!)
+        let (lowerPos, upperPos) = (segment.lower ?? firstPosition, segment.upper ?? lastPosition)
         (fromPos, toPos) = forwardY ? (lowerPos, upperPos) : (upperPos, lowerPos)
 
         if behaviorAdapter.shouldProjectMomentum(to: toPos) == false {
             log.debug("targetPosition -- negate projection: distance = \(distance)")
             let segment = layoutAdapter.segment(at: currentY, forward: forwardY)
-            var (lowerPos, upperPos) = (segment.lower ?? sortedPositions.first!, segment.upper ?? sortedPositions.last!)
+            var (lowerPos, upperPos) = (segment.lower ?? firstPosition, segment.upper ?? lastPosition)
             // Equate the segment out of {top,bottom} most state to the {top,bottom} most segment
             if lowerPos == upperPos {
                 if forwardY {
