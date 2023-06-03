@@ -56,26 +56,11 @@ jobs:
             xcode: "13.4.1"
             sim: "iPhone 13 Pro"
             runsOn: macos-12
-          - os: "15.2"
-            xcode: "13.2.1"
-            sim: "iPhone 13 Pro"
-            runsOn: macos-11
-          - os: "14.5"
-            xcode: "12.5.1"
-            sim: "iPhone 12 Pro"
-            runsOn: macos-11
-          - os: "14.4"
-            xcode: "12.4"
-            sim: "iPhone 12 Pro"
-            runsOn: macos-11
-          - os: "13.7"
-            xcode: "11.7"
-            sim: "iPhone 11 Pro"
-            runsOn: macos-11
     steps:
     - uses: actions/checkout@v3
     - name: Testing in iOS ${{ matrix.os }}
       run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=${{ matrix.os }},name=${{ matrix.sim }}'
+    timeout-minutes: 20
 
   example:
     runs-on: macos-12

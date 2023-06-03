@@ -22,7 +22,11 @@ class ControllerTests: XCTestCase {
     }
 
     func test_addPanel() {
-        guard let rootVC = UIApplication.shared.keyWindow?.rootViewController else { fatalError() }
+        let rootVC = UIViewController()
+        rootVC.loadViewIfNeeded()
+        rootVC.view.bounds = .init(origin: .zero, size: .init(width: 390, height: 844))
+
+
         let fpc = FloatingPanelController()
         fpc.addPanel(toParent: rootVC)
         XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .half).y)
