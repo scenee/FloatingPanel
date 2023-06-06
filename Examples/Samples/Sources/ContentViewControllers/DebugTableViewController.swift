@@ -151,7 +151,7 @@ class DebugTableViewController: InspectableViewController {
             }
         }
         // Set titles
-        tracksScrollView = false
+        tracksScrollView = true
         followsScrollViewBouncing = false
     }
 
