@@ -414,8 +414,14 @@ open class FloatingPanelController: UIViewController {
                 guard let self = self else { return }
                 self.delegate?.floatingPanelDidRemove?(self)
             }
-        } else {
+        } else if parent != nil {
             removePanelFromParent(animated: true)
+        } else {
+            hide(animated: true) { [weak self] in
+                guard let self = self else { return }
+                self.view.removeFromSuperview()
+                self.delegate?.floatingPanelDidRemove?(self)
+            }
         }
     }
 

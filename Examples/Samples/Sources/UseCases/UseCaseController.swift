@@ -11,6 +11,7 @@ final class UseCaseController: NSObject {
     private var detailPanelVC: FloatingPanelController!
     private var settingsPanelVC: FloatingPanelController!
     private lazy var pagePanelController = PagePanelController()
+    private lazy var overWindowPanelVC = FloatingPanelController()
 
     init(mainVC: MainViewController) {
         self.mainVC = mainVC
@@ -157,6 +158,19 @@ extension UseCaseController {
             let fpc = MultiPanelController()
             mainVC.present(fpc, animated: true, completion: nil)
 
+        case .showOnWindow:
+            let fpc = overWindowPanelVC
+            fpc.backdropView.dismissalTapGestureRecognizer.isEnabled = true
+            fpc.set(contentViewController: contentVC)
+            fpc.ext_trackScrollView(in: contentVC)
+
+            guard let window = UIApplication.shared.windows.first else { fatalError("Any window not found") }
+
+            window.addSubview(fpc.view)
+            fpc.view.frame = window.bounds
+            fpc.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+            fpc.show(animated: true)
         case .showPanelInSheetModal:
             let fpc = FloatingPanelController()
             let contentVC = UIViewController()
