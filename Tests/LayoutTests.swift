@@ -464,7 +464,6 @@ class LayoutTests: XCTestCase {
                 if #available(iOS 11, *) {
                     XCTAssertEqual(c.secondAnchor, prop.result.secondAnchor, line: UInt(prop.result.0))
                 }
-                print(c)
         }
     }
     func test_layoutAnchor_bottomPosition() {
