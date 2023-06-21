@@ -459,7 +459,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                         switch layoutAdapter.position {
                         case .top, .left:
                             if velocity < 0, !allowScrollPanGesture(for: scrollView) {
-                                lockScrollView()
+                                lockScrollView(strict: true)
                             }
                             if velocity > 0, allowScrollPanGesture(for: scrollView) {
                                 unlockScrollView()
@@ -467,7 +467,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                         case .bottom, .right:
                             // Hide a scroll indicator just before starting an interaction by swiping a panel down.
                             if velocity > 0, !allowScrollPanGesture(for: scrollView) {
-                                lockScrollView()
+                                lockScrollView(strict: true)
                             }
                             // Show a scroll indicator when an animation is interrupted at the top and content is scrolled up
                             if velocity < 0, allowScrollPanGesture(for: scrollView) {
@@ -930,11 +930,17 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             """)
         if finished, state == layoutAdapter.mostExpandedState, abs(layoutAdapter.offsetFromMostExpandedAnchor) <= 1.0 {
             unlockScrollView()
+        } else if finished, shouldLooselyLockScrollView {
+            unlockScrollView()
         }
     }
 
     func value(of point: CGPoint) -> CGFloat {
         return layoutAdapter.position.mainLocation(point)
+    }
+
+    func value(of size: CGSize) -> CGFloat {
+        return layoutAdapter.position.mainDimension(size)
     }
 
     func setValue(_ newValue: CGPoint, to point: inout CGPoint) {
@@ -1024,7 +1030,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         scrollView.transform = CGAffineTransform(translationX: 0, y: contentOffset)
     }
 
-    private func lockScrollView() {
+    private func lockScrollView(strict: Bool = false) {
         guard let scrollView = scrollView else { return }
 
         if scrollView.isLocked {
@@ -1033,11 +1039,19 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
         log.debug("lock scroll view")
 
-        scrollBounce = scrollView.bounces
         scrollIndictorVisible = scrollView.showsVerticalScrollIndicator
 
+        if !strict, shouldLooselyLockScrollView {
+            // Don't change its `bounces` property. If it's changed, it will cause its scroll content offset jump at
+            // the most expanded anchor position while seamlessly scrolling content. This problem only occurs where its
+            // content mode is `.fitToBounds` and the tracking scroll content is smaller than the content view size.
+            // The reason why is because `bounces` prop change leads to the "content frame" change on `.fitToBounds`.
+            // See also https://github.com/scenee/FloatingPanel/issues/524.
+        } else {
+            scrollBounce = scrollView.bounces
+            scrollView.bounces = false
+        }
         scrollView.isDirectionalLockEnabled = true
-        scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
     }
 
@@ -1045,9 +1059,20 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         guard let scrollView = scrollView, scrollView.isLocked else { return }
         log.debug("unlock scroll view")
 
-        scrollView.isDirectionalLockEnabled = false
         scrollView.bounces = scrollBounce
+        scrollView.isDirectionalLockEnabled = false
         scrollView.showsVerticalScrollIndicator = scrollIndictorVisible
+    }
+
+    private var shouldLooselyLockScrollView: Bool {
+        var isSmallScrollContentAndFitToBoundsMode: Bool {
+            if ownerVC?.contentMode == .fitToBounds, let scrollView = scrollView,
+               value(of: scrollView.contentSize) < value(of: scrollView.bounds.size) - min(layoutAdapter.offsetFromMostExpandedAnchor, 0) {
+                return true
+            }
+            return false
+        }
+        return isSmallScrollContentAndFitToBoundsMode
     }
 
     private func stopScrolling(at contentOffset: CGPoint) {
