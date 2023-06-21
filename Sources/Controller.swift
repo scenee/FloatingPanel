@@ -695,7 +695,7 @@ extension FloatingPanelController {
 // MARK: - Swizzling
 
 private var originalDismissImp: IMP?
-private typealias __dismissFunction = @convention(c) (AnyObject, Selector, Bool, (() -> Void)?) -> Void
+private typealias DismissFunction = @convention(c) (AnyObject, Selector, Bool, (() -> Void)?) -> Void
 extension FloatingPanelController {
     private static let dismissSwizzling: Void = {
         let aClass: AnyClass! = UIViewController.self //object_getClass(vc)
@@ -709,7 +709,7 @@ extension FloatingPanelController {
 extension UIViewController {
     @objc
     fileprivate func __swizzled_dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        let dismissImp = unsafeBitCast(originalDismissImp, to: __dismissFunction.self)
+        let dismissImp = unsafeBitCast(originalDismissImp, to: DismissFunction.self)
         let sel = #selector(UIViewController.dismiss(animated:completion:))
 
         // Call dismiss(animated:completion:) to a content view controller
