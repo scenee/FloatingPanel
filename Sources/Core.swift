@@ -1079,7 +1079,11 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         // Must use setContentOffset(_:animated) to force-stop deceleration
         guard let scrollView = scrollView else { return }
         var offset = scrollView.contentOffset
-        setValue(contentOffset, to: &offset)
+        if contentOffset.y >= 0 {
+            setValue(contentOffset, to: &offset)
+        } else {
+            offset = CGPoint(x: 0, y: 0)
+        }
         scrollView.setContentOffset(offset, animated: false)
     }
 
