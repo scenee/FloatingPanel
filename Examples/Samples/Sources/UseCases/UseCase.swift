@@ -10,6 +10,7 @@ enum UseCase: Int, CaseIterable {
     case showPanelModal
     case showMultiPanelModal
     case showPanelInSheetModal
+    case showOnWindow
     case showTabBar
     case showPageView
     case showPageContentView
@@ -34,6 +35,7 @@ extension UseCase {
         case .showModal: return "Show Modal"
         case .showPanelModal: return "Show Panel Modal"
         case .showMultiPanelModal: return "Show Multi Panel Modal"
+        case .showOnWindow: return "Show Panel over Window"
         case .showPanelInSheetModal: return "Show Panel in Sheet Modal"
         case .showTabBar: return "Show Tab Bar"
         case .showPageView: return "Show Page View"
@@ -65,6 +67,7 @@ extension UseCase {
         case .showDetail: return .storyboard(String(describing: DetailViewController.self))
         case .showModal: return .storyboard(String(describing: ModalViewController.self))
         case .showMultiPanelModal: return .viewController(DebugTableViewController())
+        case .showOnWindow: return .viewController(DebugTableViewController())
         case .showPanelInSheetModal: return .viewController(DebugTableViewController())
         case .showPanelModal: return .viewController(DebugTableViewController())
         case .showTabBar: return .storyboard(String(describing: TabBarViewController.self))
