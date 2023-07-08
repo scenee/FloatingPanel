@@ -66,6 +66,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     private var stopScrollDeceleration: Bool = false
     private var scrollBounce = false
     private var scrollIndictorVisible = false
+    private var scrollBounceThreshold: CGFloat = -30.0
 
     // MARK: - Interface
 
@@ -337,7 +338,10 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                     if surfaceView.grabberAreaContains(gestureRecognizer.location(in: surfaceView)) {
                         return false
                     }
-                    return allowScrollPanGesture(for: scrollView)
+                    guard state == layoutAdapter.mostExpandedState else { return false }
+                    // The condition where offset > 0 must not be included here. Because it will stop recognizing
+                    // the panel pan gesture if a user starts scrolling content from an offset greater than 0.
+                    return allowScrollPanGesture(of: scrollView) { offset in offset <= scrollBounceThreshold  }
                 default:
                     return false
                 }
@@ -456,21 +460,24 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                     }
                 } else {
                     if state == layoutAdapter.mostExpandedState {
+                        let allowScroll = allowScrollPanGesture(of: scrollView) { offset in
+                            offset <= scrollBounceThreshold || 0 < offset
+                        }
                         switch layoutAdapter.position {
                         case .top, .left:
-                            if velocity < 0, !allowScrollPanGesture(for: scrollView) {
+                            if velocity < 0, !allowScroll {
                                 lockScrollView(strict: true)
                             }
-                            if velocity > 0, allowScrollPanGesture(for: scrollView) {
+                            if velocity > 0, allowScroll {
                                 unlockScrollView()
                             }
                         case .bottom, .right:
                             // Hide a scroll indicator just before starting an interaction by swiping a panel down.
-                            if velocity > 0, !allowScrollPanGesture(for: scrollView) {
+                            if velocity > 0, !allowScroll {
                                 lockScrollView(strict: true)
                             }
                             // Show a scroll indicator when an animation is interrupted at the top and content is scrolled up
-                            if velocity < 0, allowScrollPanGesture(for: scrollView) {
+                            if velocity < 0, allowScroll {
                                 unlockScrollView()
                             }
                         }
@@ -803,13 +810,14 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 initialScrollOffset = scrollView.contentOffset
             } else {
                 let pinningOffset = contentOffsetForPinning(of: scrollView)
-
-                // `scrollView.contentOffset` can be a value in [-30, 0) at this time by `allowScrollPanGesture(for:)`.
-                // Therefore the initial scroll offset must be reset to the pinning offset. Otherwise, the following
-                // `Fit the surface bounds` logic don't working and also the scroll content offset can be invalid.
+                
+                // `initialScrollOffset` must be reset to the pinning offset because the value of `scrollView.contentOffset`,
+                // for instance, is a value in [-30, 0) on a bottom positioned panel with `allowScrollPanGesture(of:condition:)`.
+                // If it's not reset, the following logic to shift the surface frame will not work and then the scroll
+                // content offset will become an unexpected value.
                 initialScrollOffset = pinningOffset
 
-                // Fit the surface bounds to a scroll offset content by startInteraction(at:offset:)
+                // Shift the surface frame to negate the scroll content offset at startInteraction(at:offset:)
                 let offsetDiff = scrollView.contentOffset - pinningOffset
                 switch layoutAdapter.position {
                 case .top, .left:
@@ -1103,16 +1111,15 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
     }
 
-    private func allowScrollPanGesture(for scrollView: UIScrollView) -> Bool {
-        guard state == layoutAdapter.mostExpandedState else { return false }
-        var offsetY: CGFloat = 0
+    private func allowScrollPanGesture(of scrollView: UIScrollView, condition: (_ offset: CGFloat) -> Bool) -> Bool {
+        var offset: CGFloat = 0
         switch layoutAdapter.position {
         case .top, .left:
-            offsetY = value(of: scrollView.fp_contentOffsetMax - scrollView.contentOffset)
+            offset = value(of: scrollView.fp_contentOffsetMax - scrollView.contentOffset)
         case .bottom, .right:
-            offsetY = value(of: scrollView.contentOffset - contentOffsetForPinning(of: scrollView))
+            offset = value(of: scrollView.contentOffset - contentOffsetForPinning(of: scrollView))
         }
-        return offsetY <= -30.0 || offsetY > 0
+        return condition(offset)
     }
 
     // MARK: - UIPanGestureRecognizer Intermediation
