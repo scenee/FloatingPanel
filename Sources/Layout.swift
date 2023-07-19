@@ -1,6 +1,7 @@
 // Copyright 2018-Present Shin Yamamoto. All rights reserved. MIT license.
 
 import UIKit
+import os.log
 
 /// An interface for generating layout information for a panel.
 @objc public protocol FloatingPanelLayout {
@@ -710,7 +711,7 @@ class LayoutAdapter {
 
     func updateInteractiveEdgeConstraint(diff: CGFloat, scrollingContent: Bool, allowsRubberBanding: (UIRectEdge) -> Bool) {
         defer {
-            log.debug("update surface location = \(surfaceLocation)")
+            os_log(msg, log: devLog, type: .debug, "update surface location = \(surfaceLocation)")
         }
 
         let minConst: CGFloat = position(for: leastCoordinateState)
@@ -750,9 +751,9 @@ class LayoutAdapter {
         defer {
             if forceLayout {
                 layoutSurfaceIfNeeded()
-                log.debug("activateLayout for \(state) -- surface.presentation = \(self.surfaceView.presentationFrame) surface.frame = \(self.surfaceView.frame)")
+                os_log(msg, log: devLog, type: .debug, "activateLayout for \(state) -- surface.presentation = \(self.surfaceView.presentationFrame) surface.frame = \(self.surfaceView.frame)")
             } else {
-                log.debug("activateLayout for \(state)")
+                os_log(msg, log: devLog, type: .debug, "activateLayout for \(state)")
             }
         }
 
@@ -787,7 +788,7 @@ class LayoutAdapter {
             if let constraints = stateConstraints[state] {
                 NSLayoutConstraint.activate(constraints)
             } else {
-                log.error("Couldn't find any constraints for \(state)")
+                os_log(msg, log: sysLog, type: .fault, "Error: can not find any constraints for \(state)")
             }
         }
     }

@@ -1,6 +1,7 @@
 // Copyright 2018-Present Shin Yamamoto. All rights reserved. MIT license.
 
 import UIKit
+import os.log
 
 /// A set of methods implemented by the delegate of a panel controller allows the adopting delegate to respond to
 /// messages from the FloatingPanelController class and thus respond to, and in some affect, operations such as
@@ -167,7 +168,8 @@ open class FloatingPanelController: UIViewController {
         set {
             _layout = newValue
             if let parent = parent, let layout = newValue as? UIViewController, layout == parent {
-                log.warning("A memory leak will occur by a retain cycle because \(self) owns the parent view controller(\(parent)) as the layout object. Don't let the parent adopt FloatingPanelLayout.")
+                let log = "Warning: A memory leak occurs due to a retain cycle, as \(self) owns the parent view controller(\(parent)) as its layout object. Don't allow the parent to adopt FloatingPanelLayout."
+                os_log(msg, log: sysLog, type: .error, log)
             }
         }
     }
@@ -179,7 +181,8 @@ open class FloatingPanelController: UIViewController {
         set {
             _behavior = newValue
             if let parent = parent, let behavior = newValue as? UIViewController, behavior == parent {
-                log.warning("A memory leak will occur by a retain cycle because \(self) owns the parent view controller(\(parent)) as the behavior object. Don't let the parent adopt FloatingPanelBehavior.")
+                let log = "Warning: A memory leak occurs due to a retain cycle, as \(self) owns the parent view controller(\(parent)) as its behavior object. Don't allow the parent to adopt FloatingPanelBehavior."
+                os_log(msg, log: sysLog, type: .error, log)
             }
         }
     }
@@ -375,7 +378,7 @@ open class FloatingPanelController: UIViewController {
             preSafeAreaInsets != safeAreaInsets
             else { return }
 
-        log.debug("Update safeAreaInsets", safeAreaInsets)
+        os_log(msg, log: devLog, type: .debug, "Update safeAreaInsets = \(safeAreaInsets)")
 
         // Prevent an infinite loop on iOS 10: setUpLayout() -> viewDidLayoutSubviews() -> setUpLayout()
         preSafeAreaInsets = safeAreaInsets
@@ -482,7 +485,7 @@ open class FloatingPanelController: UIViewController {
     @objc(addPanelToParent:at:animated:completion:)
     public func addPanel(toParent parent: UIViewController, at viewIndex: Int = -1, animated: Bool = false, completion: (() -> Void)? = nil) {
         guard self.parent == nil else {
-            log.warning("Already added to a parent(\(parent))")
+            os_log(msg, log: sysLog, type: .error, "Warning: already added to a parent(\(parent))")
             return
         }
         assert((parent is UINavigationController) == false, "UINavigationController displays only one child view controller at a time.")

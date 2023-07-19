@@ -1,6 +1,7 @@
 // Copyright 2018-Present Shin Yamamoto. All rights reserved. MIT license.
 
 import UIKit
+import os.log
 
 /// An object for customizing the appearance of a surface view
 @objc(FloatingPanelSurfaceAppearance)
@@ -318,7 +319,7 @@ public class SurfaceView: UIView {
 
     public override func layoutSubviews() {
         super.layoutSubviews()
-        log.debug("surface view frame = \(frame)")
+        os_log(msg, log: devLog, type: .debug, "surface view frame = \(frame)")
 
         containerView.backgroundColor = appearance.backgroundColor
 

@@ -1,5 +1,6 @@
 // Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
 
+import OSLog
 import XCTest
 @testable import FloatingPanel
 
@@ -7,18 +8,20 @@ class ControllerTests: XCTestCase {
     override func setUp() {}
     override func tearDown() {}
 
-    func test_warningRetainCycle() {
-        let exp = expectation(description: "Warning retain cycle")
-        exp.expectedFulfillmentCount = 2 // For layout & behavior logs
-        log.hook = {(log, level) in
-            if log.contains("A memory leak will occur by a retain cycle because") {
-                XCTAssert(level == .warning)
-                exp.fulfill()
-            }
-        }
+    @available(iOS 15, *)
+    func test_warningRetainCycle() throws {
         let myVC = MyZombieViewController(nibName: nil, bundle: nil)
         myVC.loadViewIfNeeded()
-        wait(for: [exp], timeout: 10)
+        let store = try OSLogStore(scope: .currentProcessIdentifier)
+        let found = try store
+            .getEntries(
+                at: store.position(timeIntervalSinceLatestBoot: 0),
+                matching: .init(format: "subsystem == '\(Logging.subsystem)'")
+            )
+            .contains {
+                $0.composedMessage.contains("A memory leak occurs due to a retain cycle, as")
+            }
+        XCTAssertTrue(found)
     }
 
     func test_addPanel() {
