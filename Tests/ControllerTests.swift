@@ -8,8 +8,11 @@ class ControllerTests: XCTestCase {
     override func setUp() {}
     override func tearDown() {}
 
-    @available(iOS 15, *)
+#if swift(>=5.5)  // Avoid the 'No exact matches in call to initializer' build failure for OSLogStore when running this test case on iOS 13.7 using Xcode 12.5.1
     func test_warningRetainCycle() throws {
+        guard #available(iOS 15.0, *) else {
+            throw XCTSkip("Unsupported iOS version: this test needs iOS 15 or later")
+        }
         let myVC = MyZombieViewController(nibName: nil, bundle: nil)
         myVC.loadViewIfNeeded()
         let store = try OSLogStore(scope: .currentProcessIdentifier)
@@ -23,6 +26,7 @@ class ControllerTests: XCTestCase {
             }
         XCTAssertTrue(found)
     }
+#endif
 
     func test_addPanel() {
         let rootVC = UIViewController()
@@ -37,8 +41,13 @@ class ControllerTests: XCTestCase {
         XCTAssertEqual(fpc.surfaceLocation.y, fpc.surfaceLocation(for: .tip).y)
     }
 
-    @available(iOS 12.0, *)
-    func test_updateLayout_willTransition() {
+    func test_updateLayout_willTransition() throws {
+        guard #available(iOS 12, *) else {
+            throw XCTSkip("Unsupported iOS version: this test needs iOS 12 or later")
+        }
+        if #available(iOS 17, *) {
+            throw XCTSkip("Unsupported iOS version: this test doesn't support iOS 17 or later")
+        }
         class MyDelegate: FloatingPanelControllerDelegate {
             func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout {
                 if newCollection.userInterfaceStyle == .dark {
