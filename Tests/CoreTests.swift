@@ -7,7 +7,7 @@ class CoreTests: XCTestCase {
     override func setUp() {}
     override func tearDown() {}
 
-    func test_scrolllock() {
+    func test_scrollLock() {
         let fpc = FloatingPanelController()
 
         let contentVC1 = UITableViewController(nibName: nil, bundle: nil)
