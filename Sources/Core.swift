@@ -128,7 +128,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         if animated {
             let updateScrollView: () -> Void = { [weak self] in
                 guard let self = self else { return }
-                if self.state == self.layoutAdapter.mostExpandedState, abs(self.layoutAdapter.offsetFromMostExpandedAnchor) <= 1.0 {
+                if self.state == self.layoutAdapter.mostExpandedState, 0 == self.layoutAdapter.offsetFromMostExpandedAnchor {
                     self.unlockScrollView()
                 } else {
                     self.lockScrollView()
@@ -393,7 +393,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             let velocity = value(of: panGesture.velocity(in: panGesture.view))
             let location = panGesture.location(in: surfaceView)
 
-            let insideMostExpandedAnchor = 0 > layoutAdapter.offsetFromMostExpandedAnchor + (1.0 / surfaceView.fp_displayScale)
+            let insideMostExpandedAnchor = 0 > layoutAdapter.offsetFromMostExpandedAnchor
 
             os_log(msg, log: devLog, type: .debug, """
                 scroll gesture(\(state):\(panGesture.state)) -- \
@@ -557,7 +557,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 // A user can stop a panel at the nearest Y of a target position so this fine-tunes
                 // the a small gap between the presentation layer frame and model layer frame
                 // to unlock scroll view properly at finishAnimation(at:)
-                if abs(layoutAdapter.offsetFromMostExpandedAnchor) <= 1.0 {
+                if 0 == layoutAdapter.offsetFromMostExpandedAnchor {
                     layoutAdapter.surfaceLocation = layoutAdapter.surfaceLocation(for: layoutAdapter.mostExpandedState)
                 }
                 animator.finishAnimation(at: .current)
@@ -716,7 +716,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             return
         }
 
-        stopScrollDeceleration = (0 > layoutAdapter.offsetFromMostExpandedAnchor + (1.0 / surfaceView.fp_displayScale)) // Projecting the dragging to the scroll dragging or not
+        // Determine whether the panel's dragging should be projected onto the scroll content scrolling
+        stopScrollDeceleration = 0 > layoutAdapter.offsetFromMostExpandedAnchor
         if stopScrollDeceleration {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
@@ -938,7 +939,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             surface location = \(layoutAdapter.surfaceLocation) \
             edge most position = \(layoutAdapter.surfaceLocation(for: layoutAdapter.mostExpandedState))
             """)
-        if finished, state == layoutAdapter.mostExpandedState, abs(layoutAdapter.offsetFromMostExpandedAnchor) <= 1.0 {
+        if finished, state == layoutAdapter.mostExpandedState, 0 == layoutAdapter.offsetFromMostExpandedAnchor {
             unlockScrollView()
         } else if finished, shouldLooselyLockScrollView {
             unlockScrollView()

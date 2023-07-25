@@ -10,7 +10,7 @@ extension CGFloat {
         return (self * displayScale).rounded(.toNearestOrAwayFromZero) / displayScale
     }
     func isEqual(to: CGFloat, on displayScale: CGFloat) -> Bool {
-        return self.rounded(by: displayScale) == to.rounded(by: displayScale)
+        return rounded(by: displayScale) == to.rounded(by: displayScale)
     }
 }
 

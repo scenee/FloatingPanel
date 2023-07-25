@@ -266,12 +266,14 @@ class LayoutAdapter {
     }
 
     var offsetFromMostExpandedAnchor: CGFloat {
+        let offset: CGFloat
         switch position {
         case .top, .left:
-            return edgePosition(surfaceView.presentationFrame) - position(for: mostExpandedState)
+            offset = edgePosition(surfaceView.presentationFrame) - position(for: mostExpandedState)
         case .bottom, .right:
-            return position(for: mostExpandedState) - edgePosition(surfaceView.presentationFrame)
+            offset = position(for: mostExpandedState) - edgePosition(surfaceView.presentationFrame)
         }
+        return offset.rounded(by: surfaceView.fp_displayScale)
     }
 
     private var hiddenAnchor: FloatingPanelLayoutAnchoring {
