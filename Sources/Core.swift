@@ -902,8 +902,12 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         },
             completion: { [weak self] in
                 guard let self = self,
-                      self.ownerVC != nil else { return }
+                      let ownerVC = self.ownerVC
+                else { return }
                 self.updateLayout(to: targetPosition)
+                // Notify when it has reached the target anchor point. At this point, the surface location is equal to
+                // the target anchor location.
+                ownerVC.notifyDidMove()
                 completion()
         })
         moveAnimator?.startAnimation()
