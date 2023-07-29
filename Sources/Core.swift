@@ -753,13 +753,14 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
 
         guard shouldAttract(to: targetPosition) else {
-            if let vc = ownerVC {
-                vc.delegate?.floatingPanelDidEndDragging?(vc, willAttract: false)
-            }
-
             self.state = targetPosition
             self.updateLayout(to: targetPosition)
             self.unlockScrollView()
+            // The `floatingPanelDidEndDragging(_:willAttract:)` must be called after the state property changes.
+            // This allows library users to get the correct state in the delegate method.
+            if let vc = ownerVC {
+                vc.delegate?.floatingPanelDidEndDragging?(vc, willAttract: false)
+            }
             return
         }
 
