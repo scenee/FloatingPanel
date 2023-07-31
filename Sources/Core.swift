@@ -143,10 +143,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 let animationVector = CGVector(dx: abs(removalVector.dx), dy: abs(removalVector.dy))
                 animator = vc.animatorForDismissing(with: animationVector)
             default:
-                move(to: to, with: 0) { [weak self] in
-                    guard let self = self else { return }
-
-                    self.moveAnimator = nil
+                startAttraction(to: to, with: .zero) { [weak self] in
+                    self?.endAttraction(false)
                     updateScrollView()
                     completion?()
                 }
@@ -768,7 +766,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             vc.delegate?.floatingPanelDidEndDragging?(vc, willAttract: true)
         }
 
-        startAttraction(to: targetPosition, with: velocity)
+        startAttraction(to: targetPosition, with: velocity) { [weak self] in
+            self?.endAttraction(true)
+        }
     }
 
     // MARK: - Behavior
@@ -871,15 +871,13 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         return true
     }
 
-    private func startAttraction(to targetPosition: FloatingPanelState, with velocity: CGPoint) {
+    private func startAttraction(to targetPosition: FloatingPanelState, with velocity: CGPoint, completion: @escaping (() -> Void)) {
         os_log(msg, log: devLog, type: .debug, "startAnimation to \(targetPosition) -- velocity = \(value(of: velocity))")
         guard let vc = ownerVC else { return }
 
         isAttracting = true
         vc.delegate?.floatingPanelWillBeginAttracting?(vc, to: targetPosition)
-        move(to: targetPosition, with: value(of: velocity)) {
-            self.endAttraction(true)
-        }
+        move(to: targetPosition, with: value(of: velocity), completion: completion)
     }
 
     private func move(to targetPosition: FloatingPanelState, with velocity: CGFloat, completion: @escaping (() -> Void)) {
@@ -915,7 +913,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         state = targetPosition
     }
 
-    private func endAttraction(_ finished: Bool) {
+    private func endAttraction(_ tryUnlockScroll: Bool) {
         self.isAttracting = false
         self.moveAnimator = nil
 
@@ -934,10 +932,12 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             surface location = \(layoutAdapter.surfaceLocation) \
             edge most position = \(layoutAdapter.surfaceLocation(for: layoutAdapter.mostExpandedState))
             """)
-        if finished, state == layoutAdapter.mostExpandedState, 0 == layoutAdapter.offsetFromMostExpandedAnchor {
-            unlockScrollView()
-        } else if finished, shouldLooselyLockScrollView {
-            unlockScrollView()
+
+        if tryUnlockScroll {
+            if (state == layoutAdapter.mostExpandedState && 0 == layoutAdapter.offsetFromMostExpandedAnchor)
+                || shouldLooselyLockScrollView {
+                unlockScrollView()
+            }
         }
     }
 
