@@ -44,6 +44,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     let panGestureRecognizer: FloatingPanelPanGestureRecognizer
+    let panGestureDelegateRouter: FloatingPanelPanGestureRecognizer.DelegateRouter
     var isRemovalInteractionEnabled: Bool = false
 
     fileprivate var isSuspended: Bool = false // Prevent a memory leak in the modal transition
@@ -86,17 +87,19 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         behaviorAdapter = BehaviorAdapter(vc: vc, behavior: behavior)
 
         panGestureRecognizer = FloatingPanelPanGestureRecognizer()
-
-        if #available(iOS 11.0, *) {
-            panGestureRecognizer.name = "FloatingPanelPanGestureRecognizer"
-        }
+        panGestureDelegateRouter = FloatingPanelPanGestureRecognizer.DelegateRouter(panGestureRecognizer: panGestureRecognizer)
 
         super.init()
 
-        panGestureRecognizer.floatingPanel = self
+        panGestureRecognizer.set(floatingPanel: self)
         surfaceView.addGestureRecognizer(panGestureRecognizer)
         panGestureRecognizer.addTarget(self, action: #selector(handle(panGesture:)))
-        panGestureRecognizer.delegate = self
+
+        // Assign the delegate router to `FloatingPanelPanGestureRecognizer.delegate` only after setting
+        // `FloatingPanelPanGestureRecognizer.floatingPanel` property.
+        // This is because `delegateOrigin` is used at the time of assignment to its `delegate` property
+        // through the delegate router.
+        panGestureRecognizer.delegate = panGestureDelegateRouter
 
         // Set the tap-to-dismiss action of the backdrop view.
         // It's disabled by default. See also BackdropView.dismissalTapGestureRecognizer.
@@ -258,10 +261,6 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                                   shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if let result = panGestureRecognizer.delegateProxy?.gestureRecognizer?(gestureRecognizer, shouldRecognizeSimultaneouslyWith: otherGestureRecognizer) {
-            return result
-        }
-
         guard gestureRecognizer == panGestureRecognizer else { return false }
 
         /* os_log(msg, log: devLog, type: .debug, "shouldRecognizeSimultaneouslyWith", otherGestureRecognizer) */
@@ -289,10 +288,6 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if let result = panGestureRecognizer.delegateProxy?.gestureRecognizer?(gestureRecognizer, shouldBeRequiredToFailBy: otherGestureRecognizer) {
-            return result
-        }
-
         if otherGestureRecognizer is FloatingPanelPanGestureRecognizer {
             // If this panel is the farthest descendant of visible panels,
             // its ancestors' pan gesture must wait for its pan gesture to fail
@@ -314,10 +309,6 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if let result = panGestureRecognizer.delegateProxy?.gestureRecognizer?(gestureRecognizer, shouldRequireFailureOf: otherGestureRecognizer) {
-            return result
-        }
-
         guard gestureRecognizer == panGestureRecognizer else { return false }
 
         // Should begin the pan gesture without waiting for the tracking scroll view's gestures.
@@ -1131,16 +1122,27 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
 /// A gesture recognizer that looks for panning (dragging) gestures in a panel.
 public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
-    fileprivate weak var floatingPanel: Core?
     fileprivate var initialLocation: CGPoint = .zero
+    private weak var floatingPanel: Core!  //  Core has this gesture recognizer as non-optional
+    fileprivate func set(floatingPanel: Core) {
+        self.floatingPanel = floatingPanel
+    }
+
+    init() {
+        super.init(target: nil, action: nil)
+        if #available(iOS 11.0, *) {
+            name = "FloatingPanelPanGestureRecognizer"
+        }
+    }
 
     public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
         super.touchesBegan(touches, with: event)
         initialLocation = touches.first?.location(in: view) ?? .zero
-        if floatingPanel?.transitionAnimator != nil || floatingPanel?.moveAnimator != nil {
+        if floatingPanel.transitionAnimator != nil || floatingPanel.moveAnimator != nil {
             self.state = .began
         }
     }
+
     /// The delegate of the gesture recognizer.
     ///
     /// - Note: The delegate is used by FloatingPanel itself. If you set your own delegate object, an
@@ -1150,10 +1152,12 @@ public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
             return super.delegate
         }
         set {
-            guard newValue is Core else {
-                let exception = NSException(name: .invalidArgumentException,
-                                            reason: "FloatingPanelController's built-in pan gesture recognizer must have its controller as its delegate. Use 'delegateProxy' property.",
-                                            userInfo: nil)
+            guard newValue is DelegateRouter else {
+                let exception = NSException(
+                    name: .invalidArgumentException,
+                    reason: "FloatingPanelController's built-in pan gesture recognizer must have its controller as its delegate. Use 'delegateProxy' property.",
+                    userInfo: nil
+                )
                 exception.raise()
                 return
             }
@@ -1161,12 +1165,44 @@ public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
         }
     }
 
-    /// An object to intercept the delegate of the gesture recognizer.
+    /// The default object implementing a set methods of the delegate of the gesture recognizer.
     ///
-    /// If an object adopting `UIGestureRecognizerDelegate` is set, the delegate methods are proxied to it.
+    /// Use this property with ``delegateProxy`` when you need to use the default gesture behaviors in a proxy implementation.
+    public var delegateOrigin: UIGestureRecognizerDelegate {
+        return floatingPanel
+    }
+
+    /// A proxy object to intercept the default behavior of the gesture recognizer.
+    ///
+    /// `UIGestureRecognizerDelegate` methods implementing by this object are called instead of the default delegate,
+    ///  ``delegateOrigin``.
     public weak var delegateProxy: UIGestureRecognizerDelegate? {
         didSet {
-            self.delegate = floatingPanel // Update the cached IMP
+            self.delegate = floatingPanel?.panGestureDelegateRouter // Update the cached IMP
+        }
+    }
+
+    final class DelegateRouter: NSObject, UIGestureRecognizerDelegate {
+        fileprivate unowned let panGestureRecognizer: FloatingPanelPanGestureRecognizer
+
+        init(panGestureRecognizer: FloatingPanelPanGestureRecognizer) {
+            self.panGestureRecognizer = panGestureRecognizer
+            super.init()
+        }
+
+        override func responds(to aSelector: Selector!) -> Bool {
+            return panGestureRecognizer.delegateProxy?.responds(to: aSelector) == true
+            || panGestureRecognizer.delegateOrigin.responds(to: aSelector)
+        }
+
+        override func forwardingTarget(for aSelector: Selector!) -> Any? {
+            if panGestureRecognizer.delegateProxy?.responds(to: aSelector) == true {
+                return panGestureRecognizer.delegateProxy
+            }
+            if panGestureRecognizer.delegateOrigin.responds(to: aSelector) {
+                return panGestureRecognizer.delegateOrigin
+            }
+            return nil
         }
     }
 }
