@@ -37,6 +37,14 @@ final class DebugTextViewController: UIViewController, UITextViewDelegate {
         }
     }
 
+    @IBAction func toggleTopMargin(_ sender: UISwitch) {
+        if sender.isOn {
+            textViewTopConstraint.constant = 160
+        } else {
+            textViewTopConstraint.constant = 16
+        }
+    }
+
     @IBAction func close(sender: UIButton) {
         // (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
         dismiss(animated: true, completion: nil)
