@@ -161,6 +161,7 @@ extension UseCaseController {
         case .showOnWindow:
             let fpc = overWindowPanelVC
             fpc.backdropView.dismissalTapGestureRecognizer.isEnabled = true
+            fpc.isRemovalInteractionEnabled = true
             fpc.set(contentViewController: contentVC)
             fpc.ext_trackScrollView(in: contentVC)
 
