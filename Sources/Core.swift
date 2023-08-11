@@ -65,7 +65,6 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
     // Scroll handling
     private var initialScrollOffset: CGPoint = .zero
-    private var stopScrollDeceleration: Bool = false
     private var scrollBounce = false
     private var scrollIndictorVisible = false
     private var scrollBounceThreshold: CGFloat = -30.0
@@ -706,8 +705,10 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
 
         // Determine whether the panel's dragging should be projected onto the scroll content scrolling
-        stopScrollDeceleration = 0 > layoutAdapter.offsetFromMostExpandedAnchor
-        if stopScrollDeceleration {
+        let stopScrollDeceleration = 0 > layoutAdapter.offsetFromMostExpandedAnchor
+        os_log(msg, log: devLog, type: .debug, "panningEnd -- offsetFromMostExpandedAnchor = \(layoutAdapter.offsetFromMostExpandedAnchor)")
+
+        if stopScrollDeceleration, state != layoutAdapter.mostExpandedState {
             os_log(msg, log: devLog, type: .debug, "panningEnd -- will stop scrolling at initialScrollOffset = \(initialScrollOffset)")
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
@@ -791,10 +792,41 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
         initialSurfaceLocation = layoutAdapter.surfaceLocation
         if state == layoutAdapter.mostExpandedState, let scrollView = scrollView {
-            if surfaceView.grabberAreaContains(location) {
+            let scrollFrame = scrollView.convert(scrollView.bounds, to: nil)
+            let touchStartingPoint = surfaceView.convert(initialLocation, to: nil)
+
+            ifLabel: if surfaceView.grabberAreaContains(location) {
                 initialScrollOffset = scrollView.contentOffset
-            } else {
+            } else if scrollFrame.contains(touchStartingPoint) {
                 let pinningOffset = contentOffsetForPinning(of: scrollView)
+
+                // This code block handles the scenario where there's a navigation bar or toolbar
+                // above the tracking scroll view with corresponding content insets set, and users
+                // move the panel by interacting with these bars. One case of the scenario can be
+                // tested with 'Show Navigation Controller' in Samples.app
+                do {
+                    // Adjust the location by subtracting scrollView's origin to reference the frame
+                    // rectangle of the scroll view itself.
+                    let _location = scrollView.convert(location, from: surfaceView) - scrollView.bounds.origin
+
+                    os_log(msg, log: devLog, type: .debug, "startInteraction -- location in scroll view = \(_location))")
+
+                    // Keep the scroll content offset if the current touch position is inside its
+                    // content inset area.
+                    switch layoutAdapter.position {
+                    case .top, .left:
+                        let base = value(of: scrollView.bounds.size)
+                        if value(of: pinningOffset) + (base - value(of: _location)) < 0 {
+                            initialScrollOffset = scrollView.contentOffset
+                            break ifLabel
+                        }
+                    case .bottom, .right:
+                        if value(of: pinningOffset) + value(of: _location) < 0 {
+                            initialScrollOffset = scrollView.contentOffset
+                            break ifLabel
+                        }
+                    }
+                }
 
                 // `initialScrollOffset` must be reset to the pinning offset because the value of `scrollView.contentOffset`,
                 // for instance, is a value in [-30, 0) on a bottom positioned panel with `allowScrollPanGesture(of:condition:)`.
@@ -814,6 +846,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                         offset = -offsetDiff
                     }
                 }
+            } else {
+                initialScrollOffset = scrollView.contentOffset
             }
             os_log(msg, log: devLog, type: .debug, "initial scroll offset -- \(initialScrollOffset)")
         }
@@ -915,8 +949,6 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         if let scrollView = scrollView {
             os_log(msg, log: devLog, type: .debug, "finishAnimation -- scroll offset = \(scrollView.contentOffset)")
         }
-
-        stopScrollDeceleration = false
 
         os_log(msg, log: devLog, type: .debug, """
             finishAnimation -- state = \(state) \
