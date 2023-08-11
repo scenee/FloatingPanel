@@ -216,7 +216,7 @@ open class FloatingPanelController: UIViewController {
     /// The NearbyState determines that finger's nearby state.
     public var nearbyState: FloatingPanelState {
         let currentY = surfaceLocation.y
-        return floatingPanel.targetPosition(from: currentY, with: .zero)
+        return floatingPanel.targetState(from: currentY, with: .zero)
     }
 
     /// Constants that define how a panel content fills in the surface.

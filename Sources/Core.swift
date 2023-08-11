@@ -719,9 +719,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
         let currentPos = value(of: layoutAdapter.surfaceLocation)
         let mainVelocity = value(of: velocity)
-        var targetPosition = self.targetPosition(from: currentPos, with: mainVelocity)
+        var target = self.targetState(from: currentPos, with: mainVelocity)
 
-        endInteraction(for: targetPosition)
+        endInteraction(for: target)
 
         if isRemovalInteractionEnabled {
             let distToHidden = CGFloat(abs(currentPos - layoutAdapter.position(for: .hidden)))
@@ -738,12 +738,12 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
 
         if let vc = ownerVC {
-            vc.delegate?.floatingPanelWillEndDragging?(vc, withVelocity: velocity, targetState: &targetPosition)
+            vc.delegate?.floatingPanelWillEndDragging?(vc, withVelocity: velocity, targetState: &target)
         }
 
-        guard shouldAttract(to: targetPosition) else {
-            self.state = targetPosition
-            self.updateLayout(to: targetPosition)
+        guard shouldAttract(to: target) else {
+            self.state = target
+            self.updateLayout(to: target)
             self.unlockScrollView()
             // The `floatingPanelDidEndDragging(_:willAttract:)` must be called after the state property changes.
             // This allows library users to get the correct state in the delegate method.
@@ -757,7 +757,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             vc.delegate?.floatingPanelDidEndDragging?(vc, willAttract: true)
         }
 
-        startAttraction(to: targetPosition, with: velocity) { [weak self] in
+        startAttraction(to: target, with: velocity) { [weak self] in
             self?.endAttraction(true)
         }
     }
@@ -831,8 +831,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         lockScrollView()
     }
 
-    private func endInteraction(for targetPosition: FloatingPanelState) {
-        os_log(msg, log: devLog, type: .debug, "endInteraction to \(targetPosition)")
+    private func endInteraction(for state: FloatingPanelState) {
+        os_log(msg, log: devLog, type: .debug, "endInteraction to \(state)")
 
         if let scrollView = scrollView {
             os_log(msg, log: devLog, type: .debug, "endInteraction -- scroll offset = \(scrollView.contentOffset)")
@@ -841,11 +841,11 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         interactionInProgress = false
 
         // Prevent to keep a scroll view indicator visible at the half/tip position
-        if targetPosition != layoutAdapter.mostExpandedState {
+        if state != layoutAdapter.mostExpandedState {
             lockScrollView()
         }
 
-        layoutAdapter.endInteraction(at: targetPosition)
+        layoutAdapter.endInteraction(at: state)
     }
 
     private func tearDownActiveInteraction() {
@@ -855,24 +855,24 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         panGestureRecognizer.isEnabled = true
     }
 
-    private func shouldAttract(to targetState: FloatingPanelState) -> Bool {
-        if layoutAdapter.position(for: targetState) == value(of: layoutAdapter.surfaceLocation) {
+    private func shouldAttract(to state: FloatingPanelState) -> Bool {
+        if layoutAdapter.position(for: state) == value(of: layoutAdapter.surfaceLocation) {
             return false
         }
         return true
     }
 
-    private func startAttraction(to targetPosition: FloatingPanelState, with velocity: CGPoint, completion: @escaping (() -> Void)) {
-        os_log(msg, log: devLog, type: .debug, "startAnimation to \(targetPosition) -- velocity = \(value(of: velocity))")
+    private func startAttraction(to state: FloatingPanelState, with velocity: CGPoint, completion: @escaping (() -> Void)) {
+        os_log(msg, log: devLog, type: .debug, "startAnimation to \(state) -- velocity = \(value(of: velocity))")
         guard let vc = ownerVC else { return }
 
         isAttracting = true
-        vc.delegate?.floatingPanelWillBeginAttracting?(vc, to: targetPosition)
-        move(to: targetPosition, with: value(of: velocity), completion: completion)
+        vc.delegate?.floatingPanelWillBeginAttracting?(vc, to: state)
+        move(to: state, with: value(of: velocity), completion: completion)
     }
 
-    private func move(to targetPosition: FloatingPanelState, with velocity: CGFloat, completion: @escaping (() -> Void)) {
-        let (animationConstraint, target) = layoutAdapter.setUpAttraction(to: targetPosition)
+    private func move(to state: FloatingPanelState, with velocity: CGFloat, completion: @escaping (() -> Void)) {
+        let (animationConstraint, target) = layoutAdapter.setUpAttraction(to: state)
         let initialData = NumericSpringAnimator.Data(value: animationConstraint.constant, velocity: velocity)
         moveAnimator = NumericSpringAnimator(
             initialData: initialData,
@@ -894,14 +894,14 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 guard let self = self,
                       let ownerVC = self.ownerVC
                 else { return }
-                self.updateLayout(to: targetPosition)
+                self.updateLayout(to: state)
                 // Notify when it has reached the target anchor point. At this point, the surface location is equal to
                 // the target anchor location.
                 ownerVC.notifyDidMove()
                 completion()
         })
         moveAnimator?.startAnimation()
-        state = targetPosition
+        self.state = state
     }
 
     private func endAttraction(_ tryUnlockScroll: Bool) {
@@ -955,8 +955,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         return (initialVelocity / 1000.0) * decelerationRate / (1.0 - decelerationRate)
     }
 
-    func targetPosition(from currentY: CGFloat, with velocity: CGFloat) -> (FloatingPanelState) {
-        os_log(msg, log: devLog, type: .debug, "targetPosition -- currentY = \(currentY), velocity = \(velocity)")
+    func targetState(from currentY: CGFloat, with velocity: CGFloat) -> FloatingPanelState {
+        os_log(msg, log: devLog, type: .debug, "targetState -- currentY = \(currentY), velocity = \(velocity)")
 
         let sortedPositions = layoutAdapter.sortedAnchorStatesByCoordinate
 
@@ -982,7 +982,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         (fromPos, toPos) = forwardY ? (lowerPos, upperPos) : (upperPos, lowerPos)
 
         if behaviorAdapter.shouldProjectMomentum(to: toPos) == false {
-            os_log(msg, log: devLog, type: .debug, "targetPosition -- negate projection: distance = \(distance)")
+            os_log(msg, log: devLog, type: .debug, "targetState -- negate projection: distance = \(distance)")
             let segment = layoutAdapter.segment(at: currentY, forward: forwardY)
             var (lowerPos, upperPos) = (segment.lower ?? sortedPositions.first!, segment.upper ?? sortedPositions.last!)
             // Equate the segment out of {top,bottom} most state to the {top,bottom} most segment

@@ -292,7 +292,7 @@ class CoreTests: XCTestCase {
         }
     }
 
-    func test_targetPosition_1positions() {
+    func test_targetState_1positions() {
         class FloatingPanelLayout1Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .full
             let position: FloatingPanelPosition = .bottom
@@ -309,7 +309,7 @@ class CoreTests: XCTestCase {
         let fullPos = fpc.surfaceLocation(for: .full).y
 
         fpc.move(to: .full, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .full), // redirect
             (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full), // redirect
             (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full), // redirect
@@ -320,7 +320,7 @@ class CoreTests: XCTestCase {
             ])
     }
 
-    func test_targetPosition_2positions() {
+    func test_targetState_2positions() {
         class FloatingPanelLayout2Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .half
             let position: FloatingPanelPosition = .bottom
@@ -340,7 +340,7 @@ class CoreTests: XCTestCase {
         let halfPos = fpc.surfaceLocation(for: .half).y
 
         fpc.move(to: .full, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .half), // project to half
             (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full), // redirect
             (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
@@ -357,7 +357,7 @@ class CoreTests: XCTestCase {
             (#line, halfPos + 10.0, CGPoint(x: 0.0, y: -1000.0), .full), // project to full
             ])
         fpc.move(to: .half, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .half), // project to half
             (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full), // redirect
             (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
@@ -375,7 +375,7 @@ class CoreTests: XCTestCase {
             ])
     }
 
-    func test_targetPosition_2positionsWithHidden() {
+    func test_targetState_2positionsWithHidden() {
         class FloatingPanelLayout2Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .hidden
             let position: FloatingPanelPosition = .bottom
@@ -395,7 +395,7 @@ class CoreTests: XCTestCase {
         let hiddenPos = fpc.surfaceLocation(for: .hidden).y
 
         fpc.move(to: .full, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .hidden), // project to hidden
             (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full), // redirect
             (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
@@ -412,7 +412,7 @@ class CoreTests: XCTestCase {
             (#line, hiddenPos + 10.0, CGPoint(x: 0.0, y: -1000.0), .full), // project to full
             ])
         fpc.move(to: .hidden, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 1000.0), .hidden), // project to hidden
             (#line, fullPos, CGPoint(x: 0.0, y: -1000.0), .full), // redirect
             (#line, fullPos, CGPoint(x: 0.0, y: -100.0), .full),
@@ -430,7 +430,7 @@ class CoreTests: XCTestCase {
             ])
     }
 
-    func test_targetPosition_3positionsFromFull() {
+    func test_targetState_3positionsFromFull() {
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
         fpc.layout = FloatingPanelLayout3Positions()
@@ -442,7 +442,7 @@ class CoreTests: XCTestCase {
         let tipPos = fpc.surfaceLocation(for: .tip).y
         // From .full
         fpc.move(to: .full, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, fullPos - 500.0, CGPoint(x: 0.0, y: -100.0), .full), // far from topMostState
             (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 0.0), .full), // far from topMostState
             (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 100.0), .full), // far from topMostState
@@ -474,7 +474,7 @@ class CoreTests: XCTestCase {
         ])
     }
 
-    func test_targetPosition_3positionsFromFull_bottomEdge() {
+    func test_targetState_3positionsFromFull_bottomEdge() {
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
         fpc.layout = FloatingPanelLayout3PositionsBottomEdge()
@@ -486,7 +486,7 @@ class CoreTests: XCTestCase {
         let tipPos = fpc.surfaceLocation(for: .tip).y
         // From .full
         fpc.move(to: .full, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, tipPos - 500.0, CGPoint(x: 0.0, y: -100.0), .tip), // far from topMostState
             (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 0.0), .tip), // far from topMostState
             (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 100.0), .tip), // far from topMostState
@@ -518,7 +518,7 @@ class CoreTests: XCTestCase {
         ])
     }
 
-    func test_targetPosition_3positionsFromHalf() {
+    func test_targetState_3positionsFromHalf() {
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
         fpc.layout = FloatingPanelLayout3Positions()
@@ -530,7 +530,7 @@ class CoreTests: XCTestCase {
         let tipPos = fpc.surfaceLocation(for: .tip).y
         // From .half
         fpc.move(to: .half, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, fullPos - 500.0, CGPoint(x: 0.0, y: -100.0), .full), // far from topMostState
             (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 0.0), .full), // far from topMostState
             (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 100.0), .full), // far from topMostState
@@ -560,7 +560,7 @@ class CoreTests: XCTestCase {
         ])
     }
 
-    func test_targetPosition_3positionsFromHalf_bottomEdge() {
+    func test_targetState_3positionsFromHalf_bottomEdge() {
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
         fpc.layout = FloatingPanelLayout3PositionsBottomEdge()
@@ -572,7 +572,7 @@ class CoreTests: XCTestCase {
             let tipPos = fpc.surfaceLocation(for: .tip).y
             // From .half
             fpc.move(to: .half, animated: false)
-            assertTargetPosition(fpc.floatingPanel, with: [
+            assertTargetState(fpc.floatingPanel, with: [
                 (#line, tipPos - 500.0, CGPoint(x: 0.0, y: -100.0), .tip), // far from topMostState
                 (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 0.0), .tip), // far from topMostState
                 (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 100.0), .tip), // far from topMostState
@@ -602,7 +602,7 @@ class CoreTests: XCTestCase {
             ])
     }
 
-    func test_targetPosition_3positionsFromTip() {
+    func test_targetState_3positionsFromTip() {
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
         fpc.layout = FloatingPanelLayout3Positions()
@@ -615,7 +615,7 @@ class CoreTests: XCTestCase {
 
         // From .tip
         fpc.move(to: .tip, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, fullPos - 500.0, CGPoint(x: 0.0, y: -100.0), .full), // far from topMostState
             (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 0.0), .full), // far from topMostState
             (#line, fullPos - 500.0, CGPoint(x: 0.0, y: 100.0), .full), // far from topMostState
@@ -645,7 +645,7 @@ class CoreTests: XCTestCase {
         ])
     }
 
-    func test_targetPosition_3positionsFromTip_bottomEdge() {
+    func test_targetState_3positionsFromTip_bottomEdge() {
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
         fpc.layout = FloatingPanelLayout3PositionsBottomEdge()
@@ -658,7 +658,7 @@ class CoreTests: XCTestCase {
 
             // From .tip
             fpc.move(to: .tip, animated: false)
-            assertTargetPosition(fpc.floatingPanel, with: [
+            assertTargetState(fpc.floatingPanel, with: [
                 (#line, tipPos - 500.0, CGPoint(x: 0.0, y: -100.0), .tip), // far from topMostState
                 (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 0.0), .tip), // far from topMostState
                 (#line, tipPos - 500.0, CGPoint(x: 0.0, y: 100.0), .tip), // far from topMostState
@@ -688,7 +688,7 @@ class CoreTests: XCTestCase {
             ])
     }
 
-    func test_targetPosition_3positionsAllProjection() {
+    func test_targetState_3positionsAllProjection() {
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
         fpc.layout = FloatingPanelLayout3Positions()
@@ -702,7 +702,7 @@ class CoreTests: XCTestCase {
 
         // From .full
         fpc.move(to: .full, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 3000.0), .tip),
             (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .tip),
             (#line, fullPos, CGPoint(x: 0.0, y: 3000.0), .tip),
@@ -715,7 +715,7 @@ class CoreTests: XCTestCase {
 
         // From .half
         fpc.move(to: .tip, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .tip),
             (#line, fullPos, CGPoint(x: 0.0, y: 3000.0), .tip),
             (#line, tipPos, CGPoint(x: 0.0, y: -3000.0), .full),
@@ -724,7 +724,7 @@ class CoreTests: XCTestCase {
 
         // From .tip
         fpc.move(to: .tip, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, fullPos - 10.0, CGPoint(x: 0.0, y: 3000.0), .tip),
             (#line, fullPos, CGPoint(x: 0.0, y: 1000.0), .tip),
             (#line, fullPos, CGPoint(x: 0.0, y: 3000.0), .tip),
@@ -736,7 +736,7 @@ class CoreTests: XCTestCase {
             ])
     }
 
-    func test_targetPosition_3positionsWithHidden() {
+    func test_targetState_3positionsWithHidden() {
         class FloatingPanelLayout3PositionsWithHidden: FloatingPanelLayout {
             let initialState: FloatingPanelState = .hidden
             let position: FloatingPanelPosition = .bottom
@@ -754,11 +754,11 @@ class CoreTests: XCTestCase {
         XCTAssertEqual(fpc.state, .hidden)
 
         fpc.move(to: .full, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, fpc.surfaceView.frame.minY, CGPoint(x: 0.0, y: 1000.0), .half),
             ])
         fpc.move(to: .half, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, fpc.surfaceView.frame.minY, CGPoint(x: 0.0, y: -100.0), .half),
             (#line, fpc.surfaceView.frame.minY, CGPoint(x: 0.0, y: -1000.0), .full),
             (#line, fpc.surfaceView.frame.minY, CGPoint(x: 0.0, y: 0.0), .half),
@@ -766,7 +766,7 @@ class CoreTests: XCTestCase {
             ])
     }
 
-    func test_targetPosition_3positionsWithHiddenWithoutFull() {
+    func test_targetState_3positionsWithHiddenWithoutFull() {
         class FloatingPanelLayout3Positions: FloatingPanelLayout {
             let initialState: FloatingPanelState = .hidden
             let position: FloatingPanelPosition = .bottom
@@ -790,7 +790,7 @@ class CoreTests: XCTestCase {
         //let hiddenPos = fpc.surfaceLocation(for: .hidden)
 
         fpc.move(to: .half, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, halfPos, CGPoint(x: 0.0, y: -100.0), .half),
             (#line, halfPos, CGPoint(x: 0.0, y: 0.0), .half),
             (#line, halfPos, CGPoint(x: 0.0, y: 385.0), .tip), // projection
@@ -806,7 +806,7 @@ class CoreTests: XCTestCase {
             (#line, tipPos - 10.0, CGPoint(x: 0.0, y: 10.0), .tip), // redirection
             ])
         fpc.move(to: .tip, animated: false)
-        assertTargetPosition(fpc.floatingPanel, with: [
+        assertTargetState(fpc.floatingPanel, with: [
             (#line, tipPos, CGPoint(x: 0.0, y: -100.0), .tip),
             (#line, tipPos, CGPoint(x: 0.0, y: -1000.0), .half),
             (#line, tipPos, CGPoint(x: 0.0, y: 0.0), .tip),
@@ -835,9 +835,9 @@ private class FloatingPanelLayout3PositionsBottomEdge: FloatingPanelTop2BottomTe
 }
 
 private typealias TestParameter = (UInt, CGFloat,  CGPoint, FloatingPanelState)
-private func assertTargetPosition(_ floatingPanel: Core, with params: [TestParameter]) {
+private func assertTargetState(_ floatingPanel: Core, with params: [TestParameter]) {
     params.forEach { (line, pos, velocity, result) in
         floatingPanel.surfaceView.frame.origin.y = pos
-        XCTAssertEqual(floatingPanel.targetPosition(from: pos, with: velocity.y), result, line: line)
+        XCTAssertEqual(floatingPanel.targetState(from: pos, with: velocity.y), result, line: line)
     }
 }
