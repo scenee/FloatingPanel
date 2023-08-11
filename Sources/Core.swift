@@ -719,10 +719,12 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         // Determine whether the panel's dragging should be projected onto the scroll content scrolling
         stopScrollDeceleration = 0 > layoutAdapter.offsetFromMostExpandedAnchor
         if stopScrollDeceleration {
+            os_log(msg, log: devLog, type: .debug, "panningEnd -- will stop scrolling at initialScrollOffset = \(initialScrollOffset)")
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                
+
                 self.stopScrolling(at: self.initialScrollOffset)
+                os_log(msg, log: devLog, type: .debug, "panningEnd -- did stop scrolling at initialScrollOffset = \(self.initialScrollOffset)")
             }
         }
 
@@ -765,19 +767,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             vc.delegate?.floatingPanelDidEndDragging?(vc, willAttract: true)
         }
 
-        // Workaround: Disable a tracking scroll to prevent bouncing a scroll content in a panel animating
-        let isScrollEnabled = scrollView?.isScrollEnabled
-        if let scrollView = scrollView, targetPosition != layoutAdapter.mostExpandedState {
-            scrollView.isScrollEnabled = false
-        }
-
         startAttraction(to: targetPosition, with: velocity)
-
-        // Workaround: Reset `self.scrollView.isScrollEnabled`
-        if let scrollView = scrollView, targetPosition != layoutAdapter.mostExpandedState,
-            let isScrollEnabled = isScrollEnabled {
-            scrollView.isScrollEnabled = isScrollEnabled
-        }
     }
 
     // MARK: - Behavior
@@ -813,7 +803,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 initialScrollOffset = scrollView.contentOffset
             } else {
                 let pinningOffset = contentOffsetForPinning(of: scrollView)
-                
+
                 // `initialScrollOffset` must be reset to the pinning offset because the value of `scrollView.contentOffset`,
                 // for instance, is a value in [-30, 0) on a bottom positioned panel with `allowScrollPanGesture(of:condition:)`.
                 // If it's not reset, the following logic to shift the surface frame will not work and then the scroll
@@ -1090,11 +1080,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         // Must use setContentOffset(_:animated) to force-stop deceleration
         guard let scrollView = scrollView else { return }
         var offset = scrollView.contentOffset
-        if contentOffset.y >= 0 {
-            setValue(contentOffset, to: &offset)
-        } else {
-            offset = CGPoint(x: 0, y: 0)
-        }
+        setValue(contentOffset, to: &offset)
         scrollView.setContentOffset(offset, animated: false)
     }
 
