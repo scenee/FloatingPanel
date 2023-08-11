@@ -425,7 +425,7 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
 class CustomPanelBehavior: FloatingPanelBehavior {
     let springDecelerationRate = UIScrollView.DecelerationRate.fast.rawValue + 0.02
     let springResponseTime = 0.4
-    func shouldProjectMomentum(_ fpc: FloatingPanelController, to proposedTargetPosition: FloatingPanelState) -> Bool {
+    func shouldProjectMomentum(_ fpc: FloatingPanelController, to proposedState: FloatingPanelState) -> Bool {
         return true
     }
 }
@@ -451,7 +451,7 @@ This allows full projectional panel behavior. For example, a user can swipe up a
 ```swift
 class MyPanelBehavior: FloatingPanelBehavior {
     ...
-    func shouldProjectMomentum(_ fpc: FloatingPanelController, to proposedTargetPosition: FloatingPanelPosition) -> Bool {
+    func shouldProjectMomentum(_ fpc: FloatingPanelController, to proposedState: FloatingPanelPosition) -> Bool {
         return true
     }
 }

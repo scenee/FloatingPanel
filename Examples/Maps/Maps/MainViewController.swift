@@ -319,7 +319,7 @@ class SearchPaneliPadBehavior: FloatingPanelBehavior {
     var momentumProjectionRate: CGFloat {
         return UIScrollView.DecelerationRate.fast.rawValue
     }
-    func shouldProjectMomentum(_ fpc: FloatingPanelController, to proposedTargetPosition: FloatingPanelState) -> Bool {
+    func shouldProjectMomentum(_ fpc: FloatingPanelController, to proposedState: FloatingPanelState) -> Bool {
         return true
     }
 }

@@ -28,9 +28,9 @@ public protocol FloatingPanelBehavior {
     /// Asks the behavior if a panel should project a momentum of a user interaction to move the proposed position.
     ///
     /// The default implementation of this method returns true. This method is called for a layout to support all positions(tip, half and full).
-    /// Therefore, `proposedTargetPosition` can only be `FloatingPanelState.tip` or `FloatingPanelState.full`.
+    /// Therefore, `proposedState` can only be `FloatingPanelState.tip` or `FloatingPanelState.full`.
     @objc optional
-    func shouldProjectMomentum(_ fpc: FloatingPanelController, to proposedTargetPosition: FloatingPanelState) -> Bool
+    func shouldProjectMomentum(_ fpc: FloatingPanelController, to proposedState: FloatingPanelState) -> Bool
 
     /// Returns the progress to redirect to the previous position.
     ///
