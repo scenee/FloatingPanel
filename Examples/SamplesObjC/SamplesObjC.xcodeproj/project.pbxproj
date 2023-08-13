@@ -15,7 +15,6 @@
 		545BA71421BA3217007F7846 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 545BA71321BA3217007F7846 /* main.m */; };
 		545BA72621BA3BAF007F7846 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 545BA72521BA3BAF007F7846 /* FloatingPanel.framework */; };
 		545BA72721BA3BAF007F7846 /* FloatingPanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 545BA72521BA3BAF007F7846 /* FloatingPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		5D82A6B028D18447006A44BA /* libswiftCoreGraphics.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D82A6AF28D18443006A44BA /* libswiftCoreGraphics.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -53,7 +52,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5D82A6B028D18447006A44BA /* libswiftCoreGraphics.tbd in Frameworks */,
 				545BA72621BA3BAF007F7846 /* FloatingPanel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
