@@ -1305,7 +1305,7 @@ private class NumericSpringAnimator: NSObject {
         if isRunning {
             return false
         }
-        os_log(msg, log: devLog, type: .debug, "startAnimation --", displayLink)
+        os_log(msg, log: devLog, type: .debug, "startAnimation -- \(displayLink)")
         isRunning = true
         displayLink.add(to: RunLoop.main, forMode: .common)
         return true
@@ -1317,7 +1317,7 @@ private class NumericSpringAnimator: NSObject {
             if locked { lock.unlock() }
         }
 
-        os_log(msg, log: devLog, type: .debug, "stopAnimation --", displayLink)
+        os_log(msg, log: devLog, type: .debug, "stopAnimation -- \(displayLink)")
         isRunning = false
         displayLink.invalidate()
         if withoutFinishing {
