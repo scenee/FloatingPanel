@@ -704,20 +704,6 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             return
         }
 
-        // Determine whether the panel's dragging should be projected onto the scroll content scrolling
-        let stopScrollDeceleration = 0 > layoutAdapter.offsetFromMostExpandedAnchor
-        os_log(msg, log: devLog, type: .debug, "panningEnd -- offsetFromMostExpandedAnchor = \(layoutAdapter.offsetFromMostExpandedAnchor)")
-
-        if stopScrollDeceleration, state != layoutAdapter.mostExpandedState {
-            os_log(msg, log: devLog, type: .debug, "panningEnd -- will stop scrolling at initialScrollOffset = \(initialScrollOffset)")
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-
-                self.stopScrolling(at: self.initialScrollOffset)
-                os_log(msg, log: devLog, type: .debug, "panningEnd -- did stop scrolling at initialScrollOffset = \(self.initialScrollOffset)")
-            }
-        }
-
         let currentPos = value(of: layoutAdapter.surfaceLocation)
         let mainVelocity = value(of: velocity)
         var target = self.targetState(from: currentPos, with: mainVelocity)
@@ -919,9 +905,17 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                       let ownerVC = self.ownerVC // Ensure the owner vc is existing for `layoutAdapter.surfaceLocation`
                 else { return }
                 animationConstraint.constant = data.value
+
                 let current = self.value(of: self.layoutAdapter.surfaceLocation)
                 let translation = data.value - initialData.value
                 self.backdropView.alpha = self.getBackdropAlpha(at: current, with: translation)
+
+                // Pin the offset of the tracking scroll view while moving by this animator
+                if let scrollView = self.scrollView {
+                    self.stopScrolling(at: self.initialScrollOffset)
+                    os_log(msg, log: devLog, type: .debug, "move -- pinning scroll offset = \(scrollView.contentOffset)")
+                }
+
                 ownerVC.notifyDidMove()
         },
             completion: { [weak self] in
