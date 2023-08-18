@@ -1132,18 +1132,6 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
         return condition(offset)
     }
-
-    // MARK: - UIPanGestureRecognizer Intermediation
-    override func responds(to aSelector: Selector!) -> Bool {
-        return super.responds(to: aSelector) || panGestureRecognizer.delegateProxy?.responds(to: aSelector) == true
-    }
-
-    override func forwardingTarget(for aSelector: Selector!) -> Any? {
-        if panGestureRecognizer.delegateProxy?.responds(to: aSelector) == true {
-            return panGestureRecognizer.delegateProxy
-        }
-        return super.forwardingTarget(for: aSelector)
-    }
 }
 
 /// A gesture recognizer that looks for panning (dragging) gestures in a panel.
