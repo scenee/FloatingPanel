@@ -52,7 +52,12 @@ import os.log
 
     /// Called on finger up if the user dragged.
     ///
-    /// If `attract` is true, it will continue moving afterwards to a nearby state anchor.
+    /// If `attract` is true, the panel continues moving towards the nearby state
+    /// anchor. Otherwise, it stops at the closest state anchor.
+    ///
+    /// - Note: If `attract` is false, ``FloatingPanelController.state`` property has
+    ///   already changed to the closest anchor's state by the time this delegate method
+    ///   is called.
     @objc optional
     func floatingPanelDidEndDragging(_ fpc: FloatingPanelController, willAttract attract: Bool)
 
