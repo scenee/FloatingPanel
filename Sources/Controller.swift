@@ -425,6 +425,7 @@ open class FloatingPanelController: UIViewController {
         } else if parent != nil {
             removePanelFromParent(animated: true)
         } else {
+            delegate?.floatingPanelWillRemove?(self)
             hide(animated: true) { [weak self] in
                 guard let self = self else { return }
                 self.view.removeFromSuperview()
