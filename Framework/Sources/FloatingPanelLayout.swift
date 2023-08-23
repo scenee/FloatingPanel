@@ -543,12 +543,15 @@ class FloatingPanelLayoutAdapter {
     }
 
     private func layoutSurfaceIfNeeded() {
-#if !TEST
-        guard surfaceView.window != nil else { return }
-#endif
-        // added because of crash 
-        if let surfaceViewSuperView = surfaceView.superview{
-            surfaceViewSuperView.layoutIfNeeded()
+        #if !TEST
+            guard surfaceView.window != nil else { return }
+        #endif
+        
+        // added because of crash
+        do {
+            try surfaceView.superview?.layoutIfNeeded()
+        } catch {
+            print(error)
         }
     }
 
