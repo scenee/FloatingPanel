@@ -546,14 +546,7 @@ class FloatingPanelLayoutAdapter {
         #if !TEST
             guard surfaceView.window != nil else { return }
         #endif
-        
-        // added because of crash
-        print(surfaceView.superview)
-        do {
-            try surfaceView.superview?.layoutIfNeeded()
-        } catch {
-            print(error)
-        }
+        surfaceView.superview?.layoutIfNeeded()
     }
 
     private func setBackdropAlpha(of target: FloatingPanelPosition) {
