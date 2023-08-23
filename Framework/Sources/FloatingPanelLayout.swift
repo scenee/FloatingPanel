@@ -548,6 +548,7 @@ class FloatingPanelLayoutAdapter {
         #endif
         
         // added because of crash
+        print(surfaceView.superview)
         do {
             try surfaceView.superview?.layoutIfNeeded()
         } catch {
