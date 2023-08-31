@@ -7,7 +7,9 @@ import UIKit
 extension CGFloat {
     /// Returns this value rounded to an logical pixel value by a display scale
     func rounded(by displayScale: CGFloat) -> CGFloat {
-        return (self * displayScale).rounded(.toNearestOrAwayFromZero) / displayScale
+        let p = 1.0e9
+        let v = (self * p).rounded(.towardZero) / p
+        return (v * displayScale).rounded(.toNearestOrAwayFromZero) / displayScale
     }
     func isEqual(to: CGFloat, on displayScale: CGFloat) -> Bool {
         return rounded(by: displayScale) == to.rounded(by: displayScale)
