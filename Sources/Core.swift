@@ -1062,8 +1062,6 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
         os_log(msg, log: devLog, type: .debug, "lock scroll view")
 
-        scrollIndictorVisible = scrollView.showsVerticalScrollIndicator
-
         if !strict, shouldLooselyLockScrollView {
             // Don't change its `bounces` property. If it's changed, it will cause its scroll content offset jump at
             // the most expanded anchor position while seamlessly scrolling content. This problem only occurs where its
@@ -1075,7 +1073,15 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             scrollView.bounces = false
         }
         scrollView.isDirectionalLockEnabled = true
-        scrollView.showsVerticalScrollIndicator = false
+
+        switch layoutAdapter.position {
+        case .top, .bottom:
+            scrollIndictorVisible = scrollView.showsVerticalScrollIndicator
+            scrollView.showsVerticalScrollIndicator = false
+        case .left, .right:
+            scrollIndictorVisible = scrollView.showsHorizontalScrollIndicator
+            scrollView.showsHorizontalScrollIndicator = false
+        }
     }
 
     private func unlockScrollView() {
@@ -1084,7 +1090,12 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
         scrollView.bounces = scrollBounce
         scrollView.isDirectionalLockEnabled = false
-        scrollView.showsVerticalScrollIndicator = scrollIndictorVisible
+        switch layoutAdapter.position {
+        case .top, .bottom:
+            scrollView.showsVerticalScrollIndicator = scrollIndictorVisible
+        case .left, .right:
+            scrollView.showsHorizontalScrollIndicator = scrollIndictorVisible
+        }
     }
 
     private var shouldLooselyLockScrollView: Bool {
