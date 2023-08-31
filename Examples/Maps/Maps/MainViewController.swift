@@ -156,6 +156,10 @@ class SearchPanelPhoneDelegate: NSObject, FloatingPanelControllerDelegate, UIGes
         self.owner = owner
     }
 
+    func floatingPanel(_ fpc: FloatingPanelController, shouldAllowToScroll trackingScrollView: UIScrollView) -> Bool {
+        return fpc.state == .full || fpc.state == .half
+    }
+
     func floatingPanel(_ vc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout {
         switch newCollection.verticalSizeClass {
         case .compact:

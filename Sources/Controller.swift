@@ -96,6 +96,25 @@ import os.log
     @objc(floatingPanel:contentOffsetForPinningScrollView:)
     optional
     func floatingPanel(_ fpc: FloatingPanelController, contentOffsetForPinning trackingScrollView: UIScrollView) -> CGPoint
+
+    /// Returns a Boolean value that determines whether the tracking scroll view should
+    /// scroll or not
+    ///
+    ///
+    /// If you return true, the scroll content scrolls when its scroll position is not
+    /// at the top of the content. If the delegate doesn’t implement this method, its
+    /// content can be scrolled only in the most expanded state.
+    ///
+    /// Basically, the decision to scroll is based on the `state` property like the
+    /// following code.
+    /// ```swift
+    /// func floatingPanel(_ fpc: FloatingPanelController, shouldAllowToScroll trackingScrollView: UIScrollView) -> Bool {
+    ///     return fpc.state == .full || fpc.state == .half
+    /// }
+    /// ```
+    @objc(floatingPanel:shouldAllowToScroll:)
+    optional
+    func floatingPanel(_ fpc: FloatingPanelController, shouldAllowToScroll trackingScrollView: UIScrollView) -> Bool
 }
 
 ///
@@ -307,6 +326,13 @@ open class FloatingPanelController: UIViewController {
         }
     }
 
+    open override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // Need to call this method just after the view appears, as the safe area is not
+        // correctly set before this time, for example, `show(animated:completion:)`.
+        floatingPanel.adjustScrollContentInsetIfNeeded()
+    }
+
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
@@ -388,6 +414,7 @@ open class FloatingPanelController: UIViewController {
         }
 
         floatingPanel.layoutAdapter.updateStaticConstraint()
+        floatingPanel.adjustScrollContentInsetIfNeeded()
 
         if let contentOffset = contentOffset {
             trackingScrollView?.contentOffset = contentOffset

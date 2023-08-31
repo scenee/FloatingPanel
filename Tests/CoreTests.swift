@@ -820,6 +820,95 @@ class CoreTests: XCTestCase {
         fpc.showForTest()
         XCTAssertFalse(fpc.panGestureRecognizer.isEnabled)
     }
+
+    func test_is_scrollable() {
+        class Delegate: FloatingPanelControllerDelegate {
+            var shouldScroll = false
+            func floatingPanel(_ fpc: FloatingPanelController, shouldAllowToScroll trackingScrollView: UIScrollView) -> Bool {
+                return shouldScroll
+            }
+        }
+
+        let fpc = FloatingPanelController()
+        let scrollView = UIScrollView()
+        let delegate = Delegate()
+        fpc.layout = FloatingPanelBottomLayout()
+        fpc.track(scrollView: scrollView)
+        fpc.showForTest()
+
+        XCTAssertTrue(fpc.floatingPanel.isScrollable(state: .full))
+        XCTAssertFalse(fpc.floatingPanel.isScrollable(state: .half))
+
+        fpc.delegate = delegate
+
+        XCTAssertFalse(fpc.floatingPanel.isScrollable(state: .full))
+        XCTAssertFalse(fpc.floatingPanel.isScrollable(state: .half))
+
+        delegate.shouldScroll = true
+
+        XCTAssertTrue(fpc.floatingPanel.isScrollable(state: .full))
+        XCTAssertTrue(fpc.floatingPanel.isScrollable(state: .half))
+    }
+
+    func test_adjustScrollContentInsetIfNeeded() {
+        class CustomScrollView: UIScrollView {
+            var customSafeAreaInsets: UIEdgeInsets = .zero
+            override var safeAreaInsets: UIEdgeInsets {
+                customSafeAreaInsets
+            }
+        }
+
+        do {
+            let scrollView = CustomScrollView()
+            scrollView.customSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: 34, right: 0)
+            let fpc = FloatingPanelController()
+            fpc.track(scrollView: scrollView)
+            fpc.layout = FloatingPanelBottomLayout()
+            fpc.contentInsetAdjustmentBehavior = .always
+            fpc.contentMode = .static
+            fpc.showForTest()
+
+            fpc.move(to: .half, animated: false)
+            fpc.floatingPanel.adjustScrollContentInsetIfNeeded()
+
+            let expect = 34 + (fpc.surfaceLocation(for: .half).y - fpc.surfaceLocation(for: .full).y)
+            XCTAssertEqual(
+                scrollView.contentInset,
+                UIEdgeInsets(top: 0, left: 0, bottom: expect, right: 0)
+            )
+
+            fpc.contentMode = .fitToBounds
+            XCTAssertEqual(
+                scrollView.contentInset,
+                scrollView.customSafeAreaInsets
+            )
+        }
+
+        do {
+            let scrollView = CustomScrollView()
+            scrollView.customSafeAreaInsets = UIEdgeInsets(top: 91, left: 0, bottom: 0, right: 0)
+            let fpc = FloatingPanelController()
+            fpc.track(scrollView: scrollView)
+            fpc.layout = TopPositionedPanelLayout()
+            fpc.contentInsetAdjustmentBehavior = .always
+            fpc.contentMode = .static
+            fpc.showForTest()
+
+            fpc.move(to: .half, animated: false)
+            fpc.floatingPanel.adjustScrollContentInsetIfNeeded()
+
+            let expect = 91 + (fpc.surfaceLocation(for: .full).y -  fpc.surfaceLocation(for: .half).y)
+            XCTAssertEqual(
+                scrollView.contentInset,
+                UIEdgeInsets(top: expect, left: 0, bottom: 0, right: 0)
+            )
+            fpc.contentMode = .fitToBounds
+            XCTAssertEqual(
+                scrollView.contentInset,
+                scrollView.customSafeAreaInsets
+            )
+        }
+    }
 }
 
 private class FloatingPanelLayout3Positions: FloatingPanelTestLayout {
@@ -840,4 +929,14 @@ private func assertTargetState(_ floatingPanel: Core, with params: [TestParamete
         floatingPanel.surfaceView.frame.origin.y = pos
         XCTAssertEqual(floatingPanel.targetState(from: pos, with: velocity.y), result, line: line)
     }
+}
+
+private class TopPositionedPanelLayout: FloatingPanelLayout {
+    let position: FloatingPanelPosition = .top
+    let initialState: FloatingPanelState = .full
+    let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelLayoutAnchor(absoluteInset: 88.0, edge: .bottom, referenceGuide: .safeArea),
+        .half: FloatingPanelLayoutAnchor(absoluteInset: 216.0, edge: .top, referenceGuide: .safeArea),
+        .tip: FloatingPanelLayoutAnchor(absoluteInset: 44.0, edge: .top, referenceGuide: .safeArea)
+    ]
 }

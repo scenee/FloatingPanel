@@ -37,8 +37,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     private(set) var state: FloatingPanelState = .hidden {
         didSet {
             os_log(msg, log: devLog, type: .debug, "state changed: \(oldValue) -> \(state)")
-            if let vc = ownerVC {
-                vc.delegate?.floatingPanelDidChangeState?(vc)
+            if let fpc = ownerVC {
+                fpc.delegate?.floatingPanelDidChangeState?(fpc)
             }
         }
     }
@@ -120,7 +120,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             completion?()
             return
         }
-        if state != layoutAdapter.mostExpandedState {
+        if !isScrollable(state: state) {
             lockScrollView()
         }
         tearDownActiveInteraction()
@@ -130,7 +130,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         if animated {
             let updateScrollView: () -> Void = { [weak self] in
                 guard let self = self else { return }
-                if self.state == self.layoutAdapter.mostExpandedState, 0 == self.layoutAdapter.offsetFromMostExpandedAnchor {
+                if self.isScrollable(state: self.state), 0 == self.layoutAdapter.offset(from: self.state) {
                     self.unlockScrollView()
                 } else {
                     self.lockScrollView()
@@ -184,7 +184,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         } else {
             self.state = to
             self.updateLayout(to: to)
-            if self.state == self.layoutAdapter.mostExpandedState {
+            if isScrollable(state: state) {
                 self.unlockScrollView()
             } else {
                 self.lockScrollView()
@@ -221,11 +221,14 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         if let contentOffset = contentOffset {
             scrollView?.contentOffset = contentOffset
         }
+
+        adjustScrollContentInsetIfNeeded()
     }
 
     private func updateLayout(to target: FloatingPanelState) {
-        self.layoutAdapter.activateLayout(for: target, forceLayout: true)
-        self.backdropView.alpha = self.getBackdropAlpha(for: target)
+        layoutAdapter.activateLayout(for: target, forceLayout: true)
+        backdropView.alpha = getBackdropAlpha(for: target)
+        adjustScrollContentInsetIfNeeded()
     }
 
     private func getBackdropAlpha(for target: FloatingPanelState) -> CGFloat {
@@ -326,7 +329,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                     if surfaceView.grabberAreaContains(gestureRecognizer.location(in: surfaceView)) {
                         return false
                     }
-                    guard state == layoutAdapter.mostExpandedState else { return false }
+
+                    guard isScrollable(state: state) else { return false }
+
                     // The condition where offset > 0 must not be included here. Because it will stop recognizing
                     // the panel pan gesture if a user starts scrolling content from an offset greater than 0.
                     return allowScrollPanGesture(of: scrollView) { offset in offset <= scrollBounceThreshold  }
@@ -390,21 +395,31 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 """
             )
 
-            let offsetDiff = value(of: scrollView.contentOffset - contentOffsetForPinning(of: scrollView))
+            let baseOffset = contentOffsetForPinning(of: scrollView)
+            let offsetDiff = value(of: scrollView.contentOffset - baseOffset)
 
             if insideMostExpandedAnchor {
-                // Scroll offset pinning
-                if state == layoutAdapter.mostExpandedState {
+                // Prevent scrolling if needed
+                if isScrollable(state: state) {
                     if interactionInProgress {
                         os_log(msg, log: devLog, type: .debug, "settle offset -- \(value(of: initialScrollOffset))")
+                        // Return content offset to initial offset to prevent scrolling
                         stopScrolling(at: initialScrollOffset)
                     } else {
-                        if surfaceView.grabberAreaContains(location) {
+                        if surfaceView.grabberAreaContains(initialLocation) {
                             // Preserve the current content offset in moving from full.
+                            stopScrolling(at: initialScrollOffset)
+                        }
+                        /// When the scroll offset is at the pinned offset and a panel is moved, the content
+                        /// must be fixed at the pinned position without scrolling. According to the scroll
+                        /// pan gesture behavior, the content might have already scrolled a bit by the time
+                        /// this handler is called. Thus `initialScrollOffset` property is used here.
+                        if value(of: initialScrollOffset - baseOffset) == 0.0 {
                             stopScrolling(at: initialScrollOffset)
                         }
                     }
                 } else {
+                    // Return content offset to initial offset to prevent scrolling
                     stopScrolling(at: initialScrollOffset)
                 }
 
@@ -412,7 +427,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 if interactionInProgress {
                     lockScrollView()
                 } else {
-                    if state == layoutAdapter.mostExpandedState, self.transitionAnimator == nil {
+                    // Put back the scroll indicator and bounce of tracking scroll view
+                    // for scrollable states, not most expanded state.
+                    if isScrollable(state: state), self.transitionAnimator == nil {
                         switch layoutAdapter.position {
                         case .top, .left:
                             if offsetDiff < 0 && velocity > 0 {
@@ -426,6 +443,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                     }
                 }
             } else {
+                // Here handles seamless scrolling at the most expanded position
                 if interactionInProgress {
                     // Show a scroll indicator at the top in dragging.
                     switch layoutAdapter.position {
@@ -440,14 +458,14 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                             return
                         }
                     }
-                    if state == layoutAdapter.mostExpandedState {
+                    if isScrollable(state: state) {
                         // Adjust a small gap of the scroll offset just after swiping down starts in the grabber area.
                         if surfaceView.grabberAreaContains(location), surfaceView.grabberAreaContains(initialLocation) {
                             stopScrolling(at: initialScrollOffset)
                         }
                     }
                 } else {
-                    if state == layoutAdapter.mostExpandedState {
+                    if isScrollable(state: state) {
                         let allowScroll = allowScrollPanGesture(of: scrollView) { offset in
                             offset <= scrollBounceThreshold || 0 < offset
                         }
@@ -570,9 +588,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
 
         guard
-            state == layoutAdapter.mostExpandedState,  // When not top most(i.e. .full), don't scroll.
-            interactionInProgress == false,        // When interaction already in progress, don't scroll.
-            0 == layoutAdapter.offsetFromMostExpandedAnchor
+            isScrollable(state: state),  // When not top most(i.e. .full), don't scroll.
+            interactionInProgress == false,  // When interaction already in progress, don't scroll.
+            0 == layoutAdapter.offset(from: state)
         else {
             return false
         }
@@ -603,14 +621,14 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             if  offset < 0.0 {
                 return true
             }
-            if velocity >= 0 {
+            if velocity >= 0, offset > 0.0 {
                 return true
             }
         case .bottom, .right:
             if  offset > 0.0 {
                 return true
             }
-            if velocity <= 0 {
+            if velocity <= 0, offset < 0.0 {
                 return true
             }
         }
@@ -632,13 +650,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         os_log(msg, log: devLog, type: .debug, "panningBegan -- location = \(value(of: location))")
 
         guard let scrollView = scrollView else { return }
-        if state == layoutAdapter.mostExpandedState {
-            if surfaceView.grabberAreaContains(location) {
-                initialScrollOffset = scrollView.contentOffset
-            }
-        } else {
-            initialScrollOffset = scrollView.contentOffset
-        }
+
+        initialScrollOffset = scrollView.contentOffset
     }
 
     private func panningChange(with translation: CGPoint) {
@@ -775,7 +788,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         var offset: CGPoint = .zero
 
         initialSurfaceLocation = layoutAdapter.surfaceLocation
-        if state == layoutAdapter.mostExpandedState, let scrollView = scrollView {
+        if isScrollable(state: state), let scrollView = scrollView {
             let scrollFrame = scrollView.convert(scrollView.bounds, to: nil)
             let touchStartingPoint = surfaceView.convert(initialLocation, to: nil)
 
@@ -859,7 +872,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         interactionInProgress = false
 
         // Prevent to keep a scroll view indicator visible at the half/tip position
-        if state != layoutAdapter.mostExpandedState {
+        if !isScrollable(state: state) {
             lockScrollView()
         }
 
@@ -949,7 +962,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             """)
 
         if tryUnlockScroll {
-            if (state == layoutAdapter.mostExpandedState && 0 == layoutAdapter.offsetFromMostExpandedAnchor)
+            if (isScrollable(state: state) && 0 == layoutAdapter.offset(from: state))
                 || shouldLooselyLockScrollView {
                 unlockScrollView()
             }
@@ -1040,7 +1053,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             return
         }
         let contentOffset = scrollView.contentOffset.y
-        guard contentOffset < 0, layoutAdapter.position == .bottom, state == layoutAdapter.mostExpandedState else {
+        guard contentOffset < 0, layoutAdapter.position == .bottom, isScrollable(state: state) else {
             if surfaceView.transform != .identity {
                 surfaceView.transform = .identity
                 scrollView.transform = .identity
@@ -1148,6 +1161,48 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             offset = value(of: scrollView.contentOffset - contentOffsetForPinning(of: scrollView))
         }
         return condition(offset)
+    }
+
+    func isScrollable(state: FloatingPanelState) -> Bool {
+        guard let scrollView = scrollView else { return false }
+        if let fpc = ownerVC, let result = fpc.delegate?.floatingPanel?(fpc, shouldAllowToScroll: scrollView) {
+            return result
+        }
+        return state == layoutAdapter.mostExpandedState
+    }
+
+    /// Adjust content inset of the tracking scroll view if the controller's
+    /// `contentInsetAdjustmentBehavior` is `.always` and its `contentMode` is `.static`.
+    /// if its content is scrollable, the content might not be fully visible on `.half`
+    /// state, for example. Therefore the content inset needs to adjust to display the
+    /// full content.
+    func adjustScrollContentInsetIfNeeded() {
+        guard
+            let fpc = ownerVC,
+            let scrollView = scrollView,
+            fpc.contentInsetAdjustmentBehavior == .always
+        else { return }
+
+        switch fpc.contentMode {
+        case .static:
+            var inset = scrollView.safeAreaInsets
+            let offset = layoutAdapter.offsetFromMostExpandedAnchor
+            if  offset < 0 {
+                switch layoutAdapter.position {
+                case .top:
+                    inset.top = -offset + scrollView.safeAreaInsets.top
+                case .bottom:
+                    inset.bottom = -offset + scrollView.safeAreaInsets.bottom
+                case .left:
+                    inset.left = -offset + scrollView.safeAreaInsets.left
+                case .right:
+                    inset.left = -offset + scrollView.safeAreaInsets.right
+                }
+            }
+            scrollView.contentInset = inset
+        case .fitToBounds:
+            scrollView.contentInset = scrollView.safeAreaInsets
+        }
     }
 }
 

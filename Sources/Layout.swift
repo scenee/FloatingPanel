@@ -266,12 +266,16 @@ class LayoutAdapter {
     }
 
     var offsetFromMostExpandedAnchor: CGFloat {
+        return offset(from: mostExpandedState)
+    }
+
+    func offset(from state: FloatingPanelState) -> CGFloat {
         let offset: CGFloat
         switch position {
         case .top, .left:
-            offset = edgePosition(surfaceView.presentationFrame) - position(for: mostExpandedState)
+            offset = edgePosition(surfaceView.presentationFrame) - position(for: state)
         case .bottom, .right:
-            offset = position(for: mostExpandedState) - edgePosition(surfaceView.presentationFrame)
+            offset = position(for: state) - edgePosition(surfaceView.presentationFrame)
         }
         return offset.rounded(by: surfaceView.fp_displayScale)
     }
