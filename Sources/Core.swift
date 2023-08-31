@@ -1088,6 +1088,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     private var shouldLooselyLockScrollView: Bool {
+        if surfaceView.frame == .zero {
+            return false
+        }
         var isSmallScrollContentAndFitToBoundsMode: Bool {
             if ownerVC?.contentMode == .fitToBounds, let scrollView = scrollView,
                value(of: scrollView.contentSize) < value(of: scrollView.bounds.size) - min(layoutAdapter.offsetFromMostExpandedAnchor, 0) {
