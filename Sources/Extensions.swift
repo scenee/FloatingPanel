@@ -157,7 +157,10 @@ extension UIGestureRecognizer.State: CustomDebugStringConvertible {
 
 extension UIScrollView {
     var isLocked: Bool {
-        return !showsVerticalScrollIndicator && !bounces &&  isDirectionalLockEnabled
+        return !showsVerticalScrollIndicator && !bounces && isDirectionalLockEnabled
+    }
+    var isLooselyLocked: Bool {
+        return !showsVerticalScrollIndicator && isDirectionalLockEnabled
     }
     var fp_contentInset: UIEdgeInsets {
         if #available(iOS 11.0, *) {

@@ -1056,22 +1056,27 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     private func lockScrollView(strict: Bool = false) {
         guard let scrollView = scrollView else { return }
 
-        if scrollView.isLocked {
-            os_log(msg, log: devLog, type: .debug, "Already scroll locked.")
-            return
-        }
-        os_log(msg, log: devLog, type: .debug, "lock scroll view")
-
         if !strict, shouldLooselyLockScrollView {
+            if scrollView.isLooselyLocked {
+                os_log(msg, log: devLog, type: .debug, "Already scroll locked loosely.")
+                return
+            }
             // Don't change its `bounces` property. If it's changed, it will cause its scroll content offset jump at
             // the most expanded anchor position while seamlessly scrolling content. This problem only occurs where its
             // content mode is `.fitToBounds` and the tracking scroll content is smaller than the content view size.
             // The reason why is because `bounces` prop change leads to the "content frame" change on `.fitToBounds`.
             // See also https://github.com/scenee/FloatingPanel/issues/524.
         } else {
+            if scrollView.isLocked {
+                os_log(msg, log: devLog, type: .debug, "Already scroll locked.")
+                return
+            }
+
             scrollBounce = scrollView.bounces
             scrollView.bounces = false
         }
+        os_log(msg, log: devLog, type: .debug, "lock scroll view")
+
         scrollView.isDirectionalLockEnabled = true
 
         switch layoutAdapter.position {
