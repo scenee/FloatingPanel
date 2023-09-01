@@ -791,12 +791,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
         initialSurfaceLocation = layoutAdapter.surfaceLocation
         if isScrollable(state: state), let scrollView = scrollView {
-            let scrollFrame = scrollView.convert(scrollView.bounds, to: nil)
-            let touchStartingPoint = surfaceView.convert(initialLocation, to: nil)
-
-            ifLabel: if surfaceView.grabberAreaContains(location) {
+            ifLabel: if surfaceView.grabberAreaContains(initialLocation) {
                 initialScrollOffset = scrollView.contentOffset
-            } else if scrollFrame.contains(touchStartingPoint) {
+            } else if scrollView.frame.contains(initialLocation) {
                 let pinningOffset = contentOffsetForPinning(of: scrollView)
 
                 // This code block handles the scenario where there's a navigation bar or toolbar
