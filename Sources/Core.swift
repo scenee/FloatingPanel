@@ -496,7 +496,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             }
         case panGestureRecognizer:
             let translation = panGesture.translation(in: panGestureRecognizer.view!.superview)
+            // The touch velocity in the surface view
             let velocity = panGesture.velocity(in: panGesture.view)
+            // The touch location in the surface view
             let location = panGesture.location(in: panGesture.view)
 
             os_log(msg, log: devLog, type: .debug, """
@@ -573,7 +575,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
     private func shouldScrollViewHandleTouch(_ scrollView: UIScrollView?, point: CGPoint, velocity: CGFloat) -> Bool {
         // When no scrollView, nothing to handle.
-        guard let scrollView = scrollView else { return false }
+        guard let scrollView = scrollView, scrollView.frame.contains(initialLocation) else { return false }
 
         // For _UISwipeActionPanGestureRecognizer
         if let scrollGestureRecognizers = scrollView.gestureRecognizers {
@@ -1208,6 +1210,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
 /// A gesture recognizer that looks for panning (dragging) gestures in a panel.
 public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
+    /// The gesture starting location in the surface view which it is attached to.
     fileprivate var initialLocation: CGPoint = .zero
     private weak var floatingPanel: Core!  //  Core has this gesture recognizer as non-optional
     fileprivate func set(floatingPanel: Core) {
