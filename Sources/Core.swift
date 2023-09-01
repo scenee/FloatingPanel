@@ -294,8 +294,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 return true
             }
         }
-        if #available(iOS 11.0, *),
-            otherGestureRecognizer.name == "_UISheetInteractionBackgroundDismissRecognizer" {
+        if otherGestureRecognizer.name == "_UISheetInteractionBackgroundDismissRecognizer" {
             // The dismiss gesture of a sheet modal should not begin until the pan gesture fails.
             return true
         }
@@ -350,8 +349,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
              is UIRotationGestureRecognizer,
              is UIScreenEdgePanGestureRecognizer,
              is UIPinchGestureRecognizer:
-            if #available(iOS 11.0, *),
-                otherGestureRecognizer.name == "_UISheetInteractionBackgroundDismissRecognizer" {
+            if otherGestureRecognizer.name == "_UISheetInteractionBackgroundDismissRecognizer" {
                 // Should begin the pan gesture without waiting the dismiss gesture of a sheet modal.
                 return false
             }
@@ -1135,9 +1133,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         case .left:
             return CGPoint(x: scrollView.fp_contentOffsetMax.x, y: 0.0)
         case .bottom:
-            return CGPoint(x: 0.0, y: 0.0 - scrollView.fp_contentInset.top)
+            return CGPoint(x: 0.0, y: 0.0 - scrollView.adjustedContentInset.top)
         case .right:
-            return CGPoint(x: 0.0 - scrollView.fp_contentInset.left, y: 0.0)
+            return CGPoint(x: 0.0 - scrollView.adjustedContentInset.left, y: 0.0)
         }
     }
 
@@ -1163,9 +1161,7 @@ public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
 
     init() {
         super.init(target: nil, action: nil)
-        if #available(iOS 11.0, *) {
-            name = "FloatingPanelPanGestureRecognizer"
-        }
+        name = "FloatingPanelPanGestureRecognizer"
     }
 
     public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {

@@ -61,7 +61,6 @@ Please see also [the API reference](https://floatingpanel.github.io/2.7.0/docume
 - [Notes](#notes)
     - ['Show' or 'Show Detail' Segues from `FloatingPanelController`'s content view controller](#show-or-show-detail-segues-from-floatingpanelcontrollers-content-view-controller)
     - [UISearchController issue](#uisearchcontroller-issue)
-    - [FloatingPanelSurfaceView's issue on iOS 10](#floatingpanelsurfaceviews-issue-on-ios-10)
 - [Maintainer](#maintainer)
 - [License](#license)
 
@@ -92,8 +91,6 @@ Examples can be found here:
 ## Requirements
 
 FloatingPanel is written in Swift 5.0+ and compatible with iOS 11.0+. 
-
-While it still supports iOS 10, it is recommended to use this library on iOS 11+.
 
 :pencil2: If you'd like to use Swift 4.0, please use FloatingPanel v1.
 
@@ -702,21 +699,6 @@ It's a great way to decouple between a floating panel and the content VC.
 `UISearchController` isn't able to be used with `FloatingPanelController` by the system design.
 
 Because `UISearchController` automatically presents itself modally when a user interacts with the search bar, and then it swaps the superview of the search bar to the view managed by itself while it displays. As a result, `FloatingPanelController` can't control the search bar when it's active, as you can see from [the screen shot](https://github.com/SCENEE/FloatingPanel/issues/248#issuecomment-521263831).
-
-### FloatingPanelSurfaceView's issue on iOS 10
-
-* On iOS 10, `FloatingPanelSurfaceView.cornerRadius` isn't not automatically masked with the top rounded corners  because of `UIVisualEffectView` issue. See https://forums.developer.apple.com/thread/50854. 
-So you need to draw top rounding corners of your content.  Here is an example in Examples/Maps.
-```swift
-override func viewDidLayoutSubviews() {
-    super.viewDidLayoutSubviews()
-    if #available(iOS 10, *) {
-        visualEffectView.layer.cornerRadius = 9.0
-        visualEffectView.clipsToBounds = true
-    }
-}
-```
-* If you sets clear color to `FloatingPanelSurfaceView.backgroundColor`, please note the bottom overflow of your content on bouncing at full position. To prevent it, you need to expand your content. For example, See Example/Maps App's Auto Layout settings of `UIVisualEffectView` in Main.storyboard.
 
 ## Maintainer
 

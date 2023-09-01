@@ -37,7 +37,6 @@ final class ImageViewController: UIViewController {
         case withHeaderFooter
     }
 
-    @available(iOS 11.0, *)
     func layoutGuideFor(mode: Mode) -> UILayoutGuide {
         switch mode {
         case .onlyImage:

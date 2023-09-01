@@ -323,7 +323,7 @@ extension UseCaseController {
 
 extension UseCaseController: FloatingPanelControllerDelegate {
     func floatingPanel(_ vc: FloatingPanelController, contentOffsetForPinning trackingScrollView: UIScrollView) -> CGPoint {
-        if useCase == .showNavigationController, #available(iOS 11.0, *) {
+        if useCase == .showNavigationController {
             // 148.0 is the SafeArea's top value for a navigation bar with a large title.
             return CGPoint(x: 0.0, y: 0.0 - trackingScrollView.contentInset.top - 148.0)
         }

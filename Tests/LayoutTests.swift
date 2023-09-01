@@ -411,18 +411,18 @@ class LayoutTests: XCTestCase {
         for prop in [
             // from top edge
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 0.0, edge: .top, referenceGuide: .safeArea),
-             result: (#line, constant: 0.0, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.fp_safeAreaLayoutGuide.topAnchor)),
+             result: (#line, constant: 0.0, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.view.safeAreaLayoutGuide.topAnchor)),
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 100.0, edge: .top, referenceGuide: .safeArea),
-             result: (#line, constant: 100.0, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.fp_safeAreaLayoutGuide.topAnchor)),
+             result: (#line, constant: 100.0, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.view.safeAreaLayoutGuide.topAnchor)),
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 0.0, edge: .top, referenceGuide: .superview),
              result: (#line, constant: 0.0, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.view.topAnchor)),
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 100.0, edge: .top, referenceGuide: .superview),
              result: (#line, constant: 100.0, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.view.topAnchor)),
             // from bottom edge
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 0.0, edge: .bottom, referenceGuide: .safeArea),
-             result: (#line, constant: 0.0, firstAnchor: fpc.fp_safeAreaLayoutGuide.bottomAnchor, secondAnchor: fpc.surfaceView.bottomAnchor)),
+             result: (#line, constant: 0.0, firstAnchor: fpc.view.safeAreaLayoutGuide.bottomAnchor, secondAnchor: fpc.surfaceView.bottomAnchor)),
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 100.0, edge: .bottom, referenceGuide: .safeArea),
-             result: (#line, constant: 100.0, firstAnchor: fpc.fp_safeAreaLayoutGuide.bottomAnchor, secondAnchor: fpc.surfaceView.bottomAnchor)),
+             result: (#line, constant: 100.0, firstAnchor: fpc.view.safeAreaLayoutGuide.bottomAnchor, secondAnchor: fpc.surfaceView.bottomAnchor)),
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 0.0, edge: .bottom, referenceGuide: .superview),
              result: (#line, constant: 0.0, firstAnchor: fpc.view.bottomAnchor, secondAnchor: fpc.surfaceView.bottomAnchor)),
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 100.0, edge: .bottom, referenceGuide: .superview),
@@ -440,7 +440,7 @@ class LayoutTests: XCTestCase {
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.0, edge: .top, referenceGuide: .safeArea),
              result: (#line, multiplier: 1.0, secondAnchor: nil)),
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .top, referenceGuide: .safeArea),
-             result: (#line, multiplier: 0.5, secondAnchor: fpc.fp_safeAreaLayoutGuide.heightAnchor)),
+             result: (#line, multiplier: 0.5, secondAnchor: fpc.view.safeAreaLayoutGuide.heightAnchor)),
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.0, edge: .top, referenceGuide: .superview),
              result: (#line, multiplier: 1.0, secondAnchor: nil)),
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .top, referenceGuide: .superview),
@@ -450,7 +450,7 @@ class LayoutTests: XCTestCase {
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.0, edge: .bottom, referenceGuide: .safeArea),
              result: (#line, multiplier: 1.0, secondAnchor: nil)),
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
-             result: (#line, multiplier: 0.5, secondAnchor: fpc.fp_safeAreaLayoutGuide.heightAnchor)),
+             result: (#line, multiplier: 0.5, secondAnchor: fpc.view.safeAreaLayoutGuide.heightAnchor)),
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.0, edge: .bottom, referenceGuide: .superview),
              result: (#line, multiplier: 1.0, secondAnchor: nil)),
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .superview),
@@ -459,11 +459,7 @@ class LayoutTests: XCTestCase {
                 let c = prop.anchor.layoutConstraints(fpc, for: position)[0]
                 XCTAssertEqual(c.multiplier, CGFloat(prop.result.multiplier), line: UInt(prop.result.0))
                 XCTAssertTrue(c.firstAnchor is NSLayoutAnchor<NSLayoutDimension>, line: UInt(prop.result.0))
-                // On iOS 10, `c.secondAnchor` can't be equal object to `prop.result.secondAnchor`
-                // because there is no safe area  on iOS 10 and `fp_safeAreaLayoutGuide` emulates it.
-                if #available(iOS 11, *) {
-                    XCTAssertEqual(c.secondAnchor, prop.result.secondAnchor, line: UInt(prop.result.0))
-                }
+                XCTAssertEqual(c.secondAnchor, prop.result.secondAnchor, line: UInt(prop.result.0))
         }
     }
     func test_layoutAnchor_bottomPosition() {
@@ -476,9 +472,9 @@ class LayoutTests: XCTestCase {
         for prop in [
             // from top edge
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 0.0, edge: .top, referenceGuide: .safeArea),
-             result: (#line, constant: 0.0, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.fp_safeAreaLayoutGuide.topAnchor)),
+             result: (#line, constant: 0.0, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.view.safeAreaLayoutGuide.topAnchor)),
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 100.0, edge: .top, referenceGuide: .safeArea),
-             result: (#line, constant: 100.0, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.fp_safeAreaLayoutGuide.topAnchor)),
+             result: (#line, constant: 100.0, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.view.safeAreaLayoutGuide.topAnchor)),
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 0.0, edge: .top, referenceGuide: .superview),
              result: (#line, constant: 0.0, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.view.topAnchor)),
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 100.0, edge: .top, referenceGuide: .superview),
@@ -486,9 +482,9 @@ class LayoutTests: XCTestCase {
 
             // from bottom edge
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 0.0, edge: .bottom, referenceGuide: .safeArea),
-             result: (#line, constant: 0.0, firstAnchor: fpc.fp_safeAreaLayoutGuide.bottomAnchor, secondAnchor: fpc.surfaceView.topAnchor)),
+             result: (#line, constant: 0.0, firstAnchor: fpc.view.safeAreaLayoutGuide.bottomAnchor, secondAnchor: fpc.surfaceView.topAnchor)),
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 100.0, edge: .bottom, referenceGuide: .safeArea),
-             result: (#line, constant: 100.0, firstAnchor: fpc.fp_safeAreaLayoutGuide.bottomAnchor, secondAnchor: fpc.surfaceView.topAnchor)),
+             result: (#line, constant: 100.0, firstAnchor: fpc.view.safeAreaLayoutGuide.bottomAnchor, secondAnchor: fpc.surfaceView.topAnchor)),
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 0.0, edge: .bottom, referenceGuide: .superview),
              result: (#line, constant: 0.0, firstAnchor: fpc.view.bottomAnchor, secondAnchor: fpc.surfaceView.topAnchor)),
             (anchor: FloatingPanelLayoutAnchor(absoluteInset: 100.0, edge: .bottom, referenceGuide: .superview),
@@ -506,7 +502,7 @@ class LayoutTests: XCTestCase {
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.0, edge: .top, referenceGuide: .safeArea),
              result: (#line, multiplier: 1.0, secondAnchor: nil)),
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .top, referenceGuide: .safeArea),
-             result: (#line, multiplier: 0.5, secondAnchor: fpc.fp_safeAreaLayoutGuide.heightAnchor)),
+             result: (#line, multiplier: 0.5, secondAnchor: fpc.view.safeAreaLayoutGuide.heightAnchor)),
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.0, edge: .top, referenceGuide: .superview),
              result: (#line, multiplier: 1.0, secondAnchor: nil)),
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .top, referenceGuide: .superview),
@@ -516,7 +512,7 @@ class LayoutTests: XCTestCase {
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.0, edge: .bottom, referenceGuide: .safeArea),
              result: (#line, multiplier: 1.0, secondAnchor: nil)),
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
-             result: (#line, multiplier: 0.5, secondAnchor: fpc.fp_safeAreaLayoutGuide.heightAnchor)),
+             result: (#line, multiplier: 0.5, secondAnchor: fpc.view.safeAreaLayoutGuide.heightAnchor)),
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.0, edge: .bottom, referenceGuide: .superview),
              result: (#line, multiplier: 1.0, secondAnchor: nil)),
             (anchor: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .superview),
@@ -525,12 +521,7 @@ class LayoutTests: XCTestCase {
                 let c = prop.anchor.layoutConstraints(fpc, for: position)[0]
                 XCTAssertEqual(c.multiplier, CGFloat(prop.result.multiplier), line: UInt(prop.result.0))
                 XCTAssertTrue(c.firstAnchor is NSLayoutAnchor<NSLayoutDimension>, line: UInt(prop.result.0))
-                // On iOS 10, `c.secondAnchor` can't be equal object to `prop.result.secondAnchor`
-                // because there is no safe area  on iOS 10 and `fp_safeAreaLayoutGuide` emulates it.
-                if #available(iOS 11, *) {
-                    XCTAssertEqual(c.secondAnchor, prop.result.secondAnchor, line: UInt(prop.result.0))
-                }
-                print(c)
+                XCTAssertEqual(c.secondAnchor, prop.result.secondAnchor, line: UInt(prop.result.0))
         }
     }
 
@@ -556,20 +547,20 @@ class LayoutTests: XCTestCase {
 
         for prop in [
             (anchor: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 0.0, referenceGuide: .safeArea),
-             result: (#line, constant: 420, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.fp_safeAreaLayoutGuide.topAnchor)),
+             result: (#line, constant: 420, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.view.safeAreaLayoutGuide.topAnchor)),
             (anchor: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 42.0, referenceGuide: .safeArea),
-             result: (#line, constant: 420 - 42, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.fp_safeAreaLayoutGuide.topAnchor)),
+             result: (#line, constant: 420 - 42, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.view.safeAreaLayoutGuide.topAnchor)),
             (anchor: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 0.0, referenceGuide: .superview),
              result: (#line, constant: 420, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.view.topAnchor)),
             (anchor: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 42.0, referenceGuide: .superview),
              result: (#line, constant: 420 - 42, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.view.topAnchor)),
 
             (anchor: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.0, referenceGuide: .safeArea),
-             result: (#line, constant: 420, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.fp_safeAreaLayoutGuide.topAnchor)),
+             result: (#line, constant: 420, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.view.safeAreaLayoutGuide.topAnchor)),
             (anchor: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.5, referenceGuide: .safeArea),
-             result: (#line, constant: 210, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.fp_safeAreaLayoutGuide.topAnchor)),
+             result: (#line, constant: 210, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.view.safeAreaLayoutGuide.topAnchor)),
             (anchor: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 1.0, referenceGuide: .safeArea),
-             result: (#line, constant: 0, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.fp_safeAreaLayoutGuide.topAnchor)),
+             result: (#line, constant: 0, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.view.safeAreaLayoutGuide.topAnchor)),
             (anchor: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.0, referenceGuide: .superview),
              result: (#line, constant: 420, firstAnchor: fpc.surfaceView.bottomAnchor, secondAnchor: fpc.view.topAnchor)),
             (anchor: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.5, referenceGuide: .superview),
@@ -606,20 +597,20 @@ class LayoutTests: XCTestCase {
 
         for prop in [
             (anchor: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 0.0, referenceGuide: .safeArea),
-             result: (#line, constant: -420, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.fp_safeAreaLayoutGuide.bottomAnchor)),
+             result: (#line, constant: -420, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.view.safeAreaLayoutGuide.bottomAnchor)),
             (anchor: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 42.0, referenceGuide: .safeArea),
-             result: (#line, constant: -420 + 42, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.fp_safeAreaLayoutGuide.bottomAnchor)),
+             result: (#line, constant: -420 + 42, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.view.safeAreaLayoutGuide.bottomAnchor)),
             (anchor: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 0.0, referenceGuide: .superview),
              result: (#line, constant: -420, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.view.bottomAnchor)),
             (anchor: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 42.0, referenceGuide: .superview),
              result: (#line, constant: -420 + 42, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.view.bottomAnchor)),
 
             (anchor: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.0, referenceGuide: .safeArea),
-             result: (#line, constant: -420, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.fp_safeAreaLayoutGuide.bottomAnchor)),
+             result: (#line, constant: -420, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.view.safeAreaLayoutGuide.bottomAnchor)),
             (anchor: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.5, referenceGuide: .safeArea),
-             result: (#line, constant: -210, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.fp_safeAreaLayoutGuide.bottomAnchor)),
+             result: (#line, constant: -210, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.view.safeAreaLayoutGuide.bottomAnchor)),
             (anchor: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 1.0, referenceGuide: .safeArea),
-             result: (#line, constant: 0, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.fp_safeAreaLayoutGuide.bottomAnchor)),
+             result: (#line, constant: 0, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.view.safeAreaLayoutGuide.bottomAnchor)),
             (anchor: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.0, referenceGuide: .superview),
              result: (#line, constant: -420, firstAnchor: fpc.surfaceView.topAnchor, secondAnchor: fpc.view.bottomAnchor)),
             (anchor: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.5, referenceGuide: .superview),

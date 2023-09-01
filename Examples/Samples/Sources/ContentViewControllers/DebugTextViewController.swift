@@ -11,9 +11,7 @@ final class DebugTextViewController: UIViewController, UITextViewDelegate {
         textView.delegate = self
         print("viewDidLoad: TextView --- ", textView.contentOffset, textView.contentInset)
 
-        if #available(iOS 11.0, *) {
-            textView.contentInsetAdjustmentBehavior = .never
-        }
+        textView.contentInsetAdjustmentBehavior = .never
     }
 
     override func viewWillLayoutSubviews() {
@@ -32,9 +30,7 @@ final class DebugTextViewController: UIViewController, UITextViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         print("TextView --- ", scrollView.contentOffset, scrollView.contentInset)
-        if #available(iOS 11.0, *) {
-            print("TextView --- ", scrollView.adjustedContentInset)
-        }
+        print("TextView --- ", scrollView.adjustedContentInset)
     }
 
     @IBAction func toggleTopMargin(_ sender: UISwitch) {

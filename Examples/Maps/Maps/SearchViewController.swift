@@ -81,38 +81,12 @@ class SearchViewController: UIViewController, UITableViewDataSource {
 
     var items: [LocationItem] = []
 
-    // For iOS 10 only
-    private lazy var shadowLayer: CAShapeLayer = CAShapeLayer()
-
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
         searchBar.setSearchText(fontSize: 15.0)
 
         hideHeader(animated: false)
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        if #available(iOS 11, *) {
-        } else {
-            // Exmaple: Add rounding corners on iOS 10
-            visualEffectView.layer.cornerRadius = 9.0
-            visualEffectView.clipsToBounds = true
-
-            // Exmaple: Add shadow manually on iOS 10
-            view.layer.insertSublayer(shadowLayer, at: 0)
-            let rect = visualEffectView.frame
-            let path = UIBezierPath(roundedRect: rect,
-                                    byRoundingCorners: [.topLeft, .topRight],
-                                    cornerRadii: CGSize(width: 9.0, height: 9.0))
-            shadowLayer.frame = visualEffectView.frame
-            shadowLayer.shadowPath = path.cgPath
-            shadowLayer.shadowColor = UIColor.black.cgColor
-            shadowLayer.shadowOffset = CGSize(width: 0.0, height: 1.0)
-            shadowLayer.shadowOpacity = 0.2
-            shadowLayer.shadowRadius = 3.0
-        }
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

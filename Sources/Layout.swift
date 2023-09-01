@@ -45,8 +45,8 @@ open class FloatingPanelBottomLayout: NSObject, FloatingPanelLayout {
 
     open func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
         return [
-            surfaceView.leftAnchor.constraint(equalTo: view.fp_safeAreaLayoutGuide.leftAnchor, constant: 0.0),
-            surfaceView.rightAnchor.constraint(equalTo: view.fp_safeAreaLayoutGuide.rightAnchor, constant: 0.0),
+            surfaceView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 0.0),
+            surfaceView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: 0.0),
         ]
     }
 
@@ -424,13 +424,13 @@ class LayoutAdapter {
             switch position {
             case .top, .bottom:
                 surfaceConstraints = [
-                    surfaceView.leftAnchor.constraint(equalTo: vc.fp_safeAreaLayoutGuide.leftAnchor, constant: 0.0),
-                    surfaceView.rightAnchor.constraint(equalTo: vc.fp_safeAreaLayoutGuide.rightAnchor, constant: 0.0),
+                    surfaceView.leftAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.leftAnchor, constant: 0.0),
+                    surfaceView.rightAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.rightAnchor, constant: 0.0),
                 ]
             case .left, .right:
                 surfaceConstraints = [
-                    surfaceView.topAnchor.constraint(equalTo: vc.fp_safeAreaLayoutGuide.topAnchor, constant: 0.0),
-                    surfaceView.bottomAnchor.constraint(equalTo: vc.fp_safeAreaLayoutGuide.bottomAnchor, constant: 0.0),
+                    surfaceView.topAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.topAnchor, constant: 0.0),
+                    surfaceView.bottomAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.bottomAnchor, constant: 0.0),
                 ]
             }
         }
@@ -538,7 +538,7 @@ class LayoutAdapter {
         let layoutGuideProvider: LayoutGuideProvider
         switch anchor.referenceGuide {
         case .safeArea:
-            layoutGuideProvider = vc.fp_safeAreaLayoutGuide
+            layoutGuideProvider = vc.view.safeAreaLayoutGuide
         case .superview:
             layoutGuideProvider = vc.view
         }

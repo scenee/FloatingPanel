@@ -47,65 +47,16 @@ protocol LayoutGuideProvider {
 extension UILayoutGuide: LayoutGuideProvider {}
 extension UIView: LayoutGuideProvider {}
 
-private class CustomLayoutGuide: LayoutGuideProvider {
-    let topAnchor: NSLayoutYAxisAnchor
-    let leftAnchor: NSLayoutXAxisAnchor
-    let bottomAnchor: NSLayoutYAxisAnchor
-    let rightAnchor: NSLayoutXAxisAnchor
-    let widthAnchor: NSLayoutDimension
-    let heightAnchor: NSLayoutDimension
-    init(topAnchor: NSLayoutYAxisAnchor,
-         leftAnchor: NSLayoutXAxisAnchor,
-         bottomAnchor: NSLayoutYAxisAnchor,
-         rightAnchor: NSLayoutXAxisAnchor,
-         widthAnchor: NSLayoutDimension,
-         heightAnchor: NSLayoutDimension) {
-        self.topAnchor = topAnchor
-        self.leftAnchor = leftAnchor
-        self.bottomAnchor = bottomAnchor
-        self.rightAnchor = rightAnchor
-        self.widthAnchor = widthAnchor
-        self.heightAnchor = heightAnchor
-    }
-}
-
 extension UIViewController {
+    /// The proxy property to be used in `LayoutAdapter`
+    ///
+    /// This property is to allow the safe area inset to change in unit testing
     @objc var fp_safeAreaInsets: UIEdgeInsets {
-        if #available(iOS 11.0, *) {
-            return view.safeAreaInsets
-        } else {
-            return UIEdgeInsets(top: topLayoutGuide.length,
-                                left: 0.0,
-                                bottom: bottomLayoutGuide.length,
-                                right: 0.0)
-        }
-    }
-
-    var fp_safeAreaLayoutGuide: LayoutGuideProvider {
-        if #available(iOS 11.0, *) {
-            return view!.safeAreaLayoutGuide
-        } else {
-            return CustomLayoutGuide(topAnchor: topLayoutGuide.bottomAnchor,
-                                     leftAnchor: view.leftAnchor,
-                                     bottomAnchor: bottomLayoutGuide.topAnchor,
-                                     rightAnchor: view.rightAnchor,
-                                     widthAnchor: view.widthAnchor,
-                                     heightAnchor: topLayoutGuide.bottomAnchor.anchorWithOffset(to: bottomLayoutGuide.topAnchor))
-        }
+        return view.safeAreaInsets
     }
 }
 
-// The reason why UIView has no extensions of safe area insets and top/bottom guides
-// is for iOS10 compatibility.
 extension UIView {
-    var fp_safeAreaLayoutGuide: LayoutGuideProvider {
-        if #available(iOS 11.0, *) {
-            return safeAreaLayoutGuide
-        } else {
-            return self
-        }
-    }
-
     var presentationFrame: CGRect {
         return layer.presentation()?.frame ?? frame
     }
@@ -164,16 +115,9 @@ extension UIScrollView {
     var isLooselyLocked: Bool {
         return !showsVerticalScrollIndicator && isDirectionalLockEnabled
     }
-    var fp_contentInset: UIEdgeInsets {
-        if #available(iOS 11.0, *) {
-            return adjustedContentInset
-        } else {
-            return contentInset
-        }
-    }
     var fp_contentOffsetMax: CGPoint {
-        return CGPoint(x: max((contentSize.width + fp_contentInset.right) - bounds.width, 0.0),
-                       y: max((contentSize.height + fp_contentInset.bottom) - bounds.height, 0.0))
+        return CGPoint(x: max((contentSize.width + adjustedContentInset.right) - bounds.width, 0.0),
+                       y: max((contentSize.height + adjustedContentInset.bottom) - bounds.height, 0.0))
     }
 }
 

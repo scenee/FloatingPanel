@@ -14,21 +14,17 @@ final class SettingsViewController: InspectableViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if #available(iOS 11.0, *) {
-            let prefersLargeTitles = navigationController!.navigationBar.prefersLargeTitles
-            largeTitlesSwitch.setOn(prefersLargeTitles, animated: false)
-        } else {
-            largeTitlesSwitch.isEnabled = false
-        }
+        let prefersLargeTitles = navigationController!.navigationBar.prefersLargeTitles
+        largeTitlesSwitch.setOn(prefersLargeTitles, animated: false)
+
         let isTranslucent = navigationController!.navigationBar.isTranslucent
         translucentSwitch.setOn(isTranslucent, animated: false)
     }
 
     @IBAction func toggleLargeTitle(_ sender: UISwitch) {
-        if #available(iOS 11.0, *) {
-            navigationController?.navigationBar.prefersLargeTitles = sender.isOn
-        }
+        navigationController?.navigationBar.prefersLargeTitles = sender.isOn
     }
+
     @IBAction func toggleTranslucent(_ sender: UISwitch) {
         // White non-translucent navigation bar, supports dark appearance
         if #available(iOS 15, *) {

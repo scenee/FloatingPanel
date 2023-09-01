@@ -383,29 +383,24 @@ public class SurfaceView: UIView {
         }
         containerView.layer.masksToBounds = true
         if position.inset(containerMargins) != 0 {
-            if #available(iOS 11, *) {
-                containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,
-                                                     .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-            }
+            containerView.layer.maskedCorners = [
+                .layerMinXMinYCorner, .layerMaxXMinYCorner,
+                .layerMinXMaxYCorner, .layerMaxXMaxYCorner
+            ]
             return
         }
-        if #available(iOS 11, *) {
-            // Don't use `contentView.clipToBounds` because it prevents content view from expanding the height of a subview of it
-            // for the bottom overflow like Auto Layout settings of UIVisualEffectView in Main.storyboard of Example/Maps.
-            // Because the bottom of contentView must be fit to the bottom of a screen to work the `safeLayoutGuide` of a content VC.
-            switch position {
-            case .top:
-                containerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-            case .left:
-                containerView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
-            case .bottom:
-                containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-            case .right:
-                containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
-            }
-        } else {
-            // Can't use `containerView.layer.mask` because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
-            // Instead, a user should display rounding corners appropriately.
+        // Don't use `contentView.clipToBounds` because it prevents content view from expanding the height of a subview of it
+        // for the bottom overflow like Auto Layout settings of UIVisualEffectView in Main.storyboard of Example/Maps.
+        // Because the bottom of contentView must be fit to the bottom of a screen to work the `safeLayoutGuide` of a content VC.
+        switch position {
+        case .top:
+            containerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        case .left:
+            containerView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+        case .bottom:
+            containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        case .right:
+            containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
         }
     }
 
