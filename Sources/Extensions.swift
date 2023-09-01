@@ -139,7 +139,7 @@ extension UIView {
     }
 }
 
-#if __FP_LOG
+#if FP_LOG
 extension UIGestureRecognizer.State: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
