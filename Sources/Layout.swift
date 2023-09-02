@@ -269,13 +269,20 @@ class LayoutAdapter {
         return offset(from: mostExpandedState)
     }
 
+    /// The distance from the given state position to the current surface location.
+    ///
+    /// If the returned value is positive, it indicates that the surface is moving from
+    /// the given state position to closer to the `hidden` state position. In other
+    /// words, the surface is within the given state position. Otherwise, it indicates
+    /// that the surface is outside this position and is moving away from the `hidden`
+    /// state position.
     func offset(from state: FloatingPanelState) -> CGFloat {
         let offset: CGFloat
         switch position {
         case .top, .left:
-            offset = edgePosition(surfaceView.presentationFrame) - position(for: state)
-        case .bottom, .right:
             offset = position(for: state) - edgePosition(surfaceView.presentationFrame)
+        case .bottom, .right:
+            offset = edgePosition(surfaceView.presentationFrame) - position(for: state)
         }
         return offset.rounded(by: surfaceView.fp_displayScale)
     }

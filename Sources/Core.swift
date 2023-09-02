@@ -384,7 +384,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             let velocity = value(of: panGesture.velocity(in: panGesture.view))
             let location = panGesture.location(in: surfaceView)
 
-            let insideMostExpandedAnchor = 0 > layoutAdapter.offsetFromMostExpandedAnchor
+            let insideMostExpandedAnchor = 0 < layoutAdapter.offsetFromMostExpandedAnchor
 
             os_log(msg, log: devLog, type: .debug, """
                 scroll gesture(\(state):\(panGesture.state)) -- \
@@ -556,7 +556,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             endAttraction(false)
         }
         if let animator = self.transitionAnimator {
-            guard 0 >= layoutAdapter.offsetFromMostExpandedAnchor else { return }
+            guard 0 <= layoutAdapter.offsetFromMostExpandedAnchor else { return }
             os_log(msg, log: devLog, type: .debug, "a panel animation(interruptible: \(animator.isInterruptible)) interrupted!!!")
             if animator.isInterruptible {
                 animator.stopAnimation(false)
@@ -1119,7 +1119,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
         var isSmallScrollContentAndFitToBoundsMode: Bool {
             if ownerVC?.contentMode == .fitToBounds, let scrollView = scrollView,
-               value(of: scrollView.contentSize) < value(of: scrollView.bounds.size) - min(layoutAdapter.offsetFromMostExpandedAnchor, 0) {
+               value(of: scrollView.contentSize) < value(of: scrollView.bounds.size) + max(layoutAdapter.offsetFromMostExpandedAnchor, 0) {
                 return true
             }
             return false
@@ -1186,16 +1186,16 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         case .static:
             var inset = scrollView.safeAreaInsets
             let offset = layoutAdapter.offsetFromMostExpandedAnchor
-            if  offset < 0 {
+            if  offset > 0 {
                 switch layoutAdapter.position {
                 case .top:
-                    inset.top = -offset + scrollView.safeAreaInsets.top
+                    inset.top = offset + scrollView.safeAreaInsets.top
                 case .bottom:
-                    inset.bottom = -offset + scrollView.safeAreaInsets.bottom
+                    inset.bottom = offset + scrollView.safeAreaInsets.bottom
                 case .left:
-                    inset.left = -offset + scrollView.safeAreaInsets.left
+                    inset.left = offset + scrollView.safeAreaInsets.left
                 case .right:
-                    inset.left = -offset + scrollView.safeAreaInsets.right
+                    inset.left = offset + scrollView.safeAreaInsets.right
                 }
             }
             scrollView.contentInset = inset

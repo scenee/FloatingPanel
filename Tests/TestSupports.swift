@@ -72,6 +72,16 @@ class FloatingPanelTop2BottomTestLayout: FloatingPanelLayout {
     }
 }
 
+class FloatingPanelTopPositionedLayout: FloatingPanelLayout {
+    let position: FloatingPanelPosition = .top
+    let initialState: FloatingPanelState = .full
+    let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelLayoutAnchor(absoluteInset: 88.0, edge: .bottom, referenceGuide: .safeArea),
+        .half: FloatingPanelLayoutAnchor(absoluteInset: 216.0, edge: .top, referenceGuide: .safeArea),
+        .tip: FloatingPanelLayoutAnchor(absoluteInset: 44.0, edge: .top, referenceGuide: .safeArea)
+    ]
+}
+
 class FloatingPanelProjectableBehavior: FloatingPanelBehavior {
     func shouldProjectMomentum(_ fpc: FloatingPanelController, to proposedState: FloatingPanelState) -> Bool {
         return true

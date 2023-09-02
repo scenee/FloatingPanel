@@ -624,6 +624,41 @@ class LayoutTests: XCTestCase {
                 XCTAssertEqual(c.secondAnchor, prop.result.secondAnchor, line: UInt(prop.result.0))
         }
     }
+
+    func test_offsetFromMostExpandedAnchor() {
+        do {
+            let fpc = FloatingPanelController()
+            fpc.layout = FloatingPanelBottomLayout()
+            fpc.showForTest()
+
+            fpc.move(to: .full, animated: false)
+
+            XCTAssertEqual(fpc.floatingPanel.layoutAdapter.offsetFromMostExpandedAnchor, 0.0)
+
+            fpc.move(to: .half, animated: false)
+
+            XCTAssertEqual(
+                fpc.floatingPanel.layoutAdapter.offsetFromMostExpandedAnchor,
+                (fpc.surfaceLocation(for: .half) - fpc.surfaceLocation(for: .full)).y
+            )
+        }
+        do {
+            let fpc = FloatingPanelController()
+            fpc.layout = FloatingPanelTopPositionedLayout()
+            fpc.showForTest()
+
+            fpc.move(to: .full, animated: false)
+
+            XCTAssertEqual(fpc.floatingPanel.layoutAdapter.offsetFromMostExpandedAnchor, 0.0)
+
+            fpc.move(to: .half, animated: false)
+
+            XCTAssertEqual(
+                fpc.floatingPanel.layoutAdapter.offsetFromMostExpandedAnchor,
+                -(fpc.surfaceLocation(for: .half) - fpc.surfaceLocation(for: .full)).y
+            )
+        }
+    }
 }
 
 private typealias LayoutSegmentTestParameter = (UInt, pos: CGFloat, forwardY: Bool, lower: FloatingPanelState?, upper: FloatingPanelState?)
