@@ -592,25 +592,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         guard
             isScrollable(state: state),  // When not top most(i.e. .full), don't scroll.
             interactionInProgress == false,  // When interaction already in progress, don't scroll.
-            0 == layoutAdapter.offset(from: state)
-        else {
-            return false
-        }
-
-        // When the current point is within grabber area but the initial point is not, do scroll.
-        if surfaceView.grabberAreaContains(point), !surfaceView.grabberAreaContains(initialLocation) {
-            return true
-        }
-
-        // When the initial point is within grabber area and the current point is out of surface, don't scroll.
-        if surfaceView.grabberAreaContains(initialLocation), !surfaceView.frame.contains(point) {
-            return false
-        }
-
-        let scrollViewFrame = scrollView.convert(scrollView.bounds, to: surfaceView)
-        guard
-            scrollViewFrame.contains(initialLocation), // When the initial point not in scrollView, don't scroll.
-            !surfaceView.grabberAreaContains(point)        // When point within grabber area, don't scroll.
+            0 == layoutAdapter.offset(from: state),
+            !surfaceView.grabberAreaContains(initialLocation)  // When the initial point is within grabber area, don't scroll
         else {
             return false
         }
