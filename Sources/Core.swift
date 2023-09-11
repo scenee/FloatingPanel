@@ -940,7 +940,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         os_log(msg, log: devLog, type: .debug, """
             finishAnimation -- state = \(state) \
             surface location = \(layoutAdapter.surfaceLocation) \
-            edge most position = \(layoutAdapter.surfaceLocation(for: layoutAdapter.mostExpandedState))
+            offset from state position = \(layoutAdapter.offset(from: state))
             """)
 
         if tryUnlockScroll {

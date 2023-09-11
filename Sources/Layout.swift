@@ -280,9 +280,9 @@ class LayoutAdapter {
         let offset: CGFloat
         switch position {
         case .top, .left:
-            offset = position(for: state) - edgePosition(surfaceView.presentationFrame)
+            offset = position(for: state) - edgePosition(surfaceView.frame)
         case .bottom, .right:
-            offset = edgePosition(surfaceView.presentationFrame) - position(for: state)
+            offset = edgePosition(surfaceView.frame) - position(for: state)
         }
         return offset.rounded(by: surfaceView.fp_displayScale)
     }
