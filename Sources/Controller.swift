@@ -108,13 +108,21 @@ import os.log
     /// Basically, the decision to scroll is based on the `state` property like the
     /// following code.
     /// ```swift
-    /// func floatingPanel(_ fpc: FloatingPanelController, shouldAllowToScroll trackingScrollView: UIScrollView) -> Bool {
-    ///     return fpc.state == .full || fpc.state == .half
+    /// func floatingPanel(
+    ///     _ fpc: FloatingPanelController,
+    ///     shouldAllowToScroll trackingScrollView: UIScrollView,
+    ///     in state: FloatingPanelState
+    /// ) -> Bool {
+    ///     return state == .full || state == .half
     /// }
     /// ```
-    @objc(floatingPanel:shouldAllowToScroll:)
+    @objc(floatingPanel:shouldAllowToScroll:in:)
     optional
-    func floatingPanel(_ fpc: FloatingPanelController, shouldAllowToScroll trackingScrollView: UIScrollView) -> Bool
+    func floatingPanel(
+        _ fpc: FloatingPanelController,
+        shouldAllowToScroll scrollView: UIScrollView,
+        in state: FloatingPanelState
+    ) -> Bool
 }
 
 ///

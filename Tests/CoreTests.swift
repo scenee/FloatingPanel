@@ -824,7 +824,11 @@ class CoreTests: XCTestCase {
     func test_is_scrollable() {
         class Delegate: FloatingPanelControllerDelegate {
             var shouldScroll = false
-            func floatingPanel(_ fpc: FloatingPanelController, shouldAllowToScroll trackingScrollView: UIScrollView) -> Bool {
+            func floatingPanel(
+                _ fpc: FloatingPanelController,
+                shouldAllowToScroll scrollView: UIScrollView,
+                in state: FloatingPanelState
+            ) -> Bool {
                 return shouldScroll
             }
         }

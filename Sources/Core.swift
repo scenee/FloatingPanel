@@ -1147,8 +1147,10 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
     func isScrollable(state: FloatingPanelState) -> Bool {
         guard let scrollView = scrollView else { return false }
-        if let fpc = ownerVC, let result = fpc.delegate?.floatingPanel?(fpc, shouldAllowToScroll: scrollView) {
-            return result
+        if let fpc = ownerVC, 
+            let scrollable = fpc.delegate?.floatingPanel?(fpc, shouldAllowToScroll: scrollView, in: state)
+        {
+            return scrollable
         }
         return state == layoutAdapter.mostExpandedState
     }
