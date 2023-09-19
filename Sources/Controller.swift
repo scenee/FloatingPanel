@@ -110,15 +110,14 @@ import os.log
     /// ```swift
     /// func floatingPanel(
     ///     _ fpc: FloatingPanelController,
-    ///     shouldAllowToScroll trackingScrollView: UIScrollView,
+    ///     shouldAllowToScroll scrollView: UIScrollView,
     ///     in state: FloatingPanelState
     /// ) -> Bool {
     ///     return state == .full || state == .half
     /// }
     /// ```
     @objc(floatingPanel:shouldAllowToScroll:in:)
-    optional
-    func floatingPanel(
+    optional func floatingPanel(
         _ fpc: FloatingPanelController,
         shouldAllowToScroll scrollView: UIScrollView,
         in state: FloatingPanelState

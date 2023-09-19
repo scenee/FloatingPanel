@@ -21,46 +21,47 @@ Please see also [the API reference](https://floatingpanel.github.io/2.7.0/docume
 - [Features](#features)
 - [Requirements](#requirements)
 - [Installation](#installation)
-    - [CocoaPods](#cocoapods)
-    - [Carthage](#carthage)
-    - [Swift Package Manager](#swift-package-manager)
+  - [CocoaPods](#cocoapods)
+  - [Carthage](#carthage)
+  - [Swift Package Manager](#swift-package-manager)
 - [Getting Started](#getting-started)
-    - [Add a floating panel as a child view controller](#add-a-floating-panel-as-a-child-view-controller)
-    - [Present a floating panel as a modality](#present-a-floating-panel-as-a-modality)
+  - [Add a floating panel as a child view controller](#add-a-floating-panel-as-a-child-view-controller)
+  - [Present a floating panel as a modality](#present-a-floating-panel-as-a-modality)
 - [View hierarchy](#view-hierarchy)
 - [Usage](#usage)
-    - [Show/Hide a floating panel in a view with your view hierarchy](#showhide-a-floating-panel-in-a-view-with-your-view-hierarchy)
-    - [Scale the content view when the surface position changes](#scale-the-content-view-when-the-surface-position-changes)
-    - [Customize the layout with `FloatingPanelLayout` protocol](#customize-the-layout-with-floatingpanellayout-protocol)
-        - [Change the initial layout](#change-the-initial-layout)
-    - [Update your panel layout](#update-your-panel-layout)
-        - [Support your landscape layout](#support-your-landscape-layout)
-        - [Use the intrinsic size of a content in your panel layout](#use-the-intrinsic-size-of-a-content-in-your-panel-layout)
-        - [Specify an anchor for each state by an inset of the `FloatingPanelController.view` frame](#specify-an-anchor-for-each-state-by-an-inset-of-the-floatingpanelcontrollerview-frame)
-        - [Change the backdrop alpha](#change-the-backdrop-alpha)
-        - [Using custome panel states](#using-custome-panel-states)
-    - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
-        - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
-        - [Activate the rubber-band effect on panel edges](#activate-the-rubber-band-effect-on-panel-edges)
-        - [Manage the projection of a pan gesture momentum](#manage-the-projection-of-a-pan-gesture-momentum)
-    - [Specify the panel move's boundary](#specify-the-panel-moves-boundary)
-    - [Customize the surface design](#customize-the-surface-design)
-        - [Modify your surface appearance](#modify-your-surface-appearance)
-        - [Use a custom grabber handle](#use-a-custom-grabber-handle)
-        - [Customize layout of the grabber handle](#customize-layout-of-the-grabber-handle)
-        - [Customize content padding from surface edges](#customize-content-padding-from-surface-edges)
-        - [Customize margins of the surface edges](#customize-margins-of-the-surface-edges)
-    - [Customize gestures](#customize-gestures)
-        - [Suppress the panel interaction](#suppress-the-panel-interaction)
-        - [Add tap gestures to the surface view](#add-tap-gestures-to-the-surface-view)
-        - [Interrupt the delegate methods of `FloatingPanelController.panGestureRecognizer`](#interrupt-the-delegate-methods-of-floatingpanelcontrollerpangesturerecognizer)
-    - [Create an additional floating panel for a detail](#create-an-additional-floating-panel-for-a-detail)
-    - [Move a position with an animation](#move-a-position-with-an-animation)
-    - [Work your contents together with a floating panel behavior](#work-your-contents-together-with-a-floating-panel-behavior)
-    - [Enabling the tap-to-dismiss action of the backdrop view](#enabling-the-tap-to-dismiss-action-of-the-backdrop-view)
+  - [Show/Hide a floating panel in a view with your view hierarchy](#showhide-a-floating-panel-in-a-view-with-your-view-hierarchy)
+  - [Scale the content view when the surface position changes](#scale-the-content-view-when-the-surface-position-changes)
+  - [Customize the layout with `FloatingPanelLayout` protocol](#customize-the-layout-with-floatingpanellayout-protocol)
+    - [Change the initial layout](#change-the-initial-layout)
+  - [Update your panel layout](#update-your-panel-layout)
+    - [Support your landscape layout](#support-your-landscape-layout)
+    - [Use the intrinsic size of a content in your panel layout](#use-the-intrinsic-size-of-a-content-in-your-panel-layout)
+    - [Specify an anchor for each state by an inset of the `FloatingPanelController.view` frame](#specify-an-anchor-for-each-state-by-an-inset-of-the-floatingpanelcontrollerview-frame)
+    - [Change the backdrop alpha](#change-the-backdrop-alpha)
+    - [Using custome panel states](#using-custome-panel-states)
+  - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
+    - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
+    - [Activate the rubber-band effect on panel edges](#activate-the-rubber-band-effect-on-panel-edges)
+    - [Manage the projection of a pan gesture momentum](#manage-the-projection-of-a-pan-gesture-momentum)
+  - [Specify the panel move's boundary](#specify-the-panel-moves-boundary)
+  - [Customize the surface design](#customize-the-surface-design)
+    - [Modify your surface appearance](#modify-your-surface-appearance)
+    - [Use a custom grabber handle](#use-a-custom-grabber-handle)
+    - [Customize layout of the grabber handle](#customize-layout-of-the-grabber-handle)
+    - [Customize content padding from surface edges](#customize-content-padding-from-surface-edges)
+    - [Customize margins of the surface edges](#customize-margins-of-the-surface-edges)
+  - [Customize gestures](#customize-gestures)
+    - [Suppress the panel interaction](#suppress-the-panel-interaction)
+    - [Add tap gestures to the surface view](#add-tap-gestures-to-the-surface-view)
+    - [Interrupt the delegate methods of `FloatingPanelController.panGestureRecognizer`](#interrupt-the-delegate-methods-of-floatingpanelcontrollerpangesturerecognizer)
+  - [Create an additional floating panel for a detail](#create-an-additional-floating-panel-for-a-detail)
+  - [Move a position with an animation](#move-a-position-with-an-animation)
+  - [Work your contents together with a floating panel behavior](#work-your-contents-together-with-a-floating-panel-behavior)
+  - [Enabling the tap-to-dismiss action of the backdrop view](#enabling-the-tap-to-dismiss-action-of-the-backdrop-view)
+  - [Allow to scroll content of the tracking scroll view in addition to the most expanded state](#allow-to-scroll-content-of-the-tracking-scroll-view-in-addition-to-the-most-expanded-state)
 - [Notes](#notes)
-    - ['Show' or 'Show Detail' Segues from `FloatingPanelController`'s content view controller](#show-or-show-detail-segues-from-floatingpanelcontrollers-content-view-controller)
-    - [UISearchController issue](#uisearchcontroller-issue)
+  - ['Show' or 'Show Detail' Segues from `FloatingPanelController`'s content view controller](#show-or-show-detail-segues-from-floatingpanelcontrollers-content-view-controller)
+  - [UISearchController issue](#uisearchcontroller-issue)
 - [Maintainer](#maintainer)
 - [License](#license)
 
@@ -667,6 +668,24 @@ The tap-to-dismiss action is disabled by default. So it needs to be enabled as b
 
 ```swift
 fpc.backdropView.dismissalTapGestureRecognizer.isEnabled = true
+```
+
+### Allow to scroll content of the tracking scroll view in addition to the most expanded state
+
+Just define conditions to allow content scrolling in `floatingPanel(:_:shouldAllowToScroll:in)` delegate method. If the returned value is true, the scroll content scrolls when its scroll position is not at the top of the content.
+
+```swift
+class MyViewController: FloatingPanelControllerDelegate {
+    ... 
+
+    func floatingPanel(
+        _ fpc: FloatingPanelController,
+        shouldAllowToScroll trackingScrollView: UIScrollView,
+        in state: FloatingPanelState
+    ) -> Bool {
+        return state == .full || state == .half
+    }
+}
 ```
 
 ## Notes
