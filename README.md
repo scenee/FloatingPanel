@@ -92,7 +92,8 @@ Examples can be found here:
 
 FloatingPanel is written in Swift 5.0+ and compatible with iOS 11.0+. 
 
-:pencil2: If you'd like to use Swift 4.0, please use FloatingPanel v1.
+> [!NOTE]
+> If you'd like to use Swift 4.0, please use FloatingPanel v1.
 
 ## Installation
 
@@ -105,7 +106,8 @@ it, simply add the following line to your Podfile:
 pod 'FloatingPanel'
 ```
 
-:pencil2: FloatingPanel v1.7.0 or later requires CocoaPods v1.7.0+ for `swift_versions` support.
+> [!NOTE]
+> FloatingPanel v1.7.0 or later requires CocoaPods v1.7.0+ for `swift_versions` support.
 
 ### Carthage
 
@@ -165,7 +167,8 @@ self.present(fpc, animated: true, completion: nil)
 
 You can show a floating panel over UINavigationController from the container view controllers as a modality of `.overCurrentContext` style.
 
-:pencil2: FloatingPanelController has the custom presentation controller. If you would like to customize the presentation/dismissal, please see [Transitioning](https://github.com/SCENEE/FloatingPanel/blob/master/Sources/Transitioning.swift).
+> [!NOTE]
+> FloatingPanelController has the custom presentation controller. If you would like to customize the presentation/dismissal, please see [Transitioning](https://github.com/SCENEE/FloatingPanel/blob/master/Sources/Transitioning.swift).
 
 ## View hierarchy
 
@@ -249,7 +252,8 @@ fpc.contentMode = .fitToBounds
 
 Otherwise, `FloatingPanelController` fixes the content by the height of the top most position.
 
-:pencil2: In `.fitToBounds` mode, the surface height changes as following a user interaction so that you have a responsibility to configure Auto Layout constrains not to break the layout of a content view by the elastic surface height.
+> [!NOTE]
+> In `.fitToBounds` mode, the surface height changes as following a user interaction so that you have a responsibility to configure Auto Layout constrains not to break the layout of a content view by the elastic surface height.
 
 ### Customize the layout with `FloatingPanelLayout` protocol
 
@@ -347,7 +351,8 @@ class IntrinsicPanelLayout: FloatingPanelLayout {
 }
 ```
 
-:pencil2: `FloatingPanelIntrinsicLayout` is deprecated on v1.
+> [!WARNING]
+> `FloatingPanelIntrinsicLayout` is deprecated on v1.
 
 #### Specify an anchor for each state by an inset of the `FloatingPanelController.view` frame
 
@@ -364,7 +369,8 @@ class MyFullScreenLayout: FloatingPanelLayout {
 }
 ```
 
-:pencil2: `FloatingPanelFullScreenLayout` is deprecated on v1.
+> [!WARNING]
+> `FloatingPanelFullScreenLayout` is deprecated on v1.
 
 #### Change the backdrop alpha
 
@@ -428,7 +434,8 @@ class CustomPanelBehavior: FloatingPanelBehavior {
 }
 ```
 
-:pencil2: `floatingPanel(_ vc:behaviorFor:)` is deprecated on v1.
+> [!WARNING]
+> `floatingPanel(_ vc:behaviorFor:)` is deprecated on v1.
 
 #### Activate the rubber-band effect on panel edges
 
@@ -470,7 +477,8 @@ func floatingPanelDidMove(_ vc: FloatingPanelController) {
 }
 ```
 
-:pencil2: `{top,bottom}InteractionBuffer` property is removed from `FloatingPanelLayout` since v2.
+> [!WARNING]
+> `{top,bottom}InteractionBuffer` property is removed from `FloatingPanelLayout` since v2.
 
 ### Customize the surface design
 
@@ -511,7 +519,8 @@ fpc.surfaceView.grabberHandlePadding = 10.0
 fpc.surfaceView.grabberHandleSize = .init(width: 44.0, height: 12.0)
 ```
 
-:pencil2: Note that `grabberHandleSize` width and height are reversed in the left/right position.
+> [!NOTE]
+> `grabberHandleSize` width and height are reversed in the left/right position.
 
 #### Customize content padding from surface edges
 
