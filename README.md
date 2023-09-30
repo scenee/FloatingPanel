@@ -93,9 +93,6 @@ Examples can be found here:
 
 FloatingPanel is written in Swift 5.0+ and compatible with iOS 11.0+. 
 
-> [!NOTE]
-> If you'd like to use Swift 4.0, please use FloatingPanel v1.
-
 ## Installation
 
 ### CocoaPods
@@ -106,9 +103,6 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod 'FloatingPanel'
 ```
-
-> [!NOTE]
-> FloatingPanel v1.7.0 or later requires CocoaPods v1.7.0+ for `swift_versions` support.
 
 ### Carthage
 
