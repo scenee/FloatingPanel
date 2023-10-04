@@ -1,0 +1,121 @@
+name: ci
+
+on: 
+  push:
+    branches: 
+      - master
+      - next
+  pull_request:
+    branches: 
+      - '*'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.runsOn }}
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - swift: "5.8"
+            xcode: "14.3"
+            runsOn: macos-13
+          - swift: "5.7"
+            xcode: "14.1"
+            runsOn: macos-12
+          - swift: "5.6"
+            xcode: "13.4.1"
+            runsOn: macos-12
+          - swift: "5.5"
+            xcode: "13.2.1"
+            runsOn: macos-11
+          - swift: "5.4"
+            xcode: "12.5.1"
+            runsOn: macos-11
+          - swift: "5.3"
+            xcode: "12.4"
+            runsOn: macos-11
+          - swift: "5.2"
+            xcode: "11.7"
+            runsOn: macos-11
+    steps:
+      - uses: actions/checkout@v3
+      - name: Building in Swift ${{ matrix.swift }}
+        run: xcodebuild -scheme FloatingPanel SWIFT_VERSION=${{ matrix.swift }} clean build
+
+  test:
+    runs-on: ${{ matrix.runsOn }}
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: "16.4"
+            xcode: "14.3.1"
+            sim: "iPhone 14 Pro"
+            parallel: NO  # Stop random test job failures
+            runsOn: macos-13
+          - os: "15.5"
+            xcode: "13.4.1"
+            sim: "iPhone 13 Pro"
+            parallel: NO  # Stop random test job failures
+            runsOn: macos-12
+    steps:
+    - uses: actions/checkout@v3
+    - name: Testing in iOS ${{ matrix.os }}
+      run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=${{ matrix.os }},name=${{ matrix.sim }}' -parallel-testing-enabled '${{ matrix.parallel }}'
+    timeout-minutes: 20
+
+  example:
+    runs-on: macos-12
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_14.1.app/Contents/Developer
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - example: "Maps"
+          - example: "Maps-SwiftUI"
+          - example: "Stocks"
+          - example: "Samples"
+    steps:
+    - uses: actions/checkout@v3
+    - name: Building ${{ matrix.example }}
+      run: xcodebuild -workspace FloatingPanel.xcworkspace -scheme ${{ matrix.example }} -sdk iphonesimulator clean build
+
+  swiftpm:
+    runs-on: macos-12
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_14.1.app/Contents/Developer
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # 15.7
+          - target: "x86_64-apple-ios15.7-simulator"
+          - target: "arm64-apple-ios15.7-simulator"
+          # 16.1
+          - target: "x86_64-apple-ios16.1-simulator"
+          - target: "arm64-apple-ios16.1-simulator"
+    steps:
+    - uses: actions/checkout@v3
+    - name: "Swift Package Manager build"
+      run: swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk iphonesimulator --show-sdk-path`" -Xswiftc "-target" -Xswiftc "${{ matrix.target }}"
+
+  carthage:
+    runs-on: macos-11
+    steps:
+    - uses: actions/checkout@v3
+    - name: "Carthage build"
+      run: carthage build --use-xcframeworks --no-skip-current
+
+  cocoapods:
+    runs-on: macos-12
+    steps:
+    - uses: actions/checkout@v3
+    - name: "CocoaPods: pod lib lint"
+      run: pod lib lint --allow-warnings
+    - name: "CocoaPods: pod spec lint"
+      run: pod spec lint --allow-warnings

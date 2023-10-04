@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina4_7" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Main View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Stocks" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="MainViewController" customModule="Stocks" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Uop-sw-I6p">
-                                <rect key="frame" x="0.0" y="65" width="375" height="557.5"/>
+                                <rect key="frame" x="0.0" y="65" width="600" height="490.5"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="375" placeholderIntrinsicHeight="625" image="stocks_list" translatesAutoresizingMaskIntoConstraints="NO" id="XJR-iK-fem">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="625"/>
@@ -32,10 +30,10 @@
                                 </constraints>
                             </scrollView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dFl-81-6ok">
-                                <rect key="frame" x="0.0" y="622.5" width="375" height="44.5"/>
+                                <rect key="frame" x="0.0" y="555.5" width="600" height="44.5"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="yahoo_bottom_bar" translatesAutoresizingMaskIntoConstraints="NO" id="NKr-gS-mpx">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="44.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="44.5"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="44.5" id="B5t-ZF-qUj"/>
@@ -54,7 +52,7 @@
                                 <rect key="frame" x="16" y="0.0" width="153.5" height="57"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="STOCKS" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PCG-Wl-fXa">
-                                        <rect key="frame" x="0.0" y="0.0" width="111.5" height="32.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="111" height="32.5"/>
                                         <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="27"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
@@ -68,6 +66,7 @@
                                 </subviews>
                             </stackView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" red="0.11764924973249435" green="0.11764311045408249" blue="0.11764728277921677" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="dFl-81-6ok" secondAttribute="trailing" id="20i-yz-AaQ"/>
@@ -81,7 +80,6 @@
                             <constraint firstItem="dFl-81-6ok" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="nlX-Ab-1aI"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="NKr-gS-mpx" secondAttribute="bottom" id="yeu-NH-Pmp"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
                         <outlet property="bottomToolView" destination="dFl-81-6ok" id="NXn-af-lFv"/>
@@ -120,6 +118,7 @@
                                 </constraints>
                             </scrollView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="INo-op-FLO"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="h7M-7T-4k4" secondAttribute="bottom" id="2b8-Wo-tm0"/>
@@ -127,7 +126,6 @@
                             <constraint firstItem="h7M-7T-4k4" firstAttribute="trailing" secondItem="INo-op-FLO" secondAttribute="trailing" id="WTc-1l-3Ha"/>
                             <constraint firstItem="h7M-7T-4k4" firstAttribute="leading" secondItem="INo-op-FLO" secondAttribute="leading" id="na8-TO-WiG"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="INo-op-FLO"/>
                     </view>
                     <size key="freeformSize" width="375" height="600"/>
                     <connections>

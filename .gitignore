@@ -17,6 +17,7 @@ DerivedData/
 *.perspectivev3
 !default.perspectivev3
 xcuserdata/
+IDEWorkspaceChecks.plis
 
 ## Other
 *.moved-aside
@@ -29,6 +30,9 @@ xcuserdata/
 *.ipa
 *.dSYM.zip
 *.dSYM
+
+## Swift Package Manager Specific
+.swiftpm/
 
 ## Playgrounds
 timeline.xctimeline

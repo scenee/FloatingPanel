@@ -8,12 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		548DF95421705BE00041922A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548DF95321705BE00041922A /* AppDelegate.swift */; };
-		548DF95621705BE00041922A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548DF95521705BE00041922A /* ViewController.swift */; };
+		548DF95621705BE00041922A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548DF95521705BE00041922A /* MainViewController.swift */; };
 		548DF95921705BE00041922A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 548DF95721705BE00041922A /* Main.storyboard */; };
 		548DF95B21705BE10041922A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 548DF95A21705BE10041922A /* Assets.xcassets */; };
 		548DF95E21705BE10041922A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 548DF95C21705BE10041922A /* LaunchScreen.storyboard */; };
 		549D23CF233C77CF008EF4D7 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23CE233C77CF008EF4D7 /* FloatingPanel.framework */; };
 		549D23D0233C77CF008EF4D7 /* FloatingPanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23CE233C77CF008EF4D7 /* FloatingPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5D82A6AA28D18432006A44BA /* libswiftCoreGraphics.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D82A6A928D1842B006A44BA /* libswiftCoreGraphics.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,12 +34,13 @@
 /* Begin PBXFileReference section */
 		548DF95021705BE00041922A /* Stocks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stocks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		548DF95321705BE00041922A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		548DF95521705BE00041922A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		548DF95521705BE00041922A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		548DF95821705BE00041922A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		548DF95A21705BE10041922A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		548DF95D21705BE10041922A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		548DF95F21705BE10041922A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		549D23CE233C77CF008EF4D7 /* FloatingPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FloatingPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D82A6A928D1842B006A44BA /* libswiftCoreGraphics.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswiftCoreGraphics.tbd; path = usr/lib/swift/libswiftCoreGraphics.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D82A6AA28D18432006A44BA /* libswiftCoreGraphics.tbd in Frameworks */,
 				549D23CF233C77CF008EF4D7 /* FloatingPanel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -59,6 +62,7 @@
 				549D23CE233C77CF008EF4D7 /* FloatingPanel.framework */,
 				548DF95221705BE00041922A /* Stocks */,
 				548DF95121705BE00041922A /* Products */,
+				5D82A6A828D1842A006A44BA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -73,14 +77,22 @@
 		548DF95221705BE00041922A /* Stocks */ = {
 			isa = PBXGroup;
 			children = (
-				548DF95321705BE00041922A /* AppDelegate.swift */,
-				548DF95521705BE00041922A /* ViewController.swift */,
-				548DF95721705BE00041922A /* Main.storyboard */,
 				548DF95A21705BE10041922A /* Assets.xcassets */,
 				548DF95C21705BE10041922A /* LaunchScreen.storyboard */,
+				548DF95721705BE00041922A /* Main.storyboard */,
+				548DF95321705BE00041922A /* AppDelegate.swift */,
+				548DF95521705BE00041922A /* MainViewController.swift */,
 				548DF95F21705BE10041922A /* Info.plist */,
 			);
 			path = Stocks;
+			sourceTree = "<group>";
+		};
+		5D82A6A828D1842A006A44BA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5D82A6A928D1842B006A44BA /* libswiftCoreGraphics.tbd */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -111,7 +123,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1000;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = scenee;
 				TargetAttributes = {
 					548DF94F21705BE00041922A = {
@@ -155,7 +167,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				548DF95621705BE00041922A /* ViewController.swift in Sources */,
+				548DF95621705BE00041922A /* MainViewController.swift in Sources */,
 				548DF95421705BE00041922A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -208,6 +220,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -269,6 +282,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -310,7 +324,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.Stocks;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/swift",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = example.Stocks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -329,7 +347,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.Stocks;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/swift",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = example.Stocks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
