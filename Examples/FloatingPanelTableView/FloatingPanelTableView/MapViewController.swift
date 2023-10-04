@@ -131,7 +131,7 @@ class FloatingPanelHotelLayout: FloatingPanelLayout {
     
     init(middle:CGFloat,topBuffer:CGFloat) {
         self.mm = middle
-        self.topBuffer = 314 //topBuffer
+        self.topBuffer = 350 //topBuffer
     }
     func insetFor(position: FloatingPanelPosition) -> CGFloat? {
         switch position {
