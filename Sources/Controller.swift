@@ -116,6 +116,9 @@ import os.log
     ///     return state == .full || state == .half
     /// }
     /// ```
+    ///
+    /// - Attention: It is recommended that this method always returns the most expanded state(i.e.
+    /// .full). If it excludes the state, the panel might do unexpected behaviors.
     @objc(floatingPanel:shouldAllowToScroll:in:)
     optional func floatingPanel(
         _ fpc: FloatingPanelController,
