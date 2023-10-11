@@ -9,7 +9,7 @@
 FloatingPanel is a simple and easy-to-use UI component designed for a user interface featured in Apple Maps, Shortcuts and Stocks app.
 The user interface displays related content and utilities alongside the main content.
 
-Please see also [the API reference](https://floatingpanel.github.io/2.7.0/documentation/floatingpanel/) for more details.
+Please see also [the API reference](https://floatingpanel.github.io/2.8.0/documentation/floatingpanel/) for more details.
 
 ![Maps](https://github.com/SCENEE/FloatingPanel/blob/master/assets/maps.gif)
 ![Stocks](https://github.com/SCENEE/FloatingPanel/blob/master/assets/stocks.gif)
@@ -21,46 +21,47 @@ Please see also [the API reference](https://floatingpanel.github.io/2.7.0/docume
 - [Features](#features)
 - [Requirements](#requirements)
 - [Installation](#installation)
-    - [CocoaPods](#cocoapods)
-    - [Carthage](#carthage)
-    - [Swift Package Manager](#swift-package-manager)
+  - [CocoaPods](#cocoapods)
+  - [Carthage](#carthage)
+  - [Swift Package Manager](#swift-package-manager)
 - [Getting Started](#getting-started)
-    - [Add a floating panel as a child view controller](#add-a-floating-panel-as-a-child-view-controller)
-    - [Present a floating panel as a modality](#present-a-floating-panel-as-a-modality)
+  - [Add a floating panel as a child view controller](#add-a-floating-panel-as-a-child-view-controller)
+  - [Present a floating panel as a modality](#present-a-floating-panel-as-a-modality)
 - [View hierarchy](#view-hierarchy)
 - [Usage](#usage)
-    - [Show/Hide a floating panel in a view with your view hierarchy](#showhide-a-floating-panel-in-a-view-with-your-view-hierarchy)
-    - [Scale the content view when the surface position changes](#scale-the-content-view-when-the-surface-position-changes)
-    - [Customize the layout with `FloatingPanelLayout` protocol](#customize-the-layout-with-floatingpanellayout-protocol)
-        - [Change the initial layout](#change-the-initial-layout)
-    - [Update your panel layout](#update-your-panel-layout)
-        - [Support your landscape layout](#support-your-landscape-layout)
-        - [Use the intrinsic size of a content in your panel layout](#use-the-intrinsic-size-of-a-content-in-your-panel-layout)
-        - [Specify an anchor for each state by an inset of the `FloatingPanelController.view` frame](#specify-an-anchor-for-each-state-by-an-inset-of-the-floatingpanelcontrollerview-frame)
-        - [Change the backdrop alpha](#change-the-backdrop-alpha)
-        - [Using custome panel states](#using-custome-panel-states)
-    - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
-        - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
-        - [Activate the rubber-band effect on panel edges](#activate-the-rubber-band-effect-on-panel-edges)
-        - [Manage the projection of a pan gesture momentum](#manage-the-projection-of-a-pan-gesture-momentum)
-    - [Specify the panel move's boundary](#specify-the-panel-moves-boundary)
-    - [Customize the surface design](#customize-the-surface-design)
-        - [Modify your surface appearance](#modify-your-surface-appearance)
-        - [Use a custom grabber handle](#use-a-custom-grabber-handle)
-        - [Customize layout of the grabber handle](#customize-layout-of-the-grabber-handle)
-        - [Customize content padding from surface edges](#customize-content-padding-from-surface-edges)
-        - [Customize margins of the surface edges](#customize-margins-of-the-surface-edges)
-    - [Customize gestures](#customize-gestures)
-        - [Suppress the panel interaction](#suppress-the-panel-interaction)
-        - [Add tap gestures to the surface view](#add-tap-gestures-to-the-surface-view)
-        - [Interrupt the delegate methods of `FloatingPanelController.panGestureRecognizer`](#interrupt-the-delegate-methods-of-floatingpanelcontrollerpangesturerecognizer)
-    - [Create an additional floating panel for a detail](#create-an-additional-floating-panel-for-a-detail)
-    - [Move a position with an animation](#move-a-position-with-an-animation)
-    - [Work your contents together with a floating panel behavior](#work-your-contents-together-with-a-floating-panel-behavior)
-    - [Enabling the tap-to-dismiss action of the backdrop view](#enabling-the-tap-to-dismiss-action-of-the-backdrop-view)
+  - [Show/Hide a floating panel in a view with your view hierarchy](#showhide-a-floating-panel-in-a-view-with-your-view-hierarchy)
+  - [Scale the content view when the surface position changes](#scale-the-content-view-when-the-surface-position-changes)
+  - [Customize the layout with `FloatingPanelLayout` protocol](#customize-the-layout-with-floatingpanellayout-protocol)
+    - [Change the initial layout](#change-the-initial-layout)
+  - [Update your panel layout](#update-your-panel-layout)
+    - [Support your landscape layout](#support-your-landscape-layout)
+    - [Use the intrinsic size of a content in your panel layout](#use-the-intrinsic-size-of-a-content-in-your-panel-layout)
+    - [Specify an anchor for each state by an inset of the `FloatingPanelController.view` frame](#specify-an-anchor-for-each-state-by-an-inset-of-the-floatingpanelcontrollerview-frame)
+    - [Change the backdrop alpha](#change-the-backdrop-alpha)
+    - [Using custome panel states](#using-custome-panel-states)
+  - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
+    - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
+    - [Activate the rubber-band effect on panel edges](#activate-the-rubber-band-effect-on-panel-edges)
+    - [Manage the projection of a pan gesture momentum](#manage-the-projection-of-a-pan-gesture-momentum)
+  - [Specify the panel move's boundary](#specify-the-panel-moves-boundary)
+  - [Customize the surface design](#customize-the-surface-design)
+    - [Modify your surface appearance](#modify-your-surface-appearance)
+    - [Use a custom grabber handle](#use-a-custom-grabber-handle)
+    - [Customize layout of the grabber handle](#customize-layout-of-the-grabber-handle)
+    - [Customize content padding from surface edges](#customize-content-padding-from-surface-edges)
+    - [Customize margins of the surface edges](#customize-margins-of-the-surface-edges)
+  - [Customize gestures](#customize-gestures)
+    - [Suppress the panel interaction](#suppress-the-panel-interaction)
+    - [Add tap gestures to the surface view](#add-tap-gestures-to-the-surface-view)
+    - [Interrupt the delegate methods of `FloatingPanelController.panGestureRecognizer`](#interrupt-the-delegate-methods-of-floatingpanelcontrollerpangesturerecognizer)
+  - [Create an additional floating panel for a detail](#create-an-additional-floating-panel-for-a-detail)
+  - [Move a position with an animation](#move-a-position-with-an-animation)
+  - [Work your contents together with a floating panel behavior](#work-your-contents-together-with-a-floating-panel-behavior)
+  - [Enabling the tap-to-dismiss action of the backdrop view](#enabling-the-tap-to-dismiss-action-of-the-backdrop-view)
+  - [Allow to scroll content of the tracking scroll view in addition to the most expanded state](#allow-to-scroll-content-of-the-tracking-scroll-view-in-addition-to-the-most-expanded-state)
 - [Notes](#notes)
-    - ['Show' or 'Show Detail' Segues from `FloatingPanelController`'s content view controller](#show-or-show-detail-segues-from-floatingpanelcontrollers-content-view-controller)
-    - [UISearchController issue](#uisearchcontroller-issue)
+  - ['Show' or 'Show Detail' Segues from `FloatingPanelController`'s content view controller](#show-or-show-detail-segues-from-floatingpanelcontrollers-content-view-controller)
+  - [UISearchController issue](#uisearchcontroller-issue)
 - [Maintainer](#maintainer)
 - [License](#license)
 
@@ -92,8 +93,6 @@ Examples can be found here:
 
 FloatingPanel is written in Swift 5.0+ and compatible with iOS 11.0+. 
 
-:pencil2: If you'd like to use Swift 4.0, please use FloatingPanel v1.
-
 ## Installation
 
 ### CocoaPods
@@ -104,8 +103,6 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod 'FloatingPanel'
 ```
-
-:pencil2: FloatingPanel v1.7.0 or later requires CocoaPods v1.7.0+ for `swift_versions` support.
 
 ### Carthage
 
@@ -165,7 +162,8 @@ self.present(fpc, animated: true, completion: nil)
 
 You can show a floating panel over UINavigationController from the container view controllers as a modality of `.overCurrentContext` style.
 
-:pencil2: FloatingPanelController has the custom presentation controller. If you would like to customize the presentation/dismissal, please see [Transitioning](https://github.com/SCENEE/FloatingPanel/blob/master/Sources/Transitioning.swift).
+> [!NOTE]
+> FloatingPanelController has the custom presentation controller. If you would like to customize the presentation/dismissal, please see [Transitioning](https://github.com/SCENEE/FloatingPanel/blob/master/Sources/Transitioning.swift).
 
 ## View hierarchy
 
@@ -249,7 +247,8 @@ fpc.contentMode = .fitToBounds
 
 Otherwise, `FloatingPanelController` fixes the content by the height of the top most position.
 
-:pencil2: In `.fitToBounds` mode, the surface height changes as following a user interaction so that you have a responsibility to configure Auto Layout constrains not to break the layout of a content view by the elastic surface height.
+> [!NOTE]
+> In `.fitToBounds` mode, the surface height changes as following a user interaction so that you have a responsibility to configure Auto Layout constrains not to break the layout of a content view by the elastic surface height.
 
 ### Customize the layout with `FloatingPanelLayout` protocol
 
@@ -347,7 +346,8 @@ class IntrinsicPanelLayout: FloatingPanelLayout {
 }
 ```
 
-:pencil2: `FloatingPanelIntrinsicLayout` is deprecated on v1.
+> [!WARNING]
+> `FloatingPanelIntrinsicLayout` is deprecated on v1.
 
 #### Specify an anchor for each state by an inset of the `FloatingPanelController.view` frame
 
@@ -364,7 +364,8 @@ class MyFullScreenLayout: FloatingPanelLayout {
 }
 ```
 
-:pencil2: `FloatingPanelFullScreenLayout` is deprecated on v1.
+> [!WARNING]
+> `FloatingPanelFullScreenLayout` is deprecated on v1.
 
 #### Change the backdrop alpha
 
@@ -428,7 +429,8 @@ class CustomPanelBehavior: FloatingPanelBehavior {
 }
 ```
 
-:pencil2: `floatingPanel(_ vc:behaviorFor:)` is deprecated on v1.
+> [!WARNING]
+> `floatingPanel(_ vc:behaviorFor:)` is deprecated on v1.
 
 #### Activate the rubber-band effect on panel edges
 
@@ -470,7 +472,8 @@ func floatingPanelDidMove(_ vc: FloatingPanelController) {
 }
 ```
 
-:pencil2: `{top,bottom}InteractionBuffer` property is removed from `FloatingPanelLayout` since v2.
+> [!WARNING]
+> `{top,bottom}InteractionBuffer` property is removed from `FloatingPanelLayout` since v2.
 
 ### Customize the surface design
 
@@ -511,7 +514,8 @@ fpc.surfaceView.grabberHandlePadding = 10.0
 fpc.surfaceView.grabberHandleSize = .init(width: 44.0, height: 12.0)
 ```
 
-:pencil2: Note that `grabberHandleSize` width and height are reversed in the left/right position.
+> [!NOTE]
+> `grabberHandleSize` width and height are reversed in the left/right position.
 
 #### Customize content padding from surface edges
 
@@ -658,6 +662,24 @@ The tap-to-dismiss action is disabled by default. So it needs to be enabled as b
 
 ```swift
 fpc.backdropView.dismissalTapGestureRecognizer.isEnabled = true
+```
+
+### Allow to scroll content of the tracking scroll view in addition to the most expanded state
+
+Just define conditions to allow content scrolling in `floatingPanel(:_:shouldAllowToScroll:in)` delegate method. If the returned value is true, the scroll content scrolls when its scroll position is not at the top of the content.
+
+```swift
+class MyViewController: FloatingPanelControllerDelegate {
+    ... 
+
+    func floatingPanel(
+        _ fpc: FloatingPanelController,
+        shouldAllowToScroll trackingScrollView: UIScrollView,
+        in state: FloatingPanelState
+    ) -> Bool {
+        return state == .full || state == .half
+    }
+}
 ```
 
 ## Notes
