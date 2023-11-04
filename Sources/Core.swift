@@ -209,6 +209,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             contentOffset = scrollView?.contentOffset
         }
 
+        if layoutAdapter.validStates.contains(state) == false {
+            state = layoutAdapter.initialState
+        }
         layoutAdapter.updateStaticConstraint()
         layoutAdapter.activateLayout(for: state, forceLayout: forceLayout)
 
@@ -725,7 +728,6 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
 
         guard shouldAttract(to: target) else {
-            self.state = target
             self.updateLayout(to: target)
             self.unlockScrollView()
             // The `floatingPanelDidEndDragging(_:willAttract:)` must be called after the state property changes.

@@ -782,12 +782,6 @@ class LayoutAdapter {
             NSLayoutConstraint.activate(constraint: self.fitToBoundsConstraint)
         }
 
-        var state = state
-
-        if validStates.contains(state) == false {
-            state = layout.initialState
-        }
-
         // Recalculate the intrinsic size of a content view. This is because
         // UIView.systemLayoutSizeFitting() returns a different size between an
         // on-screen and off-screen view which includes

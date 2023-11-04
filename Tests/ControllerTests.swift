@@ -334,6 +334,36 @@ class ControllerTests: XCTestCase {
         fpc.move(to: .tip, animated: false)
         XCTAssertEqual(fpc.surfaceView.frame.height, fpc.view.bounds.height - fpc.surfaceLocation(for: .tip).y)
     }
+
+    func test_switching_layout() {
+        final class FirstLayout: FloatingPanelLayout {
+            let position: FloatingPanelPosition = .bottom
+            let initialState: FloatingPanelState = .half
+            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+                .full: FloatingPanelLayoutAnchor(absoluteInset: 16.0, edge: .top, referenceGuide: .safeArea),
+                .half: FloatingPanelLayoutAnchor(absoluteInset: 262, edge: .top, referenceGuide: .safeArea),
+                .tip: FloatingPanelLayoutAnchor(absoluteInset: 44.0, edge: .bottom, referenceGuide: .safeArea)
+            ]
+        }
+        final class SecondLayout: FloatingPanelLayout {
+            let position: FloatingPanelPosition = .bottom
+            let initialState: FloatingPanelState = .half
+            let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+                .half: FloatingPanelLayoutAnchor(absoluteInset: 262, edge: .top, referenceGuide: .safeArea)
+            ]
+        }
+        let fpc = FloatingPanelController()
+        fpc.layout = FirstLayout()
+        fpc.showForTest()
+
+        fpc.move(to: .tip, animated: false)
+
+        // Switch to another layout
+        fpc.layout = SecondLayout()
+        fpc.invalidateLayout()
+
+        XCTAssertEqual(fpc.state, .half)
+    }
 }
 
 private class MyZombieViewController: UIViewController, FloatingPanelLayout, FloatingPanelBehavior, FloatingPanelControllerDelegate {
