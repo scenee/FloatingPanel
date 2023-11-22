@@ -158,14 +158,15 @@ open class FloatingPanelController: UIViewController {
 
     /// Returns the surface view managed by the controller object. It's the same as `self.view`.
     @objc
-    public var surfaceView: SurfaceView! {
+    public var surfaceView: SurfaceView {
         return floatingPanel.surfaceView
     }
 
     /// Returns the backdrop view managed by the controller object.
     @objc
-    public var backdropView: BackdropView! {
-        return floatingPanel.backdropView
+    public var backdropView: BackdropView {
+        set { floatingPanel.backdropView = newValue }
+        get { return floatingPanel.backdropView }
     }
 
     /// Returns the scroll view that the controller tracks.

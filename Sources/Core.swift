@@ -10,7 +10,13 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     private weak var ownerVC: FloatingPanelController?
 
     let surfaceView: SurfaceView
-    let backdropView: BackdropView
+    var backdropView: BackdropView {
+        didSet {
+            backdropView.dismissalTapGestureRecognizer
+                .addTarget(self, action: #selector(handleBackdrop(tapGesture:)))
+        }
+    }
+
     let layoutAdapter: LayoutAdapter
     let behaviorAdapter: BehaviorAdapter
 

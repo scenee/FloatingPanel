@@ -4,7 +4,7 @@ import UIKit
 
 /// A view that presents a backdrop interface behind a panel.
 @objc(FloatingPanelBackdropView)
-public class BackdropView: UIView {
+open class BackdropView: UIView {
 
     /// The gesture recognizer for tap gestures to dismiss a panel.
     ///
@@ -12,14 +12,14 @@ public class BackdropView: UIView {
     /// To dismiss a panel by tap gestures on the backdrop, `dismissalTapGestureRecognizer.isEnabled` is set to true.
     @objc public var dismissalTapGestureRecognizer: UITapGestureRecognizer
 
-    init() {
+    public init() {
         dismissalTapGestureRecognizer = UITapGestureRecognizer()
         dismissalTapGestureRecognizer.isEnabled = false
         super.init(frame: .zero)
         addGestureRecognizer(dismissalTapGestureRecognizer)
     }
 
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
