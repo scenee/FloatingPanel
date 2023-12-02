@@ -732,6 +732,7 @@ private var originalDismissImp: IMP?
 private typealias DismissFunction = @convention(c) (AnyObject, Selector, Bool, (() -> Void)?) -> Void
 extension FloatingPanelController {
     private static let dismissSwizzling: Void = {
+        guard originalDismissImp == nil else { return }
         let aClass: AnyClass! = UIViewController.self //object_getClass(vc)
         if let originalMethod = class_getInstanceMethod(aClass, #selector(dismiss(animated:completion:))),
            let swizzledImp = class_getMethodImplementation(aClass, #selector(__swizzled_dismiss(animated:completion:))) {
