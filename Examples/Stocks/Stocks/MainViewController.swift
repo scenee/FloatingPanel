@@ -81,7 +81,7 @@ class MainViewController: UIViewController, FloatingPanelControllerDelegate {
     }
 
     private func hideStockTickerBanner() {
-        // Dimiss top bar with dissolve animation
+        // Dismiss top bar with dissolve animation
         UIView.animate(withDuration: 0.25) {
             self.topBannerView.alpha = 0.0
             self.labelStackView.alpha = 1.0
