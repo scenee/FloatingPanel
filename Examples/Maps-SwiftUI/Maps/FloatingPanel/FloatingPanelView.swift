@@ -82,7 +82,10 @@ struct FloatingPanelView<Content: View, FloatingPanelContent: View>: UIViewContr
     /// Responsible to setup the view hierarchy and floating panel.
     final class Coordinator {
         private let parent: FloatingPanelView<Content, FloatingPanelContent>
-        private lazy var fpc = FloatingPanelController()
+        private lazy var fpc = {
+            FloatingPanelController.enableDismissToRemove()
+            return FloatingPanelController()
+        }()
 
         init(parent: FloatingPanelView<Content, FloatingPanelContent>) {
             self.parent = parent

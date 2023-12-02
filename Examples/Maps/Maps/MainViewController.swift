@@ -124,7 +124,7 @@ extension MainViewController: UISearchBarDelegate {
         searchBar.showsCancelButton = true
         searchVC.showHeader(animated: true)
         searchVC.tableView.alpha = 1.0
-        detailVC.dismiss(animated: true, completion: nil)
+        detailFpc.removePanelFromParent(animated: true)
     }
     func deactivate(searchBar: UISearchBar) {
         searchBar.resignFirstResponder()

@@ -288,8 +288,6 @@ open class FloatingPanelController: UIViewController {
     }
 
     private func setUp() {
-        _ = FloatingPanelController.dismissSwizzling
-
         modalPresentationStyle = .custom
         transitioningDelegate = modalTransition
 
@@ -310,7 +308,7 @@ open class FloatingPanelController: UIViewController {
         }
     }
 
-    // MARK:- Overrides
+    // MARK: - Overrides
 
     /// Creates the view that the controller manages.
     open override func loadView() {
@@ -381,7 +379,8 @@ open class FloatingPanelController: UIViewController {
         safeAreaInsetsObservation = nil
     }
 
-    // MARK:- Child view controller to consult
+    // MARK: - Child view controller to consult
+
     open override var childForStatusBarStyle: UIViewController? {
         return contentViewController
     }
@@ -398,19 +397,19 @@ open class FloatingPanelController: UIViewController {
         return contentViewController
     }
 
-    // MARK:- Privates
+    // MARK: - Privates
 
     private func shouldUpdateLayout(from previous: UITraitCollection, to new: UITraitCollection) -> Bool {
         return previous.horizontalSizeClass != new.horizontalSizeClass
-            || previous.verticalSizeClass != new.verticalSizeClass
-            || previous.preferredContentSizeCategory != new.preferredContentSizeCategory
-            || previous.layoutDirection != new.layoutDirection
+        || previous.verticalSizeClass != new.verticalSizeClass
+        || previous.preferredContentSizeCategory != new.preferredContentSizeCategory
+        || previous.layoutDirection != new.layoutDirection
     }
 
     private func update(safeAreaInsets: UIEdgeInsets) {
         guard
             preSafeAreaInsets != safeAreaInsets
-            else { return }
+        else { return }
 
         os_log(msg, log: devLog, type: .debug, "Update safeAreaInsets = \(safeAreaInsets)")
 
@@ -540,7 +539,7 @@ open class FloatingPanelController: UIViewController {
             self.view.leftAnchor.constraint(equalTo: parent.view.leftAnchor, constant: 0.0),
             self.view.rightAnchor.constraint(equalTo: parent.view.rightAnchor, constant: 0.0),
             self.view.bottomAnchor.constraint(equalTo: parent.view.bottomAnchor, constant: 0.0),
-            ])
+        ])
 
         show(animated: animated) { [weak self] in
             guard let self = self else { return }
@@ -694,6 +693,18 @@ open class FloatingPanelController: UIViewController {
         get { floatingPanel.layoutAdapter.surfaceLocation }
         set { floatingPanel.layoutAdapter.surfaceLocation = newValue }
     }
+
+
+    /// Calling this will allow to invoke `removePanelFromParent(animated:completion:)` as needed by
+    /// calling UIViewController's `dismiss` method
+    ///
+    /// Previously, until v2.8, this was the default behavior. However, from v2.9 onwards, due to
+    /// identified issues when used in conjunction with other libraries, it has been made an opt-in 
+    /// feature.
+    @objc
+    public static func enableDismissToRemove() {
+        _ = FloatingPanelController.dismissSwizzling
+    }
 }
 
 extension FloatingPanelController {
@@ -732,6 +743,7 @@ private var originalDismissImp: IMP?
 private typealias DismissFunction = @convention(c) (AnyObject, Selector, Bool, (() -> Void)?) -> Void
 extension FloatingPanelController {
     private static let dismissSwizzling: Void = {
+        guard originalDismissImp == nil else { return }
         let aClass: AnyClass! = UIViewController.self //object_getClass(vc)
         if let originalMethod = class_getInstanceMethod(aClass, #selector(dismiss(animated:completion:))),
            let swizzledImp = class_getMethodImplementation(aClass, #selector(__swizzled_dismiss(animated:completion:))) {
