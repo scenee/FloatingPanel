@@ -24,6 +24,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                     scrollBounce = cur.bounces
                     scrollIndictorVisible = cur.showsVerticalScrollIndicator
                 }
+                scrollLocked = false
             } else {
                 if let pre = oldValue {
                     pre.isDirectionalLockEnabled = false
