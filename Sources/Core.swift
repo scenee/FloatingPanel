@@ -68,6 +68,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     private var scrollBounce = false
     private var scrollIndictorVisible = false
     private var scrollBounceThreshold: CGFloat = -30.0
+	private var scrollLocked = false
 
     // MARK: - Interface
 
@@ -1050,29 +1051,25 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
     private func lockScrollView(strict: Bool = false) {
         guard let scrollView = scrollView else { return }
+		if scrollLocked {
+			os_log(msg, log: devLog, type: .debug, "Already scroll locked")
+			return
+		}
 
+		scrollBounce = scrollView.bounces
         if !strict, shouldLooselyLockScrollView {
-            if scrollView.isLooselyLocked {
-                os_log(msg, log: devLog, type: .debug, "Already scroll locked loosely.")
-                return
-            }
             // Don't change its `bounces` property. If it's changed, it will cause its scroll content offset jump at
             // the most expanded anchor position while seamlessly scrolling content. This problem only occurs where its
             // content mode is `.fitToBounds` and the tracking scroll content is smaller than the content view size.
             // The reason why is because `bounces` prop change leads to the "content frame" change on `.fitToBounds`.
             // See also https://github.com/scenee/FloatingPanel/issues/524.
         } else {
-            if scrollView.isLocked {
-                os_log(msg, log: devLog, type: .debug, "Already scroll locked.")
-                return
-            }
-
-            scrollBounce = scrollView.bounces
             scrollView.bounces = false
         }
         os_log(msg, log: devLog, type: .debug, "lock scroll view")
 
-        scrollView.isDirectionalLockEnabled = true
+		scrollLocked = true
+		scrollView.isDirectionalLockEnabled = true
 
         switch layoutAdapter.position {
         case .top, .bottom:
@@ -1085,9 +1082,14 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     private func unlockScrollView() {
-        guard let scrollView = scrollView, scrollView.isLocked else { return }
+        guard let scrollView = scrollView else { return }
+		if !scrollLocked {
+			os_log(msg, log: devLog, type: .debug, "Already scroll unlocked.")
+			return
+		}
         os_log(msg, log: devLog, type: .debug, "unlock scroll view")
 
+		scrollLocked = false
         scrollView.bounces = scrollBounce
         scrollView.isDirectionalLockEnabled = false
         switch layoutAdapter.position {
