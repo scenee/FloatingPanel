@@ -728,6 +728,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
 
         guard shouldAttract(to: target) else {
+            self.state = target
             self.updateLayout(to: target)
             self.unlockScrollView()
             // The `floatingPanelDidEndDragging(_:willAttract:)` must be called after the state property changes.
