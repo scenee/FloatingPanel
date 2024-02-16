@@ -109,12 +109,6 @@ extension UIGestureRecognizer.State: CustomDebugStringConvertible {
 #endif
 
 extension UIScrollView {
-    var isLocked: Bool {
-        return !showsVerticalScrollIndicator && !bounces && isDirectionalLockEnabled
-    }
-    var isLooselyLocked: Bool {
-        return !showsVerticalScrollIndicator && isDirectionalLockEnabled
-    }
     var fp_contentOffsetMax: CGPoint {
         return CGPoint(x: max((contentSize.width + adjustedContentInset.right) - bounds.width, 0.0),
                        y: max((contentSize.height + adjustedContentInset.bottom) - bounds.height, 0.0))
