@@ -273,6 +273,52 @@ extension UseCaseController {
             fpc.set(contentViewController: contentVC)
             fpc.ext_trackScrollView(in: contentVC)
             addMain(panel: fpc)
+
+        case .showCustomBackdrop:
+            class BlurBackdropView: BackdropView {
+                var effectView: UIVisualEffectView!
+                override var alpha: CGFloat {
+                    set {
+                        effectView.alpha = newValue
+                    }
+                    get {
+                        effectView.alpha
+                    }
+                }
+                override init() {
+                    super.init()
+
+                    let effect = UIBlurEffect(style: .prominent)
+                    let effectView = UIVisualEffectView(effect: effect)
+                    addSubview(effectView)
+                    effectView.frame = bounds
+                    effectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+                    self.effectView = effectView
+                }
+
+                required init?(coder: NSCoder) {
+                    fatalError("init(coder:) has not been implemented")
+                }
+            }
+            class CustomBottomLayout: FloatingPanelBottomLayout {
+                override var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
+                    return [
+                        .full: FloatingPanelLayoutAnchor(absoluteInset: 100.0, edge: .top, referenceGuide: .safeArea),
+                        .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
+                        .tip: FloatingPanelLayoutAnchor(fractionalInset: 0.1, edge: .bottom, referenceGuide: .safeArea),
+                    ]
+                }
+                override func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
+                    return state == .full ? 0.8 : 0.0
+                }
+            }
+
+            let fpc = FloatingPanelController()
+            fpc.delegate = self
+            fpc.set(contentViewController: contentVC)
+            fpc.backdropView = BlurBackdropView()
+            fpc.layout = CustomBottomLayout()
+            addMain(panel: fpc)
         }
     }
 

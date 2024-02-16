@@ -24,6 +24,7 @@ enum UseCase: Int, CaseIterable {
     case showAdaptivePanel
     case showAdaptivePanelWithCustomGuide
     case showCustomStatePanel
+    case showCustomBackdrop
 }
 
 extension UseCase {
@@ -50,6 +51,7 @@ extension UseCase {
         case .showAdaptivePanel: return "Show Adaptive Panel"
         case .showAdaptivePanelWithCustomGuide: return "Show Adaptive Panel (Custom Layout Guide)"
         case .showCustomStatePanel: return "Show Panel with Custom state"
+        case .showCustomBackdrop: return "Show Panel with Custom Backdrop"
         }
     }
 }
@@ -83,6 +85,7 @@ extension UseCase {
         case .showAdaptivePanel: return .storyboard(String(describing: ImageViewController.self))
         case .showAdaptivePanelWithCustomGuide: return .storyboard(String(describing: AdaptiveLayoutTestViewController.self))
         case .showCustomStatePanel: return .viewController(DebugTableViewController())
+        case .showCustomBackdrop: return .viewController(UIViewController())
         }
     }
 
