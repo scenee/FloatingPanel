@@ -736,14 +736,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
 
         guard shouldAttract(to: target) else {
-            self.state = target
-            self.updateLayout(to: target)
-            self.unlockScrollView()
-            // The `floatingPanelDidEndDragging(_:willAttract:)` must be called after the state property changes.
-            // This allows library users to get the correct state in the delegate method.
-            if let vc = ownerVC {
-                vc.delegate?.floatingPanelDidEndDragging?(vc, willAttract: false)
-            }
+            self.endWithoutAttraction(target)
             return
         }
 
@@ -884,6 +877,17 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             return false
         }
         return true
+    }
+
+    func endWithoutAttraction(_ target: FloatingPanelState) {
+        self.state = target
+        self.updateLayout(to: target)
+        self.unlockScrollView()
+        // The `floatingPanelDidEndDragging(_:willAttract:)` must be called after the state property changes.
+        // This allows library users to get the correct state in the delegate method.
+        if let vc = ownerVC {
+            vc.delegate?.floatingPanelDidEndDragging?(vc, willAttract: false)
+        }
     }
 
     private func startAttraction(to state: FloatingPanelState, with velocity: CGPoint, completion: @escaping (() -> Void)) {

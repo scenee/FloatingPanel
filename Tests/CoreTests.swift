@@ -913,6 +913,27 @@ class CoreTests: XCTestCase {
             )
         }
     }
+
+    func test_handleGesture_endWithoutAttraction() throws {
+        class Delegate: FloatingPanelControllerDelegate {
+            var willAttract: Bool?
+            func floatingPanelDidEndDragging(_ fpc: FloatingPanelController, willAttract attract: Bool) {
+                willAttract = attract
+            }
+        }
+        let fpc = FloatingPanelController()
+        let scrollView = UIScrollView()
+        let delegate = Delegate()
+        fpc.showForTest()
+        fpc.delegate = delegate
+        XCTAssertEqual(fpc.state, .half)
+
+        fpc.floatingPanel.endWithoutAttraction(.full)
+
+        XCTAssertEqual(fpc.state, .full)
+        XCTAssertEqual(fpc.surfaceLocation(for: .full).y, fpc.surfaceLocation.y)
+        XCTAssertEqual(delegate.willAttract, false)
+    }
 }
 
 private class FloatingPanelLayout3Positions: FloatingPanelTestLayout {
