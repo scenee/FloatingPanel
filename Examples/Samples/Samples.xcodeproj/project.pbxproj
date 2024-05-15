@@ -32,6 +32,8 @@
 		54CDC5D8215BBE23007D205C /* SupplementaryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CDC5D7215BBE23007D205C /* SupplementaryViews.swift */; };
 		54EAD35B263A75EB006A36EA /* PanelLayouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EAD35A263A75EB006A36EA /* PanelLayouts.swift */; };
 		54EAD365263A765F006A36EA /* PagePanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EAD364263A765F006A36EA /* PagePanelController.swift */; };
+		54F185822BF4AD0000916F57 /* DebugListCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54F185812BF4AD0000916F57 /* DebugListCollectionViewController.swift */; };
+		54F185842BF4B82E00916F57 /* UnavailableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54F185832BF4B82E00916F57 /* UnavailableViewController.swift */; };
 		5D82A6AD28D1843C006A44BA /* libswiftCoreGraphics.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D82A6AC28D18438006A44BA /* libswiftCoreGraphics.tbd */; };
 /* End PBXBuildFile section */
 
@@ -76,6 +78,8 @@
 		54CDC5D7215BBE23007D205C /* SupplementaryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementaryViews.swift; sourceTree = "<group>"; };
 		54EAD35A263A75EB006A36EA /* PanelLayouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelLayouts.swift; sourceTree = "<group>"; };
 		54EAD364263A765F006A36EA /* PagePanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagePanelController.swift; sourceTree = "<group>"; };
+		54F185812BF4AD0000916F57 /* DebugListCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugListCollectionViewController.swift; sourceTree = "<group>"; };
+		54F185832BF4B82E00916F57 /* UnavailableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnavailableViewController.swift; sourceTree = "<group>"; };
 		5D82A6AC28D18438006A44BA /* libswiftCoreGraphics.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswiftCoreGraphics.tbd; path = usr/lib/swift/libswiftCoreGraphics.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -97,6 +101,7 @@
 			children = (
 				5442E23F25FC533800A26F43 /* DebugTableViewController.swift */,
 				5442E24925FC53C100A26F43 /* DebugTextViewController.swift */,
+				54F185812BF4AD0000916F57 /* DebugListCollectionViewController.swift */,
 				5442E23325FC528400A26F43 /* DetailViewController.swift */,
 				5442E24325FC538200A26F43 /* InspectorViewController.swift */,
 				5442E22325FC51AF00A26F43 /* ImageViewController.swift */,
@@ -106,6 +111,7 @@
 				5442E22B25FC521F00A26F43 /* SettingsViewController.swift */,
 				5442E22F25FC525200A26F43 /* TabBarViewController.swift */,
 				544BC56726CC918200D0A436 /* AdaptiveLayoutTestViewController.swift */,
+				54F185832BF4B82E00916F57 /* UnavailableViewController.swift */,
 			);
 			path = ContentViewControllers;
 			sourceTree = "<group>";
@@ -247,6 +253,7 @@
 				5442E23A25FC52CD00A26F43 /* ModalViewController.swift in Sources */,
 				5442E22425FC51AF00A26F43 /* ImageViewController.swift in Sources */,
 				5442E24025FC533800A26F43 /* DebugTableViewController.swift in Sources */,
+				54F185822BF4AD0000916F57 /* DebugListCollectionViewController.swift in Sources */,
 				5442E25225FC541700A26F43 /* NestedScrollViewController.swift in Sources */,
 				5442E22825FC51E200A26F43 /* MultiPanelController.swift in Sources */,
 				546341A125C6415100CA0596 /* UseCase.swift in Sources */,
@@ -257,6 +264,7 @@
 				54EAD365263A765F006A36EA /* PagePanelController.swift in Sources */,
 				5442E24425FC538200A26F43 /* InspectorViewController.swift in Sources */,
 				5442E22C25FC521F00A26F43 /* SettingsViewController.swift in Sources */,
+				54F185842BF4B82E00916F57 /* UnavailableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

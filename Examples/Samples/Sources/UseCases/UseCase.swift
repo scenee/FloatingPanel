@@ -5,6 +5,7 @@ import UIKit
 enum UseCase: Int, CaseIterable {
     case trackingTableView
     case trackingTextView
+    case trackingCollectionViewList
     case showDetail
     case showModal
     case showPanelModal
@@ -31,6 +32,7 @@ extension UseCase {
     var name: String {
         switch self {
         case .trackingTableView: return "Scroll tracking(TableView)"
+        case .trackingCollectionViewList: return "Scroll tracking(List CollectionView)"
         case .trackingTextView: return "Scroll tracking(TextView)"
         case .showDetail: return "Show Detail Panel"
         case .showModal: return "Show Modal"
@@ -65,6 +67,15 @@ extension UseCase {
     private var content: Content {
         switch self {
         case .trackingTableView: return .viewController(DebugTableViewController())
+        case .trackingCollectionViewList:
+            if #available(iOS 14, *) {
+                return .viewController(DebugListCollectionViewController())
+            } else {
+                let vc = UnavailableViewController()
+                vc.loadViewIfNeeded()
+                vc.label.text = "UICollectionLayoutListConfiguration is unavailable.\nBuild this app on iOS 14 and later."
+                return .viewController(vc)
+            }
         case .trackingTextView: return .storyboard("ConsoleViewController") // Storyboard only
         case .showDetail: return .storyboard(String(describing: DetailViewController.self))
         case .showModal: return .storyboard(String(describing: ModalViewController.self))
