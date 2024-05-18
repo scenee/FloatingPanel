@@ -18,6 +18,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - swift: "5.10"
+            xcode: "15.4"
+            runs-on: macos-14
           - swift: "5.9"
             xcode: "15.2"
             runs-on: macos-13
@@ -55,11 +58,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: "17.2"
-            xcode: "15.2"
+          - os: "17.5"
+            xcode: "15.4"
             sim: "iPhone 15 Pro"
             parallel: NO  # Stop random test job failures
-            runs-on: macos-13
+            runs-on: macos-14
           - os: "16.4"
             xcode: "14.3.1"
             sim: "iPhone 14 Pro"
@@ -82,9 +85,9 @@ jobs:
     timeout-minutes: 20
 
   example:
-    runs-on: macos-13
+    runs-on: macos-14
     env:
-      DEVELOPER_DIR: /Applications/Xcode_15.2.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_15.4.app/Contents/Developer
     strategy:
       fail-fast: false
       matrix:
@@ -103,9 +106,9 @@ jobs:
           -sdk iphonesimulator
 
   swiftpm:
-    runs-on: macos-13
+    runs-on: macos-14
     env:
-      DEVELOPER_DIR: /Applications/Xcode_15.2.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_15.4.app/Contents/Developer
     strategy:
       fail-fast: false
       matrix:
@@ -166,9 +169,9 @@ jobs:
       run: carthage build --use-xcframeworks --no-skip-current
 
   cocoapods:
-    runs-on: macos-13
+    runs-on: macos-14
     env:
-      DEVELOPER_DIR: /Applications/Xcode_15.2.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_15.4.app/Contents/Developer
     steps:
     - uses: actions/checkout@v3
     - name: "CocoaPods: pod lib lint"
