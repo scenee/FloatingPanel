@@ -588,11 +588,16 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         // When no scrollView, nothing to handle.
         guard let scrollView = scrollView, scrollView.frame.contains(initialLocation) else { return false }
 
-        // For _UISwipeActionPanGestureRecognizer
-        if let scrollGestureRecognizers = scrollView.gestureRecognizers {
+        // Prevents moving a panel on swipe actions using _UISwipeActionPanGestureRecognizer.
+        // [Warning] Do not apply this to WKWebView. Since iOS 17.4, WKWebView has an additional pan
+        // gesture recognizer besides UIScrollViewPanGestureRecognizer. Applying this to WKWebView
+        // will block panel movements because another pan gesture isn't `scrollView.panGestureRecognizer`.
+        if let scrollGestureRecognizers = scrollView.gestureRecognizers,
+            scrollView is UITableView || scrollView is UICollectionView {
             for gesture in scrollGestureRecognizers {
-                guard gesture.state == .began || gesture.state == .changed
-                else { continue }
+                guard gesture.state == .began || gesture.state == .changed else {
+                    continue
+                }
 
                 if gesture != scrollView.panGestureRecognizer {
                     return true

@@ -52,6 +52,30 @@ extension UseCaseController {
             fpc.ext_trackScrollView(in: contentVC)
             addMain(panel: fpc)
 
+         case .trackingCollectionViewList:
+            let fpc = FloatingPanelController()
+            fpc.delegate = self
+            fpc.contentInsetAdjustmentBehavior = .always
+            fpc.surfaceView.appearance = {
+                let appearance = SurfaceAppearance()
+                appearance.cornerRadius = 6.0
+                return appearance
+            }()
+
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(UseCaseController.handleSurface(tapGesture:)))
+            tapGesture.cancelsTouchesInView = false
+            tapGesture.numberOfTapsRequired = 2
+            // Prevents a delay to response a tap in menus of DebugTableViewController.
+            tapGesture.delaysTouchesEnded = false
+            fpc.surfaceView.addGestureRecognizer(tapGesture)
+
+            fpc.set(contentViewController: contentVC)
+            if #available(iOS 14, *),
+                let scrollView = (fpc.contentViewController as? DebugListCollectionViewController)?.collectionView {
+                    fpc.track(scrollView: scrollView)
+            }
+            addMain(panel: fpc)
+
         case .trackingTextView:
             let fpc = FloatingPanelController()
             fpc.delegate = self
