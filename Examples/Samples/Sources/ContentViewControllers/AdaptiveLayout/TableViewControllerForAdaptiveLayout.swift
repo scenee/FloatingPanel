@@ -3,7 +3,7 @@
 import UIKit
 import FloatingPanel
 
-final class AdaptiveLayoutTestViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+final class TableViewControllerForAdaptiveLayout: UIViewController, UITableViewDataSource, UITableViewDelegate {
     class PanelLayout: FloatingPanelLayout {
         let position: FloatingPanelPosition = .bottom
         let initialState: FloatingPanelState = .full
@@ -75,7 +75,6 @@ final class AdaptiveLayoutTestViewController: UIViewController, UITableViewDataS
 }
 
 class IntrinsicTableView: UITableView {
-
     override var contentSize:CGSize {
         didSet {
             invalidateIntrinsicContentSize()

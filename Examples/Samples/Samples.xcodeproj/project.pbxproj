@@ -18,7 +18,7 @@
 		5442E24A25FC53C100A26F43 /* DebugTextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E24925FC53C100A26F43 /* DebugTextViewController.swift */; };
 		5442E25225FC541700A26F43 /* NestedScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E25125FC541700A26F43 /* NestedScrollViewController.swift */; };
 		54496C59263A7E5A0031E0C8 /* UseCaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54496C58263A7E5A0031E0C8 /* UseCaseController.swift */; };
-		544BC56826CC918200D0A436 /* AdaptiveLayoutTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544BC56726CC918200D0A436 /* AdaptiveLayoutTestViewController.swift */; };
+		544BC56826CC918200D0A436 /* TableViewControllerForAdaptiveLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544BC56726CC918200D0A436 /* TableViewControllerForAdaptiveLayout.swift */; };
 		545DB9EE21511E6300CA77B8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9ED21511E6300CA77B8 /* AppDelegate.swift */; };
 		545DB9F021511E6300CA77B8 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9EF21511E6300CA77B8 /* MainViewController.swift */; };
 		545DB9F321511E6300CA77B8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 545DB9F121511E6300CA77B8 /* Main.storyboard */; };
@@ -30,6 +30,7 @@
 		549D23CC233C7779008EF4D7 /* FloatingPanel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23CA233C7779008EF4D7 /* FloatingPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B51116216AFE5F0033A6F3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B51115216AFE5F0033A6F3 /* Extensions.swift */; };
 		54CDC5D8215BBE23007D205C /* SupplementaryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CDC5D7215BBE23007D205C /* SupplementaryViews.swift */; };
+		54E58CB72BF8A8D900408EA9 /* CollectionViewControllerForAdaptiveLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54E58CB62BF8A8D900408EA9 /* CollectionViewControllerForAdaptiveLayout.swift */; };
 		54EAD35B263A75EB006A36EA /* PanelLayouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EAD35A263A75EB006A36EA /* PanelLayouts.swift */; };
 		54EAD365263A765F006A36EA /* PagePanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EAD364263A765F006A36EA /* PagePanelController.swift */; };
 		54F185822BF4AD0000916F57 /* DebugListCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54F185812BF4AD0000916F57 /* DebugListCollectionViewController.swift */; };
@@ -63,7 +64,7 @@
 		5442E24925FC53C100A26F43 /* DebugTextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugTextViewController.swift; sourceTree = "<group>"; };
 		5442E25125FC541700A26F43 /* NestedScrollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestedScrollViewController.swift; sourceTree = "<group>"; };
 		54496C58263A7E5A0031E0C8 /* UseCaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseCaseController.swift; sourceTree = "<group>"; };
-		544BC56726CC918200D0A436 /* AdaptiveLayoutTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveLayoutTestViewController.swift; sourceTree = "<group>"; };
+		544BC56726CC918200D0A436 /* TableViewControllerForAdaptiveLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewControllerForAdaptiveLayout.swift; sourceTree = "<group>"; };
 		545DB9EA21511E6300CA77B8 /* Samples.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Samples.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		545DB9ED21511E6300CA77B8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		545DB9EF21511E6300CA77B8 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -76,6 +77,7 @@
 		549D23CA233C7779008EF4D7 /* FloatingPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FloatingPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		54B51115216AFE5F0033A6F3 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		54CDC5D7215BBE23007D205C /* SupplementaryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementaryViews.swift; sourceTree = "<group>"; };
+		54E58CB62BF8A8D900408EA9 /* CollectionViewControllerForAdaptiveLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewControllerForAdaptiveLayout.swift; sourceTree = "<group>"; };
 		54EAD35A263A75EB006A36EA /* PanelLayouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelLayouts.swift; sourceTree = "<group>"; };
 		54EAD364263A765F006A36EA /* PagePanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagePanelController.swift; sourceTree = "<group>"; };
 		54F185812BF4AD0000916F57 /* DebugListCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugListCollectionViewController.swift; sourceTree = "<group>"; };
@@ -99,18 +101,17 @@
 		5442E22225FC519700A26F43 /* ContentViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				54E58CB52BF8A88600408EA9 /* AdaptiveLayout */,
 				5442E23F25FC533800A26F43 /* DebugTableViewController.swift */,
 				5442E24925FC53C100A26F43 /* DebugTextViewController.swift */,
 				54F185812BF4AD0000916F57 /* DebugListCollectionViewController.swift */,
 				5442E23325FC528400A26F43 /* DetailViewController.swift */,
 				5442E24325FC538200A26F43 /* InspectorViewController.swift */,
-				5442E22325FC51AF00A26F43 /* ImageViewController.swift */,
 				5442E25125FC541700A26F43 /* NestedScrollViewController.swift */,
 				5442E23925FC52CD00A26F43 /* ModalViewController.swift */,
 				5442E22725FC51E200A26F43 /* MultiPanelController.swift */,
 				5442E22B25FC521F00A26F43 /* SettingsViewController.swift */,
 				5442E22F25FC525200A26F43 /* TabBarViewController.swift */,
-				544BC56726CC918200D0A436 /* AdaptiveLayoutTestViewController.swift */,
 				54F185832BF4B82E00916F57 /* UnavailableViewController.swift */,
 			);
 			path = ContentViewControllers;
@@ -161,6 +162,16 @@
 				54EAD364263A765F006A36EA /* PagePanelController.swift */,
 			);
 			path = UseCases;
+			sourceTree = "<group>";
+		};
+		54E58CB52BF8A88600408EA9 /* AdaptiveLayout */ = {
+			isa = PBXGroup;
+			children = (
+				5442E22325FC51AF00A26F43 /* ImageViewController.swift */,
+				544BC56726CC918200D0A436 /* TableViewControllerForAdaptiveLayout.swift */,
+				54E58CB62BF8A8D900408EA9 /* CollectionViewControllerForAdaptiveLayout.swift */,
+			);
+			path = AdaptiveLayout;
 			sourceTree = "<group>";
 		};
 		5D82A6AB28D18438006A44BA /* Frameworks */ = {
@@ -244,10 +255,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				5442E23425FC528400A26F43 /* DetailViewController.swift in Sources */,
+				54E58CB72BF8A8D900408EA9 /* CollectionViewControllerForAdaptiveLayout.swift in Sources */,
 				54496C59263A7E5A0031E0C8 /* UseCaseController.swift in Sources */,
 				54CDC5D8215BBE23007D205C /* SupplementaryViews.swift in Sources */,
 				54B51116216AFE5F0033A6F3 /* Extensions.swift in Sources */,
-				544BC56826CC918200D0A436 /* AdaptiveLayoutTestViewController.swift in Sources */,
+				544BC56826CC918200D0A436 /* TableViewControllerForAdaptiveLayout.swift in Sources */,
 				5442E24A25FC53C100A26F43 /* DebugTextViewController.swift in Sources */,
 				546341AC25C6426500CA0596 /* CustomState.swift in Sources */,
 				5442E23A25FC52CD00A26F43 /* ModalViewController.swift in Sources */,
