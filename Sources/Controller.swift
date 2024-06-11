@@ -729,7 +729,7 @@ extension FloatingPanelController {
 
 // MARK: - Swizzling
 
-private var originalDismissImp: IMP?
+@MainActor private var originalDismissImp: IMP?
 private typealias DismissFunction = @convention(c) (AnyObject, Selector, Bool, (() -> Void)?) -> Void
 extension FloatingPanelController {
     private static let dismissSwizzling: Void = {
