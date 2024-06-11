@@ -5,6 +5,7 @@ import UIKit
 enum UseCase: Int, CaseIterable {
     case trackingTableView
     case trackingTextView
+    case trackingCollectionViewList
     case showDetail
     case showModal
     case showPanelModal
@@ -22,7 +23,9 @@ enum UseCase: Int, CaseIterable {
     case showNavigationController
     case showTopPositionedPanel
     case showAdaptivePanel
-    case showAdaptivePanelWithCustomGuide
+    case showAdaptivePanelWithTableView
+    case showAdaptivePanelWithCollectionView
+    case showAdaptivePanelWithCompositionalCollectionView
     case showCustomStatePanel
     case showCustomBackdrop
 }
@@ -31,6 +34,7 @@ extension UseCase {
     var name: String {
         switch self {
         case .trackingTableView: return "Scroll tracking(TableView)"
+        case .trackingCollectionViewList: return "Scroll tracking(List CollectionView)"
         case .trackingTextView: return "Scroll tracking(TextView)"
         case .showDetail: return "Show Detail Panel"
         case .showModal: return "Show Modal"
@@ -49,7 +53,9 @@ extension UseCase {
         case .showNavigationController: return "Show Navigation Controller"
         case .showTopPositionedPanel: return "Show Top Positioned Panel"
         case .showAdaptivePanel: return "Show Adaptive Panel"
-        case .showAdaptivePanelWithCustomGuide: return "Show Adaptive Panel (Custom Layout Guide)"
+        case .showAdaptivePanelWithTableView: return "Show Adaptive Panel (TableView)"
+        case .showAdaptivePanelWithCollectionView: return "Show Adaptive Panel (CollectionView)"
+        case .showAdaptivePanelWithCompositionalCollectionView: return "Show Adaptive Panel (Compositional CollectionView)"
         case .showCustomStatePanel: return "Show Panel with Custom state"
         case .showCustomBackdrop: return "Show Panel with Custom Backdrop"
         }
@@ -65,6 +71,13 @@ extension UseCase {
     private var content: Content {
         switch self {
         case .trackingTableView: return .viewController(DebugTableViewController())
+        case .trackingCollectionViewList:
+            if #available(iOS 14, *) {
+                return .viewController(DebugListCollectionViewController())
+            } else {
+                let msg = "UICollectionLayoutListConfiguration is unavailable.\nBuild this app on iOS 14 and later."
+                return makeUnavailableViewContent(message: msg)
+            }
         case .trackingTextView: return .storyboard("ConsoleViewController") // Storyboard only
         case .showDetail: return .storyboard(String(describing: DetailViewController.self))
         case .showModal: return .storyboard(String(describing: ModalViewController.self))
@@ -83,7 +96,17 @@ extension UseCase {
         case .showNavigationController: return .storyboard("RootNavigationController") // Storyboard only
         case .showTopPositionedPanel: return .viewController(DebugTableViewController())
         case .showAdaptivePanel: return .storyboard(String(describing: ImageViewController.self))
-        case .showAdaptivePanelWithCustomGuide: return .storyboard(String(describing: AdaptiveLayoutTestViewController.self))
+        case .showAdaptivePanelWithTableView: return .storyboard(String(describing: TableViewControllerForAdaptiveLayout.self))
+        case .showAdaptivePanelWithCollectionView,
+            .showAdaptivePanelWithCompositionalCollectionView:
+            if #available(iOS 13, *) {
+                let vc = CollectionViewControllerForAdaptiveLayout()
+                vc.layoutType = self == .showAdaptivePanelWithCollectionView ? .flow : .compositional
+                return .viewController(vc)
+            } else {
+                let msg = "Compositional layout is unavailable.\nBuild this app on iOS 13 and later."
+                return makeUnavailableViewContent(message: msg)
+            }
         case .showCustomStatePanel: return .viewController(DebugTableViewController())
         case .showCustomBackdrop: return .viewController(UIViewController())
         }
@@ -97,5 +120,12 @@ extension UseCase {
             vc.loadViewIfNeeded()
             return vc
         }
+    }
+
+    private func makeUnavailableViewContent(message: String) -> Content {
+        let vc = UnavailableViewController()
+        vc.loadViewIfNeeded()
+        vc.label.text = message
+        return .viewController(vc)
     }
 }

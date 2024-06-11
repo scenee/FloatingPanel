@@ -52,6 +52,30 @@ extension UseCaseController {
             fpc.ext_trackScrollView(in: contentVC)
             addMain(panel: fpc)
 
+         case .trackingCollectionViewList:
+            let fpc = FloatingPanelController()
+            fpc.delegate = self
+            fpc.contentInsetAdjustmentBehavior = .always
+            fpc.surfaceView.appearance = {
+                let appearance = SurfaceAppearance()
+                appearance.cornerRadius = 6.0
+                return appearance
+            }()
+
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(UseCaseController.handleSurface(tapGesture:)))
+            tapGesture.cancelsTouchesInView = false
+            tapGesture.numberOfTapsRequired = 2
+            // Prevents a delay to response a tap in menus of DebugTableViewController.
+            tapGesture.delaysTouchesEnded = false
+            fpc.surfaceView.addGestureRecognizer(tapGesture)
+
+            fpc.set(contentViewController: contentVC)
+            if #available(iOS 14, *),
+                let scrollView = (fpc.contentViewController as? DebugListCollectionViewController)?.collectionView {
+                    fpc.track(scrollView: scrollView)
+            }
+            addMain(panel: fpc)
+
         case .trackingTextView:
             let fpc = FloatingPanelController()
             fpc.delegate = self
@@ -239,13 +263,13 @@ extension UseCaseController {
             fpc.set(contentViewController: contentVC)
             fpc.ext_trackScrollView(in: contentVC)
             if case let contentVC as ImageViewController = contentVC {
-                let mode: ImageViewController.Mode = (useCase == .showAdaptivePanelWithCustomGuide) ? .withHeaderFooter : .onlyImage
+                let mode: ImageViewController.Mode = (useCase == .showAdaptivePanelWithTableView) ? .withHeaderFooter : .onlyImage
                 let layoutGuide = contentVC.layoutGuideFor(mode: mode)
                 fpc.layout = ImageViewController.PanelLayout(targetGuide: layoutGuide)
             }
             addMain(panel: fpc)
 
-        case .showAdaptivePanelWithCustomGuide:
+        case .showAdaptivePanelWithTableView:
             let fpc = FloatingPanelController()
             fpc.isRemovalInteractionEnabled = true
             fpc.contentInsetAdjustmentBehavior = .always
@@ -255,10 +279,25 @@ extension UseCaseController {
                 return appearance
             }()
 
-
             fpc.set(contentViewController: contentVC)
-            fpc.ext_trackScrollView(in: contentVC)
-            fpc.layout = AdaptiveLayoutTestViewController.PanelLayout(targetGuide: contentVC.view.makeBoundsLayoutGuide())
+            fpc.track(scrollView: (contentVC as! TableViewControllerForAdaptiveLayout).tableView)
+            fpc.layout = TableViewControllerForAdaptiveLayout.PanelLayout(targetGuide: contentVC.view.makeBoundsLayoutGuide())
+            addMain(panel: fpc)
+
+        case .showAdaptivePanelWithCollectionView, .showAdaptivePanelWithCompositionalCollectionView:
+            let fpc = FloatingPanelController()
+            fpc.isRemovalInteractionEnabled = true
+            fpc.contentInsetAdjustmentBehavior = .always
+            fpc.surfaceView.appearance = {
+                let appearance = SurfaceAppearance()
+                appearance.cornerRadius = 6.0
+                return appearance
+            }()
+            fpc.set(contentViewController: contentVC)
+            if #available(iOS 13, *) {
+                fpc.track(scrollView: (contentVC as! CollectionViewControllerForAdaptiveLayout).collectionView)
+                fpc.layout = CollectionViewControllerForAdaptiveLayout.PanelLayout(targetGuide: contentVC.view.makeBoundsLayoutGuide())
+            }
             addMain(panel: fpc)
 
         case .showCustomStatePanel:
@@ -458,7 +497,7 @@ private extension FloatingPanelController {
         case let contentVC as ImageViewController:
             track(scrollView: contentVC.scrollView)
 
-        case let contentVC as AdaptiveLayoutTestViewController:
+        case let contentVC as TableViewControllerForAdaptiveLayout:
             track(scrollView: contentVC.tableView)
 
         default:
