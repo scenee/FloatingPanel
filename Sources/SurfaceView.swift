@@ -56,11 +56,11 @@ public class SurfaceAppearance: NSObject {
     /// Defaults to `.circular`.
     @available(iOS 13.0, *)
     public var cornerCurve: CALayerCornerCurve {
-        get { _cornerCurve ?? .circular }
+        get { _cornerCurve as? CALayerCornerCurve ?? .circular }
         set { _cornerCurve = newValue }
     }
 
-    private var _cornerCurve: CALayerCornerCurve?
+    private var _cornerCurve: Any?
 
     /// An array of shadows used to create drop shadows underneath a surface view.
     public var shadows: [Shadow] = [Shadow()]
