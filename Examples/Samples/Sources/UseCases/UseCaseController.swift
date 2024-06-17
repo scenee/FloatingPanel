@@ -3,6 +3,7 @@
 import UIKit
 import FloatingPanel
 
+@MainActor
 final class UseCaseController: NSObject {
     unowned let mainVC: MainViewController
     private(set) var useCase: UseCase
