@@ -3,7 +3,6 @@
 import UIKit
 import os.log
 
-///
 /// The presentation model of FloatingPanel
 ///
 class Core: NSObject, UIGestureRecognizerDelegate {
@@ -114,8 +113,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     deinit {
-        // Release `NumericSpringAnimator.displayLink` from the run loop.
-        self.moveAnimator?.stopAnimation(false)
+        moveAnimator?.stopAnimation(false)
     }
 
     func move(to: FloatingPanelState, animated: Bool, completion: (() -> Void)? = nil) {
@@ -1309,7 +1307,7 @@ public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
 
 // MARK: - Animator
 
-private class NumericSpringAnimator: NSObject {
+private final class NumericSpringAnimator: NSObject,  @unchecked Sendable  {
     struct Data {
         let value: CGFloat
         let velocity: CGFloat
