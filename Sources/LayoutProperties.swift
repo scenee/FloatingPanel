@@ -3,6 +3,7 @@
 import UIKit
 
 /// Constants that specify the edge of the container of a panel.
+@MainActor
 @objc public enum FloatingPanelReferenceEdge: Int {
     case top
     case left
@@ -28,6 +29,7 @@ extension FloatingPanelReferenceEdge {
 }
 
 /// A representation to specify a rectangular area to lay out a panel.
+@MainActor
 @objc public enum FloatingPanelLayoutReferenceGuide: Int {
     case superview = 0
     case safeArea = 1
@@ -45,6 +47,7 @@ extension FloatingPanelLayoutReferenceGuide {
 }
 
 /// A representation to specify a bounding box which limit the content size of a panel.
+@MainActor
 @objc public enum FloatingPanelLayoutContentBoundingGuide: Int {
     case none = 0
     case superview = 1

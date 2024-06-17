@@ -36,6 +36,7 @@ extension CGPoint {
 
 // MARK: - UIKit
 
+@MainActor
 protocol LayoutGuideProvider {
     var topAnchor: NSLayoutYAxisAnchor { get }
     var leftAnchor: NSLayoutXAxisAnchor { get }

@@ -6,6 +6,7 @@ import os.log
 /// A set of methods implemented by the delegate of a panel controller allows the adopting delegate to respond to
 /// messages from the FloatingPanelController class and thus respond to, and in some affect, operations such as
 /// dragging, attracting a panel, layout of a panel and the content, and transition animations.
+@MainActor
 @objc public protocol FloatingPanelControllerDelegate {
     /// Returns a FloatingPanelLayout object. If you use the default one, you can use a `FloatingPanelBottomLayout` object.
     @objc(floatingPanel:layoutForTraitCollection:) optional
@@ -495,16 +496,18 @@ open class FloatingPanelController: UIViewController {
         // 2. The safe area top inset can be variable on the large title navigation bar(iOS11+).
         // That's why it needs the observation to keep `adjustedContentInsets` correct.
         safeAreaInsetsObservation = self.view.observe(\.safeAreaInsets, options: [.initial, .new, .old]) { [weak self] (_, change) in
-            // Use `self.view.safeAreaInsets` because `change.newValue` can be nil in particular case when
-            // is reported in https://github.com/SCENEE/FloatingPanel/issues/330
-            guard let self = self, change.oldValue != self.view.safeAreaInsets else { return }
+            MainActor.assumeIsolated {
+                // Use `self.view.safeAreaInsets` because `change.newValue` can be nil in particular case when
+                // is reported in https://github.com/SCENEE/FloatingPanel/issues/330
+                guard let self = self, change.oldValue != self.view.safeAreaInsets else { return }
 
-            // Sometimes the bounding rectangle of the controlled view becomes invalid when the screen is rotated.
-            // This results in its safeAreaInsets change. In that case, `self.update(safeAreaInsets:)` leads
-            // an unsatisfied constraints error. So this method should not be called with those bounds.
-            guard self.view.bounds.height > 0 && self.view.bounds.width > 0 else { return }
+                // Sometimes the bounding rectangle of the controlled view becomes invalid when the screen is rotated.
+                // This results in its safeAreaInsets change. In that case, `self.update(safeAreaInsets:)` leads
+                // an unsatisfied constraints error. So this method should not be called with those bounds.
+                guard self.view.bounds.height > 0 && self.view.bounds.width > 0 else { return }
 
-            self.update(safeAreaInsets: self.view.safeAreaInsets)
+                self.update(safeAreaInsets: self.view.safeAreaInsets)
+            }
         }
 
         move(to: floatingPanel.layoutAdapter.initialState,

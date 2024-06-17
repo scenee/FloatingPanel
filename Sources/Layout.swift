@@ -4,6 +4,7 @@ import UIKit
 import os.log
 
 /// An interface for generating layout information for a panel.
+@MainActor
 @objc public protocol FloatingPanelLayout {
     /// Returns the position of a panel in a `FloatingPanelController` view .
     @objc var position: FloatingPanelPosition { get }
@@ -60,6 +61,7 @@ struct LayoutSegment {
     let upper: FloatingPanelState?
 }
 
+@MainActor
 class LayoutAdapter {
     private unowned var vc: FloatingPanelController
     private let defaultLayout = FloatingPanelBottomLayout()

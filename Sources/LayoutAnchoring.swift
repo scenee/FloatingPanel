@@ -3,6 +3,7 @@
 import UIKit
 
 /// An interface for implementing custom layout anchor objects.
+@MainActor
 @objc public protocol FloatingPanelLayoutAnchoring {
     var referenceGuide: FloatingPanelLayoutReferenceGuide { get }
     func layoutConstraints(_ fpc: FloatingPanelController, for position: FloatingPanelPosition) -> [NSLayoutConstraint]
