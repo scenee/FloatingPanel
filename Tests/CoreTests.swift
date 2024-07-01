@@ -922,7 +922,6 @@ class CoreTests: XCTestCase {
             }
         }
         let fpc = FloatingPanelController()
-        let scrollView = UIScrollView()
         let delegate = Delegate()
         fpc.showForTest()
         fpc.delegate = delegate
