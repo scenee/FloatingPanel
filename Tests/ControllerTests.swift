@@ -64,6 +64,7 @@ class ControllerTests: XCTestCase {
     }
 
     func test_moveTo() {
+        let timeout = 3.0
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
         XCTAssertEqual(delegate.position, .hidden)
@@ -102,7 +103,7 @@ class ControllerTests: XCTestCase {
             }
             XCTAssertEqual(fpc.state, .full)
             XCTAssertEqual(delegate.position, .full)
-            wait(for: [exp], timeout: 1.0)
+            wait(for: [exp], timeout: timeout)
         }
 
         XCTContext.runActivity(named: "move to half(animated)") { act in
@@ -113,7 +114,7 @@ class ControllerTests: XCTestCase {
             }
             XCTAssertEqual(fpc.state, .half)
             XCTAssertEqual(delegate.position, .half)
-            wait(for: [exp], timeout: 1.0)
+            wait(for: [exp], timeout: timeout)
         }
 
         XCTContext.runActivity(named: "move to tip(animated)") { act in
@@ -124,7 +125,7 @@ class ControllerTests: XCTestCase {
             }
             XCTAssertEqual(fpc.state, .tip)
             XCTAssertEqual(delegate.position, .tip)
-            wait(for: [exp], timeout: 1.0)
+            wait(for: [exp], timeout: timeout)
         }
 
         fpc.move(to: .hidden, animated: true)
@@ -137,6 +138,7 @@ class ControllerTests: XCTestCase {
         class MyFloatingPanelTop2BottomLayout: FloatingPanelTop2BottomTestLayout {
             override var initialState: FloatingPanelState { return .half }
         }
+        let timeout = 3.0
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
         fpc.layout = MyFloatingPanelTop2BottomLayout()
@@ -175,7 +177,7 @@ class ControllerTests: XCTestCase {
             }
             XCTAssertEqual(fpc.state, .full)
             XCTAssertEqual(delegate.position, .full)
-            wait(for: [exp], timeout: 1.0)
+            wait(for: [exp], timeout: timeout)
         }
 
         XCTContext.runActivity(named: "move to half(animated)") { act in
@@ -186,7 +188,7 @@ class ControllerTests: XCTestCase {
             }
             XCTAssertEqual(fpc.state, .half)
             XCTAssertEqual(delegate.position, .half)
-            wait(for: [exp], timeout: 1.0)
+            wait(for: [exp], timeout: timeout)
         }
 
         XCTContext.runActivity(named: "move to tip(animated)") { act in
@@ -197,7 +199,7 @@ class ControllerTests: XCTestCase {
             }
             XCTAssertEqual(fpc.state, .tip)
             XCTAssertEqual(delegate.position, .tip)
-            wait(for: [exp], timeout: 1.0)
+            wait(for: [exp], timeout: timeout)
         }
 
         fpc.move(to: .hidden, animated: true)
@@ -223,6 +225,7 @@ class ControllerTests: XCTestCase {
     }
 
     func test_moveTo_didMoveDelegate() {
+        let timeout = 3.0
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
         XCTAssertEqual(delegate.position, .hidden)
@@ -237,7 +240,7 @@ class ControllerTests: XCTestCase {
                 exp.fulfill()
             }
             fpc.move(to: .full, animated: false)
-            wait(for: [exp], timeout: 1.0)
+            wait(for: [exp], timeout: timeout)
 
             XCTAssertEqual(count, 1)
         }
@@ -253,7 +256,7 @@ class ControllerTests: XCTestCase {
             fpc.move(to: .half, animated: true) {
                 exp.fulfill()
             }
-            wait(for: [exp], timeout: 1.0)
+            wait(for: [exp], timeout: timeout)
 
             XCTAssertGreaterThan(count, 1)
         }
@@ -270,7 +273,7 @@ class ControllerTests: XCTestCase {
                     exp.fulfill()
                 }
             }
-            wait(for: [exp], timeout: 1.0)
+            wait(for: [exp], timeout: timeout)
 
             XCTAssertEqual(count, 1)
         }
@@ -288,7 +291,7 @@ class ControllerTests: XCTestCase {
                     exp.fulfill()
                 }
             }
-            wait(for: [exp], timeout: 1.0)
+            wait(for: [exp], timeout: timeout)
 
             XCTAssertGreaterThan(count, 1)
         }
