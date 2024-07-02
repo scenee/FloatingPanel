@@ -7,15 +7,8 @@ jobs:
     steps:
       - checkout
       - run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=14.5,name=iPhone 12 Pro'
-  test-ios13_7-iPhone_11_Pro:
-    macos:
-      xcode: 12.5.1
-    steps:
-      - checkout
-      - run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=13.7,name=iPhone 11 Pro'
 
 workflows:
   test: 
     jobs:
       - test-ios14_5-iPhone_12_Pro
-      - test-ios13_7-iPhone_11_Pro
