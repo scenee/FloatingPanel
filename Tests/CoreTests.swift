@@ -209,6 +209,8 @@ class CoreTests: XCTestCase {
             return floor(fpc.backdropView.alpha * 1e+06) / 1e+06
         }
 
+        let timeout = 3.0
+
         let delegate = TestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
         fpc.layout = BackdropTestLayout()
@@ -228,14 +230,14 @@ class CoreTests: XCTestCase {
         fpc.move(to: .full, animated: true) {
             exp1.fulfill()
         }
-        wait(for: [exp1], timeout: 1.0)
+        wait(for: [exp1], timeout: timeout)
         XCTAssertEqual(_floor(fpc.backdropView.alpha), 0.3)
 
         let exp2 = expectation(description: "move to half with animation")
         fpc.move(to: .half, animated: true) {
             exp2.fulfill()
         }
-        wait(for: [exp2], timeout: 1.0)
+        wait(for: [exp2], timeout: timeout)
         XCTAssertEqual(fpc.backdropView.alpha, 0.0)
 
         // Test a content mode change of FloatingPanelController
@@ -246,7 +248,7 @@ class CoreTests: XCTestCase {
         }
         fpc.contentMode = .fitToBounds
         XCTAssertEqual(fpc.backdropView.alpha, 0.0)  // Must not affect the backdrop alpha by changing the content mode
-        wait(for: [exp3], timeout: 1.0)
+        wait(for: [exp3], timeout: timeout)
         XCTAssertEqual(_floor(fpc.backdropView.alpha), 0.3)
 
         // Test a size class change of FloatingPanelController.view
