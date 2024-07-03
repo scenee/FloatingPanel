@@ -2,7 +2,6 @@
 [![Platform](https://img.shields.io/cocoapods/p/FloatingPanel.svg)](https://cocoapods.org/pods/FloatingPanel)
 [![Version](https://img.shields.io/cocoapods/v/FloatingPanel.svg)](https://cocoapods.org/pods/FloatingPanel)
 ![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/scenee/FloatingPanel/ci.yml?branch=master)
-[![Carthage compatible](https://img.shields.io/badge/carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 # FloatingPanel
 
@@ -22,7 +21,6 @@ Please see also [the API reference@SPI](https://swiftpackageindex.com/scenee/Flo
 - [Requirements](#requirements)
 - [Installation](#installation)
   - [CocoaPods](#cocoapods)
-  - [Carthage](#carthage)
   - [Swift Package Manager](#swift-package-manager)
 - [Getting Started](#getting-started)
   - [Add a floating panel as a child view controller](#add-a-floating-panel-as-a-child-view-controller)
@@ -102,14 +100,6 @@ it, simply add the following line to your Podfile:
 
 ```ruby
 pod 'FloatingPanel'
-```
-
-### Carthage
-
-For [Carthage](https://github.com/Carthage/Carthage), add the following to your `Cartfile`:
-
-```ogdl
-github "scenee/FloatingPanel"
 ```
 
 ### Swift Package Manager

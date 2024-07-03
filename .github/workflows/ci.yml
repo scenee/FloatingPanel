@@ -36,15 +36,6 @@ jobs:
           - swift: "5.5"
             xcode: "13.2.1"
             runs-on: macos-12
-          - swift: "5.4"
-            xcode: "12.5.1"
-            runs-on: macos-11
-          - swift: "5.3"
-            xcode: "12.4"
-            runs-on: macos-11
-          - swift: "5.2"
-            xcode: "11.7"
-            runs-on: macos-11
     steps:
       - uses: actions/checkout@v4
       - name: Building in Swift ${{ matrix.swift }}
@@ -160,13 +151,6 @@ jobs:
         swift build \
           -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk iphonesimulator --show-sdk-path`" \
           -Xswiftc "-target" -Xswiftc "${{ matrix.target }}"
-
-  carthage:
-    runs-on: macos-11
-    steps:
-    - uses: actions/checkout@v4
-    - name: "Carthage build"
-      run: carthage build --use-xcframeworks --no-skip-current
 
   cocoapods:
     runs-on: macos-14
