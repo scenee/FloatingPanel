@@ -656,14 +656,19 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     private func panningChange(with translation: CGPoint) {
-        os_log(msg, log: devLog, type: .debug, "panningChange -- translation = \(value(of: translation))")
         let pre = value(of: layoutAdapter.surfaceLocation)
         let diff = value(of: translation - initialTranslation)
         let next = pre + diff
 
-        layoutAdapter.updateInteractiveEdgeConstraint(diff: diff,
-                                                      scrollingContent: shouldScrollingContentInMoving(from: pre, to: next),
-                                                      allowsRubberBanding: behaviorAdapter.allowsRubberBanding(for:))
+        os_log(msg, log: devLog, type: .debug, """
+        panningChange -- translation = \(value(of: translation)), diff = \(diff), pre = \(pre), next = \(next)
+        """)
+
+        layoutAdapter.updateInteractiveEdgeConstraint(
+            diff: diff,
+            scrollingContent: shouldScrollingContentInMoving(from: pre, to: next),
+            allowsRubberBanding: behaviorAdapter.allowsRubberBanding(for:)
+        )
 
         let cur = value(of: layoutAdapter.surfaceLocation)
 
@@ -676,31 +681,36 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         }
     }
 
-    private func shouldScrollingContentInMoving(from pre: CGFloat, to next: CGFloat) -> Bool {
+    /// Determines if the content should scroll while the surface is moving from `cur` to `target`.
+    ///
+    /// - Note: `cur` argument starts from an anchor location of surface view in a state. For example,
+    /// it starts from zero if the state is full whose FloatingPanelLayoutAnchor.absoluteInset is zero
+    /// and there is no additional safe area insets like a navigation bar. Therefore, `cur` argument
+    /// can be minus if the absoluteInset is minus with such a condition.
+    private func shouldScrollingContentInMoving(from cur: CGFloat, to target: CGFloat) -> Bool {
         // Don't allow scrolling if the initial panning location is in the grabber area.
         if surfaceView.grabberAreaContains(initialLocation) {
             return false
         }
-        if let scrollView = scrollView, scrollView.panGestureRecognizer.state == .changed {
+        if let sv = scrollView, sv.panGestureRecognizer.state == .changed {
+            let (contentSize, bounds, alwaysBounceHorizontal, alwaysBounceVertical)
+                = (sv.contentSize, sv.bounds, sv.alwaysBounceHorizontal, sv.alwaysBounceVertical)
+
             switch layoutAdapter.position {
             case .top:
-                if pre > .zero, pre < next,
-                    scrollView.contentSize.height > scrollView.bounds.height || scrollView.alwaysBounceVertical {
+                if cur < target, contentSize.height > bounds.height || alwaysBounceVertical {
                     return true
                 }
             case .left:
-                if pre > .zero, pre < next,
-                    scrollView.contentSize.width > scrollView.bounds.width || scrollView.alwaysBounceHorizontal {
+                if cur < target, contentSize.width > bounds.width || alwaysBounceHorizontal {
                     return true
                 }
             case .bottom:
-                if pre > .zero, pre > next,
-                    scrollView.contentSize.height > scrollView.bounds.height || scrollView.alwaysBounceVertical {
+                if cur > target, contentSize.height > bounds.height || alwaysBounceVertical {
                     return true
                 }
             case .right:
-                if pre > .zero, pre > next,
-                    scrollView.contentSize.width > scrollView.bounds.width || scrollView.alwaysBounceHorizontal {
+                if cur > target, contentSize.width > bounds.width || alwaysBounceHorizontal {
                     return true
                 }
             }
