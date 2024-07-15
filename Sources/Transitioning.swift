@@ -5,11 +5,11 @@ import UIKit
 class ModalTransition: NSObject, UIViewControllerTransitioningDelegate {
     func animationController(forPresented presented: UIViewController,
                              presenting: UIViewController,
-                             source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+                             source: UIViewController) -> (any UIViewControllerAnimatedTransitioning)? {
         return ModalPresentTransition()
     }
 
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationController(forDismissed dismissed: UIViewController) -> (any UIViewControllerAnimatedTransitioning)? {
         return ModalDismissTransition()
     }
 
@@ -81,7 +81,7 @@ class PresentationController: UIPresentationController {
 }
 
 class ModalPresentTransition: NSObject, UIViewControllerAnimatedTransitioning {
-    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+    func transitionDuration(using transitionContext: (any UIViewControllerContextTransitioning)?) -> TimeInterval {
         guard
             let fpc = transitionContext?.viewController(forKey: .to) as? FloatingPanelController
         else { fatalError()}
@@ -90,7 +90,7 @@ class ModalPresentTransition: NSObject, UIViewControllerAnimatedTransitioning {
         return TimeInterval(animator.duration)
     }
 
-    func interruptibleAnimator(using transitionContext: UIViewControllerContextTransitioning) -> UIViewImplicitlyAnimating {
+    func interruptibleAnimator(using transitionContext: any UIViewControllerContextTransitioning) -> any UIViewImplicitlyAnimating {
         guard
             let fpc = transitionContext.viewController(forKey: .to) as? FloatingPanelController
         else { fatalError() }
@@ -110,13 +110,13 @@ class ModalPresentTransition: NSObject, UIViewControllerAnimatedTransitioning {
         return transitionAnimator
     }
 
-    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+    func animateTransition(using transitionContext: any UIViewControllerContextTransitioning) {
         self.interruptibleAnimator(using: transitionContext).startAnimation()
     }
 }
 
 class ModalDismissTransition: NSObject, UIViewControllerAnimatedTransitioning {
-    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+    func transitionDuration(using transitionContext: (any UIViewControllerContextTransitioning)?) -> TimeInterval {
         guard
             let fpc = transitionContext?.viewController(forKey: .from) as? FloatingPanelController
         else { fatalError()}
@@ -125,7 +125,7 @@ class ModalDismissTransition: NSObject, UIViewControllerAnimatedTransitioning {
         return TimeInterval(animator.duration)
     }
 
-    func interruptibleAnimator(using transitionContext: UIViewControllerContextTransitioning) -> UIViewImplicitlyAnimating {
+    func interruptibleAnimator(using transitionContext: any UIViewControllerContextTransitioning) -> any UIViewImplicitlyAnimating {
         guard
             let fpc = transitionContext.viewController(forKey: .from) as? FloatingPanelController
         else { fatalError() }
@@ -142,7 +142,7 @@ class ModalDismissTransition: NSObject, UIViewControllerAnimatedTransitioning {
         return fpc.transitionAnimator!
     }
 
-    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+    func animateTransition(using transitionContext: any UIViewControllerContextTransitioning) {
         self.interruptibleAnimator(using: transitionContext).startAnimation()
     }
 }
