@@ -66,7 +66,7 @@ public extension FloatingPanelLayoutAnchor {
         }
     }
 
-    private func layoutConstraints(_ layoutGuide: some LayoutGuideProvider, for edgeAnchor: NSLayoutYAxisAnchor) -> [NSLayoutConstraint] {
+    private func layoutConstraints(_ layoutGuide: any LayoutGuideProvider, for edgeAnchor: NSLayoutYAxisAnchor) -> [NSLayoutConstraint] {
         switch referenceEdge {
         case .top:
             if isAbsolute {
@@ -85,7 +85,7 @@ public extension FloatingPanelLayoutAnchor {
         }
     }
 
-    private func layoutConstraints(_ layoutGuide: some LayoutGuideProvider, for edgeAnchor: NSLayoutXAxisAnchor) -> [NSLayoutConstraint] {
+    private func layoutConstraints(_ layoutGuide: any LayoutGuideProvider, for edgeAnchor: NSLayoutXAxisAnchor) -> [NSLayoutConstraint] {
         switch referenceEdge {
         case .left:
             if isAbsolute {
