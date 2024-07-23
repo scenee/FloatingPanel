@@ -469,6 +469,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				OTHER_SWIFT_FLAGS = "-enable-upcoming-feature ExistentialAny";
 				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingPanel;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -513,6 +514,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				OTHER_SWIFT_FLAGS = "-enable-upcoming-feature ExistentialAny";
 				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingPanel;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -662,6 +664,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				OTHER_SWIFT_FLAGS = "-enable-upcoming-feature ExistentialAny";
 				PRODUCT_BUNDLE_IDENTIFIER = com.scenee.FloatingPanel;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
