@@ -84,7 +84,7 @@ class ModalPresentTransition: NSObject, UIViewControllerAnimatedTransitioning {
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         guard
             let fpc = transitionContext?.viewController(forKey: .to) as? FloatingPanelController
-        else { fatalError()}
+        else { return 0.0 }
 
         let animator = fpc.animatorForPresenting(to: fpc.layout.initialState)
         return TimeInterval(animator.duration)
@@ -119,7 +119,7 @@ class ModalDismissTransition: NSObject, UIViewControllerAnimatedTransitioning {
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         guard
             let fpc = transitionContext?.viewController(forKey: .from) as? FloatingPanelController
-        else { fatalError()}
+        else { return 0.0 }
 
         let animator = fpc.animatorForDismissing(with: .zero)
         return TimeInterval(animator.duration)
