@@ -10,11 +10,11 @@ import os.log
 @objc public protocol FloatingPanelControllerDelegate {
     /// Returns a FloatingPanelLayout object. If you use the default one, you can use a `FloatingPanelBottomLayout` object.
     @objc(floatingPanel:layoutForTraitCollection:) optional
-    func floatingPanel(_ fpc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout
+    func floatingPanel(_ fpc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> any FloatingPanelLayout
 
     /// Returns a FloatingPanelLayout object. If you use the default one, you can use a `FloatingPanelBottomLayout` object.
     @objc(floatingPanel:layoutForSize:) optional
-    func floatingPanel(_ fpc: FloatingPanelController, layoutFor size: CGSize) -> FloatingPanelLayout
+    func floatingPanel(_ fpc: FloatingPanelController, layoutFor size: CGSize) -> any FloatingPanelLayout
 
     /// Returns a UIViewPropertyAnimator object to add/present the panel to a state anchor.
     ///
@@ -163,7 +163,7 @@ open class FloatingPanelController: UIViewController {
 
     /// The delegate of a panel controller object.
     @objc
-    public weak var delegate: FloatingPanelControllerDelegate?{
+    public weak var delegate: (any FloatingPanelControllerDelegate)?{
         didSet{
             didUpdateDelegate()
         }
@@ -211,7 +211,7 @@ open class FloatingPanelController: UIViewController {
     /// You need to call ``invalidateLayout()`` if you want to apply a new layout object into the panel
     /// immediately.
     @objc
-    public var layout: FloatingPanelLayout {
+    public var layout: any FloatingPanelLayout {
         get { _layout }
         set {
             _layout = newValue
@@ -224,7 +224,7 @@ open class FloatingPanelController: UIViewController {
 
     /// The behavior object that the controller manages
     @objc
-    public var behavior: FloatingPanelBehavior {
+    public var behavior: any FloatingPanelBehavior {
         get { _behavior }
         set {
             _behavior = newValue
@@ -295,7 +295,7 @@ open class FloatingPanelController: UIViewController {
 
     /// Initialize a newly created panel controller.
     @objc
-    public init(delegate: FloatingPanelControllerDelegate? = nil) {
+    public init(delegate: (any FloatingPanelControllerDelegate)? = nil) {
         super.init(nibName: nil, bundle: nil)
         self.delegate = delegate
         setUp()
@@ -307,7 +307,7 @@ open class FloatingPanelController: UIViewController {
         modalPresentationStyle = .custom
         transitioningDelegate = modalTransition
 
-        let initialLayout: FloatingPanelLayout
+        let initialLayout: any FloatingPanelLayout
         if let layout = delegate?.floatingPanel?(self, layoutFor: traitCollection) {
             initialLayout = layout
         } else {
@@ -357,7 +357,7 @@ open class FloatingPanelController: UIViewController {
         floatingPanel.adjustScrollContentInsetIfNeeded()
     }
 
-    open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    open override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
         if self.view.bounds.size == size {
@@ -376,7 +376,7 @@ open class FloatingPanelController: UIViewController {
         }
     }
 
-    open override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+    open override func willTransition(to newCollection: UITraitCollection, with coordinator: any UIViewControllerTransitionCoordinator) {
         super.willTransition(to: newCollection, with: coordinator)
 
         if shouldUpdateLayout(from: traitCollection, to: newCollection) == false {

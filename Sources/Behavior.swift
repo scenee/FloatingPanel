@@ -86,9 +86,9 @@ open class FloatingPanelDefaultBehavior: FloatingPanelBehavior {
 
 class BehaviorAdapter {
     unowned let vc: FloatingPanelController
-    fileprivate var behavior: FloatingPanelBehavior
+    fileprivate var behavior: any FloatingPanelBehavior
 
-    init(vc: FloatingPanelController, behavior: FloatingPanelBehavior) {
+    init(vc: FloatingPanelController, behavior: any FloatingPanelBehavior) {
         self.vc = vc
         self.behavior = behavior
     }
@@ -123,7 +123,7 @@ class BehaviorAdapter {
 }
 
 extension FloatingPanelController {
-    var _behavior: FloatingPanelBehavior {
+    var _behavior: any FloatingPanelBehavior {
         get { floatingPanel.behaviorAdapter.behavior }
         set { floatingPanel.behaviorAdapter.behavior = newValue}
     }

@@ -80,7 +80,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
     // MARK: - Interface
 
-    init(_ vc: FloatingPanelController, layout: FloatingPanelLayout, behavior: FloatingPanelBehavior) {
+    init(_ vc: FloatingPanelController, layout: any FloatingPanelLayout, behavior: any FloatingPanelBehavior) {
         ownerVC = vc
 
         surfaceView = SurfaceView()
@@ -1284,7 +1284,7 @@ public class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
     ///
     /// - Note: The delegate is used by FloatingPanel itself. If you set your own delegate object, an
     /// exception is raised. If you want to handle the methods of UIGestureRecognizerDelegate, you can use `delegateProxy`.
-    public override weak var delegate: UIGestureRecognizerDelegate? {
+    public override weak var delegate: (any UIGestureRecognizerDelegate)? {
         get {
             return super.delegate
         }
@@ -1305,7 +1305,7 @@ public class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
     /// The default object implementing a set methods of the delegate of the gesture recognizer.
     ///
     /// Use this property with ``delegateProxy`` when you need to use the default gesture behaviors in a proxy implementation.
-    public var delegateOrigin: UIGestureRecognizerDelegate {
+    public var delegateOrigin: any UIGestureRecognizerDelegate {
         return floatingPanel
     }
 
@@ -1313,7 +1313,7 @@ public class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
     ///
     /// `UIGestureRecognizerDelegate` methods implementing by this object are called instead of the default delegate,
     ///  ``delegateOrigin``.
-    public weak var delegateProxy: UIGestureRecognizerDelegate? {
+    public weak var delegateProxy: (any UIGestureRecognizerDelegate)? {
         didSet {
             self.delegate = floatingPanel?.panGestureDelegateRouter // Update the cached IMP
         }

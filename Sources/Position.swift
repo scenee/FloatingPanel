@@ -26,7 +26,7 @@ extension FloatingPanelPosition {
         }
     }
 
-    func mainDimensionAnchor(_ layoutGuide: LayoutGuideProvider) -> NSLayoutDimension {
+    func mainDimensionAnchor(_ layoutGuide: any LayoutGuideProvider) -> NSLayoutDimension {
         switch self {
         case .top, .bottom: return layoutGuide.heightAnchor
         case .left, .right: return layoutGuide.widthAnchor

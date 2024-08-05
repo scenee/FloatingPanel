@@ -13,7 +13,7 @@ import os.log
     @objc var initialState: FloatingPanelState { get }
 
     /// Returns the layout anchors to specify the snapping locations for each state.
-    @objc var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] { get }
+    @objc var anchors: [FloatingPanelState: any FloatingPanelLayoutAnchoring] { get }
 
     /// Returns layout constraints to determine the cross dimension of a panel.
     @objc optional func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint]
@@ -32,7 +32,7 @@ open class FloatingPanelBottomLayout: NSObject, FloatingPanelLayout {
         return .half
     }
 
-    open var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]  {
+    open var anchors: [FloatingPanelState: any FloatingPanelLayoutAnchoring]  {
         return [
             .full: FloatingPanelLayoutAnchor(absoluteInset: 18.0, edge: .top, referenceGuide: .safeArea),
             .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
@@ -66,7 +66,7 @@ class LayoutAdapter {
     private unowned var vc: FloatingPanelController
     private let defaultLayout = FloatingPanelBottomLayout()
 
-    fileprivate var layout: FloatingPanelLayout {
+    fileprivate var layout: any FloatingPanelLayout {
         didSet {
             surfaceView.position = position
         }
@@ -289,7 +289,7 @@ class LayoutAdapter {
         return offset.rounded(by: surfaceView.fp_displayScale)
     }
 
-    private var hiddenAnchor: FloatingPanelLayoutAnchoring {
+    private var hiddenAnchor: any FloatingPanelLayoutAnchoring {
         switch position {
         case .top:
             return FloatingPanelLayoutAnchor(absoluteInset: -100, edge: .top, referenceGuide: .superview)
@@ -302,7 +302,7 @@ class LayoutAdapter {
         }
     }
 
-    init(vc: FloatingPanelController, layout: FloatingPanelLayout) {
+    init(vc: FloatingPanelController, layout: any FloatingPanelLayout) {
         self.vc = vc
         self.layout = layout
     }
@@ -406,7 +406,7 @@ class LayoutAdapter {
         }
     }
 
-    private func referenceEdge(of anchor: FloatingPanelLayoutAnchoring) -> FloatingPanelReferenceEdge {
+    private func referenceEdge(of anchor: any FloatingPanelLayoutAnchoring) -> FloatingPanelReferenceEdge {
         switch anchor {
         case is FloatingPanelIntrinsicLayoutAnchor,
             is FloatingPanelAdaptiveLayoutAnchor:
@@ -548,7 +548,7 @@ class LayoutAdapter {
         NSLayoutConstraint.deactivate(constraint: interactionConstraint)
         interactionConstraint = nil
 
-        let layoutGuideProvider: LayoutGuideProvider
+        let layoutGuideProvider: any LayoutGuideProvider
         switch anchor.referenceGuide {
         case .safeArea:
             layoutGuideProvider = vc.view.safeAreaLayoutGuide
@@ -856,7 +856,7 @@ extension LayoutAdapter {
 }
 
 extension FloatingPanelController {
-    var _layout: FloatingPanelLayout {
+    var _layout: any FloatingPanelLayout {
         get {
             floatingPanel.layoutAdapter.layout
         }

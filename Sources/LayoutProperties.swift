@@ -36,7 +36,7 @@ extension FloatingPanelReferenceEdge {
 }
 
 extension FloatingPanelLayoutReferenceGuide {
-    func layoutGuide(vc: UIViewController) -> LayoutGuideProvider {
+    func layoutGuide(vc: UIViewController) -> any LayoutGuideProvider {
         switch self {
         case .safeArea:
             return vc.view.safeAreaLayoutGuide
@@ -55,7 +55,7 @@ extension FloatingPanelLayoutReferenceGuide {
 }
 
 extension FloatingPanelLayoutContentBoundingGuide {
-    func layoutGuide(_ fpc: FloatingPanelController) -> LayoutGuideProvider? {
+    func layoutGuide(_ fpc: FloatingPanelController) -> (any LayoutGuideProvider)? {
         switch self {
         case .superview:
             return fpc.view
