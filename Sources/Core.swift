@@ -1267,7 +1267,7 @@ public class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
         self.floatingPanel = floatingPanel
     }
 
-    init() {
+    override init(target: Any? = nil, action: Selector? = nil) {
         super.init(target: nil, action: nil)
         name = "FloatingPanelPanGestureRecognizer"
     }
