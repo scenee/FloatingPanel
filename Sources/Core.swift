@@ -1305,17 +1305,21 @@ public class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
     /// The default object implementing a set methods of the delegate of the gesture recognizer.
     ///
     /// Use this property with ``delegateProxy`` when you need to use the default gesture behaviors in a proxy implementation.
+    nonisolated(unsafe)  // Enable to be called in DelegateRouter.responds(to:) and DelegateRouter.forwardingTarget(for :) in Xcode 16 Beta 6
     public var delegateOrigin: any UIGestureRecognizerDelegate {
-        return floatingPanel
+        MainActor.assumeIsolated { floatingPanel }
     }
 
     /// A proxy object to intercept the default behavior of the gesture recognizer.
     ///
     /// `UIGestureRecognizerDelegate` methods implementing by this object are called instead of the default delegate,
     ///  ``delegateOrigin``.
+    nonisolated(unsafe)  // Enable to be called in DelegateRouter.responds(to:) and DelegateRouter.forwardingTarget(for :) in Xcode 16 Beta 6
     public weak var delegateProxy: (any UIGestureRecognizerDelegate)? {
         didSet {
-            self.delegate = floatingPanel?.panGestureDelegateRouter // Update the cached IMP
+            MainActor.assumeIsolated {
+                self.delegate = floatingPanel?.panGestureDelegateRouter // Update the cached IMP
+            }
         }
     }
 
