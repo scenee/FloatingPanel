@@ -17,7 +17,7 @@ import UIKit
     /// positioning.
     ///
     /// - Parameters:
-    ///     - absoluteOffset: An absolute offset to attach the panel from the edge.
+    ///     - absoluteInset: An absolute distance to attach the panel from the specified edge.
     ///     - edge: Specify the edge of ``FloatingPanelController``'s view. This is the staring point of the offset.
     ///     - referenceGuide: The rectangular area to lay out the content. If it's set to `.safeArea`, the panel content lays out inside the safe area of its ``FloatingPanelController``'s view.
     @objc public init(absoluteInset: CGFloat, edge: FloatingPanelReferenceEdge, referenceGuide: FloatingPanelLayoutReferenceGuide) {
@@ -34,7 +34,7 @@ import UIKit
     /// 1.0 represents a distance to the opposite edge.
     ///
     /// - Parameters:
-    ///     - fractionalOffset: A fractional value of the size of ``FloatingPanelController``'s view to attach the panel from the edge.
+    ///     - fractionalInset: A fractional value of the size of ``FloatingPanelController``'s view to attach the panel from the specified edge.
     ///     - edge: Specify the edge of ``FloatingPanelController``'s view. This is the staring point of the offset.
     ///     - referenceGuide: The rectangular area to lay out the content. If it's set to `.safeArea`, the panel content lays out inside the safe area of its ``FloatingPanelController``'s view.
     @objc public init(fractionalInset: CGFloat, edge: FloatingPanelReferenceEdge, referenceGuide: FloatingPanelLayoutReferenceGuide) {
@@ -115,8 +115,8 @@ public extension FloatingPanelLayoutAnchor {
     /// - Parameters:
     ///     - absoluteOffset: An absolute offset from the content size in the main dimension(i.e. y axis for a bottom panel) to attach the panel.
     ///     - referenceGuide: The rectangular area to lay out the content. If it's set to `.safeArea`, the panel content lays out inside the safe area of its ``FloatingPanelController``'s view.
-    @objc public init(absoluteOffset offset: CGFloat, referenceGuide: FloatingPanelLayoutReferenceGuide = .safeArea) {
-        self.offset = offset
+    @objc public init(absoluteOffset: CGFloat, referenceGuide: FloatingPanelLayoutReferenceGuide = .safeArea) {
+        self.offset = absoluteOffset
         self.referenceGuide = referenceGuide
         self.isAbsolute = true
     }
@@ -129,8 +129,8 @@ public extension FloatingPanelLayoutAnchor {
     /// - Parameters:
     ///     - fractionalOffset: A fractional offset of the content size in the main dimension(i.e. y axis for a bottom panel) to attach the panel.
     ///     - referenceGuide: The rectangular area to lay out the content. If it's set to `.safeArea`, the panel content lays out inside the safe area of its ``FloatingPanelController``'s view.
-    @objc public init(fractionalOffset offset: CGFloat, referenceGuide: FloatingPanelLayoutReferenceGuide = .safeArea) {
-        self.offset = offset
+    @objc public init(fractionalOffset: CGFloat, referenceGuide: FloatingPanelLayoutReferenceGuide = .safeArea) {
+        self.offset = fractionalOffset
         self.referenceGuide = referenceGuide
         self.isAbsolute = false
     }
@@ -177,12 +177,12 @@ public extension FloatingPanelIntrinsicLayoutAnchor {
     ///
     /// - Warning: If ``contentBoundingGuide`` is set to none, the panel may expand out of the screen size, depending on the intrinsic size of its content.
     @objc public init(
-        absoluteOffset offset: CGFloat,
+        absoluteOffset: CGFloat,
         contentLayout: UILayoutGuide,
         referenceGuide: FloatingPanelLayoutReferenceGuide,
         contentBoundingGuide: FloatingPanelLayoutContentBoundingGuide = .none
     ) {
-        self.offset = offset
+        self.offset = absoluteOffset
         self.contentLayoutGuide = contentLayout
         self.referenceGuide = referenceGuide
         self.contentBoundingGuide = contentBoundingGuide
@@ -204,12 +204,12 @@ public extension FloatingPanelIntrinsicLayoutAnchor {
     ///
     /// - Warning: If ``contentBoundingGuide`` is set to none, the panel may expand out of the screen size, depending on the intrinsic size of its content.
     @objc public init(
-        fractionalOffset offset: CGFloat,
+        fractionalOffset: CGFloat,
         contentLayout: UILayoutGuide,
         referenceGuide: FloatingPanelLayoutReferenceGuide,
         contentBoundingGuide: FloatingPanelLayoutContentBoundingGuide = .none
     ) {
-        self.offset = offset
+        self.offset = fractionalOffset
         self.contentLayoutGuide = contentLayout
         self.referenceGuide = referenceGuide
         self.contentBoundingGuide = contentBoundingGuide
