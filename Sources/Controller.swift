@@ -125,6 +125,10 @@ import os.log
         shouldAllowToScroll scrollView: UIScrollView,
         in state: FloatingPanelState
     ) -> Bool
+    
+    /// Determines whether the scroll content should be locked during transition to the specified state. If not implemented, the content will always be locked.
+    @objc(floatingPanel:shouldLockScrollView:transitioningToState:)
+    optional func floatingPanel(_ fpc: FloatingPanelController, shouldLockScrollView scrollView: UIScrollView, transitioningToState state: FloatingPanelState) -> Bool
 }
 
 ///
