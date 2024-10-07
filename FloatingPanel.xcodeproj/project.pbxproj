@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		542753C622C49A6E00D17955 /* LayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542753C522C49A6E00D17955 /* LayoutTests.swift */; };
+		5431025B2DB8AAB800A927EF /* View+floatingPanelSurface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543102592DB8AAB800A927EF /* View+floatingPanelSurface.swift */; };
+		5431025E2DB8AAB800A927EF /* View+floatingPanelConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543102572DB8AAB800A927EF /* View+floatingPanelConfiguration.swift */; };
+		543102B22DB8B4AC00A927EF /* View+floatingPanelLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543102B12DB8B4A300A927EF /* View+floatingPanelLayout.swift */; };
+		543102EA2DB8F02E00A927EF /* View+floatingPanelBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543102E92DB8F02D00A927EF /* View+floatingPanelBehavior.swift */; };
+		543103472DB9B4D400A927EF /* View+floatingPanelScrollTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543103462DB9B4C900A927EF /* View+floatingPanelScrollTracking.swift */; };
 		54352E9621A51A2500CBCA08 /* Transitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54352E9521A51A2500CBCA08 /* Transitioning.swift */; };
 		54352E9821A521CA00CBCA08 /* PassthroughView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54352E9721A521CA00CBCA08 /* PassthroughView.swift */; };
 		5450EEE421646DF500135936 /* Behavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5450EEE321646DF500135936 /* Behavior.swift */; };
@@ -21,7 +26,12 @@
 		5469F4B024B30E1500537F8A /* LayoutAnchoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5469F4AF24B30E1500537F8A /* LayoutAnchoring.swift */; };
 		5469F4B224B30F1100537F8A /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5469F4B124B30F1100537F8A /* Position.swift */; };
 		5469F4B424B30F3500537F8A /* LayoutProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5469F4B324B30F3500537F8A /* LayoutProperties.swift */; };
+		5471AF8E2CB53FC8001B7A64 /* View+floatingPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5471AF8D2CB53FC8001B7A64 /* View+floatingPanel.swift */; };
+		5471AF902CB53FFC001B7A64 /* FloatingPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5471AF8F2CB53FFC001B7A64 /* FloatingPanelView.swift */; };
+		5471AF922CB5462C001B7A64 /* FloatingPanelProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5471AF912CB54628001B7A64 /* FloatingPanelProxy.swift */; };
+		547B44912CC0E8B300F7E68C /* FloatingPanelCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547B44902CC0E8AD00F7E68C /* FloatingPanelCoordinator.swift */; };
 		547F7A9C2A6E946000303905 /* GestureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547F7A9B2A6E946000303905 /* GestureTests.swift */; };
+		5484E7432DCF90AC0058E962 /* View+floatingPanelState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5484E7422DCF90A60058E962 /* View+floatingPanelState.swift */; };
 		549C371F2361E15E007D8058 /* ExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 549C371E2361E15D007D8058 /* ExtensionTests.swift */; };
 		549E944522CF295D0050AECF /* StateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 549E944422CF295D0050AECF /* StateTests.swift */; };
 		54A6B6B122968B530077F348 /* CoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A6B6B022968B530077F348 /* CoreTests.swift */; };
@@ -32,6 +42,7 @@
 		54CFBFC3215CD045006B5735 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CFBFC2215CD045006B5735 /* Layout.swift */; };
 		54CFBFC5215CD09C006B5735 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CFBFC4215CD09C006B5735 /* Core.swift */; };
 		54DBA3DC262E938500D75969 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54DBA3DB262E938500D75969 /* Extensions.swift */; };
+		54DFB9762DC9DF8800006C84 /* SurfaceAppearance+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54DFB9752DC9DF8200006C84 /* SurfaceAppearance+.swift */; };
 		54E3992727141F5100A8F9ED /* FloatingPanel.docc in Sources */ = {isa = PBXBuildFile; fileRef = 54E3992627141F5100A8F9ED /* FloatingPanel.docc */; };
 		5D82A6B528D18464006A44BA /* libswiftCoreGraphics.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D82A6B428D18461006A44BA /* libswiftCoreGraphics.tbd */; };
 /* End PBXBuildFile section */
@@ -49,6 +60,11 @@
 /* Begin PBXFileReference section */
 		542753C522C49A6E00D17955 /* LayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutTests.swift; sourceTree = "<group>"; };
 		542753C722C49A8F00D17955 /* TestSupports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupports.swift; sourceTree = "<group>"; };
+		543102572DB8AAB800A927EF /* View+floatingPanelConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+floatingPanelConfiguration.swift"; sourceTree = "<group>"; };
+		543102592DB8AAB800A927EF /* View+floatingPanelSurface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+floatingPanelSurface.swift"; sourceTree = "<group>"; };
+		543102B12DB8B4A300A927EF /* View+floatingPanelLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+floatingPanelLayout.swift"; sourceTree = "<group>"; };
+		543102E92DB8F02D00A927EF /* View+floatingPanelBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+floatingPanelBehavior.swift"; sourceTree = "<group>"; };
+		543103462DB9B4C900A927EF /* View+floatingPanelScrollTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+floatingPanelScrollTracking.swift"; sourceTree = "<group>"; };
 		54352E9521A51A2500CBCA08 /* Transitioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transitioning.swift; sourceTree = "<group>"; };
 		54352E9721A521CA00CBCA08 /* PassthroughView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassthroughView.swift; sourceTree = "<group>"; };
 		5450EEE321646DF500135936 /* Behavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Behavior.swift; sourceTree = "<group>"; };
@@ -64,7 +80,12 @@
 		5469F4AF24B30E1500537F8A /* LayoutAnchoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutAnchoring.swift; sourceTree = "<group>"; };
 		5469F4B124B30F1100537F8A /* Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
 		5469F4B324B30F3500537F8A /* LayoutProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutProperties.swift; sourceTree = "<group>"; };
+		5471AF8D2CB53FC8001B7A64 /* View+floatingPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+floatingPanel.swift"; sourceTree = "<group>"; };
+		5471AF8F2CB53FFC001B7A64 /* FloatingPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelView.swift; sourceTree = "<group>"; };
+		5471AF912CB54628001B7A64 /* FloatingPanelProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelProxy.swift; sourceTree = "<group>"; };
+		547B44902CC0E8AD00F7E68C /* FloatingPanelCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelCoordinator.swift; sourceTree = "<group>"; };
 		547F7A9B2A6E946000303905 /* GestureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureTests.swift; sourceTree = "<group>"; };
+		5484E7422DCF90A60058E962 /* View+floatingPanelState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+floatingPanelState.swift"; sourceTree = "<group>"; };
 		549C371E2361E15D007D8058 /* ExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionTests.swift; sourceTree = "<group>"; };
 		549E944422CF295D0050AECF /* StateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateTests.swift; sourceTree = "<group>"; };
 		54A6B6B022968B530077F348 /* CoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreTests.swift; sourceTree = "<group>"; };
@@ -75,6 +96,7 @@
 		54CFBFC2215CD045006B5735 /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
 		54CFBFC4215CD09C006B5735 /* Core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; };
 		54DBA3DB262E938500D75969 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		54DFB9752DC9DF8200006C84 /* SurfaceAppearance+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SurfaceAppearance+.swift"; sourceTree = "<group>"; };
 		54E3992627141F5100A8F9ED /* FloatingPanel.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = FloatingPanel.docc; sourceTree = "<group>"; };
 		5D82A6B428D18461006A44BA /* libswiftCoreGraphics.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswiftCoreGraphics.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/swift/libswiftCoreGraphics.tbd; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
@@ -121,6 +143,7 @@
 		545DB9C32151169500CA77B8 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				5471AF8C2CB53FB4001B7A64 /* SwiftUI */,
 				545DB9DF21511AC100CA77B8 /* Controller.swift */,
 				5469F4AD24B30D7E00537F8A /* State.swift */,
 				5469F4B124B30F1100537F8A /* Position.swift */,
@@ -157,6 +180,24 @@
 				545DB9D12151169500CA77B8 /* Info.plist */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		5471AF8C2CB53FB4001B7A64 /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				5471AF8F2CB53FFC001B7A64 /* FloatingPanelView.swift */,
+				5471AF912CB54628001B7A64 /* FloatingPanelProxy.swift */,
+				547B44902CC0E8AD00F7E68C /* FloatingPanelCoordinator.swift */,
+				5471AF8D2CB53FC8001B7A64 /* View+floatingPanel.swift */,
+				5484E7422DCF90A60058E962 /* View+floatingPanelState.swift */,
+				543102B12DB8B4A300A927EF /* View+floatingPanelLayout.swift */,
+				543102E92DB8F02D00A927EF /* View+floatingPanelBehavior.swift */,
+				543102572DB8AAB800A927EF /* View+floatingPanelConfiguration.swift */,
+				543102592DB8AAB800A927EF /* View+floatingPanelSurface.swift */,
+				543103462DB9B4C900A927EF /* View+floatingPanelScrollTracking.swift */,
+				54DFB9752DC9DF8200006C84 /* SurfaceAppearance+.swift */,
+			);
+			path = SwiftUI;
 			sourceTree = "<group>";
 		};
 		5D82A6B328D18460006A44BA /* Frameworks */ = {
@@ -282,21 +323,32 @@
 			buildActionMask = 2147483647;
 			files = (
 				5469F4B224B30F1100537F8A /* Position.swift in Sources */,
+				5484E7432DCF90AC0058E962 /* View+floatingPanelState.swift in Sources */,
 				5469F4B024B30E1500537F8A /* LayoutAnchoring.swift in Sources */,
+				547B44912CC0E8B300F7E68C /* FloatingPanelCoordinator.swift in Sources */,
+				543102EA2DB8F02E00A927EF /* View+floatingPanelBehavior.swift in Sources */,
 				54CDC5D3215B6D5A007D205C /* SurfaceView.swift in Sources */,
 				54CFBFC3215CD045006B5735 /* Layout.swift in Sources */,
 				5469F4B424B30F3500537F8A /* LayoutProperties.swift in Sources */,
 				54CDC5D5215B6D8D007D205C /* BackdropView.swift in Sources */,
 				54352E9821A521CA00CBCA08 /* PassthroughView.swift in Sources */,
+				5471AF922CB5462C001B7A64 /* FloatingPanelProxy.swift in Sources */,
 				54CFBFC5215CD09C006B5735 /* Core.swift in Sources */,
 				54ABD7AF216CCFF7002E6C13 /* Logging.swift in Sources */,
+				5471AF902CB53FFC001B7A64 /* FloatingPanelView.swift in Sources */,
 				545DB9E021511AC100CA77B8 /* Controller.swift in Sources */,
+				5431025B2DB8AAB800A927EF /* View+floatingPanelSurface.swift in Sources */,
+				543102B22DB8B4AC00A927EF /* View+floatingPanelLayout.swift in Sources */,
+				5431025E2DB8AAB800A927EF /* View+floatingPanelConfiguration.swift in Sources */,
 				54DBA3DC262E938500D75969 /* Extensions.swift in Sources */,
 				5450EEE421646DF500135936 /* Behavior.swift in Sources */,
 				545DBA2B2152383100CA77B8 /* GrabberView.swift in Sources */,
+				5471AF8E2CB53FC8001B7A64 /* View+floatingPanel.swift in Sources */,
+				54DFB9762DC9DF8800006C84 /* SurfaceAppearance+.swift in Sources */,
 				54E3992727141F5100A8F9ED /* FloatingPanel.docc in Sources */,
 				54352E9621A51A2500CBCA08 /* Transitioning.swift in Sources */,
 				5469F4AE24B30D7E00537F8A /* State.swift in Sources */,
+				543103472DB9B4D400A927EF /* View+floatingPanelScrollTracking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

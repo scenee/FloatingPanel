@@ -1,3 +1,4 @@
+import Foundation
 import PackagePlugin
 
 @main
@@ -13,18 +14,28 @@ import XcodeProjectPlugin
 extension SwiftFormatBuildToolPlugin: XcodeBuildToolPlugin {
     // Entry point for creating build commands for targets in Xcode projects.
     func createBuildCommands(context: XcodePluginContext, target: XcodeTarget) throws -> [Command] {
+        #if swift(>=6.0)
+        let swift = try context.tool(named: "swift").url
+        let xcodeProjectDirectoryURL = context.xcodeProject.directoryURL
+        #else
+        let swift = try context.tool(named: "swift").path
+        let xcodeProjectDirectoryURL = URL(fileURLWithPath: context.xcodeProject.directory.string)
+        #endif
         // Find the code generator tool to run (replace this with the actual one).
-        print("SwiftFormatBuildToolPlugin -> \(context.xcodeProject.directoryURL.path())")
-        let configFile = context.xcodeProject.directoryURL.appending(path: ".swift-format")
+        print("SwiftFormatBuildToolPlugin -> \(xcodeProjectDirectoryURL.path())")
+        let configFile = xcodeProjectDirectoryURL.appending(path: ".swift-format")
         // Currently check only 'SwiftUI' source code.
-        let sourceFiles = context.xcodeProject.directoryURL.appending(path: "Sources/SwiftUI")
-        // let sourceFiles = context.xcodeProject.directoryURL.appending(path: "Sources")
-        // let testFiles = context.xcodeProject.directoryURL.appending(path: "Tests")
-        let buildToolsFiles = context.xcodeProject.directoryURL.appending(path: "BuildTools")
+        let sourceFiles = xcodeProjectDirectoryURL.appending(path: "Sources/SwiftUI")
+        // let sourceFiles = xcodeProjectDirectoryURL.appending(path: "Sources")
+        // let testFiles = xcodeProjectDirectoryURL.appending(path: "Tests")
+        let buildToolsFiles = xcodeProjectDirectoryURL.appending(path: "BuildTools")
+        let examplesFiles = [
+            xcodeProjectDirectoryURL.appending(path: "Examples/SamplesSwiftUI").path()
+        ]
         return [
             .buildCommand(
                 displayName: "Run swift format(xcode)",
-                executable: try context.tool(named: "swift").url,
+                executable: swift,
                 arguments: [
                     "format",
                     "lint",
@@ -34,12 +45,11 @@ extension SwiftFormatBuildToolPlugin: XcodeBuildToolPlugin {
                     sourceFiles.path(),
                     //testFiles.path(),
                     buildToolsFiles.path(),
-                ],
+                ] + examplesFiles,
                 inputFiles: [],
                 outputFiles: []
             )
         ]
     }
 }
-
 #endif

@@ -1,5 +1,6 @@
 // Copyright 2018-Present Shin Yamamoto. All rights reserved. MIT license.
 
+import Combine
 import UIKit
 import os.log
 
@@ -49,6 +50,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             }
         }
     }
+    private(set) var statePublisher: CurrentValueSubject<FloatingPanelState, Never> = .init(.hidden)
 
     let panGestureRecognizer: FloatingPanelPanGestureRecognizer
     let panGestureDelegateRouter: FloatingPanelPanGestureRecognizer.DelegateRouter
@@ -118,11 +120,28 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         self.moveAnimator?.stopAnimation(false)
     }
 
-    func move(to: FloatingPanelState, animated: Bool, completion: (() -> Void)? = nil) {
-        move(from: state, to: to, animated: animated, completion: completion)
+    func move(
+        to: FloatingPanelState,
+        animated: Bool,
+        moveAnimator: UIViewPropertyAnimator? = nil,
+        completion: (() -> Void)? = nil
+    ) {
+        move(
+            from: state,
+            to: to,
+            animated: animated,
+            moveAnimator: moveAnimator,
+            completion: completion
+        )
     }
 
-    private func move(from: FloatingPanelState, to: FloatingPanelState, animated: Bool, completion: (() -> Void)? = nil) {
+    private func move(
+        from: FloatingPanelState,
+        to: FloatingPanelState,
+        animated: Bool,
+        moveAnimator: UIViewPropertyAnimator?,
+        completion: (() -> Void)? = nil
+    ) {
         assert(layoutAdapter.validStates.contains(to), "Can't move to '\(to)' state because it's not valid in the layout")
         guard let vc = ownerVC else {
             completion?()
@@ -153,12 +172,15 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 let animationVector = CGVector(dx: abs(removalVector.dx), dy: abs(removalVector.dy))
                 animator = vc.animatorForDismissing(with: animationVector)
             default:
-                startAttraction(to: to, with: .zero) { [weak self] in
-                    self?.endAttraction(false)
-                    updateScrollView()
-                    completion?()
+                guard let moveAnimator = moveAnimator else {
+                    startAttraction(to: to, with: .zero) { [weak self] in
+                        self?.endAttraction(false)
+                        updateScrollView()
+                        completion?()
+                    }
+                    return
                 }
-                return
+                animator = moveAnimator
             }
 
             let shouldDoubleLayout = from == .hidden
@@ -240,6 +262,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         layoutAdapter.activateLayout(for: target, forceLayout: true)
         backdropView.alpha = getBackdropAlpha(for: target)
         adjustScrollContentInsetIfNeeded()
+        statePublisher.send(target)
     }
 
     private func getBackdropAlpha(for target: FloatingPanelState) -> CGFloat {

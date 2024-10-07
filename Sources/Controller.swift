@@ -15,17 +15,29 @@ import os.log
     @objc(floatingPanel:layoutForSize:) optional
     func floatingPanel(_ fpc: FloatingPanelController, layoutFor size: CGSize) -> FloatingPanelLayout
 
-    /// Returns a UIViewPropertyAnimator object to add/present the  panel to a position.
+    /// Returns a UIViewPropertyAnimator object to add/present the panel to a state anchor.
     ///
     /// Default is the spring animation with 0.25 secs.
     @objc(floatingPanel:animatorForPresentingToState:) optional
     func floatingPanel(_ fpc: FloatingPanelController, animatorForPresentingTo state: FloatingPanelState) -> UIViewPropertyAnimator
 
-    /// Returns a UIViewPropertyAnimator object to remove/dismiss a panel from a position.
+    /// Returns a UIViewPropertyAnimator object to remove/dismiss a panel.
     ///
     /// Default is the spring animator with 0.25 secs.
     @objc(floatingPanel:animatorForDismissingWithVelocity:) optional
     func floatingPanel(_ fpc: FloatingPanelController, animatorForDismissingWith velocity: CGVector) -> UIViewPropertyAnimator
+
+    /// Returns a UIViewPropertyAnimator object to move a panel to a state anchor.
+    ///
+    /// When this method is not implemented, FloatingPanelController uses its own custom spring animation when
+    /// ``FloatingPanelController/move(to:animated:completion:)`` is called. The custom animation is the same as
+    /// attracting animation after a user moves a panel by finger.
+    /// If you implement this method, the returned UIViewPropertyAnimator will be used when
+    /// ``FloatingPanelController/move(to:animated:completion:)`` is called if the current state or the target state
+    /// (`to` argument) are not `.hidden`.
+    @objc(floatingPanel:animatorForMovingTo:) optional
+    func floatingPanel(_ fpc: FloatingPanelController, animatorForMovingTo state: FloatingPanelState) -> UIViewPropertyAnimator
+
 
     /// Called when a panel has changed to a new state.
     ///
@@ -585,7 +597,21 @@ open class FloatingPanelController: UIViewController {
     ///     - completion: The block to execute after the view controller has finished moving. This block has no return value and takes no parameters. You may specify nil for this parameter.
     @objc(moveToState:animated:completion:)
     public func move(to: FloatingPanelState, animated: Bool, completion: (() -> Void)? = nil) {
-        floatingPanel.move(to: to, animated: animated, completion: completion)
+        floatingPanel.move(
+            to: to,
+            animated: animated,
+            moveAnimator: animatorForMoving(to: to),
+            completion: completion
+        )
+    }
+
+    func moveForSwiftUI(to: FloatingPanelState, animated: Bool, completion: (() -> Void)? = nil) {
+        floatingPanel.move(
+            to: to,
+            animated: animated,
+            moveAnimator: animatorForMoving(to: to) ?? makeDefaultAnimator(),
+            completion: completion
+        )
     }
 
     /// Sets the view controller responsible for the content portion of a panel.
@@ -718,13 +744,17 @@ extension FloatingPanelController {
         }
         return makeDefaultAnimator(initialVelocity: velocity)
     }
+
+    func animatorForMoving(to: FloatingPanelState) -> UIViewPropertyAnimator? {
+        return delegate?.floatingPanel?(self, animatorForMovingTo: to)
+    }
 }
 
 
 // MARK: - Animation
 
 extension FloatingPanelController {
-    func makeDefaultAnimator(initialVelocity: CGVector = .zero) -> UIViewPropertyAnimator {
+    public func makeDefaultAnimator(initialVelocity: CGVector = .zero) -> UIViewPropertyAnimator {
         let timingParameters = UISpringTimingParameters(
             decelerationRate: UIScrollView.DecelerationRate.fast.rawValue,
             frequencyResponse: 0.25,
