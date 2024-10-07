@@ -153,12 +153,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 let animationVector = CGVector(dx: abs(removalVector.dx), dy: abs(removalVector.dy))
                 animator = vc.animatorForDismissing(with: animationVector)
             default:
-                startAttraction(to: to, with: .zero) { [weak self] in
-                    self?.endAttraction(false)
-                    updateScrollView()
-                    completion?()
-                }
-                return
+                animator = vc.animatorForMoving(to: to)
             }
 
             let shouldDoubleLayout = from == .hidden

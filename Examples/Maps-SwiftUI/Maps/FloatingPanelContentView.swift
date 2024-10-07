@@ -1,6 +1,7 @@
 // Copyright 2021 the FloatingPanel authors. All rights reserved. MIT license.
 
 import SwiftUI
+import FloatingPanel
 
 struct FloatingPanelContentView: View {
     @State private var searchText = ""
@@ -10,7 +11,8 @@ struct FloatingPanelContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             searchBar
-            resultsList
+            ResultsList()
+                .floatingPanelScrollTracking(proxy: proxy)
         }
         // 👇🏻 for the floating panel grabber handle.
         .padding(.top, 6)
@@ -35,9 +37,5 @@ struct FloatingPanelContentView: View {
         } onCancel: {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
-    }
-
-    var resultsList: some View {
-        ResultsList(onScrollViewCreated: proxy.track(scrollView:))
     }
 }

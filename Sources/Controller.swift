@@ -15,17 +15,29 @@ import os.log
     @objc(floatingPanel:layoutForSize:) optional
     func floatingPanel(_ fpc: FloatingPanelController, layoutFor size: CGSize) -> FloatingPanelLayout
 
-    /// Returns a UIViewPropertyAnimator object to add/present the  panel to a position.
+    /// Returns a UIViewPropertyAnimator object to add/present the panel to a state anchor.
     ///
     /// Default is the spring animation with 0.25 secs.
     @objc(floatingPanel:animatorForPresentingToState:) optional
     func floatingPanel(_ fpc: FloatingPanelController, animatorForPresentingTo state: FloatingPanelState) -> UIViewPropertyAnimator
 
-    /// Returns a UIViewPropertyAnimator object to remove/dismiss a panel from a position.
+    /// Returns a UIViewPropertyAnimator object to remove/dismiss a panel.
     ///
     /// Default is the spring animator with 0.25 secs.
     @objc(floatingPanel:animatorForDismissingWithVelocity:) optional
     func floatingPanel(_ fpc: FloatingPanelController, animatorForDismissingWith velocity: CGVector) -> UIViewPropertyAnimator
+
+    /// Returns a UIViewPropertyAnimator object to move a panel to a state anchor.
+    ///
+    /// When this method is not implemented, FloatingPanelController uses its own custom spring animation when
+    /// ``FloatingPanelController/move(to:animated:completion:)`` is called. The custom animation is the same as
+    /// attracting animation after a user moves a panel by finger.
+    /// If you implement this method, the returned UIViewPropertyAnimator will be used when
+    /// ``FloatingPanelController/move(to:animated:completion:)`` is called if the current state or the target state
+    /// (`to` argument) are not `.hidden`.
+    @objc(floatingPanel:animatorForMovingTo:) optional
+    func floatingPanel(_ fpc: FloatingPanelController, animatorForMovingTo state: FloatingPanelState) -> UIViewPropertyAnimator
+
 
     /// Called when a panel has changed to a new state.
     ///
@@ -718,15 +730,22 @@ extension FloatingPanelController {
         }
         return makeDefaultAnimator(initialVelocity: velocity)
     }
+
+    func animatorForMoving(to: FloatingPanelState) -> UIViewPropertyAnimator {
+        if let animator = delegate?.floatingPanel?(self, animatorForMovingTo: to) {
+            return animator
+        }
+        return makeDefaultAnimator()
+    }
 }
 
 
 // MARK: - Animation
 
 extension FloatingPanelController {
-    func makeDefaultAnimator(initialVelocity: CGVector = .zero) -> UIViewPropertyAnimator {
+    public func makeDefaultAnimator(initialVelocity: CGVector = .zero) -> UIViewPropertyAnimator {
         let timingParameters = UISpringTimingParameters(
-            decelerationRate: UIScrollView.DecelerationRate.fast.rawValue,
+            decelerationRate: UIScrollView.DecelerationRate.normal.rawValue,
             frequencyResponse: 0.25,
             initialVelocity: initialVelocity
         )

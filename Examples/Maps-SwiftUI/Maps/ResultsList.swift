@@ -3,21 +3,16 @@
 import SwiftUI
 
 struct ResultsList: UIViewControllerRepresentable {
-    var onScrollViewCreated: (_ scrollView: UIScrollView) -> Void
-
     func makeUIViewController(
         context: Context
     ) -> ResultsTableViewController {
-        let rtvc = ResultsTableViewController()
-        onScrollViewCreated(rtvc.tableView)
-        return rtvc
+        ResultsTableViewController()
     }
 
     func updateUIViewController(
         _ uiViewController: ResultsTableViewController,
         context: Context
-    ) {
-    }
+    ) {}
 }
 
 final class ResultsTableViewController: UITableViewController {
