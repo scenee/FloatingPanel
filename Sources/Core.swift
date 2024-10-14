@@ -87,8 +87,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         surfaceView.backgroundColor = .white
 
         backdropView = BackdropView()
-        backdropView.backgroundColor = .black
-        backdropView.alpha = 0.0
+        backdropView.backgroundColor = .black.withAlphaComponent(1.0)
 
         layoutAdapter = LayoutAdapter(vc: vc, layout: layout)
         behaviorAdapter = BehaviorAdapter(vc: vc, behavior: behavior)
@@ -226,7 +225,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         // Update the backdrop alpha only when called in `Controller.show(animated:completion:)`
         // Because that prevents a backdrop flicking just before presenting a panel(#466).
         if forceLayout {
-            backdropView.alpha = getBackdropAlpha(for: state)
+            backdropView.backgroundColor = .blue.withAlphaComponent(getBackdropAlpha(for: state))
         }
 
         if let contentOffset = contentOffset {
@@ -238,7 +237,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
     private func updateLayout(to target: FloatingPanelState) {
         layoutAdapter.activateLayout(for: target, forceLayout: true)
-        backdropView.alpha = getBackdropAlpha(for: target)
+        backdropView.backgroundColor = .black.withAlphaComponent(getBackdropAlpha(for: target))
         adjustScrollContentInsetIfNeeded()
     }
 
@@ -672,7 +671,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
         let cur = value(of: layoutAdapter.surfaceLocation)
 
-        backdropView.alpha = getBackdropAlpha(at: cur, with: value(of: translation))
+        backdropView.backgroundColor = .black.withAlphaComponent(getBackdropAlpha(at: cur, with: value(of: translation)))
 
         guard (pre != cur) else { return }
 
@@ -931,7 +930,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
                 let current = self.value(of: self.layoutAdapter.surfaceLocation)
                 let translation = data.value - initialData.value
-                self.backdropView.alpha = self.getBackdropAlpha(at: current, with: translation)
+                self.backdropView.backgroundColor = .black.withAlphaComponent(self.getBackdropAlpha(at: current, with: translation))
 
                 // Pin the offset of the tracking scroll view while moving by this animator
                 if let scrollView = self.scrollView {
