@@ -94,7 +94,7 @@ extension UIView {
 }
 
 #if FP_LOG
-extension UIGestureRecognizer.State: CustomDebugStringConvertible {
+extension UIGestureRecognizer.State: @retroactive CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
         case .began: return "began"
