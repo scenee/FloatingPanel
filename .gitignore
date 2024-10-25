@@ -18,6 +18,7 @@ DerivedData/
 !default.perspectivev3
 xcuserdata/
 IDEWorkspaceChecks.plis
+*.xcodeproj/project.xcworkspace
 
 ## Other
 *.moved-aside
