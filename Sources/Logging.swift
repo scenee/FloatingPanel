@@ -3,11 +3,11 @@
 import os.log
 
 let msg = StaticString("%{public}@")
-nonisolated(unsafe) let sysLog = OSLog(subsystem: Logging.subsystem, category: Logging.category)
+let sysLog = OSLog(subsystem: Logging.subsystem, category: Logging.category)
 #if FP_LOG
 let devLog = OSLog(subsystem: Logging.subsystem, category: "\(Logging.category):dev")
 #else
-nonisolated(unsafe) let devLog = OSLog.disabled
+let devLog = OSLog.disabled
 #endif
 
 struct Logging {
