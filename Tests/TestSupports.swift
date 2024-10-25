@@ -16,6 +16,8 @@ extension FloatingPanelController {
 }
 
 class FloatingPanelTestDelegate: FloatingPanelControllerDelegate {
+    @MainActor
+    init() {}
     var position: FloatingPanelState = .hidden
     var didMoveCallback: ((FloatingPanelController) -> Void)?
     func floatingPanelDidChangeState(_ vc: FloatingPanelController) {
