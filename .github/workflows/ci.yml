@@ -18,6 +18,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - swift: "5"
+            xcode: "16.0"
+            runs-on: macos-14
           - swift: "5.10"
             xcode: "15.4"
             runs-on: macos-14
@@ -49,6 +52,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - os: "18.0"
+            xcode: "16.0"
+            sim: "iPhone 16 Pro"
+            parallel: NO  # Stop random test job failures
+            runs-on: macos-14
           - os: "17.5"
             xcode: "15.4"
             sim: "iPhone 15 Pro"
@@ -78,7 +86,7 @@ jobs:
   example:
     runs-on: macos-14
     env:
-      DEVELOPER_DIR: /Applications/Xcode_15.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_16.0.app/Contents/Developer
     strategy:
       fail-fast: false
       matrix:
@@ -99,20 +107,30 @@ jobs:
   swiftpm:
     runs-on: macos-14
     env:
-      DEVELOPER_DIR: /Applications/Xcode_15.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer
     strategy:
       fail-fast: false
       matrix:
+        xcode: ["16.0", "15.4"]
         platform: [iphoneos, iphonesimulator]
         arch: [x86_64, arm64]
         exclude:
           - platform: iphoneos
             arch: x86_64
         include:
+          # 18.0
+          - platform: iphoneos
+            xcode: "16.0"
+            sys: "ios18.0"
+          - platform: iphonesimulator
+            xcode: "16.0"
+            sys: "ios18.0-simulator"
           # 17.2
           - platform: iphoneos
+            xcode: "15.4"
             sys: "ios17.2"
           - platform: iphonesimulator
+            xcode: "15.4"
             sys: "ios17.2-simulator"
     steps:
     - uses: actions/checkout@v4
@@ -155,7 +173,7 @@ jobs:
   cocoapods:
     runs-on: macos-14
     env:
-      DEVELOPER_DIR: /Applications/Xcode_15.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_16.0.app/Contents/Developer
     steps:
     - uses: actions/checkout@v4
     - name: "CocoaPods: pod lib lint"
