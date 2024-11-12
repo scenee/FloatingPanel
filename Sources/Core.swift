@@ -933,8 +933,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 let translation = data.value - initialData.value
                 self.backdropView.alpha = self.getBackdropAlpha(at: current, with: translation)
 
-                // Pin the offset of the tracking scroll view while moving by this animator
-                if let scrollView = self.scrollView {
+                // Pin the offset of the tracking scroll view while moving by this animator, unless the delegate decides otherwise
+                if let scrollView = self.scrollView, ownerVC.delegate?.floatingPanel?(ownerVC, shouldLockScrollView: scrollView, transitioningToState: state) ?? true {
                     self.stopScrolling(at: self.initialScrollOffset)
                     os_log(msg, log: devLog, type: .debug, "move -- pinning scroll offset = \(scrollView.contentOffset)")
                 }
