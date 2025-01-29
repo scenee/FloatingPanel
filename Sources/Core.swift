@@ -949,6 +949,11 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     private func endAttraction(_ tryUnlockScroll: Bool) {
         self.isAttracting = false
         self.moveAnimator = nil
+
+        // We need to reset `initialScrollOffset` because the scroll offset can become unexpected
+        // under the following circumstances:
+        // 1. The scroll offset changes while the panel does not move.
+        // 2. The panel is then moved using `move(to:animate:completion:)`.
         self.initialScrollOffset = nil
 
         if let vc = ownerVC {
@@ -974,6 +979,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     func endWithoutAttraction(_ target: FloatingPanelState) {
+        // See comments in `endAttraction`
         self.initialScrollOffset = nil
 
         self.state = target
