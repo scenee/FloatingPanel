@@ -849,7 +849,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             } else {
                 initialScrollOffset = scrollView.contentOffset
             }
-            os_log(msg, log: devLog, type: .debug, "initial scroll offset -- \(initialScrollOffset)")
+            os_log(msg, log: devLog, type: .debug, "initial scroll offset -- \(optional: initialScrollOffset)")
         }
 
         initialTranslation = translation

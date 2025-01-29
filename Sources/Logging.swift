@@ -15,3 +15,14 @@ struct Logging {
     static let category = "FloatingPanel"
     private init() {}
 }
+
+extension String.StringInterpolation {
+    mutating func appendInterpolation<T>(optional: T?, defaultValue: String = "nil") {
+        switch optional {
+        case let value?:
+            appendLiteral(String(describing: value))
+        case nil:
+            appendLiteral(defaultValue)
+        }
+    }
+}
