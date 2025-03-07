@@ -47,7 +47,7 @@ jobs:
             xcode: "16.2"
             sim: "iPhone 16 Pro"
             parallel: NO  # Stop random test job failures
-            runs-on: macos-14
+            runs-on: macos-15
           - os: "17.5"
             xcode: "15.4"
             sim: "iPhone 15 Pro"
@@ -151,7 +151,7 @@ jobs:
           -Xswiftc "-target" -Xswiftc "${{ matrix.target }}"
 
   cocoapods:
-    runs-on: macos-14
+    runs-on: macos-15
     env:
       DEVELOPER_DIR: /Applications/Xcode_16.2.app/Contents/Developer
     steps:
