@@ -916,6 +916,34 @@ class CoreTests: XCTestCase {
         }
     }
 
+    func test_initial_scroll_offset_reset() {
+        let fpc = FloatingPanelController()
+        let scrollView = UIScrollView()
+        fpc.layout = FloatingPanelBottomLayout()
+        fpc.track(scrollView: scrollView)
+        fpc.showForTest()
+
+        fpc.move(to: .full, animated: false)
+
+        fpc.panGestureRecognizer.state = .began
+        fpc.floatingPanel.handle(panGesture: fpc.panGestureRecognizer)
+
+        fpc.panGestureRecognizer.state = .cancelled
+        fpc.floatingPanel.handle(panGesture: fpc.panGestureRecognizer)
+
+        waitRunLoop(secs: 1.0)
+
+        let expect = CGPoint(x: 0, y: 100)
+
+        scrollView.setContentOffset(expect, animated: false)
+
+        fpc.move(to: .half, animated: true)
+
+        waitRunLoop(secs: 1.0)
+
+        XCTAssertEqual(expect, scrollView.contentOffset)
+    }
+
     func test_handleGesture_endWithoutAttraction() throws {
         class Delegate: FloatingPanelControllerDelegate {
             var willAttract: Bool?

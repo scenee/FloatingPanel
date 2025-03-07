@@ -27,15 +27,6 @@ jobs:
           - swift: "5.8"
             xcode: "14.3.1"
             runs-on: macos-13
-          - swift: "5.7"
-            xcode: "14.1"
-            runs-on: macos-12
-          - swift: "5.6"
-            xcode: "13.4.1"
-            runs-on: macos-12
-          - swift: "5.5"
-            xcode: "13.2.1"
-            runs-on: macos-12
     steps:
       - uses: actions/checkout@v4
       - name: Building in Swift ${{ matrix.swift }}
@@ -59,11 +50,6 @@ jobs:
             sim: "iPhone 14 Pro"
             parallel: NO  # Stop random test job failures
             runs-on: macos-13
-          - os: "15.5"
-            xcode: "13.4.1"
-            sim: "iPhone 13 Pro"
-            parallel: NO  # Stop random test job failures
-            runs-on: macos-12
     steps:
     - uses: actions/checkout@v4
     - name: Testing in iOS ${{ matrix.os }}
@@ -137,13 +123,6 @@ jobs:
           - target: "arm64-apple-ios16.4-simulator"
             xcode: "14.3.1"
             runs-on: macos-13
-          # 15.7
-          - target: "x86_64-apple-ios15.7-simulator"
-            xcode: "14.1"
-            runs-on: macos-12
-          - target: "arm64-apple-ios15.7-simulator"
-            xcode: "14.1"
-            runs-on: macos-12
     steps:
     - uses: actions/checkout@v4
     - name: "Swift Package Manager build"

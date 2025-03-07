@@ -71,7 +71,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     var removalVector: CGVector = .zero
 
     // Scroll handling
-    private var initialScrollOffset: CGPoint = .zero
+    private var initialScrollOffset: CGPoint?
     private var scrollBounce = false
     private var scrollIndictorVisible = false
     private var scrollBounceThreshold: CGFloat = -30.0
@@ -411,7 +411,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
             if insideMostExpandedAnchor {
                 // Prevent scrolling if needed
-                if isScrollable(state: state) {
+                if isScrollable(state: state), let initialScrollOffset = initialScrollOffset {
                     if interactionInProgress {
                         os_log(msg, log: devLog, type: .debug, "settle offset -- \(value(of: initialScrollOffset))")
                         // Return content offset to initial offset to prevent scrolling
@@ -429,7 +429,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                             stopScrolling(at: initialScrollOffset)
                         }
                     }
-                } else {
+                } else if let initialScrollOffset = initialScrollOffset {
                     // Return content offset to initial offset to prevent scrolling
                     stopScrolling(at: initialScrollOffset)
                 }
@@ -471,7 +471,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                     }
                     if isScrollable(state: state) {
                         // Adjust a small gap of the scroll offset just after swiping down starts in the grabber area.
-                        if surfaceView.grabberAreaContains(location), surfaceView.grabberAreaContains(initialLocation) {
+                        if surfaceView.grabberAreaContains(location), surfaceView.grabberAreaContains(initialLocation),
+                            let initialScrollOffset = initialScrollOffset {
                             stopScrolling(at: initialScrollOffset)
                         }
                     }
@@ -499,7 +500,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                             }
                         }
                         // Adjust a small gap of the scroll offset just before swiping down starts in the grabber area,
-                        if surfaceView.grabberAreaContains(location), surfaceView.grabberAreaContains(initialLocation) {
+                        if surfaceView.grabberAreaContains(location), surfaceView.grabberAreaContains(initialLocation),
+                            let initialScrollOffset = initialScrollOffset {
                             stopScrolling(at: initialScrollOffset)
                         }
                     }
@@ -847,7 +849,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             } else {
                 initialScrollOffset = scrollView.contentOffset
             }
-            os_log(msg, log: devLog, type: .debug, "initial scroll offset -- \(initialScrollOffset)")
+            os_log(msg, log: devLog, type: .debug, "initial scroll offset -- \(optional: initialScrollOffset)")
         }
 
         initialTranslation = translation
@@ -894,17 +896,6 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         return true
     }
 
-    func endWithoutAttraction(_ target: FloatingPanelState) {
-        self.state = target
-        self.updateLayout(to: target)
-        self.unlockScrollView()
-        // The `floatingPanelDidEndDragging(_:willAttract:)` must be called after the state property changes.
-        // This allows library users to get the correct state in the delegate method.
-        if let vc = ownerVC {
-            vc.delegate?.floatingPanelDidEndDragging?(vc, willAttract: false)
-        }
-    }
-
     private func startAttraction(to state: FloatingPanelState, with velocity: CGPoint, completion: @escaping (() -> Void)) {
         os_log(msg, log: devLog, type: .debug, "startAnimation to \(state) -- velocity = \(value(of: velocity))")
         guard let vc = ownerVC else { return }
@@ -934,8 +925,8 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 self.backdropView.alpha = self.getBackdropAlpha(at: current, with: translation)
 
                 // Pin the offset of the tracking scroll view while moving by this animator
-                if let scrollView = self.scrollView {
-                    self.stopScrolling(at: self.initialScrollOffset)
+                if let scrollView = self.scrollView, let initialScrollOffset = self.initialScrollOffset {
+                    self.stopScrolling(at: initialScrollOffset)
                     os_log(msg, log: devLog, type: .debug, "move -- pinning scroll offset = \(scrollView.contentOffset)")
                 }
 
@@ -959,6 +950,12 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         self.isAttracting = false
         self.moveAnimator = nil
 
+        // We need to reset `initialScrollOffset` because the scroll offset can become unexpected
+        // under the following circumstances:
+        // 1. The scroll offset changes while the panel does not move.
+        // 2. The panel is then moved using `move(to:animate:completion:)`.
+        self.initialScrollOffset = nil
+
         if let vc = ownerVC {
             vc.delegate?.floatingPanelDidEndAttracting?(vc)
         }
@@ -978,6 +975,20 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 || shouldLooselyLockScrollView {
                 unlockScrollView()
             }
+        }
+    }
+
+    func endWithoutAttraction(_ target: FloatingPanelState) {
+        // See comments in `endAttraction`
+        self.initialScrollOffset = nil
+
+        self.state = target
+        self.updateLayout(to: target)
+        self.unlockScrollView()
+        // The `floatingPanelDidEndDragging(_:willAttract:)` must be called after the state property changes.
+        // This allows library users to get the correct state in the delegate method.
+        if let vc = ownerVC {
+            vc.delegate?.floatingPanelDidEndDragging?(vc, willAttract: false)
         }
     }
 

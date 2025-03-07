@@ -1,6 +1,27 @@
 version: 2.1
 
 jobs:
+  build-swift_5_7:
+    macos:
+      xcode: 13.4.1
+    steps:
+      - checkout
+      - run: xcodebuild -scheme FloatingPanel -workspace FloatingPanel.xcworkspace SWIFT_VERSION=5.7 clean build
+
+  build-swiftpm_ios15_7:
+    macos:
+      xcode: 13.4.1
+    steps:
+      - checkout
+      - run: swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk iphonesimulator --show-sdk-path`" -Xswiftc "-target" -Xswiftc "x86_64-apple-ios15.7-simulator"
+      - run: swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk iphonesimulator --show-sdk-path`" -Xswiftc "-target" -Xswiftc "arm64-apple-ios15.7-simulator"
+
+  test-ios15_5-iPhone_13_Pro:
+    macos:
+      xcode: 13.4.1
+    steps:
+      - checkout
+      - run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=15.5,name=iPhone 13 Pro'
   test-ios14_5-iPhone_12_Pro:
     macos:
       xcode: 13.4.1
@@ -8,7 +29,15 @@ jobs:
       - checkout
       - run: xcodebuild clean test -scheme FloatingPanel -workspace FloatingPanel.xcworkspace -destination 'platform=iOS Simulator,OS=14.5,name=iPhone 12 Pro'
 
+
 workflows:
   test: 
     jobs:
-      - test-ios14_5-iPhone_12_Pro
+      - build-swift_5_7:
+          name: build (5.7, 13.4.1)
+      - build-swiftpm_ios15_7:
+          name: swiftpm ({x86_64,arm64}-apple-ios15.5-simulator, 13.4.1)
+      - test-ios14_5-iPhone_12_Pro:
+          name: test (15.5, 13.4.1, iPhone 12 Pro)
+      - test-ios15_5-iPhone_13_Pro:
+          name: test (14.5, 13.4.1, iPhone 13 Pro)
