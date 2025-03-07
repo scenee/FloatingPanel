@@ -70,7 +70,7 @@ jobs:
     timeout-minutes: 20
 
   example:
-    runs-on: macos-14
+    runs-on: macos-15
     env:
       DEVELOPER_DIR: /Applications/Xcode_16.2.app/Contents/Developer
     strategy:
@@ -84,11 +84,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Building ${{ matrix.example }}
+      # Need to use iphonesimulator18.1 because randomly 18.2<DVTBuildVersion 22C146> isn't available.
       run: |
         xcodebuild clean build \
           -workspace FloatingPanel.xcworkspace \
           -scheme ${{ matrix.example }} \
-          -sdk iphonesimulator18.2
+          -sdk iphonesimulator
 
   swiftpm:
     runs-on: macos-14
