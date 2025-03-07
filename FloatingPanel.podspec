@@ -9,7 +9,7 @@ The new interface displays the related contents and utilities in parallel as a u
                    DESC
   s.homepage            = "https://github.com/scenee/FloatingPanel"
   s.author              = "Shin Yamamoto"
-  s.social_media_url    = "https://twitter.com/scenee"
+  s.social_media_url    = "https://x.com/scenee"
 
   s.platform            = :ios, "11.0"
   s.source              = { :git => "https://github.com/scenee/FloatingPanel.git", :tag => s.version.to_s }
