@@ -156,6 +156,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: "CocoaPods: pod lib lint"
-      run: pod lib lint --allow-warnings
+      run: pod lib lint --allow-warnings --verbose
     - name: "CocoaPods: pod spec lint"
-      run: pod spec lint --allow-warnings
+      run: pod spec lint --allow-warnings --verbose
