@@ -76,3 +76,18 @@ class ModalPanelLayout: FloatingPanelLayout {
         return 0.3
     }
 }
+
+class ModalPanelLayout2: FloatingPanelLayout {
+    let position: FloatingPanelPosition = .bottom
+    let initialState: FloatingPanelState = .half
+    var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
+        [
+            .full: FloatingPanelLayoutAnchor(fractionalInset: 0.0, edge: .top, referenceGuide: .superview),
+            .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .superview)
+        ]
+    }
+    func backdropAlpha(for _: FloatingPanelState) -> CGFloat {
+        0.6
+    }
+}
+

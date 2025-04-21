@@ -1197,16 +1197,21 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         return state == layoutAdapter.mostExpandedState
     }
 
-    /// Adjust content inset of the tracking scroll view if the controller's
-    /// `contentInsetAdjustmentBehavior` is `.always` and its `contentMode` is `.static`.
-    /// if its content is scrollable, the content might not be fully visible on `.half`
-    /// state, for example. Therefore the content inset needs to adjust to display the
-    /// full content.
+    // Adjusts content inset of the tracking scroll view when the following conditions are met:
+    // - The controller's `contentInsetAdjustmentBehavior` is `.always`
+    // - Its `contentMode` is `.static`
+    // - Its content is scrollable
+    // This ensures that the content remains fully visible in intermediate states like `.half`,
+    // by using `UIScrollView.safeAreaInsets` and the panel's current position.
+    // This method must not be invoked in the fully expanded state, as it may lead to unexpected
+    // behavior under the top safe area (i.e., the status bar).
     func adjustScrollContentInsetIfNeeded() {
         guard
             let fpc = ownerVC,
             let scrollView = scrollView,
-            fpc.contentInsetAdjustmentBehavior == .always
+            fpc.contentInsetAdjustmentBehavior == .always,
+            fpc.state != layoutAdapter.mostExpandedState,
+            isScrollable(state: fpc.state)
         else { return }
 
         switch fpc.contentMode {

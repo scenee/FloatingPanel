@@ -178,6 +178,14 @@ extension UseCaseController {
 
             mainVC.present(fpc, animated: true, completion: nil)
 
+        case .showPanelModal2:
+            let fpc = FloatingPanelController()
+            fpc.set(contentViewController: contentVC)
+            fpc.delegate = self
+            fpc.track(scrollView: (contentVC as? DebugTextViewController)!.textView)
+
+            mainVC.present(fpc, animated: true, completion: nil)
+
         case .showMultiPanelModal:
             let fpc = MultiPanelController()
             mainVC.present(fpc, animated: true, completion: nil)
@@ -435,6 +443,8 @@ extension UseCaseController: FloatingPanelControllerDelegate {
             return newCollection.verticalSizeClass == .compact ? RemovablePanelLandscapeLayout() :  RemovablePanelLayout()
         case .showIntrinsicView:
             return IntrinsicPanelLayout()
+        case .showPanelModal2:
+            return ModalPanelLayout2()
         case .showPanelModal:
             if vc != mainPanelVC && vc != detailPanelVC {
                 return ModalPanelLayout()
