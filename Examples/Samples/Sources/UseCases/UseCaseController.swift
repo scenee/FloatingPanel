@@ -202,10 +202,10 @@ extension UseCaseController {
             fpc.set(contentViewController: contentVC)
             fpc.delegate = self
 
-            let apprearance = SurfaceAppearance()
-            apprearance.cornerRadius = 38.5
-            apprearance.shadows = []
-            fpc.surfaceView.appearance = apprearance
+            let appearance = SurfaceAppearance()
+            appearance.cornerRadius = 38.5
+            appearance.shadows = []
+            fpc.surfaceView.appearance = appearance
             fpc.isRemovalInteractionEnabled = true
 
             let mvc = UIViewController()
