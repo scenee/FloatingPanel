@@ -610,7 +610,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         guard
             isScrollable(state: state),  // When not top most(i.e. .full), don't scroll.
             interactionInProgress == false,  // When interaction already in progress, don't scroll.
-            0 == layoutAdapter.offset(from: state),
+            abs(layoutAdapter.offset(from: state)) < 1, // Indistinguishably close to an anchor point.
             !surfaceView.grabberAreaContains(initialLocation)  // When the initial point is within grabber area, don't scroll
         else {
             return false
