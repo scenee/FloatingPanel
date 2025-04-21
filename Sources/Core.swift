@@ -563,7 +563,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     private func interruptAnimationIfNeeded() {
-        if let animator = self.moveAnimator, animator.isRunning, 0 <= layoutAdapter.offsetFromMostExpandedAnchor {
+        if let animator = self.moveAnimator, animator.isRunning {
             os_log(msg, log: devLog, type: .debug, "the attraction animator interrupted!!!")
             animator.stopAnimation(true)
             endAttraction(false)
