@@ -8,7 +8,7 @@
 FloatingPanel is a simple and easy-to-use UI component designed for a user interface featured in Apple Maps, Shortcuts and Stocks app.
 The user interface displays related content and utilities alongside the main content.
 
-Please see also [the API reference@SPI](https://swiftpackageindex.com/scenee/FloatingPanel/2.8.7/documentation/floatingpanel) for more details.
+Please see also [the API reference@SPI](https://swiftpackageindex.com/scenee/FloatingPanel/2.8.8/documentation/floatingpanel) for more details.
 
 ![Maps](https://github.com/SCENEE/FloatingPanel/blob/master/assets/maps.gif)
 ![Stocks](https://github.com/SCENEE/FloatingPanel/blob/master/assets/stocks.gif)
