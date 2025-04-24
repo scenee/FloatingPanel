@@ -2,17 +2,17 @@
   "fileScopedDeclarationPrivacy" : {
     "accessLevel" : "private"
   },
-  "indentConditionalCompilationBlocks" : true,
+  "indentConditionalCompilationBlocks" : false,
   "indentSwitchCaseLabels" : false,
   "indentation" : {
-    "spaces" : 2
+    "spaces" : 4
   },
   "lineBreakAroundMultilineExpressionChainComponents" : false,
   "lineBreakBeforeControlFlowKeywords" : false,
   "lineBreakBeforeEachArgument" : false,
   "lineBreakBeforeEachGenericRequirement" : false,
   "lineBreakBetweenDeclarationAttributes" : false,
-  "lineLength" : 100,
+  "lineLength" : 120,
   "maximumBlankLines" : 1,
   "multiElementCollectionTrailingCommas" : true,
   "noAssignmentInExpressions" : {
