@@ -709,23 +709,34 @@ extension FloatingPanelController {
         if let animator = delegate?.floatingPanel?(self, animatorForPresentingTo: to) {
             return animator
         }
-        let timingParameters = UISpringTimingParameters(decelerationRate: UIScrollView.DecelerationRate.fast.rawValue,
-                                                       frequencyResponse: 0.25)
-        return UIViewPropertyAnimator(duration: 0.0,
-                                      timingParameters: timingParameters)
+        return makeDefaultAnimator()
     }
 
     func animatorForDismissing(with velocity: CGVector) -> UIViewPropertyAnimator {
         if let animator = delegate?.floatingPanel?(self, animatorForDismissingWith: velocity) {
             return animator
         }
-        let timingParameters = UISpringTimingParameters(decelerationRate: UIScrollView.DecelerationRate.fast.rawValue,
-                                                       frequencyResponse: 0.25,
-                                                       initialVelocity: velocity)
-        return UIViewPropertyAnimator(duration: 0.0,
-                                      timingParameters: timingParameters)
+        return makeDefaultAnimator(initialVelocity: velocity)
     }
 }
+
+
+// MARK: - Animation
+
+extension FloatingPanelController {
+    func makeDefaultAnimator(initialVelocity: CGVector = .zero) -> UIViewPropertyAnimator {
+        let timingParameters = UISpringTimingParameters(
+            decelerationRate: UIScrollView.DecelerationRate.fast.rawValue,
+            frequencyResponse: 0.25,
+            initialVelocity: initialVelocity
+        )
+        return UIViewPropertyAnimator(
+            duration: 0.0,
+            timingParameters: timingParameters
+        )
+    }
+}
+
 
 // MARK: - Swizzling
 
