@@ -19,7 +19,7 @@ This guide is provided in order to ease the transition of existing applications 
 * __Flexible and explicit layout customization__
   * `FloatingPanelLayout` is redesigned. There is no implicit rules to lay out a panel anymore.
 * __New spring animation without UIViewPropertyAnimator__
-  * The new spring animation uses [Numeric springing](http://allenchou.net/2015/04/game-math-precise-control-over-numeric-springing/) which is a very powerful tool for procedural animation. Therefore a library consumer is easy to modify a panel behavior by 2 paramters of the deceleration rate and response time.
+  * The new spring animation uses [Numeric springing](http://allenchou.net/2015/04/game-math-precise-control-over-numeric-springing/) which is a very powerful tool for procedural animation. Therefore a library consumer is easy to modify a panel behavior by 2 parameters of the deceleration rate and response time.
 * __Handle the panel position anytime__
   * `floatingPanelDidMove(_:)` delegate method is also called while a panel is moving. The method behavior becomes same as `scrollViewDidScroll(_:)` in `UIScrollViewDelegate`. And in the method a library consumer is able to change a panel location.
 * __Update the removal interaction's invocation__
