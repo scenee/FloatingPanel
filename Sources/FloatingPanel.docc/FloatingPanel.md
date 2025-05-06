@@ -4,50 +4,62 @@ Create a user interface to display the related content and utilities alongside t
 
 ## Overview
 
-
 FloatingPanel is a simple and easy-to-use UI component designed for a user interface featured in the Apple Maps, Shortcuts and Stocks app.
 The user interface displays related content and utilities alongside the main content.
 
-
 ## Topics
 
-### Essentials
+### API Guides
+
+- <doc:FloatingPanel-API-Guide>
+- <doc:FloatingPanel-SwiftUI-API-Guide>
+
+### Creations
 
 - ``FloatingPanelController``
 - ``FloatingPanelControllerDelegate``
+- ``SwiftUICore/View/floatingPanel(coordinator:onEvent:content:)``
+- ``SwiftUICore/View/floatingPanelScrollTracking(proxy:onScrollViewDetected:)``
+- ``FloatingPanelCoordinator``
+- ``FloatingPanelDefaultCoordinator``
+- ``FloatingPanelProxy``
 
-### Views
-
-- ``SurfaceView``
-- ``SurfaceAppearance``
-- ``BackdropView``
-- ``GrabberView``
-
-### Gestures
-
-- ``FloatingPanelPanGestureRecognizer``
-
-### Layouts and Anchors
+### Layout
 
 - ``FloatingPanelLayout``
 - ``FloatingPanelBottomLayout``
+- ``FloatingPanelState``
+- ``FloatingPanelPosition``
+- ``SwiftUICore/View/floatingPanelLayout(_:)``
+- ``SwiftUICore/View/floatingPanelContentMode(_:)``
+- ``SwiftUICore/View/floatingPanelContentInsetAdjustmentBehavior(_:)``
+
+### Behavior
+
+- ``FloatingPanelBehavior``
+- ``FloatingPanelDefaultBehavior``
+- ``SwiftUICore/View/floatingPanelBehavior(_:)``
+
+### Layout Properties
+
 - ``FloatingPanelLayoutAnchoring``
 - ``FloatingPanelLayoutAnchor``
 - ``FloatingPanelAdaptiveLayoutAnchor``
 - ``FloatingPanelIntrinsicLayoutAnchor``
-
-### States
-
-- ``FloatingPanelState``
-
-### Positions
-
-- ``FloatingPanelPosition``
 - ``FloatingPanelReferenceEdge``
 - ``FloatingPanelLayoutReferenceGuide``
 - ``FloatingPanelLayoutContentBoundingGuide``
 
-### Behaviors
+### Appearance
 
-- ``FloatingPanelBehavior``
-- ``FloatingPanelDefaultBehavior``
+- ``SurfaceView``
+- ``SurfaceAppearance``
+- ``GrabberView``
+- ``BackdropView``
+- ``SwiftUICore/View/floatingPanelSurfaceAppearance(_:)``
+- ``SwiftUICore/View/floatingPanelGrabberHandlePadding(_:)``
+
+### Gesture
+
+- ``FloatingPanelPanGestureRecognizer``
+
