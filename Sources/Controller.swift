@@ -125,6 +125,9 @@ import os.log
         shouldAllowToScroll scrollView: UIScrollView,
         in state: FloatingPanelState
     ) -> Bool
+    
+    @objc(floatingPanelDidViewLayout:) optional
+    func floatingPanelDidViewLayout(_ vc: FloatingPanelController)
 }
 
 ///
@@ -335,6 +338,7 @@ open class FloatingPanelController: UIViewController {
         if contentMode == .static {
             floatingPanel.layoutAdapter.updateStaticConstraint()
         }
+        self.delegate?.floatingPanelDidViewLayout?(self)
     }
 
     open override func viewDidAppear(_ animated: Bool) {
