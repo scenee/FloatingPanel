@@ -81,6 +81,8 @@ jobs:
           - example: "Maps-SwiftUI"
           - example: "Stocks"
           - example: "Samples"
+          - example: "SamplesObjC"
+          - example: "SamplesSwiftUI"
     steps:
     - uses: actions/checkout@v4
     - name: Building ${{ matrix.example }}
