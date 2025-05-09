@@ -76,7 +76,7 @@ public struct FloatingPanelProxy {
         animated: Bool,
         completion: (() -> Void)? = nil
     ) {
-        controller.move(to: floatingPanelState, animated: animated, completion: completion)
+        controller.moveForSwiftUI(to: floatingPanelState, animated: animated, completion: completion)
     }
 }
 

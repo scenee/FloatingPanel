@@ -597,7 +597,21 @@ open class FloatingPanelController: UIViewController {
     ///     - completion: The block to execute after the view controller has finished moving. This block has no return value and takes no parameters. You may specify nil for this parameter.
     @objc(moveToState:animated:completion:)
     public func move(to: FloatingPanelState, animated: Bool, completion: (() -> Void)? = nil) {
-        floatingPanel.move(to: to, animated: animated, completion: completion)
+        floatingPanel.move(
+            to: to,
+            animated: animated,
+            moveAnimator: animatorForMoving(to: to),
+            completion: completion
+        )
+    }
+
+    func moveForSwiftUI(to: FloatingPanelState, animated: Bool, completion: (() -> Void)? = nil) {
+        floatingPanel.move(
+            to: to,
+            animated: animated,
+            moveAnimator: animatorForMoving(to: to) ?? makeDefaultAnimator(),
+            completion: completion
+        )
     }
 
     /// Sets the view controller responsible for the content portion of a panel.
@@ -731,11 +745,8 @@ extension FloatingPanelController {
         return makeDefaultAnimator(initialVelocity: velocity)
     }
 
-    func animatorForMoving(to: FloatingPanelState) -> UIViewPropertyAnimator {
-        if let animator = delegate?.floatingPanel?(self, animatorForMovingTo: to) {
-            return animator
-        }
-        return makeDefaultAnimator()
+    func animatorForMoving(to: FloatingPanelState) -> UIViewPropertyAnimator? {
+        return delegate?.floatingPanel?(self, animatorForMovingTo: to)
     }
 }
 
