@@ -19,10 +19,6 @@ extension SwiftFormatBuildToolPlugin: XcodeBuildToolPlugin {
         #if swift(>=6.0)
         let swift = try context.tool(named: "swift").url
         let xcodeProjectDirectoryURL = context.xcodeProject.directoryURL
-        #else
-        let swift = try context.tool(named: "swift").path
-        let xcodeProjectDirectoryURL = URL(fileURLWithPath: context.xcodeProject.directory.string)
-        #endif
         // Find the code generator tool to run (replace this with the actual one).
         print("SwiftFormatBuildToolPlugin -> \(xcodeProjectDirectoryURL.filePath)")
         let configFile = xcodeProjectDirectoryURL.appending(path: ".swift-format").filePath
@@ -50,6 +46,10 @@ extension SwiftFormatBuildToolPlugin: XcodeBuildToolPlugin {
                 outputFiles: []
             )
         ]
+        #else
+        // Skip running `swift format`; this subcommand ships with the Swift 6 compiler.
+        return []
+        #endif
     }
 }
 

@@ -1,4 +1,5 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.9
+// This file is used when the 'built-tools' package is built by Xcode 15 or earlier.
 
 import PackageDescription
 
