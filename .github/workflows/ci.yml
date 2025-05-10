@@ -19,7 +19,7 @@ jobs:
       matrix:
         include:
           - swift: "5"
-            xcode: "16.2"
+            xcode: "16.3"
             runs-on: macos-15
           - swift: "5.10"
             xcode: "15.4"
@@ -43,8 +43,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: "18.2"
-            xcode: "16.2"
+          - os: "18.4"
+            xcode: "16.3"
             sim: "iPhone 16 Pro"
             parallel: NO  # Stop random test job failures
             runs-on: macos-15
@@ -72,7 +72,7 @@ jobs:
   example:
     runs-on: macos-15
     env:
-      DEVELOPER_DIR: /Applications/Xcode_16.2.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_16.3.app/Contents/Developer
     strategy:
       fail-fast: false
       matrix:
@@ -86,7 +86,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Building ${{ matrix.example }}
-      # Need to use iphonesimulator18.1 because randomly 18.2<DVTBuildVersion 22C146> isn't available.
       run: |
         xcodebuild clean build \
           -workspace FloatingPanel.xcworkspace \
@@ -100,20 +99,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        xcode: ["16.2", "15.4"]
+        xcode: ["16.3", "15.4"]
         platform: [iphoneos, iphonesimulator]
         arch: [x86_64, arm64]
         exclude:
           - platform: iphoneos
             arch: x86_64
         include:
-          # 18.2
+          # 18.4
           - platform: iphoneos
-            xcode: "16.2"
-            sys: "ios18.2"
+            xcode: "16.3"
+            sys: "ios18.4"
           - platform: iphonesimulator
-            xcode: "16.2"
-            sys: "ios18.2-simulator"
+            xcode: "16.3"
+            sys: "ios18.4-simulator"
           # 17.2
           - platform: iphoneos
             xcode: "15.4"
@@ -155,7 +154,7 @@ jobs:
   cocoapods:
     runs-on: macos-15
     env:
-      DEVELOPER_DIR: /Applications/Xcode_16.2.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_16.3.app/Contents/Developer
     steps:
     - uses: actions/checkout@v4
     - name: "CocoaPods: pod lib lint"
