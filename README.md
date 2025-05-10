@@ -10,10 +10,10 @@ The user interface displays related content and utilities alongside the main con
 
 Please see also [the API reference@SPI](https://swiftpackageindex.com/scenee/FloatingPanel/2.8.8/documentation/floatingpanel) for more details.
 
-![Maps](https://github.com/SCENEE/FloatingPanel/blob/master/assets/maps.gif)
-![Stocks](https://github.com/SCENEE/FloatingPanel/blob/master/assets/stocks.gif)
+![Maps](Documentation/assets/maps.gif)
+![Stocks](Documentation/assets/stocks.gif)
 
-![Maps(Landscape)](https://github.com/SCENEE/FloatingPanel/blob/master/assets/maps-landscape.gif)
+![Maps(Landscape)](Documentation/assets/maps-landscape.gif)
 
 <!-- TOC -->
 
