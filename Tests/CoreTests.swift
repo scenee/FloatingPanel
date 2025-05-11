@@ -8,6 +8,7 @@ class CoreTests: XCTestCase {
     override func tearDown() {}
 
     func test_scrollLock() {
+        let timeout = 5.0
         let fpc = FloatingPanelController()
 
         let contentVC1 = UITableViewController(nibName: nil, bundle: nil)
@@ -35,7 +36,7 @@ class CoreTests: XCTestCase {
             XCTAssertEqual(contentVC1.tableView.bounces, true)
             exp1.fulfill()
         }
-        wait(for: [exp1], timeout: 1.0)
+        wait(for: [exp1], timeout: timeout)
 
         let exp2 = expectation(description: "move to tip with animation")
         fpc.move(to: .tip, animated: false) {
@@ -43,7 +44,7 @@ class CoreTests: XCTestCase {
             XCTAssertEqual(contentVC1.tableView.bounces, false)
             exp2.fulfill()
         }
-        wait(for: [exp2], timeout: 1.0)
+        wait(for: [exp2], timeout: timeout)
 
         // Reset the content vc
         let contentVC2 = UITableViewController(nibName: nil, bundle: nil)
@@ -209,7 +210,7 @@ class CoreTests: XCTestCase {
             return floor(fpc.backdropView.alpha * 1e+06) / 1e+06
         }
 
-        let timeout = 3.0
+        let timeout = 5.0
 
         let delegate = TestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)

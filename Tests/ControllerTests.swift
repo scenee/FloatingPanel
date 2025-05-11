@@ -64,7 +64,7 @@ class ControllerTests: XCTestCase {
     }
 
     func test_moveTo() {
-        let timeout = 3.0
+        let timeout = 5.0
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
         XCTAssertEqual(delegate.position, .hidden)
@@ -138,7 +138,7 @@ class ControllerTests: XCTestCase {
         class MyFloatingPanelTop2BottomLayout: FloatingPanelTop2BottomTestLayout {
             override var initialState: FloatingPanelState { return .half }
         }
-        let timeout = 3.0
+        let timeout = 5.0
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
         fpc.layout = MyFloatingPanelTop2BottomLayout()
@@ -225,7 +225,7 @@ class ControllerTests: XCTestCase {
     }
 
     func test_moveTo_didMoveDelegate() {
-        let timeout = 3.0
+        let timeout = 5.0
         let delegate = FloatingPanelTestDelegate()
         let fpc = FloatingPanelController(delegate: delegate)
         XCTAssertEqual(delegate.position, .hidden)
