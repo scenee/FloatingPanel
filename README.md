@@ -74,7 +74,7 @@ FloatingPanel is written in Swift 5.0+ and compatible with iOS 12.0+.
 
 ## Documentation
 
-- [API reference on Swift Package Index](https://swiftpackageindex.com/scenee/FloatingPanel/2.8.8/documentation/floatingpanel)
+- [API reference on Swift Package Index](https://swiftpackageindex.com/scenee/FloatingPanel/3.0.0/documentation/floatingpanel)
 - [FloatingPanel SwiftUI API Guide](/Documentation/FloatingPanel%20SwiftUI%20API%20Guide.md)
 - [FloatingPanel API Guide](/Documentation/FloatingPanel%20API%20Guide.md)
 - [FloatingPanel 2.0 Migration Guide](/Documentation/FloatingPanel%202.0%20Migration%20Guide.md)
@@ -92,7 +92,7 @@ Just follow [this documentation](https://developer.apple.com/documentation/swift
 In your Package.swift Swift Package Manager manifest, add the following dependency to your dependencies argument:
 
 ```swift
-.package(url: "https://github.com/scenee/FloatingPanel", from: "2.8.8"),
+.package(url: "https://github.com/scenee/FloatingPanel", from: "3.0.0"),
 ```
 
 Add Numerics as a dependency for your target:
