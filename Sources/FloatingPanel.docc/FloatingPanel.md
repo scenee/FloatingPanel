@@ -24,11 +24,15 @@ The user interface displays related content and utilities alongside the main con
 - ``FloatingPanelDefaultCoordinator``
 - ``FloatingPanelProxy``
 
+### State
+
+- ``FloatingPanelState``
+- ``SwiftUICore/View/floatingPanelState(_:)``
+
 ### Layout
 
 - ``FloatingPanelLayout``
 - ``FloatingPanelBottomLayout``
-- ``FloatingPanelState``
 - ``FloatingPanelPosition``
 - ``SwiftUICore/View/floatingPanelLayout(_:)``
 - ``SwiftUICore/View/floatingPanelContentMode(_:)``
