@@ -206,10 +206,8 @@ class CoreTests: XCTestCase {
             func floatingPanel(_ fpc: FloatingPanelController, layoutFor newCollection: UITraitCollection) -> FloatingPanelLayout { layout }
             func floatingPanel(_ fpc: FloatingPanelController, layoutFor size: CGSize) -> FloatingPanelLayout { layout }
         }
-        func round(_ alpha: CGFloat) -> CGFloat {
-            return (fpc.backdropView.alpha * 1e+06).rounded() / 1e+06
-        }
 
+        let acc = 0.000_001
         let timeout = 5.0
 
         let delegate = TestDelegate()
@@ -219,27 +217,27 @@ class CoreTests: XCTestCase {
         fpc.showForTest()
 
         fpc.move(to: .full, animated: false)
-        XCTAssertEqual(round(fpc.backdropView.alpha), 0.3)
+        XCTAssertEqual(fpc.backdropView.alpha, 0.3, accuracy: acc)
 
         fpc.move(to: .half, animated: false)
-        XCTAssertEqual(fpc.backdropView.alpha, 0.0)
+        XCTAssertEqual(fpc.backdropView.alpha, 0.0, accuracy: acc)
 
         fpc.move(to: .tip, animated: false)
-        XCTAssertEqual(round(fpc.backdropView.alpha), 0.3)
+        XCTAssertEqual(fpc.backdropView.alpha, 0.3, accuracy: acc)
 
         let exp1 = expectation(description: "move to full with animation")
         fpc.move(to: .full, animated: true) {
             exp1.fulfill()
         }
         wait(for: [exp1], timeout: timeout)
-        XCTAssertEqual(round(fpc.backdropView.alpha), 0.3)
+        XCTAssertEqual(fpc.backdropView.alpha, 0.3, accuracy: acc)
 
         let exp2 = expectation(description: "move to half with animation")
         fpc.move(to: .half, animated: true) {
             exp2.fulfill()
         }
         wait(for: [exp2], timeout: timeout)
-        XCTAssertEqual(fpc.backdropView.alpha, 0.0)
+        XCTAssertEqual(fpc.backdropView.alpha, 0.0, accuracy: acc)
 
         // Test a content mode change of FloatingPanelController
 
@@ -250,12 +248,12 @@ class CoreTests: XCTestCase {
         fpc.contentMode = .fitToBounds
         XCTAssertEqual(fpc.backdropView.alpha, 0.0)  // Must not affect the backdrop alpha by changing the content mode
         wait(for: [exp3], timeout: timeout)
-        XCTAssertEqual(round(fpc.backdropView.alpha), 0.3)
+        XCTAssertEqual(fpc.backdropView.alpha, 0.3, accuracy: acc)
 
         // Test a size class change of FloatingPanelController.view
 
         fpc.move(to: .full, animated: false)
-        XCTAssertEqual(round(fpc.backdropView.alpha), 0.3)
+        XCTAssertEqual(fpc.backdropView.alpha, 0.3, accuracy: acc)
         fpc.willTransition(to: UITraitCollection(horizontalSizeClass: .regular), with: MockTransitionCoordinator())
         XCTAssertEqual(fpc.backdropView.alpha, 0.0) // Must update the alpha by BackdropTestLayout2 in TestDelegate.
 
@@ -264,7 +262,7 @@ class CoreTests: XCTestCase {
         fpc.move(to: .full, animated: false)
         delegate.layout = BackdropTestLayout()
         fpc.invalidateLayout()
-        XCTAssertEqual(round(fpc.backdropView.alpha), 0.3)
+        XCTAssertEqual(fpc.backdropView.alpha, 0.3, accuracy: acc)
 
         delegate.layout = BackdropTestLayout2()
         fpc.viewWillTransition(to: CGSize.zero, with: MockTransitionCoordinator())
