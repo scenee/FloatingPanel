@@ -13,7 +13,7 @@ The new interface displays the related contents and utilities in parallel as a u
 
   s.platform            = :ios, "13.0"
   s.source              = { :git => "https://github.com/scenee/FloatingPanel.git", :tag => s.version.to_s }
-  s.source_files        = "Sources/*.swift"
+  s.source_files        = "Sources/**/*.swift"
   s.swift_version       = '5.0'
 
   s.framework           = "UIKit"
