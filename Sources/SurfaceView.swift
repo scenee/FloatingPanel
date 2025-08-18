@@ -45,6 +45,14 @@ public class SurfaceAppearance: NSObject {
         }
     }()
 
+    @available(iOS 26.0, *)
+    public var cornerConfiguration: UICornerConfiguration? {
+        get { _cornerConfiguration as? UICornerConfiguration }
+        set { _cornerConfiguration = newValue }
+    }
+
+    private var _cornerConfiguration: Any?
+
     /// The radius to use when drawing the top rounded corners.
     ///
     /// `self.contentView` is masked with the top rounded corners automatically on iOS 11 and later.
@@ -376,6 +384,11 @@ public class SurfaceView: UIView {
     }
 
     private func updateCornerRadius() {
+        if #available(iOS 26.0, *), let cornerConfiguration = appearance.cornerConfiguration {
+            containerView.cornerConfiguration = cornerConfiguration
+            containerView.layer.masksToBounds = true
+            return
+        }
         containerView.layer.cornerRadius = appearance.cornerRadius
         guard containerView.layer.cornerRadius != 0.0 else {
             containerView.layer.masksToBounds = false
