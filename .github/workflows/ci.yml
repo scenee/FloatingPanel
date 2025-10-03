@@ -24,12 +24,6 @@ jobs:
           - swift: "5.10"
             xcode: "15.4"
             runs-on: macos-14
-          - swift: "5.9"
-            xcode: "15.2"
-            runs-on: macos-13
-          - swift: "5.8"
-            xcode: "14.3.1"
-            runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
       - name: Building in Swift ${{ matrix.swift }}
@@ -53,11 +47,6 @@ jobs:
             sim: "iPhone 15 Pro"
             parallel: NO  # Stop random test job failures
             runs-on: macos-14
-          - os: "16.4"
-            xcode: "14.3.1"
-            sim: "iPhone 14 Pro"
-            parallel: NO  # Stop random test job failures
-            runs-on: macos-13
     steps:
     - uses: actions/checkout@v4
     - name: Testing in iOS ${{ matrix.os }}
@@ -72,7 +61,7 @@ jobs:
   example:
     runs-on: macos-15
     env:
-      DEVELOPER_DIR: /Applications/Xcode_16.3.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
     strategy:
       fail-fast: false
       matrix:
@@ -132,33 +121,10 @@ jobs:
           --sdk "$(xcrun --sdk ${{ matrix.platform }} --show-sdk-path)" \
           -Xswiftc "-target" -Xswiftc "${{ matrix.arch }}-apple-${{ matrix.sys }}"
 
-  swiftpm_old:
-    runs-on: ${{ matrix.runs-on }}
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          # 16.4
-          - target: "x86_64-apple-ios16.4-simulator"
-            xcode: "14.3.1"
-            runs-on: macos-13
-          - target: "arm64-apple-ios16.4-simulator"
-            xcode: "14.3.1"
-            runs-on: macos-13
-    steps:
-    - uses: actions/checkout@v4
-    - name: "Swift Package Manager build"
-      run: |
-        swift build \
-          -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk iphonesimulator --show-sdk-path`" \
-          -Xswiftc "-target" -Xswiftc "${{ matrix.target }}"
-
   cocoapods:
     runs-on: macos-15
     env:
-      DEVELOPER_DIR: /Applications/Xcode_16.3.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
     steps:
     - uses: actions/checkout@v4
     - name: "CocoaPods: pod lib lint"
