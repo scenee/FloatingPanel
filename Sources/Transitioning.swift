@@ -128,7 +128,10 @@ class ModalDismissTransition: NSObject, UIViewControllerAnimatedTransitioning {
     func interruptibleAnimator(using transitionContext: UIViewControllerContextTransitioning) -> UIViewImplicitlyAnimating {
         guard
             let fpc = transitionContext.viewController(forKey: .from) as? FloatingPanelController
-        else { fatalError() }
+        else {
+            transitionContext.completeTransition(true)
+            return UIViewPropertyAnimator(duration: 0, curve: .linear)
+        }
 
         if let animator = fpc.transitionAnimator {
             return animator
