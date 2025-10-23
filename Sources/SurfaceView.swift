@@ -45,7 +45,7 @@ public class SurfaceAppearance: NSObject {
         }
     }()
 
-    #if swift(>=6.2)
+    #if compiler(>=6.2)
     @available(iOS 26.0, *)
     public var cornerConfiguration: UICornerConfiguration? {
         get { _cornerConfiguration as? UICornerConfiguration }
@@ -386,7 +386,7 @@ public class SurfaceView: UIView {
     }
 
     private func updateCornerRadius() {
-        #if swift(>=6.2)
+        #if compiler(>=6.2)
         if #available(iOS 26.0, *), let cornerConfiguration = appearance.cornerConfiguration {
             containerView.cornerConfiguration = cornerConfiguration
             containerView.layer.masksToBounds = true
