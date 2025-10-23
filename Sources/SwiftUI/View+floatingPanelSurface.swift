@@ -1,12 +1,16 @@
 // Copyright 2021 the FloatingPanel authors. All rights reserved. MIT license.
 
 #if canImport(SwiftUI)
+#if compiler(>=6.0)
+public import SwiftUI
+#else
 import SwiftUI
+#endif
 
 @available(iOS 14, *)
 extension EnvironmentValues {
     struct SurfaceAppearanceKey: EnvironmentKey {
-        static var defaultValue = SurfaceAppearance()
+        static let defaultValue = SurfaceAppearance()
     }
 
     var surfaceAppearance: SurfaceAppearance {
@@ -15,7 +19,7 @@ extension EnvironmentValues {
     }
 
     struct GrabberHandlePaddingKey: EnvironmentKey {
-        static var defaultValue: CGFloat = 6.0
+        static let defaultValue: CGFloat = 6.0
     }
 
     var grabberHandlePadding: CGFloat {

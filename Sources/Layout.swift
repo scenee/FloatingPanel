@@ -25,9 +25,10 @@ import os.log
 /// A layout object that lays out a panel in bottom sheet style.
 @objcMembers
 open class FloatingPanelBottomLayout: NSObject, FloatingPanelLayout {
-    public override init() {
+    public nonisolated override init() {
         super.init()
     }
+
     open var initialState: FloatingPanelState {
         return .half
     }

@@ -147,14 +147,14 @@ import os.log
 open class FloatingPanelController: UIViewController {
     /// Constants indicating how safe area insets are added to the adjusted content inset.
     @objc
-    public enum ContentInsetAdjustmentBehavior: Int {
+    public enum ContentInsetAdjustmentBehavior: Int, Sendable {
         case always
         case never
     }
 
     /// A flag used to determine how the controller object lays out the content view when the surface position changes.
     @objc
-    public enum ContentMode: Int {
+    public enum ContentMode: Int, Sendable {
         /// The option to fix the content to keep the height of the top most position.
         case `static`
         /// The option to scale the content to fit the bounds of the root view by changing the surface position.

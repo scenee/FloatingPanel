@@ -84,7 +84,7 @@ class FloatingPanelTopPositionedLayout: FloatingPanelLayout {
     ]
 }
 
-class FloatingPanelProjectableBehavior: FloatingPanelBehavior {
+final class FloatingPanelProjectableBehavior: FloatingPanelBehavior {
     func shouldProjectMomentum(_ fpc: FloatingPanelController, to proposedState: FloatingPanelState) -> Bool {
         return true
     }

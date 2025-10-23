@@ -1,7 +1,11 @@
 // Copyright 2025 the FloatingPanel authors. All rights reserved. MIT license.
 
 #if canImport(SwiftUI)
+#if compiler(>=6.0)
+public import SwiftUI
+#else
 import SwiftUI
+#endif
 
 /// A protocol that defines the coordination between SwiftUI and UIKit for FloatingPanel integration.
 ///
@@ -24,6 +28,7 @@ import SwiftUI
 /// 3. Handle the setup of the floating panel with the provided hosting controllers
 /// 4. Optionally provide custom implementation for `onUpdate` method
 @available(iOS 14, *)
+@MainActor
 public protocol FloatingPanelCoordinator {
     /// The type of events this coordinator can dispatch to its host view.
     ///
@@ -89,6 +94,7 @@ extension FloatingPanelCoordinator {
 /// and an empty event enumeration. Use this coordinator for basic floating panel integration
 /// when you don't need custom event handling or special configuration.
 @available(iOS 14, *)
+@MainActor
 public final class FloatingPanelDefaultCoordinator: FloatingPanelCoordinator {
     public enum Event {}
 
