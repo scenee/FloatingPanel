@@ -52,7 +52,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
     private(set) var statePublisher: CurrentValueSubject<FloatingPanelState, Never> = .init(.hidden)
 
-    let panGestureRecognizer: FloatingPanelPanGestureRecognizer
+    var panGestureRecognizer: FloatingPanelPanGestureRecognizer
     let panGestureDelegateRouter: FloatingPanelPanGestureRecognizer.DelegateRouter
     var isRemovalInteractionEnabled: Bool = false
 
@@ -1261,7 +1261,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 }
 
 /// A gesture recognizer that looks for panning (dragging) gestures in a panel.
-public final class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
+public class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
     /// The gesture starting location in the surface view which it is attached to.
     fileprivate var initialLocation: CGPoint = .zero
     private weak var floatingPanel: Core!  //  Core has this gesture recognizer as non-optional
