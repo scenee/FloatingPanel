@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="RoN-h0-uBD">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="RoN-h0-uBD">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -15,7 +15,6 @@
             <objects>
                 <navigationController storyboardIdentifier="RootNavigationController" id="RoN-h0-uBD" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="hNW-5m-Omi">
-                        <rect key="frame" x="0.0" y="48" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -87,7 +86,7 @@
             <objects>
                 <viewController storyboardIdentifier="SettingsViewController" id="C1X-9Z-TyQ" customClass="SettingsViewController" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="af9-Zr-Ppc">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="197.5"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="n93-ZL-fmC">
@@ -270,7 +269,7 @@
             <objects>
                 <viewController storyboardIdentifier="IntrinsicViewController" title="Intrinsic View Controller" id="aK0-kv-mTu" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="eLM-xc-d9e">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" text="Change this text" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ge4-RW-Gmz">
@@ -299,7 +298,7 @@
             <objects>
                 <viewController storyboardIdentifier="ImageViewController" id="VWY-cF-RoY" customClass="ImageViewController" customModule="Samples" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dAf-gD-ghB">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Gs4-S6-Goh">
@@ -383,7 +382,7 @@
             <objects>
                 <viewController storyboardIdentifier="ModalViewController" id="bYI-y3-Rzb" customClass="ModalViewController" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qwo-GK-p1U">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="768"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vut-mK-Y4t" customClass="SafeAreaView" customModule="Samples" customModuleProvider="target">
@@ -465,7 +464,7 @@
             <objects>
                 <viewController storyboardIdentifier="NestedScrollViewController" id="LAe-jm-k6f" customClass="NestedScrollViewController" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="414-Wy-0t1">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sBe-tN-uMi">
@@ -587,7 +586,7 @@
             <objects>
                 <viewController storyboardIdentifier="DetailViewController" id="YC8-ae-15L" customClass="DetailViewController" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="g7l-kO-y7q">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8yw-OC-Ubk">
@@ -713,7 +712,7 @@
             <objects>
                 <viewController storyboardIdentifier="ConsoleViewController" id="tvD-nO-QUb" customClass="DebugTextViewController" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="9YG-0j-Zzg">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rN1-HL-YHv">
@@ -806,7 +805,7 @@ Section 1.10.33 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC
             <objects>
                 <viewController storyboardIdentifier="TableViewControllerForAdaptiveLayout" id="5nC-6E-bXf" customClass="TableViewControllerForAdaptiveLayout" customModule="Samples" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="jXL-Ss-NCJ">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="778"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="W7W-ET-Wco" customClass="IntrinsicTableView" customModule="Samples" customModuleProvider="target">
@@ -847,11 +846,6 @@ Section 1.10.33 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC
             <point key="canvasLocation" x="4005" y="734"/>
         </scene>
     </scenes>
-    <designables>
-        <designable name="noi-1a-5bZ">
-            <size key="intrinsicContentSize" width="30" height="30"/>
-        </designable>
-    </designables>
     <inferredMetricsTieBreakers>
         <segue reference="r1P-2i-NDe"/>
     </inferredMetricsTieBreakers>
