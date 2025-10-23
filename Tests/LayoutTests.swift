@@ -3,6 +3,7 @@
 import XCTest
 @testable import FloatingPanel
 
+@MainActor
 class LayoutTests: XCTestCase {
     var fpc: FloatingPanelController!
     override func setUp() {
@@ -662,6 +663,8 @@ class LayoutTests: XCTestCase {
 }
 
 private typealias LayoutSegmentTestParameter = (UInt, pos: CGFloat, forwardY: Bool, lower: FloatingPanelState?, upper: FloatingPanelState?)
+
+@MainActor
 private func assertLayoutSegment(_ floatingPanel: Core, with params: [LayoutSegmentTestParameter]) {
     params.forEach { (line, pos, forwardY, lowr, upper) in
         let segment = floatingPanel.layoutAdapter.segment(at: pos, forward: forwardY)

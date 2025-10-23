@@ -18,6 +18,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - swift: "6"
+            xcode: "26.0.1"
+            runs-on: macos-15
           - swift: "5"
             xcode: "16.4"
             runs-on: macos-15

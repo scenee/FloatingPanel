@@ -4,6 +4,7 @@ import OSLog
 import XCTest
 @testable import FloatingPanel
 
+@MainActor
 class ControllerTests: XCTestCase {
     override func setUp() {}
     override func tearDown() {}

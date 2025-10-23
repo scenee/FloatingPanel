@@ -6,7 +6,7 @@ import os.log
 /// An object for customizing the appearance of a surface view
 @objc(FloatingPanelSurfaceAppearance)
 @objcMembers
-public class SurfaceAppearance: NSObject {
+public class SurfaceAppearance: NSObject, @unchecked Sendable {
 
     /// An object that represents information to render a shadow
     @objc(FloatingPanelSurfaceAppearanceShadow)

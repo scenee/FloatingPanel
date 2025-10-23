@@ -29,6 +29,7 @@ import SwiftUI
 ///     }
 /// ```
 @available(iOS 14, *)
+@MainActor
 public struct FloatingPanelProxy {
     /// The associated floating panel controller.
     ///

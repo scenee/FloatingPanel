@@ -36,6 +36,7 @@ extension CGPoint {
 
 // MARK: - UIKit
 
+@MainActor
 protocol LayoutGuideProvider {
     var topAnchor: NSLayoutYAxisAnchor { get }
     var leftAnchor: NSLayoutXAxisAnchor { get }
@@ -93,7 +94,7 @@ extension UIView {
 }
 
 #if FP_LOG
-extension UIGestureRecognizer.State: CustomDebugStringConvertible {
+extension UIGestureRecognizer.State: @retroactive CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
         case .began: return "began"

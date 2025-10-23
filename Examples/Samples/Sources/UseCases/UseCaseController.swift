@@ -3,6 +3,7 @@
 import UIKit
 import FloatingPanel
 
+@MainActor
 final class UseCaseController: NSObject {
     unowned let mainVC: MainViewController
     private(set) var useCase: UseCase
@@ -332,8 +333,8 @@ extension UseCaseController {
                         effectView.alpha
                     }
                 }
-                override init() {
-                    super.init()
+                override init(frame: CGRect = .zero) {
+                    super.init(frame: frame)
 
                     let effect = UIBlurEffect(style: .prominent)
                     let effectView = UIVisualEffectView(effect: effect)
@@ -489,8 +490,9 @@ private extension FloatingPanelController {
             track(scrollView: consoleVC.textView)
 
         case let contentVC as DebugTableViewController:
-            let ob = contentVC.tableView.observe(\.isEditing) { [weak self] (tableView, _) in
-                self?.panGestureRecognizer.isEnabled = !tableView.isEditing
+            nonisolated(unsafe) let panGestureRecognizer = panGestureRecognizer
+            let ob = contentVC.tableView.observe(\.isEditing) { (tableView, _) in
+                panGestureRecognizer.isEnabled = !tableView.isEditing
             }
             contentVC.kvoObservers.append(ob)
             track(scrollView: contentVC.tableView)

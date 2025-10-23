@@ -115,7 +115,7 @@ class FloatingPanelStocksLayout: FloatingPanelLayout {
 
 // MARK: - FloatingPanelBehavior
 
-class FloatingPanelStocksBehavior: FloatingPanelBehavior {
+final class FloatingPanelStocksBehavior: FloatingPanelBehavior {
     let springDecelerationRate: CGFloat = UIScrollView.DecelerationRate.fast.rawValue
     let springResponseTime: CGFloat = 0.25
 }

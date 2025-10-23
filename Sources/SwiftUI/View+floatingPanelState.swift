@@ -1,12 +1,16 @@
 // Copyright 2025 the FloatingPanel authors. All rights reserved. MIT license.
 
 #if canImport(SwiftUI)
+#if compiler(>=6.0)
+public import SwiftUI
+#else
 import SwiftUI
+#endif
 
 @available(iOS 14, *)
 extension EnvironmentValues {
     struct StateKey: EnvironmentKey {
-        static var defaultValue: Binding<FloatingPanelState?> = .constant(nil)
+        static let defaultValue: Binding<FloatingPanelState?> = .constant(nil)
     }
 
     var state: Binding<FloatingPanelState?> {
