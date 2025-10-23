@@ -958,13 +958,29 @@ class CoreTests: XCTestCase {
     }
 
     func test_initial_scroll_offset_reset() {
+        class MockPanGestureRecognizer: FloatingPanelPanGestureRecognizer {
+            var _view: UIView?
+            override var view: UIView? {
+                set { _view = newValue }
+                get { _view }
+            }
+            var _state: UIGestureRecognizer.State = .possible
+            override var state: UIGestureRecognizer.State {
+                set { _state = newValue }
+                get { _state }
+            }
+        }
         let fpc = FloatingPanelController()
+        let mockGesture = MockPanGestureRecognizer()
+        mockGesture.view = fpc.floatingPanel.surfaceView
+        fpc.floatingPanel.panGestureRecognizer = mockGesture
         let scrollView = UIScrollView()
         fpc.layout = FloatingPanelBottomLayout()
         fpc.track(scrollView: scrollView)
         fpc.showForTest()
 
         fpc.move(to: .full, animated: false)
+
 
         fpc.panGestureRecognizer.state = .began
         fpc.floatingPanel.handle(panGesture: fpc.panGestureRecognizer)
@@ -977,6 +993,8 @@ class CoreTests: XCTestCase {
         let expect = CGPoint(x: 0, y: 100)
 
         scrollView.setContentOffset(expect, animated: false)
+
+        XCTAssertEqual(expect, scrollView.contentOffset)
 
         fpc.move(to: .half, animated: true)
 
