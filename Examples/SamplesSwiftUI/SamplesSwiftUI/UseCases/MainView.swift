@@ -6,26 +6,28 @@ import UIKit
 import os.log
 
 struct MainView: View {
+    enum CardContent: String, CaseIterable, Identifiable {
+        case list
+        case detail
+
+        var id: String { rawValue }
+    }
     @State private var panelLayout: FloatingPanelLayout? = MyFloatingPanelLayout()
     @State private var panelState: FloatingPanelState?
+    @State private var selectedContent: CardContent = .list
 
     var body: some View {
         ZStack {
             Color.orange
                 .ignoresSafeArea()
-                .floatingPanel(
-                    coordinator: MyPanelCoordinator.self
-                ) { proxy in
-                    ContentView(proxy: proxy)
-                }
-                .floatingPanelSurfaceAppearance(.transparent())
-                .floatingPanelLayout(panelLayout)
-                .floatingPanelState($panelState)
-                .onChange(of: panelState) { newValue in
-                    Logger().debug("Panel state changed: \(newValue ?? .hidden)")
-                }
-
             VStack(spacing: 32) {
+                Picker("type", selection: $selectedContent) {
+                    ForEach(CardContent.allCases) {
+                        type in
+                        Text(type.rawValue).tag(type)
+                    }
+                }
+                .pickerStyle(.segmented)
                 Button("Move to full") {
                     withAnimation(.interactiveSpring) {
                         panelState = .full
@@ -46,7 +48,28 @@ struct MainView: View {
                         Text("Switch to My layout")
                     }
                 }
+                Spacer()
             }
+        }
+        .floatingPanel(
+            coordinator: MyPanelCoordinator.self
+        ) { proxy in
+            switch selectedContent {
+            case .list:
+                ContentView(proxy: proxy)
+            case .detail:
+                VStack {
+                    Text("off")
+                        .padding(.top, 32)
+                    Spacer()
+                }
+            }
+        }
+        .floatingPanelSurfaceAppearance(.transparent())
+        .floatingPanelLayout(panelLayout)
+        .floatingPanelState($panelState)
+        .onChange(of: panelState) { newValue in
+            Logger().debug("Panel state changed: \(newValue ?? .hidden)")
         }
     }
 }
@@ -104,3 +127,4 @@ class MyFloatingPanelLayout: FloatingPanelLayout {
 #Preview("MainView") {
     MainView()
 }
+
