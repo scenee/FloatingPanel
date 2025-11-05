@@ -1,6 +1,8 @@
 // Copyright 2018-Present Shin Yamamoto. All rights reserved. MIT license.
 
+#if canImport(Combine)
 import Combine
+#endif
 import UIKit
 import os.log
 
@@ -50,7 +52,13 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             }
         }
     }
-    private(set) var statePublisher: CurrentValueSubject<FloatingPanelState, Never> = .init(.hidden)
+
+    @available(iOS 13.0, *)
+    private(set) var statePublisher: CurrentValueSubject<FloatingPanelState, Never>? {
+        get { _statePublisher as? CurrentValueSubject<FloatingPanelState, Never> }
+        set { _statePublisher = newValue }
+    }
+    private var _statePublisher: Any?
 
     var panGestureRecognizer: FloatingPanelPanGestureRecognizer
     let panGestureDelegateRouter: FloatingPanelPanGestureRecognizer.DelegateRouter
@@ -99,6 +107,10 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         panGestureDelegateRouter = FloatingPanelPanGestureRecognizer.DelegateRouter(panGestureRecognizer: panGestureRecognizer)
 
         super.init()
+
+        if #available(iOS 13.0, *) {
+            statePublisher = .init(.hidden)
+        }
 
         panGestureRecognizer.set(floatingPanel: self)
         surfaceView.addGestureRecognizer(panGestureRecognizer)
@@ -262,7 +274,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         layoutAdapter.activateLayout(for: target, forceLayout: true)
         backdropView.alpha = getBackdropAlpha(for: target)
         adjustScrollContentInsetIfNeeded()
-        statePublisher.send(target)
+        if #available(iOS 13.0, *) {
+            statePublisher?.send(target)
+        }
     }
 
     private func getBackdropAlpha(for target: FloatingPanelState) -> CGFloat {
