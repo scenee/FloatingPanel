@@ -1,5 +1,26 @@
 # ChangeLog
 
+## [3.1.0](https://github.com/scenee/FloatingPanel/releases/tag/3.1.0)
+
+### Added
+
+- Added support for configuring `UICornerConfiguration` when running on iOS 26 so surfaces can adopt the latest corner styles (#664).
+- Expanded Core test coverage with new cases for scroll offset resets and `statePublisher` delivery to guard against regressions.
+
+### Changed
+
+- **Restored compatibility with iOS 12** by lowering the deployment target across the project, Swift Package manifest, and CocoaPods spec, and by making Combine usage conditional (#674).
+
+## [3.0.1](https://github.com/scenee/FloatingPanel/releases/tag/3.0.1)
+
+### Changed
+
+- Refined the DocC documentation landing page for the new SwiftUI APIs.
+
+### Fixed
+
+- Corrected the CocoaPods spec so the SwiftUI sources are packaged properly.
+
 ## [3.0.0](https://github.com/scenee/FloatingPanel/releases/tag/3.0.0)
 
 ### Breaking Changes
@@ -135,3 +156,4 @@
 - Fixed invalid scroll offsets after moving between states
 - Calls `floatingPanelWillRemove` delegate method when a panel is removed from a
   window
+
