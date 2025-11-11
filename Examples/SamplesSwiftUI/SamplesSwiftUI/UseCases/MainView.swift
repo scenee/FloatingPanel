@@ -3,6 +3,7 @@
 import FloatingPanel
 import SwiftUI
 import UIKit
+import os.log
 
 struct MainView: View {
     @State private var panelLayout: FloatingPanelLayout? = MyFloatingPanelLayout()
@@ -20,6 +21,9 @@ struct MainView: View {
                 .floatingPanelSurfaceAppearance(.transparent())
                 .floatingPanelLayout(panelLayout)
                 .floatingPanelState($panelState)
+                .onChange(of: panelState) { newValue in
+                    Logger().debug("Panel state changed: \(newValue ?? .hidden)")
+                }
 
             VStack(spacing: 32) {
                 Button("Move to full") {

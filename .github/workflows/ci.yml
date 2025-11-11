@@ -37,7 +37,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: "26.0"
+          - os: "26.0.1"
             xcode: "26.0.1"
             sim: "iPhone 16 Pro"
             parallel: NO  # Stop random test job failures

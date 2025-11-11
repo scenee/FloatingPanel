@@ -1,6 +1,9 @@
 // Copyright 2018 the FloatingPanel authors. All rights reserved. MIT license.
 
 import XCTest
+#if canImport(Combine)
+import Combine
+#endif
 @testable import FloatingPanel
 
 class CoreTests: XCTestCase {
@@ -1021,6 +1024,45 @@ class CoreTests: XCTestCase {
         XCTAssertEqual(fpc.state, .full)
         XCTAssertEqual(fpc.surfaceLocation(for: .full).y, fpc.surfaceLocation.y)
         XCTAssertEqual(delegate.willAttract, false)
+    }
+
+    @available(iOS 13.0, *)
+    func test_statePublisher() throws {
+        let fpc = FloatingPanelController()
+        fpc.showForTest()
+
+        XCTAssertEqual(fpc.state, .half)
+
+        // Verify statePublisher is available on iOS 13+
+        XCTAssertNotNil(fpc.floatingPanel.statePublisher)
+
+        var receivedStates: [FloatingPanelState] = []
+        var cancellables = Set<AnyCancellable>()
+
+        // Subscribe to statePublisher
+        fpc.floatingPanel.statePublisher?
+            .sink { state in
+                receivedStates.append(state)
+            }
+            .store(in: &cancellables)
+
+        // The initial state should be emitted first
+        XCTAssertEqual(receivedStates, [.half])
+
+        // Move to .full
+        fpc.move(to: .full, animated: false)
+        XCTAssertEqual(fpc.state, .full)
+        XCTAssertEqual(receivedStates, [.half, .full])
+
+        // Move to .tip
+        fpc.move(to: .tip, animated: false)
+        XCTAssertEqual(fpc.state, .tip)
+        XCTAssertEqual(receivedStates, [.half, .full, .tip])
+
+        // Move back to .half
+        fpc.move(to: .half, animated: false)
+        XCTAssertEqual(fpc.state, .half)
+        XCTAssertEqual(receivedStates, [.half, .full, .tip, .half])
     }
 }
 

@@ -235,7 +235,7 @@ extension FloatingPanelCoordinatorProxy {
 
     /// Start observing ``FloatingPanelController/state`` through the `Core` object.
     func observeStateChanges() {
-        controller.floatingPanel.statePublisher
+        controller.floatingPanel.statePublisher?
             .sink { [weak self] state in
                 guard let self = self else { return }
                 // Needs to update the state binding value on the next run loop cycle to avoid this error.
