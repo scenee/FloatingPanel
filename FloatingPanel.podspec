@@ -11,7 +11,7 @@ The new interface displays the related contents and utilities in parallel as a u
   s.author              = "Shin Yamamoto"
   s.social_media_url    = "https://x.com/scenee"
 
-  s.platform            = :ios, "13.0"
+  s.platform            = :ios, "12.0"
   s.source              = { :git => "https://github.com/scenee/FloatingPanel.git", :tag => s.version.to_s }
   s.source_files        = "Sources/**/*.swift"
   s.swift_version       = '5.0'
@@ -20,3 +20,4 @@ The new interface displays the related contents and utilities in parallel as a u
 
   s.license             = { :type => "MIT", :file => "LICENSE" }
 end
+
