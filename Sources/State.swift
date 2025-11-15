@@ -4,7 +4,7 @@ import Foundation
 
 /// An object that represents the display state of a panel in a screen.
 @objc
-open class FloatingPanelState: NSObject, NSCopying, RawRepresentable {
+public final class FloatingPanelState: NSObject, NSCopying, RawRepresentable, Sendable {
     public typealias RawValue = String
 
     required public init?(rawValue: RawValue) {

@@ -62,11 +62,11 @@ struct FloatingPanelView<MainView: View, ContentView: View>: UIViewControllerRep
 
     /// The layout object that defines the position and size of the floating panel.
     @Environment(\.layout)
-    private var layout: FloatingPanelLayout
+    private var layout: any FloatingPanelLayout
 
     /// The behavior object that defines the interaction dynamics of the floating panel.
     @Environment(\.behavior)
-    private var behavior: FloatingPanelBehavior
+    private var behavior: any FloatingPanelBehavior
 
     /// The behavior for determining the adjusted content insets in the panel.
     @Environment(\.contentInsetAdjustmentBehavior)
@@ -154,14 +154,23 @@ extension FloatingPanelView {
 /// with a lifecycle that spans across FloatingPanelView as a FloatingPanelCoordinator. This object was created to
 /// control `FloatingPanelView/state` binding property.
 @available(iOS 14, *)
+@MainActor
 class FloatingPanelCoordinatorProxy {
     private let origin: any FloatingPanelCoordinator
     private var stateBinding: Binding<FloatingPanelState?>
 
-    private var subscriptions: Set<AnyCancellable> = Set()
-
     var proxy: FloatingPanelProxy { origin.proxy }
     var controller: FloatingPanelController { origin.controller }
+
+    class NonSendableBox {
+        var subscriptions: Set<AnyCancellable> = Set()
+        deinit {
+            for subscription in subscriptions {
+                subscription.cancel()
+            }
+        }
+    }
+    private var box = NonSendableBox()
 
     init(
         coordinator: any FloatingPanelCoordinator,
@@ -169,12 +178,6 @@ class FloatingPanelCoordinatorProxy {
     ) {
         self.origin = coordinator
         self.stateBinding = state
-    }
-
-    deinit {
-        for subscription in subscriptions {
-            subscription.cancel()
-        }
     }
 
     func setupFloatingPanel<Main: View, Content: View>(
@@ -199,6 +202,7 @@ extension FloatingPanelCoordinatorProxy {
     // MARK: - Layout and behavior updates
 
     /// Update layout and behavior objects for the specified floating panel.
+    @MainActor
     func update(
         layout: (any FloatingPanelLayout)?,
         behavior: (any FloatingPanelBehavior)?
@@ -228,12 +232,14 @@ extension FloatingPanelCoordinatorProxy {
     // MARK: - State updates
 
     // Update the state of FloatingPanelController
+    @MainActor
     func update(state: FloatingPanelState?) {
         guard let state = state else { return }
         controller.move(to: state, animated: false)
     }
 
     /// Start observing ``FloatingPanelController/state`` through the `Core` object.
+    @MainActor
     func observeStateChanges() {
         controller.floatingPanel.statePublisher?
             .sink { [weak self] state in
@@ -243,7 +249,7 @@ extension FloatingPanelCoordinatorProxy {
                 Task { @MainActor in
                     self.stateBinding.wrappedValue = state
                 }
-            }.store(in: &subscriptions)
+            }.store(in: &box.subscriptions)
     }
 }
 
@@ -252,6 +258,7 @@ extension FloatingPanelCoordinatorProxy {
     // MARK: - Environment updates
 
     /// Applies animatable environment value changes.
+    @MainActor
     func apply(animatableChanges: @escaping () -> Void, transaction: Transaction) {
         /// Returns the default animator object for compatibility with iOS 17 and earlier.
         func animateUsingDefaultAnimator(changes: @escaping () -> Void) {

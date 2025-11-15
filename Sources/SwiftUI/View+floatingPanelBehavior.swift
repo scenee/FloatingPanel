@@ -1,15 +1,19 @@
 // Copyright 2025 the FloatingPanel authors. All rights reserved. MIT license.
 
 #if canImport(SwiftUI)
+#if compiler(>=6.0)
+public import SwiftUI
+#else
 import SwiftUI
+#endif
 
 @available(iOS 14, *)
 extension EnvironmentValues {
     struct BehaviorKey: EnvironmentKey {
-        static var defaultValue: FloatingPanelBehavior = FloatingPanelDefaultBehavior()
+        static let defaultValue: any FloatingPanelBehavior = FloatingPanelDefaultBehavior()
     }
 
-    var behavior: FloatingPanelBehavior {
+    var behavior: any FloatingPanelBehavior {
         get { self[BehaviorKey.self] }
         set { self[BehaviorKey.self] = newValue }
     }
@@ -54,7 +58,7 @@ extension View {
     /// - Parameter behavior: An object conforming to the `FloatingPanelBehavior` protocol
     ///   that controls the panel's interactive dynamics, or `nil` to use the default behavior.
     public func floatingPanelBehavior(
-        _ behavior: FloatingPanelBehavior?
+        _ behavior: (any FloatingPanelBehavior)?
     ) -> some View {
         environment(\.behavior, behavior ?? FloatingPanelDefaultBehavior())
     }

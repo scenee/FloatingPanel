@@ -6,7 +6,6 @@ import Combine
 import UIKit
 import os.log
 
-///
 /// The presentation model of FloatingPanel
 ///
 class Core: NSObject, UIGestureRecognizerDelegate {
@@ -89,7 +88,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
 
     // MARK: - Interface
 
-    init(_ vc: FloatingPanelController, layout: FloatingPanelLayout, behavior: FloatingPanelBehavior) {
+    init(_ vc: FloatingPanelController, layout: any FloatingPanelLayout, behavior: any FloatingPanelBehavior) {
         ownerVC = vc
 
         surfaceView = SurfaceView()
@@ -128,8 +127,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     deinit {
-        // Release `NumericSpringAnimator.displayLink` from the run loop.
-        self.moveAnimator?.stopAnimation(false)
+        moveAnimator?.stopAnimation(false)
     }
 
     func move(
@@ -1283,7 +1281,7 @@ public class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
         self.floatingPanel = floatingPanel
     }
 
-    init() {
+    override init(target: Any? = nil, action: Selector? = nil) {
         super.init(target: nil, action: nil)
         name = "FloatingPanelPanGestureRecognizer"
     }
@@ -1300,7 +1298,7 @@ public class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
     ///
     /// - Note: The delegate is used by FloatingPanel itself. If you set your own delegate object, an
     /// exception is raised. If you want to handle the methods of UIGestureRecognizerDelegate, you can use `delegateProxy`.
-    public override weak var delegate: UIGestureRecognizerDelegate? {
+    public override weak var delegate: (any UIGestureRecognizerDelegate)? {
         get {
             return super.delegate
         }
@@ -1321,17 +1319,21 @@ public class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
     /// The default object implementing a set methods of the delegate of the gesture recognizer.
     ///
     /// Use this property with ``delegateProxy`` when you need to use the default gesture behaviors in a proxy implementation.
-    public var delegateOrigin: UIGestureRecognizerDelegate {
-        return floatingPanel
+    nonisolated // Enable to be called in DelegateRouter.responds(to:) and DelegateRouter.forwardingTarget(for :) in Xcode 16 Beta 6
+    public var delegateOrigin: any UIGestureRecognizerDelegate {
+        MainActor.assumeIsolated { floatingPanel }
     }
 
     /// A proxy object to intercept the default behavior of the gesture recognizer.
     ///
     /// `UIGestureRecognizerDelegate` methods implementing by this object are called instead of the default delegate,
     ///  ``delegateOrigin``.
-    public weak var delegateProxy: UIGestureRecognizerDelegate? {
+    nonisolated(unsafe)  // Enable to be called in DelegateRouter.responds(to:) and DelegateRouter.forwardingTarget(for :) in Xcode 16 Beta 6
+    public weak var delegateProxy: (any UIGestureRecognizerDelegate)? {
         didSet {
-            self.delegate = floatingPanel?.panGestureDelegateRouter // Update the cached IMP
+            MainActor.assumeIsolated {
+                self.delegate = floatingPanel?.panGestureDelegateRouter // Update the cached IMP
+            }
         }
     }
 
@@ -1362,7 +1364,7 @@ public class FloatingPanelPanGestureRecognizer: UIPanGestureRecognizer {
 
 // MARK: - Animator
 
-private class NumericSpringAnimator: NSObject {
+private final class NumericSpringAnimator: NSObject,  @unchecked Sendable  {
     struct Data {
         let value: CGFloat
         let velocity: CGFloat

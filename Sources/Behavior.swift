@@ -4,7 +4,7 @@ import UIKit
 
 /// An interface for generating behavior information to fine-tune the behavior of a panel.
 @objc
-public protocol FloatingPanelBehavior {
+public protocol FloatingPanelBehavior: Sendable {
     /// A floating-point value that determines the rate of oscillation magnitude reduction after the user lifts their finger.
     ///
     /// The oscillation magnitude to attract a panel to an anchor can be adjusted this value between 0.979 and 1.0
@@ -58,7 +58,7 @@ public protocol FloatingPanelBehavior {
 /// The default behavior object for a panel
 ///
 /// This behavior object is fine-tuned to behave as a search panel(card) in Apple Maps on iPhone portrait orientation.
-open class FloatingPanelDefaultBehavior: FloatingPanelBehavior {
+open class FloatingPanelDefaultBehavior: FloatingPanelBehavior, @unchecked Sendable {
     public init() {}
 
     open var springDecelerationRate: CGFloat {
@@ -86,9 +86,9 @@ open class FloatingPanelDefaultBehavior: FloatingPanelBehavior {
 
 class BehaviorAdapter {
     unowned let vc: FloatingPanelController
-    fileprivate var behavior: FloatingPanelBehavior
+    fileprivate var behavior: any FloatingPanelBehavior
 
-    init(vc: FloatingPanelController, behavior: FloatingPanelBehavior) {
+    init(vc: FloatingPanelController, behavior: any FloatingPanelBehavior) {
         self.vc = vc
         self.behavior = behavior
     }
@@ -123,7 +123,7 @@ class BehaviorAdapter {
 }
 
 extension FloatingPanelController {
-    var _behavior: FloatingPanelBehavior {
+    var _behavior: any FloatingPanelBehavior {
         get { floatingPanel.behaviorAdapter.behavior }
         set { floatingPanel.behaviorAdapter.behavior = newValue}
     }

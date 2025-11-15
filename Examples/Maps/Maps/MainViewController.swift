@@ -310,7 +310,7 @@ class SearchPanelPadLayout: FloatingPanelLayout {
     }
 }
 
-class SearchPaneliPadBehavior: FloatingPanelBehavior {
+final class SearchPaneliPadBehavior: FloatingPanelBehavior {
     var springDecelerationRate: CGFloat {
         return UIScrollView.DecelerationRate.fast.rawValue - 0.003
     }

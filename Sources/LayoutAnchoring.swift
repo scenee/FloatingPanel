@@ -3,6 +3,7 @@
 import UIKit
 
 /// An interface for implementing custom layout anchor objects.
+@MainActor
 @objc public protocol FloatingPanelLayoutAnchoring {
     var referenceGuide: FloatingPanelLayoutReferenceGuide { get }
     func layoutConstraints(_ fpc: FloatingPanelController, for position: FloatingPanelPosition) -> [NSLayoutConstraint]
@@ -65,7 +66,7 @@ public extension FloatingPanelLayoutAnchor {
         }
     }
 
-    private func layoutConstraints(_ layoutGuide: LayoutGuideProvider, for edgeAnchor: NSLayoutYAxisAnchor) -> [NSLayoutConstraint] {
+    private func layoutConstraints(_ layoutGuide: any LayoutGuideProvider, for edgeAnchor: NSLayoutYAxisAnchor) -> [NSLayoutConstraint] {
         switch referenceEdge {
         case .top:
             if isAbsolute {
@@ -84,7 +85,7 @@ public extension FloatingPanelLayoutAnchor {
         }
     }
 
-    private func layoutConstraints(_ layoutGuide: LayoutGuideProvider, for edgeAnchor: NSLayoutXAxisAnchor) -> [NSLayoutConstraint] {
+    private func layoutConstraints(_ layoutGuide: any LayoutGuideProvider, for edgeAnchor: NSLayoutXAxisAnchor) -> [NSLayoutConstraint] {
         switch referenceEdge {
         case .left:
             if isAbsolute {

@@ -12,8 +12,8 @@ public class GrabberView: UIView {
         super.init(coder: aDecoder)
     }
 
-    init() {
-        super.init(frame: .zero)
+    override init(frame: CGRect = .zero) {
+        super.init(frame: frame)
         backgroundColor = barColor
     }
 

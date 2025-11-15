@@ -1,15 +1,19 @@
 // Copyright 2025 the FloatingPanel authors. All rights reserved. MIT license.
 
 #if canImport(SwiftUI)
+#if compiler(>=6.0)
+public import SwiftUI
+#else
 import SwiftUI
+#endif
 
 @available(iOS 14, *)
 extension EnvironmentValues {
-    struct LayoutKey: EnvironmentKey {
-        static var defaultValue: FloatingPanelLayout = FloatingPanelBottomLayout()
+    private struct LayoutKey: EnvironmentKey {
+        static var defaultValue: any FloatingPanelLayout { FloatingPanelBottomLayout() }
     }
 
-    var layout: FloatingPanelLayout {
+    var layout: any FloatingPanelLayout {
         get { self[LayoutKey.self] }
         set { self[LayoutKey.self] = newValue }
     }
@@ -63,7 +67,7 @@ extension View {
     /// - Parameter layout: An object conforming to the `FloatingPanelLayout` protocol
     ///   that defines the panel's position and dimensions, or `nil` to use the default layout.
     public func floatingPanelLayout(
-        _ layout: FloatingPanelLayout?
+        _ layout: (any FloatingPanelLayout)?
     ) -> some View {
         environment(\.layout, layout ?? FloatingPanelBottomLayout())
     }

@@ -1,12 +1,16 @@
 // Copyright 2021 the FloatingPanel authors. All rights reserved. MIT license.
 
 #if canImport(SwiftUI)
+#if compiler(>=6.0)
+public import SwiftUI
+#else
 import SwiftUI
+#endif
 
 @available(iOS 14, *)
 extension EnvironmentValues {
     struct ContentInsetAdjustmentBehaviorKey: EnvironmentKey {
-        static var defaultValue: FloatingPanelController.ContentInsetAdjustmentBehavior = .always
+        static let defaultValue: FloatingPanelController.ContentInsetAdjustmentBehavior = .always
     }
 
     var contentInsetAdjustmentBehavior: FloatingPanelController.ContentInsetAdjustmentBehavior {
@@ -15,7 +19,7 @@ extension EnvironmentValues {
     }
 
     struct ContentModeKey: EnvironmentKey {
-        static var defaultValue: FloatingPanelController.ContentMode = .static
+        static let defaultValue: FloatingPanelController.ContentMode = .static
     }
 
     var contentMode: FloatingPanelController.ContentMode {

@@ -6,6 +6,7 @@ import Combine
 #endif
 @testable import FloatingPanel
 
+@MainActor
 class CoreTests: XCTestCase {
     override func setUp() {}
     override func tearDown() {}

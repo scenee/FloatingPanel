@@ -12,10 +12,10 @@ open class BackdropView: UIView {
     /// To dismiss a panel by tap gestures on the backdrop, `dismissalTapGestureRecognizer.isEnabled` is set to true.
     @objc public var dismissalTapGestureRecognizer: UITapGestureRecognizer
 
-    public init() {
+    public override init(frame: CGRect = .zero) {
         dismissalTapGestureRecognizer = UITapGestureRecognizer()
         dismissalTapGestureRecognizer.isEnabled = false
-        super.init(frame: .zero)
+        super.init(frame: frame)
         addGestureRecognizer(dismissalTapGestureRecognizer)
     }
 
