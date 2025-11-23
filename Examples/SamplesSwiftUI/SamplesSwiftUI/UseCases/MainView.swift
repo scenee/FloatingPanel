@@ -58,10 +58,18 @@ struct MainView: View {
             case .list:
                 ContentView(proxy: proxy)
             case .detail:
-                VStack {
-                    Text("off")
-                        .padding(.top, 32)
+                HStack {
                     Spacer()
+                    VStack {
+                        Text("Detail content")
+                            .padding(.top, 32)
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                .padding()
+                .background {
+                    BackgroundView()
                 }
             }
         }
@@ -127,4 +135,3 @@ class MyFloatingPanelLayout: FloatingPanelLayout {
 #Preview("MainView") {
     MainView()
 }
-
