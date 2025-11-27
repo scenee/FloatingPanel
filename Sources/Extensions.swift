@@ -214,4 +214,73 @@ extension UIBezierPath {
                             cornerRadii: CGSize(width: cornerRadius,
                                                 height: cornerRadius))
     }
+
+    #if compiler(>=6.2)
+    @available(iOS 26.0, *)
+    static func path(roundedRect rect: CGRect, view: UIView) -> UIBezierPath {
+        // Apply inset to hide the gap between UIBezierPath's circular arcs
+        // and UICornerConfiguration's corner curves.
+        let rect = rect.insetBy(dx: 4, dy: 4)
+
+        // Query the effective corner radius from the view using the new iOS 26 API
+        // This properly handles UICornerConfiguration including .fixed, .dynamic, and .continuous
+        let topLeadingRadius = view.effectiveRadius(corner: .topLeft)
+        let topTrailingRadius = view.effectiveRadius(corner: .topRight)
+        let bottomLeadingRadius = view.effectiveRadius(corner: .bottomLeft)
+        let bottomTrailingRadius = view.effectiveRadius(corner: .bottomRight)
+
+        // Otherwise, create a path with individual corner radii
+        let path = UIBezierPath()
+        let minX = rect.minX
+        let minY = rect.minY
+        let maxX = rect.maxX
+        let maxY = rect.maxY
+
+        // Start from top left, after the corner
+        path.move(to: CGPoint(x: minX + topLeadingRadius, y: minY))
+
+        // Top edge and top-right corner
+        path.addLine(to: CGPoint(x: maxX - topTrailingRadius, y: minY))
+        if topTrailingRadius > 0 {
+            path.addArc(withCenter: CGPoint(x: maxX - topTrailingRadius, y: minY + topTrailingRadius),
+                       radius: topTrailingRadius,
+                       startAngle: -0.5 * .pi,
+                       endAngle: 0,
+                       clockwise: true)
+        }
+
+        // Right edge and bottom-right corner
+        path.addLine(to: CGPoint(x: maxX, y: maxY - bottomTrailingRadius))
+        if bottomTrailingRadius > 0 {
+            path.addArc(withCenter: CGPoint(x: maxX - bottomTrailingRadius, y: maxY - bottomTrailingRadius),
+                       radius: bottomTrailingRadius,
+                       startAngle: 0,
+                       endAngle: .pi * 0.5,
+                       clockwise: true)
+        }
+
+        // Bottom edge and bottom-left corner
+        path.addLine(to: CGPoint(x: minX + bottomLeadingRadius, y: maxY))
+        if bottomLeadingRadius > 0 {
+            path.addArc(withCenter: CGPoint(x: minX + bottomLeadingRadius, y: maxY - bottomLeadingRadius),
+                       radius: bottomLeadingRadius,
+                       startAngle: .pi * 0.5,
+                       endAngle: .pi,
+                       clockwise: true)
+        }
+
+        // Left edge and top-left corner
+        path.addLine(to: CGPoint(x: minX, y: minY + topLeadingRadius))
+        if topLeadingRadius > 0 {
+            path.addArc(withCenter: CGPoint(x: minX + topLeadingRadius, y: minY + topLeadingRadius),
+                       radius: topLeadingRadius,
+                       startAngle: .pi,
+                       endAngle: .pi * 1.5,
+                       clockwise: true)
+        }
+
+        path.close()
+        return path
+    }
+    #endif
 }

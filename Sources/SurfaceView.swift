@@ -359,8 +359,23 @@ public class SurfaceView: UIView {
 
             let spread = shadow.spread
             let shadowRect = containerView.frame.insetBy(dx: -spread, dy: -spread)
-            let shadowPath = UIBezierPath.path(roundedRect: shadowRect,
+
+            // Create shadow path based on corner configuration or corner radius
+            let shadowPath: UIBezierPath
+            #if compiler(>=6.2)
+            if #available(iOS 26.0, *), appearance.cornerConfiguration != nil {
+                // Use UIView.effectiveRadius(corner:) API for iOS 26+
+                // This properly queries the actual corner radius from UICornerConfiguration
+                shadowPath = UIBezierPath.path(roundedRect: shadowRect, view: containerView)
+            } else {
+                shadowPath = UIBezierPath.path(roundedRect: shadowRect,
                                                appearance: appearance)
+            }
+            #else
+            shadowPath = UIBezierPath.path(roundedRect: shadowRect,
+                                           appearance: appearance)
+            #endif
+
             shadowLayer.shadowPath = shadowPath.cgPath
             shadowLayer.shadowColor = shadow.color.cgColor
             shadowLayer.shadowOffset = shadow.offset
@@ -369,17 +384,43 @@ public class SurfaceView: UIView {
             shadowLayer.shadowOpacity = shadow.opacity
 
             let mask = CAShapeLayer()
-            let path = UIBezierPath.path(roundedRect: containerView.frame,
-                                         appearance: appearance)
+
+            // Create mask path based on corner configuration or corner radius
+            let path: UIBezierPath
+            #if compiler(>=6.2)
+            if #available(iOS 26.0, *), appearance.cornerConfiguration != nil {
+                // Use UIView.effectiveRadius(corner:) API for iOS 26+
+                // This properly queries the actual corner radius from UICornerConfiguration
+                path = UIBezierPath.path(roundedRect: containerView.frame, view: containerView)
+            } else {
+                path = UIBezierPath.path(roundedRect: containerView.frame,
+                                        appearance: appearance)
+            }
+            #else
+            path = UIBezierPath.path(roundedRect: containerView.frame,
+                                    appearance: appearance)
+            #endif
+
             let size = window?.bounds.size ?? CGSize(width: 1000.0, height: 1000.0)
             path.append(UIBezierPath(rect: layer.bounds.insetBy(dx: -size.width,
                                                                 dy: -size.height)))
             mask.fillRule = .evenOdd
             mask.path = path.cgPath
+
+            #if compiler(>=6.2)
+            if #available(iOS 26.0, *), appearance.cornerConfiguration != nil {
+                // Corner curve is handled by UICornerConfiguration
+            } else if #available(iOS 13.0, *) {
+                containerView.layer.cornerCurve = appearance.cornerCurve
+                mask.cornerCurve = appearance.cornerCurve
+            }
+            #else
             if #available(iOS 13.0, *) {
                 containerView.layer.cornerCurve = appearance.cornerCurve
                 mask.cornerCurve = appearance.cornerCurve
             }
+            #endif
+
             shadowLayer.mask = mask
         }
         CATransaction.commit()
