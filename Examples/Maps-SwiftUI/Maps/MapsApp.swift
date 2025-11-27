@@ -1,7 +1,7 @@
 // Copyright 2021 the FloatingPanel authors. All rights reserved. MIT license.
 
-import SwiftUI
 import FloatingPanel
+import SwiftUI
 
 @main
 struct MapsApp: App {
@@ -24,12 +24,12 @@ struct MapsApp: App {
 final class MapPanelCoordinator: FloatingPanelCoordinator {
     enum Event {}
 
-    let action: (Event) -> ()
+    let action: (Event) -> Void
     let proxy: FloatingPanelProxy
 
     private lazy var delegate: FloatingPanelControllerDelegate? = self
 
-    init(action: @escaping (Event) -> ()) {
+    init(action: @escaping (Event) -> Void) {
         self.action = action
         self.proxy = .init(controller: FloatingPanelController())
     }
@@ -42,51 +42,54 @@ final class MapPanelCoordinator: FloatingPanelCoordinator {
         contentHostingController.ignoresKeyboardSafeArea()
 
         if #available(iOS 16, *) {
-            // Set the delegate object
-            controller.delegate = delegate
+            if #unavailable(iOS 26) {
+                // Set the delegate object
+                controller.delegate = delegate
 
-            // Set up the content
-            contentHostingController.view.backgroundColor = nil
-            controller.set(contentViewController: contentHostingController)
+                // Set up the content
+                contentHostingController.view.backgroundColor = nil
+                controller.set(contentViewController: contentHostingController)
 
-            // Show the panel
-            controller.addPanel(toParent: mainHostingController, animated: false)
-        } else {
-            // NOTE: Fix floating panel content view constraints (#549)
-            // This issue happens on iOS 15 or earlier.
-
-            // Set the delegate object
-            controller.delegate = delegate
-
-            // Set up the content
-            contentHostingController.view.backgroundColor = nil
-            let contentWrapperViewController = UIViewController()
-            contentWrapperViewController.view.addSubview(contentHostingController.view)
-            contentWrapperViewController.addChild(contentHostingController)
-            contentHostingController.didMove(toParent: contentWrapperViewController)
-            controller.set(contentViewController: contentWrapperViewController)
-
-            // Show the panel
-            controller.addPanel(toParent: mainHostingController, animated: false)
-
-            contentHostingController.view.translatesAutoresizingMaskIntoConstraints = false
-            let bottomConstraint = contentHostingController.view.bottomAnchor.constraint(
-                equalTo: contentWrapperViewController.view.bottomAnchor
-            )
-            bottomConstraint.priority = .defaultHigh
-            NSLayoutConstraint.activate([
-                contentHostingController.view.topAnchor.constraint(
-                    equalTo: contentWrapperViewController.view.topAnchor
-                ),
-                contentHostingController.view.leadingAnchor.constraint(
-                    equalTo: contentWrapperViewController.view.leadingAnchor
-                ),
-                contentHostingController.view.trailingAnchor.constraint(
-                    equalTo: contentWrapperViewController.view.trailingAnchor
-                ),
-                bottomConstraint
-            ])
+                // Show the panel
+                controller.addPanel(toParent: mainHostingController, animated: false)
+                return
+            }
         }
+
+        // NOTE: Fix floating panel content view constraints (#549)
+        // This issue happens on iOS 15 or earlier, and iOS 26 or later.
+
+        // Set the delegate object
+        controller.delegate = delegate
+
+        // Set up the content
+        contentHostingController.view.backgroundColor = nil
+        let contentWrapperViewController = UIViewController()
+        contentWrapperViewController.view.addSubview(contentHostingController.view)
+        contentWrapperViewController.addChild(contentHostingController)
+        contentHostingController.didMove(toParent: contentWrapperViewController)
+        controller.set(contentViewController: contentWrapperViewController)
+
+        // Show the panel
+        controller.addPanel(toParent: mainHostingController, animated: false)
+
+        contentHostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        let bottomConstraint = contentHostingController.view.bottomAnchor.constraint(
+            equalTo: contentWrapperViewController.view.bottomAnchor
+        )
+        bottomConstraint.priority = .defaultHigh
+        NSLayoutConstraint.activate([
+            contentHostingController.view.topAnchor.constraint(
+                equalTo: contentWrapperViewController.view.topAnchor
+            ),
+            contentHostingController.view.leadingAnchor.constraint(
+                equalTo: contentWrapperViewController.view.leadingAnchor
+            ),
+            contentHostingController.view.trailingAnchor.constraint(
+                equalTo: contentWrapperViewController.view.trailingAnchor
+            ),
+            bottomConstraint,
+        ])
     }
 
     func onUpdate<Representable>(
