@@ -1,13 +1,13 @@
 name: ci
 
-on: 
+on:
   push:
-    branches: 
+    branches:
       - master
   pull_request:
-    branches: 
-      - '*'
-  workflow_dispatch: 
+    branches:
+      - "*"
+  workflow_dispatch:
 
 jobs:
   build:
@@ -40,33 +40,33 @@ jobs:
           - os: "26.0.1"
             xcode: "26.0.1"
             sim: "iPhone 16 Pro"
-            parallel: NO  # Stop random test job failures
+            parallel: NO # Stop random test job failures
             runs-on: macos-15
           - os: "18.5"
             xcode: "16.4"
             sim: "iPhone 16 Pro"
-            parallel: NO  # Stop random test job failures
+            parallel: NO # Stop random test job failures
             runs-on: macos-15
           - os: "17.5"
             xcode: "15.4"
             sim: "iPhone 15 Pro"
-            parallel: NO  # Stop random test job failures
+            parallel: NO # Stop random test job failures
             runs-on: macos-14
     steps:
-    - uses: actions/checkout@v4
-    - name: Testing in iOS ${{ matrix.os }}
-      run: |
-        xcodebuild clean test \
-          -workspace FloatingPanel.xcworkspace \
-          -scheme FloatingPanel \
-          -destination 'platform=iOS Simulator,OS=${{ matrix.os }},name=${{ matrix.sim }}' \
-          -parallel-testing-enabled '${{ matrix.parallel }}'
+      - uses: actions/checkout@v4
+      - name: Testing in iOS ${{ matrix.os }}
+        run: |
+          xcodebuild clean test \
+            -workspace FloatingPanel.xcworkspace \
+            -scheme FloatingPanel \
+            -destination 'platform=iOS Simulator,OS=${{ matrix.os }},name=${{ matrix.sim }}' \
+            -parallel-testing-enabled '${{ matrix.parallel }}'
     timeout-minutes: 20
 
   example:
     runs-on: macos-15
     env:
-      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_26.0.1.app/Contents/Developer
     strategy:
       fail-fast: false
       matrix:
@@ -78,13 +78,13 @@ jobs:
           - example: "SamplesObjC"
           - example: "SamplesSwiftUI"
     steps:
-    - uses: actions/checkout@v4
-    - name: Building ${{ matrix.example }}
-      run: |
-        xcodebuild clean build \
-          -workspace FloatingPanel.xcworkspace \
-          -scheme ${{ matrix.example }} \
-          -sdk iphonesimulator
+      - uses: actions/checkout@v4
+      - name: Building ${{ matrix.example }}
+        run: |
+          xcodebuild clean build \
+            -workspace FloatingPanel.xcworkspace \
+            -scheme ${{ matrix.example }} \
+            -sdk iphonesimulator
 
   swiftpm:
     runs-on: ${{ matrix.runs-on }}
@@ -93,7 +93,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        xcode: ["16.4", "15.4"]
+        xcode: ["26.0.1", "16.4", "15.4"]
         platform: [iphoneos, iphonesimulator]
         arch: [x86_64, arm64]
         exclude:
@@ -119,20 +119,20 @@ jobs:
             sys: "ios17.2-simulator"
             runs-on: macos-14
     steps:
-    - uses: actions/checkout@v4
-    - name: "Swift Package Manager build"
-      run: |
-        xcrun swift build \
-          --sdk "$(xcrun --sdk ${{ matrix.platform }} --show-sdk-path)" \
-          -Xswiftc "-target" -Xswiftc "${{ matrix.arch }}-apple-${{ matrix.sys }}"
+      - uses: actions/checkout@v4
+      - name: "Swift Package Manager build"
+        run: |
+          xcrun swift build \
+            --sdk "$(xcrun --sdk ${{ matrix.platform }} --show-sdk-path)" \
+            -Xswiftc "-target" -Xswiftc "${{ matrix.arch }}-apple-${{ matrix.sys }}"
 
   cocoapods:
     runs-on: macos-15
     env:
-      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_26.0.1.app/Contents/Developer
     steps:
-    - uses: actions/checkout@v4
-    - name: "CocoaPods: pod lib lint"
-      run: pod lib lint --allow-warnings --verbose
-    - name: "CocoaPods: pod spec lint"
-      run: pod spec lint --allow-warnings --verbose
+      - uses: actions/checkout@v4
+      - name: "CocoaPods: pod lib lint"
+        run: pod lib lint --allow-warnings --verbose
+      - name: "CocoaPods: pod spec lint"
+        run: pod spec lint --allow-warnings --verbose

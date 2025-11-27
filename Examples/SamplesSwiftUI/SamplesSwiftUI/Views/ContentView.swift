@@ -15,6 +15,7 @@ struct ContentView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .frame(height: 60)
                                 .background(.clear)
+                                .padding(.horizontal)
                         }
                     }
                 }
@@ -28,6 +29,7 @@ struct ContentView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .frame(height: 60)
                                 .background(.clear)
+                                .padding(.horizontal)
                         }
                     }
                 }
@@ -38,12 +40,7 @@ struct ContentView: View {
         }
         // Prevent revealing underlying content at the bottom of the panel when the panel is moving beyond its fully‑expanded position.
         .background {
-            GeometryReader { geometry in
-                Rectangle()
-                    .fill(.clear)
-                    .frame(height: geometry.size.height * 2)
-                    .background(.regularMaterial)
-            }
+            BackgroundView()
         }
     }
 }

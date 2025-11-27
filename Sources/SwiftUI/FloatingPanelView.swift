@@ -110,7 +110,11 @@ struct FloatingPanelView<MainView: View, ContentView: View>: UIViewControllerRep
         _ uiViewController: UIHostingController<MainView>,
         context: Context
     ) {
+        uiViewController.rootView = main
+
+        context.coordinator.updateContent(content(context.coordinator.proxy))
         context.coordinator.onUpdate(context: context)
+
         applyEnvironment(context: context)
         applyAnimatableEnvironment(context: context)
     }
@@ -160,6 +164,9 @@ class FloatingPanelCoordinatorProxy {
 
     private var subscriptions: Set<AnyCancellable> = Set()
 
+    // Store a reference to the content hosting controller for dynamic updates
+    private weak var contentHostingController: UIViewController?
+
     var proxy: FloatingPanelProxy { origin.proxy }
     var controller: FloatingPanelController { origin.controller }
 
@@ -181,10 +188,23 @@ class FloatingPanelCoordinatorProxy {
         mainHostingController: UIHostingController<Main>,
         contentHostingController: UIHostingController<Content>
     ) {
+        // Store the content hosting controller reference
+        self.contentHostingController = contentHostingController
+
         origin.setupFloatingPanel(
             mainHostingController: mainHostingController,
             contentHostingController: contentHostingController
         )
+    }
+
+    /// Updates the content of the floating panel with new content.
+    func updateContent<Content: View>(_ newContent: Content) {
+        guard
+            let hostingController = contentHostingController as? UIHostingController<Content>
+        else {
+            return
+        }
+        hostingController.rootView = newContent
     }
 
     func onUpdate<Representable>(
