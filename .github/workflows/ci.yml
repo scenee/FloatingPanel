@@ -100,6 +100,15 @@ jobs:
           - platform: iphoneos
             arch: x86_64
         include:
+          # 26.0.1
+          - platform: iphoneos
+            xcode: "26.0.1"
+            sys: "ios26.0"
+            runs-on: macos-15
+          - platform: iphonesimulator
+            xcode: "26.0.1"
+            sys: "ios26.0-simulator"
+            runs-on: macos-15
           # 18.5
           - platform: iphoneos
             xcode: "16.4"
