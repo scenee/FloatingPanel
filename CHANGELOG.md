@@ -1,5 +1,21 @@
 # ChangeLog
 
+## [3.2.0](https://github.com/scenee/FloatingPanel/releases/tag/3.2.0)
+
+### Added
+
+- Added support for dynamic content updates in SwiftUI (#675).
+
+### Fixed
+
+- Fixed shadow rendering issues on iOS 26.
+- Fixed animation glitches in example apps on iOS 26.
+
+### Changed
+
+- Updated CI to use Xcode 26.0.1 for all builds.
+- Improved SamplesSwiftUI example app.
+
 ## [3.1.0](https://github.com/scenee/FloatingPanel/releases/tag/3.1.0)
 
 ### Added
