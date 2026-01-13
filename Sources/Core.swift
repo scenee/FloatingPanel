@@ -432,7 +432,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
             let velocity = value(of: panGesture.velocity(in: panGesture.view))
             let location = panGesture.location(in: surfaceView)
 
-            let insideMostExpandedAnchor = 0 < layoutAdapter.offsetFromMostExpandedAnchor
+            let insideMostExpandedAnchor = 0 < floor(layoutAdapter.offsetFromMostExpandedAnchor)
 
             os_log(msg, log: devLog, type: .debug, """
                 scroll gesture(\(state):\(panGesture.state)) -- \
@@ -927,7 +927,7 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     }
 
     private func shouldAttract(to state: FloatingPanelState) -> Bool {
-        if layoutAdapter.position(for: state) == value(of: layoutAdapter.surfaceLocation) {
+        if floor(layoutAdapter.position(for: state)) == floor(value(of: layoutAdapter.surfaceLocation)) {
             return false
         }
         return true
