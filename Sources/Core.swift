@@ -731,7 +731,9 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         if surfaceView.grabberAreaContains(initialLocation) {
             return false
         }
-        if let sv = scrollView, sv.panGestureRecognizer.state == .changed {
+        if let sv = scrollView, (
+            sv.panGestureRecognizer.state == .changed || sv.panGestureRecognizer.state == .began
+        ) {
             let (contentSize, bounds, alwaysBounceHorizontal, alwaysBounceVertical)
                 = (sv.contentSize, sv.bounds, sv.alwaysBounceHorizontal, sv.alwaysBounceVertical)
 
