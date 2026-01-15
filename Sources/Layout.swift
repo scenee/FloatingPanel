@@ -306,7 +306,7 @@ class LayoutAdapter {
     }
 
     func surfaceLocation(for state: FloatingPanelState) -> CGPoint {
-        let pos = position(for: state).rounded(by: surfaceView.fp_displayScale)
+        let pos = position(for: state)
         switch layout.position {
         case .top, .bottom:
             return CGPoint(x: 0.0, y: pos)
@@ -316,6 +316,10 @@ class LayoutAdapter {
     }
 
     func position(for state: FloatingPanelState) -> CGFloat {
+        return _position(for: state).rounded(by: surfaceView.fp_displayScale)
+    }
+
+    private func _position(for state: FloatingPanelState) -> CGFloat {
         let bounds = vc.view.bounds
         let anchor = layout.anchors[state] ?? self.hiddenAnchor
 
