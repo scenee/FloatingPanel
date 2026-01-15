@@ -68,7 +68,11 @@ private struct ScrollViewRepresentable<Content>: UIViewControllerRepresentable w
         return vc
     }
 
-    func updateUIViewController(_ uiViewController: ScrollViewHostingController<Content>, context: Context) {
+    func updateUIViewController(
+        _ uiViewController: ScrollViewHostingController<Content>,
+        context: Context
+    ) {
+        uiViewController.rootView = content()
     }
 
     class ScrollViewHostingController<V>: UIHostingController<V> where V: View {
