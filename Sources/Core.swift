@@ -626,11 +626,11 @@ class Core: NSObject, UIGestureRecognizerDelegate {
     private func shouldScrollViewHandleTouch(_ scrollView: UIScrollView?, point: CGPoint, velocity: CGFloat) -> Bool {
         // When no scrollView, nothing to handle.
         guard let scrollView = scrollView else { return false }
-        let convertedInitialLocation = panGestureRecognizer.view?.convert(
-            initialLocation,
-            to: scrollView
+        let scrollViewFrame = surfaceView.convert(
+            scrollView.frame,
+            from: scrollView.superview
         )
-        guard let convertedInitialLocation = convertedInitialLocation,  scrollView.frame.contains(convertedInitialLocation) else { return false }
+        guard scrollViewFrame.contains(initialLocation) else { return false }
 
         // Prevents moving a panel on swipe actions using _UISwipeActionPanGestureRecognizer.
         // [Warning] Do not apply this to WKWebView. Since iOS 17.4, WKWebView has an additional pan
