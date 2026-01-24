@@ -1,5 +1,12 @@
 # ChangeLog
 
+## [3.2.1](https://github.com/scenee/FloatingPanel/releases/tag/3.2.1)
+
+### Fixed
+
+- Fixed scroll offset reset due to floating-point precision errors (#677).
+- Fixed view updates during scroll tracking (#679).
+
 ## [3.2.0](https://github.com/scenee/FloatingPanel/releases/tag/3.2.0)
 
 ### Added
