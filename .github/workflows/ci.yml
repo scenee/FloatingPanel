@@ -19,6 +19,9 @@ jobs:
       matrix:
         include:
           - swift: "5"
+            xcode: "26.2"
+            runs-on: macos-15
+          - swift: "5"
             xcode: "16.4"
             runs-on: macos-15
           - swift: "5.10"
@@ -37,8 +40,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: "26.0.1"
-            xcode: "26.0.1"
+          - os: "26.2"
+            xcode: "26.2"
             sim: "iPhone 16 Pro"
             parallel: NO # Stop random test job failures
             runs-on: macos-15
@@ -66,7 +69,7 @@ jobs:
   example:
     runs-on: macos-15
     env:
-      DEVELOPER_DIR: /Applications/Xcode_26.0.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
     strategy:
       fail-fast: false
       matrix:
@@ -93,21 +96,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        xcode: ["26.0.1", "16.4", "15.4"]
+        xcode: ["26.2", "16.4", "15.4"]
         platform: [iphoneos, iphonesimulator]
         arch: [x86_64, arm64]
         exclude:
           - platform: iphoneos
             arch: x86_64
         include:
-          # 26.0.1
+          # 26.x
           - platform: iphoneos
-            xcode: "26.0.1"
-            sys: "ios26.0"
+            xcode: "26.2"
+            sys: "ios26.2"
             runs-on: macos-15
           - platform: iphonesimulator
-            xcode: "26.0.1"
-            sys: "ios26.0-simulator"
+            xcode: "26.2"
+            sys: "ios26.2-simulator"
             runs-on: macos-15
           # 18.5
           - platform: iphoneos
@@ -138,7 +141,7 @@ jobs:
   cocoapods:
     runs-on: macos-15
     env:
-      DEVELOPER_DIR: /Applications/Xcode_26.0.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
     steps:
       - uses: actions/checkout@v4
       - name: "CocoaPods: pod lib lint"
