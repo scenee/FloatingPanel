@@ -15,6 +15,7 @@ struct MainView: View {
     @State private var panelLayout: FloatingPanelLayout? = MyFloatingPanelLayout()
     @State private var panelState: FloatingPanelState?
     @State private var selectedContent: CardContent = .list
+    @State private var lastEvent: MyPanelCoordinator.Event?
 
     var body: some View {
         ZStack {
@@ -28,6 +29,9 @@ struct MainView: View {
                     }
                 }
                 .pickerStyle(.segmented)
+
+                Text("Last event: \(lastEvent?.rawValue ?? "None")")
+
                 Button("Move to full") {
                     withAnimation(.interactiveSpring) {
                         panelState = .full
@@ -52,7 +56,8 @@ struct MainView: View {
             }
         }
         .floatingPanel(
-            coordinator: MyPanelCoordinator.self
+            coordinator: MyPanelCoordinator.self,
+            onEvent: onEvent
         ) { proxy in
             switch selectedContent {
             case .list:
@@ -80,11 +85,18 @@ struct MainView: View {
             Logger().debug("Panel state changed: \(newValue ?? .hidden)")
         }
     }
+
+    func onEvent(_ event: MyPanelCoordinator.Event) {
+        lastEvent = event
+    }
 }
 
 // A custom coordinator object which handles panel context updates and setting up `FloatingPanelControllerDelegate` methods
 class MyPanelCoordinator: FloatingPanelCoordinator {
-    enum Event {}
+    enum Event: String {
+        case willBeginDragging
+        case didEndAttracting
+    }
 
     let action: (Event) -> Void
     let proxy: FloatingPanelProxy
@@ -115,6 +127,14 @@ class MyPanelCoordinator: FloatingPanelCoordinator {
 }
 
 extension MyPanelCoordinator: FloatingPanelControllerDelegate {
+    func floatingPanelWillBeginDragging(_ fpc: FloatingPanelController) {
+        action(.willBeginDragging)
+    }
+
+    func floatingPanelDidEndAttracting(_ fpc: FloatingPanelController) {
+        action(.didEndAttracting)
+    }
+
     func floatingPanelDidChangeState(_ fpc: FloatingPanelController) {
         // NOTE: This timing is difference from one of the change of the binding value
         // to `floatingPanelState(_:)` modifier
