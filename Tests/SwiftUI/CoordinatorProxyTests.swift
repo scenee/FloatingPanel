@@ -139,3 +139,105 @@ extension CoordinatorProxyTests {
         )
     }
 }
+
+// MARK: - Stale binding guard: prevents revert when unrelated @State triggers re-render
+
+/// When `observeStateChanges()` defers a binding update via `Task { @MainActor }`,
+/// a delegate callback (e.g. `didEndAttracting`) can trigger a SwiftUI re-render
+/// before that deferred task runs. In that re-render, `update(state:)` receives
+/// the OLD binding value. These tests verify that the proxy does not move the panel
+/// back to the stale state.
+@available(iOS 14, *)
+extension CoordinatorProxyTests {
+
+    /// Simulates the exact bug scenario:
+    /// 1. Panel internally reaches `.full` (via drag/attraction)
+    /// 2. A delegate callback causes a SwiftUI re-render
+    /// 3. `update(state:)` is called with the stale `.half` binding
+    /// The panel must NOT revert to `.half`.
+    func test_updateState_skipsMove_whenBindingIsStaleAfterInternalStateChange() {
+        let spy = SpyFloatingPanelController()
+        let proxy = makeProxy(spy: spy)
+        XCTAssertEqual(spy.state, .half)
+
+        // Establish lastKnownBindingState = .half
+        proxy.update(state: .half)
+        spy.moveCalls.removeAll()
+
+        // Simulate the panel internally moving to .full (e.g. user drag completed)
+        spy.move(to: .full, animated: false)
+        spy.moveCalls.removeAll()
+
+        // Simulate stale re-render: a delegate callback updates an unrelated @State,
+        // causing updateUIViewController to be called with the OLD binding value (.half)
+        proxy.update(state: .half)
+
+        XCTAssertTrue(
+            spy.moveCalls.isEmpty,
+            "Stale binding value must not cause move(to:), "
+                + "but was called \(spy.moveCalls.count) time(s)"
+        )
+        XCTAssertEqual(spy.state, .full, "Panel must remain at .full")
+    }
+
+    /// After a stale re-render, the deferred `Task` updates the binding to match
+    /// the controller's current state. This synced value must not trigger a redundant move.
+    func test_updateState_skipsRedundantMove_whenDeferredBindingSyncsToControllerState() {
+        let spy = SpyFloatingPanelController()
+        let proxy = makeProxy(spy: spy)
+        XCTAssertEqual(spy.state, .half)
+
+        proxy.update(state: .half)
+        spy.moveCalls.removeAll()
+
+        // Panel moves internally to .full
+        spy.move(to: .full, animated: false)
+        spy.moveCalls.removeAll()
+
+        // Stale re-render (skipped by lastKnownBindingState guard)
+        proxy.update(state: .half)
+        XCTAssertTrue(spy.moveCalls.isEmpty)
+
+        // Deferred Task finally updates the binding to .full.
+        // update(state:) is called again with the synced value.
+        proxy.update(state: .full)
+
+        XCTAssertTrue(
+            spy.moveCalls.isEmpty,
+            "When binding syncs to controller's current state, no move should occur, "
+                + "but was called \(spy.moveCalls.count) time(s)"
+        )
+    }
+
+    /// After the stale-binding cycle resolves, a new intentional state change
+    /// (e.g. user taps "Move to tip") must still be applied.
+    func test_updateState_movesPanel_whenNewStateRequestedAfterStaleCycle() {
+        let spy = SpyFloatingPanelController()
+        let proxy = makeProxy(spy: spy)
+        XCTAssertEqual(spy.state, .half)
+
+        proxy.update(state: .half)
+        spy.moveCalls.removeAll()
+
+        // Panel moves internally to .full
+        spy.move(to: .full, animated: false)
+        spy.moveCalls.removeAll()
+
+        // Stale re-render (skipped)
+        proxy.update(state: .half)
+
+        // Deferred binding sync (no move needed — controller already at .full)
+        proxy.update(state: .full)
+        spy.moveCalls.removeAll()
+
+        // User requests a new state (e.g. "Move to tip" button)
+        proxy.update(state: .tip)
+
+        XCTAssertEqual(
+            spy.moveCalls.count, 1,
+            "A new intentional state change must trigger move(to:)"
+        )
+        XCTAssertEqual(spy.moveCalls.first?.state, .tip)
+        XCTAssertEqual(spy.moveCalls.first?.animated, false)
+    }
+}
