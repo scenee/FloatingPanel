@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5404FC6D2F3D900E00BCC99B /* CoordinatorProxyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5404FC6B2F3D900E00BCC99B /* CoordinatorProxyTests.swift */; };
 		542753C622C49A6E00D17955 /* LayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542753C522C49A6E00D17955 /* LayoutTests.swift */; };
 		5431025B2DB8AAB800A927EF /* View+floatingPanelSurface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543102592DB8AAB800A927EF /* View+floatingPanelSurface.swift */; };
 		5431025E2DB8AAB800A927EF /* View+floatingPanelConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543102572DB8AAB800A927EF /* View+floatingPanelConfiguration.swift */; };
@@ -58,6 +59,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5404FC6B2F3D900E00BCC99B /* CoordinatorProxyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorProxyTests.swift; sourceTree = "<group>"; };
 		542753C522C49A6E00D17955 /* LayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutTests.swift; sourceTree = "<group>"; };
 		542753C722C49A8F00D17955 /* TestSupports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupports.swift; sourceTree = "<group>"; };
 		543102572DB8AAB800A927EF /* View+floatingPanelConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+floatingPanelConfiguration.swift"; sourceTree = "<group>"; };
@@ -121,6 +123,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5404FC6C2F3D900E00BCC99B /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				5404FC6B2F3D900E00BCC99B /* CoordinatorProxyTests.swift */,
+			);
+			path = SwiftUI;
+			sourceTree = "<group>";
+		};
 		545DB9B72151169500CA77B8 = {
 			isa = PBXGroup;
 			children = (
@@ -169,6 +179,7 @@
 		545DB9CE2151169500CA77B8 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				5404FC6C2F3D900E00BCC99B /* SwiftUI */,
 				54A6B6B022968B530077F348 /* CoreTests.swift */,
 				545DB9CF2151169500CA77B8 /* ControllerTests.swift */,
 				547F7A9B2A6E946000303905 /* GestureTests.swift */,
@@ -363,6 +374,7 @@
 				542753C622C49A6E00D17955 /* LayoutTests.swift in Sources */,
 				54A6B6B82296A8520077F348 /* SurfaceViewTests.swift in Sources */,
 				546055BF2333C4740069F400 /* TestSupports.swift in Sources */,
+				5404FC6D2F3D900E00BCC99B /* CoordinatorProxyTests.swift in Sources */,
 				547F7A9C2A6E946000303905 /* GestureTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
