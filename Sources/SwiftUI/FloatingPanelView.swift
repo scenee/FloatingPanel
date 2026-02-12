@@ -161,6 +161,9 @@ extension FloatingPanelView {
 class FloatingPanelCoordinatorProxy {
     private let origin: any FloatingPanelCoordinator
     private var stateBinding: Binding<FloatingPanelState?>
+    /// Tracks the last binding value seen by `update(state:)` to detect actual changes
+    /// vs. stale values from unrelated SwiftUI re-renders.
+    private var lastKnownBindingState: FloatingPanelState?
 
     private var subscriptions: Set<AnyCancellable> = Set()
 
@@ -249,8 +252,10 @@ extension FloatingPanelCoordinatorProxy {
 
     // Update the state of FloatingPanelController
     func update(state: FloatingPanelState?) {
+        defer { lastKnownBindingState = state }
         guard
             let state = state,
+            state != lastKnownBindingState,
             controller.state != state
         else { return }
         controller.move(to: state, animated: false)
