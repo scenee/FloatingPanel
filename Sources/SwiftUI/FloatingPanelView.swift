@@ -249,7 +249,10 @@ extension FloatingPanelCoordinatorProxy {
 
     // Update the state of FloatingPanelController
     func update(state: FloatingPanelState?) {
-        guard let state = state else { return }
+        guard
+            let state = state,
+            controller.state != state
+        else { return }
         controller.move(to: state, animated: false)
     }
 
