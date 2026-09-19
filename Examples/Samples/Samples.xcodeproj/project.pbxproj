@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B8B6982305E10660083E3B6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8B6981305E10660083E3B6 /* SceneDelegate.swift */; };
 		5442E22425FC51AF00A26F43 /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E22325FC51AF00A26F43 /* ImageViewController.swift */; };
 		5442E22825FC51E200A26F43 /* MultiPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E22725FC51E200A26F43 /* MultiPanelController.swift */; };
 		5442E22C25FC521F00A26F43 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E22B25FC521F00A26F43 /* SettingsViewController.swift */; };
@@ -52,6 +53,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4B8B6981305E10660083E3B6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		5442E22325FC51AF00A26F43 /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
 		5442E22725FC51E200A26F43 /* MultiPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiPanelController.swift; sourceTree = "<group>"; };
 		5442E22B25FC521F00A26F43 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 				5442E22225FC519700A26F43 /* ContentViewControllers */,
 				54EAD35A263A75EB006A36EA /* PanelLayouts.swift */,
 				546341AB25C6426500CA0596 /* CustomState.swift */,
+				4B8B6981305E10660083E3B6 /* SceneDelegate.swift */,
 				54CDC5D7215BBE23007D205C /* SupplementaryViews.swift */,
 				54B51115216AFE5F0033A6F3 /* Extensions.swift */,
 				545DB9F921511E6400CA77B8 /* Info.plist */,
@@ -257,6 +260,7 @@
 				54CDC5D8215BBE23007D205C /* SupplementaryViews.swift in Sources */,
 				54B51116216AFE5F0033A6F3 /* Extensions.swift in Sources */,
 				544BC56826CC918200D0A436 /* TableViewControllerForAdaptiveLayout.swift in Sources */,
+				4B8B6982305E10660083E3B6 /* SceneDelegate.swift in Sources */,
 				5442E24A25FC53C100A26F43 /* DebugTextViewController.swift in Sources */,
 				546341AC25C6426500CA0596 /* CustomState.swift in Sources */,
 				5442E23A25FC52CD00A26F43 /* ModalViewController.swift in Sources */,

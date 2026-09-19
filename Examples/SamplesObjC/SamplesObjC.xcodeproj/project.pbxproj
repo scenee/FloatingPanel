@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B8B69AE305E11340083E3B6 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B8B69AD305E11340083E3B6 /* SceneDelegate.m */; };
 		545BA70621BA3214007F7846 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 545BA70521BA3214007F7846 /* AppDelegate.m */; };
 		545BA70921BA3214007F7846 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 545BA70821BA3214007F7846 /* MainViewController.m */; };
 		545BA70C21BA3214007F7846 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 545BA70A21BA3214007F7846 /* Main.storyboard */; };
@@ -32,6 +33,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4B8B69AC305E11340083E3B6 /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
+		4B8B69AD305E11340083E3B6 /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
 		545BA70121BA3214007F7846 /* SamplesObjC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SamplesObjC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		545BA70421BA3214007F7846 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		545BA70521BA3214007F7846 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -85,6 +88,8 @@
 				545BA70A21BA3214007F7846 /* Main.storyboard */,
 				545BA70421BA3214007F7846 /* AppDelegate.h */,
 				545BA70521BA3214007F7846 /* AppDelegate.m */,
+				4B8B69AC305E11340083E3B6 /* SceneDelegate.h */,
+				4B8B69AD305E11340083E3B6 /* SceneDelegate.m */,
 				545BA70721BA3214007F7846 /* MainViewController.h */,
 				545BA70821BA3214007F7846 /* MainViewController.m */,
 				545BA71221BA3217007F7846 /* Info.plist */,
@@ -177,6 +182,7 @@
 				545BA70921BA3214007F7846 /* MainViewController.m in Sources */,
 				545BA71421BA3217007F7846 /* main.m in Sources */,
 				545BA70621BA3214007F7846 /* AppDelegate.m in Sources */,
+				4B8B69AE305E11340083E3B6 /* SceneDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

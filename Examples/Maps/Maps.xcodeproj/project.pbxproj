@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B8B697B305E0FEC0083E3B6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8B697A305E0FEC0083E3B6 /* SceneDelegate.swift */; };
 		543844BD23D2BE2000D5EDE4 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 543844BC23D2BE2000D5EDE4 /* MapKit.framework */; };
 		549A5F59244673FE0025F312 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 549A5F58244673FE0025F312 /* SearchViewController.swift */; };
 		549D23D2233C77D5008EF4D7 /* FloatingPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549D23D1233C77D5008EF4D7 /* FloatingPanel.framework */; };
@@ -36,6 +37,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4B8B697A305E0FEC0083E3B6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		543844BC23D2BE2000D5EDE4 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		549A5F58244673FE0025F312 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		549D23D1233C77D5008EF4D7 /* FloatingPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FloatingPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,6 +104,7 @@
 				54B5112B216C3D840033A6F3 /* MainViewController.swift */,
 				549A5F58244673FE0025F312 /* SearchViewController.swift */,
 				54E26CB724A98E310066C720 /* DetailViewController.swift */,
+				4B8B697A305E0FEC0083E3B6 /* SceneDelegate.swift */,
 				54E26CB524A989090066C720 /* Utils.swift */,
 				54B51135216C3D860033A6F3 /* Info.plist */,
 			);
@@ -185,6 +188,7 @@
 				54E26CB824A98E310066C720 /* DetailViewController.swift in Sources */,
 				54B5112A216C3D840033A6F3 /* AppDelegate.swift in Sources */,
 				54E26CB624A989090066C720 /* Utils.swift in Sources */,
+				4B8B697B305E0FEC0083E3B6 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
