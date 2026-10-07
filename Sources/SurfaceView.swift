@@ -419,7 +419,9 @@ public class SurfaceView: UIView {
             return
         }
         #endif
-        containerView.layer.cornerRadius = appearance.cornerRadius
+        // Clamp the radius to half of the container's shorter side. Core Animation otherwise draws overlapping
+        // continuous corners, and the container no longer matches its shadow's path once it gets that short.
+        containerView.layer.cornerRadius = appearance.cornerRadius(in: containerView.bounds)
         guard containerView.layer.cornerRadius != 0.0 else {
             containerView.layer.masksToBounds = false
             return

@@ -216,6 +216,22 @@ class SurfaceViewTests: XCTestCase {
 
     }
 
+    func test_surfaceView_cornerRadius_clampedToHalfOfShorterSide() {
+        let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 80.0))
+        surface.containerMargins = UIEdgeInsets(top: 0.0, left: 16.0, bottom: 40.0, right: 16.0)
+        let appearance = SurfaceAppearance()
+        appearance.cornerRadius = 32.0
+        appearance.cornerCurve = .continuous
+        surface.appearance = appearance
+        surface.layoutIfNeeded()
+        XCTAssertEqual(surface.containerView.bounds.height, 40.0)
+        XCTAssertEqual(surface.containerView.layer.cornerRadius, 20.0)
+
+        surface.frame.size.height = 120.0
+        surface.layoutIfNeeded()
+        XCTAssertEqual(surface.containerView.layer.cornerRadius, 32.0)
+    }
+
     func test_surfaceView_border() {
         let surface = SurfaceView(frame: CGRect(x: 0.0, y: 0.0, width: 320.0, height: 480.0))
         XCTAssert(surface.containerView.layer.borderWidth == 0.0)

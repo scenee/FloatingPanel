@@ -150,9 +150,16 @@ extension UIEdgeInsets {
     }
 }
 
+extension SurfaceAppearance {
+    /// The corner radius clamped to half of the shorter side of `rect`, as SwiftUI's rounded rectangles do.
+    func cornerRadius(in rect: CGRect) -> CGFloat {
+        min(cornerRadius, min(rect.width, rect.height) / 2)
+    }
+}
+
 extension UIBezierPath {
     static func path(roundedRect rect: CGRect, appearance: SurfaceAppearance) -> UIBezierPath {
-        let cornerRadius = appearance.cornerRadius
+        let cornerRadius = appearance.cornerRadius(in: rect)
         if appearance.cornerCurve == .circular {
             let path = UIBezierPath()
             let start = CGPoint(x: rect.minX + cornerRadius, y: rect.minY)
