@@ -236,11 +236,49 @@ extension UseCaseController {
             let fpc = FloatingPanelController()
             let appearance = SurfaceAppearance()
             appearance.cornerRadius = 38.5
+            let shadow = SurfaceAppearance.Shadow()
+            shadow.color = .blue
+            shadow.opacity = 0.8
+            shadow.radius = 12
+            appearance.shadows = [shadow]
             fpc.surfaceView.appearance = appearance
 
             fpc.surfaceView.backgroundColor = .red
             fpc.surfaceView.containerMargins = .init(top: 24.0, left: 8.0, bottom: max(mainVC.layoutInsets.bottom, 8.0), right: 8.0)
             fpc.surfaceView.layer.cornerCurve = .continuous
+
+            fpc.delegate = self
+            fpc.isRemovalInteractionEnabled = true
+            mainVC.present(fpc, animated: true, completion: nil)
+
+        case .showShadowAtContinuousCorners,
+             .showShadowWithCornerConfiguration:
+            // Checks that the shadow follows the container's continuous corners. (#691)
+            // The tip state shows an 80pt card, shorter than 3 times the corner radius.
+            let fpc = FloatingPanelController()
+            let appearance = SurfaceAppearance()
+            appearance.cornerRadius = 32.0
+            appearance.cornerCurve = .continuous
+            #if compiler(>=6.2)
+            if useCase == .showShadowWithCornerConfiguration, #available(iOS 26.0, *) {
+                // Uneven radii to tell this case apart and to check the per-corner shadow path.
+                appearance.cornerConfiguration = .corners(topLeftRadius: .fixed(32.0),
+                                                          topRightRadius: .fixed(8.0),
+                                                          bottomLeftRadius: .fixed(16.0),
+                                                          bottomRightRadius: .fixed(28.0))
+            }
+            #endif
+            let shadow = SurfaceAppearance.Shadow()
+            shadow.color = .blue
+            shadow.opacity = 0.6
+            shadow.radius = 3 // A large blur hides the corner gap in #691.
+            appearance.shadows = [shadow]
+            fpc.surfaceView.appearance = appearance
+
+            fpc.surfaceView.backgroundColor = .red
+            fpc.surfaceView.containerMargins = .init(top: 0.0, left: 16.0, bottom: CardPanelLayout.bottomMargin, right: 16.0)
+            // Resizes the card to each state's height instead of sliding a full-height card off the screen.
+            fpc.contentMode = .fitToBounds
 
             fpc.delegate = self
             fpc.isRemovalInteractionEnabled = true
@@ -447,6 +485,9 @@ extension UseCaseController: FloatingPanelControllerDelegate {
             return FloatingPanelBottomLayout()
         case .showCustomStatePanel:
             return FloatingPanelLayoutWithCustomState()
+        case .showShadowAtContinuousCorners,
+             .showShadowWithCornerConfiguration:
+            return CardPanelLayout()
         default:
             return (newCollection.verticalSizeClass == .compact) ? FloatingPanelBottomLayout() : mainVC
         }

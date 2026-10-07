@@ -91,3 +91,16 @@ class ModalPanelLayout2: FloatingPanelLayout {
     }
 }
 
+/// A card that is 80pt tall at the tip state and about half of the full state's height at the half state.
+class CardPanelLayout: FloatingPanelLayout {
+    /// The surface's bottom container margin, which the card sits on.
+    static let bottomMargin: CGFloat = 34.0
+
+    let position: FloatingPanelPosition = .bottom
+    let initialState: FloatingPanelState = .tip
+    let anchors: [FloatingPanelState : FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelLayoutAnchor(absoluteInset: 40.0, edge: .top, referenceGuide: .safeArea),
+        .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
+        .tip: FloatingPanelLayoutAnchor(absoluteInset: 80.0 + CardPanelLayout.bottomMargin, edge: .bottom, referenceGuide: .superview)
+    ]
+}

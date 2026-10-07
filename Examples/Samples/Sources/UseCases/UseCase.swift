@@ -21,6 +21,8 @@ enum UseCase: Int, CaseIterable {
     case showIntrinsicView
     case showContentInset
     case showContainerMargins
+    case showShadowAtContinuousCorners
+    case showShadowWithCornerConfiguration
     case showNavigationController
     case showTopPositionedPanel
     case showAdaptivePanel
@@ -52,6 +54,8 @@ extension UseCase {
         case .showIntrinsicView: return "Show Intrinsic View"
         case .showContentInset: return "Show with ContentInset"
         case .showContainerMargins: return "Show with ContainerMargins"
+        case .showShadowAtContinuousCorners: return "Show Shadow at Continuous Corners"
+        case .showShadowWithCornerConfiguration: return "Show Shadow with Corner Configuration"
         case .showNavigationController: return "Show Navigation Controller"
         case .showTopPositionedPanel: return "Show Top Positioned Panel"
         case .showAdaptivePanel: return "Show Adaptive Panel"
@@ -90,6 +94,8 @@ extension UseCase {
         case .showIntrinsicView: return .storyboard("IntrinsicViewController") // Storyboard only
         case .showContentInset: return .viewController(DebugTableViewController())
         case .showContainerMargins: return .viewController(DebugTableViewController())
+        case .showShadowAtContinuousCorners,
+            .showShadowWithCornerConfiguration: return .viewController(DebugTableViewController())
         case .showNavigationController: return .storyboard("RootNavigationController") // Storyboard only
         case .showTopPositionedPanel: return .viewController(DebugTableViewController())
         case .showAdaptivePanel: return .storyboard(String(describing: ImageViewController.self))
