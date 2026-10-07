@@ -18,6 +18,13 @@ extension FloatingPanelPosition {
         }
     }
 
+    func crossLocation(_ point: CGPoint) -> CGFloat {
+        switch self {
+        case .top, .bottom: return point.x
+        case .left, .right: return point.y
+        }
+    }
+
     func mainDimension(_ size: CGSize) -> CGFloat {
         switch self {
         case .top, .bottom: return size.height

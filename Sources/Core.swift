@@ -344,6 +344,22 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         return false
     }
 
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        guard gestureRecognizer == panGestureRecognizer else { return true }
+
+        return shouldBeginPanning(at: initialLocation, translation: panGestureRecognizer.translation(in: surfaceView))
+    }
+
+    /// Determines if the pan gesture should begin on a drag from the location in the surface view.
+    ///
+    /// Over a scroll view that scrolls only across the panel's axis, the pan gesture begins only on a drag
+    /// along the axis so that a drag across it scrolls the scroll view, as the outer of two nested scroll
+    /// views running in different directions does.
+    func shouldBeginPanning(at location: CGPoint, translation: CGPoint) -> Bool {
+        guard isCrossScrollView(at: location) else { return true }
+        return abs(value(of: translation)) >= abs(layoutAdapter.position.crossLocation(translation))
+    }
+
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         guard gestureRecognizer == panGestureRecognizer else { return false }
 
@@ -394,6 +410,14 @@ class Core: NSObject, UIGestureRecognizerDelegate {
                 return false
             }
             if surfaceView.grabberAreaContains(gestureRecognizer.location(in: surfaceView)) {
+                return false
+            }
+            if let otherScrollView = otherGestureRecognizer.view as? UIScrollView,
+               otherGestureRecognizer == otherScrollView.panGestureRecognizer,
+               scrollsOnlyAcrossPanelAxis(otherScrollView) {
+                // Should begin the pan gesture without waiting for a scroll view that scrolls only across
+                // the panel's axis, because its pan gesture doesn't fail on a drag along the axis until
+                // the touch ends. `gestureRecognizerShouldBegin(_:)` leaves a drag across the axis to it.
                 return false
             }
             // Do not begin the pan gesture until these gestures fail
@@ -718,28 +742,47 @@ class Core: NSObject, UIGestureRecognizerDelegate {
         if surfaceView.grabberAreaContains(initialLocation) {
             return false
         }
-        if let sv = scrollView, sv.panGestureRecognizer.state == .changed {
-            let (contentSize, bounds, alwaysBounceHorizontal, alwaysBounceVertical)
-                = (sv.contentSize, sv.bounds, sv.alwaysBounceHorizontal, sv.alwaysBounceVertical)
-
+        if let sv = scrollView, sv.panGestureRecognizer.state == .changed, scrollsAlongPanelAxis(sv) {
             switch layoutAdapter.position {
-            case .top:
-                if cur < target, contentSize.height > bounds.height || alwaysBounceVertical {
-                    return true
-                }
-            case .left:
-                if cur < target, contentSize.width > bounds.width || alwaysBounceHorizontal {
-                    return true
-                }
-            case .bottom:
-                if cur > target, contentSize.height > bounds.height || alwaysBounceVertical {
-                    return true
-                }
-            case .right:
-                if cur > target, contentSize.width > bounds.width || alwaysBounceHorizontal {
-                    return true
-                }
+            case .top, .left:
+                return cur < target
+            case .bottom, .right:
+                return cur > target
             }
+        }
+        return false
+    }
+
+    /// Determines if the scroll view can scroll along the axis on which the panel moves.
+    private func scrollsAlongPanelAxis(_ scrollView: UIScrollView) -> Bool {
+        switch layoutAdapter.position {
+        case .top, .bottom:
+            return scrollView.contentSize.height > scrollView.bounds.height || scrollView.alwaysBounceVertical
+        case .left, .right:
+            return scrollView.contentSize.width > scrollView.bounds.width || scrollView.alwaysBounceHorizontal
+        }
+    }
+
+    /// Determines if the scroll view scrolls only across the axis on which the panel moves.
+    private func scrollsOnlyAcrossPanelAxis(_ scrollView: UIScrollView) -> Bool {
+        guard scrollView.isScrollEnabled, !scrollsAlongPanelAxis(scrollView) else { return false }
+        switch layoutAdapter.position {
+        case .top, .bottom:
+            return scrollView.contentSize.width > scrollView.bounds.width || scrollView.alwaysBounceHorizontal
+        case .left, .right:
+            return scrollView.contentSize.height > scrollView.bounds.height || scrollView.alwaysBounceVertical
+        }
+    }
+
+    /// Determines if a scroll view that scrolls only across the axis on which the panel moves contains
+    /// the location in the surface view, other than the tracking scroll view.
+    private func isCrossScrollView(at location: CGPoint) -> Bool {
+        var view = surfaceView.hitTest(location, with: nil)
+        while let v = view, v !== surfaceView {
+            if let sv = v as? UIScrollView, sv !== scrollView, scrollsOnlyAcrossPanelAxis(sv) {
+                return true
+            }
+            view = v.superview
         }
         return false
     }
