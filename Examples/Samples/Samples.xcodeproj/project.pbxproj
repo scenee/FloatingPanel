@@ -18,6 +18,7 @@
 		5442E24425FC538200A26F43 /* InspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E24325FC538200A26F43 /* InspectorViewController.swift */; };
 		5442E24A25FC53C100A26F43 /* DebugTextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E24925FC53C100A26F43 /* DebugTextViewController.swift */; };
 		5442E25225FC541700A26F43 /* NestedScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E25125FC541700A26F43 /* NestedScrollViewController.swift */; };
+		5442E2A12E0000000000A693 /* HorizontalScrollRowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442E2A02E0000000000A693 /* HorizontalScrollRowViewController.swift */; };
 		54496C59263A7E5A0031E0C8 /* UseCaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54496C58263A7E5A0031E0C8 /* UseCaseController.swift */; };
 		544BC56826CC918200D0A436 /* TableViewControllerForAdaptiveLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544BC56726CC918200D0A436 /* TableViewControllerForAdaptiveLayout.swift */; };
 		545DB9EE21511E6300CA77B8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545DB9ED21511E6300CA77B8 /* AppDelegate.swift */; };
@@ -64,6 +65,7 @@
 		5442E24325FC538200A26F43 /* InspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorViewController.swift; sourceTree = "<group>"; };
 		5442E24925FC53C100A26F43 /* DebugTextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugTextViewController.swift; sourceTree = "<group>"; };
 		5442E25125FC541700A26F43 /* NestedScrollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestedScrollViewController.swift; sourceTree = "<group>"; };
+		5442E2A02E0000000000A693 /* HorizontalScrollRowViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalScrollRowViewController.swift; sourceTree = "<group>"; };
 		54496C58263A7E5A0031E0C8 /* UseCaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseCaseController.swift; sourceTree = "<group>"; };
 		544BC56726CC918200D0A436 /* TableViewControllerForAdaptiveLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewControllerForAdaptiveLayout.swift; sourceTree = "<group>"; };
 		545DB9EA21511E6300CA77B8 /* Samples.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Samples.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -108,6 +110,7 @@
 				5442E23325FC528400A26F43 /* DetailViewController.swift */,
 				5442E24325FC538200A26F43 /* InspectorViewController.swift */,
 				5442E25125FC541700A26F43 /* NestedScrollViewController.swift */,
+				5442E2A02E0000000000A693 /* HorizontalScrollRowViewController.swift */,
 				5442E23925FC52CD00A26F43 /* ModalViewController.swift */,
 				5442E22725FC51E200A26F43 /* MultiPanelController.swift */,
 				5442E22B25FC521F00A26F43 /* SettingsViewController.swift */,
@@ -268,6 +271,7 @@
 				5442E24025FC533800A26F43 /* DebugTableViewController.swift in Sources */,
 				54F185822BF4AD0000916F57 /* DebugListCollectionViewController.swift in Sources */,
 				5442E25225FC541700A26F43 /* NestedScrollViewController.swift in Sources */,
+				5442E2A12E0000000000A693 /* HorizontalScrollRowViewController.swift in Sources */,
 				5442E22825FC51E200A26F43 /* MultiPanelController.swift in Sources */,
 				546341A125C6415100CA0596 /* UseCase.swift in Sources */,
 				545DB9F021511E6300CA77B8 /* MainViewController.swift in Sources */,

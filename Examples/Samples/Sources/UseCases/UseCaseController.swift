@@ -314,6 +314,12 @@ extension UseCaseController {
             fpc.ext_trackScrollView(in: contentVC)
             addMain(panel: fpc)
 
+        case .showHorizontalScrollRow:
+            let fpc = FloatingPanelController()
+            fpc.delegate = self
+            fpc.set(contentViewController: contentVC)
+            addMain(panel: fpc)
+
         case .showCustomBackdrop:
             class BlurBackdropView: BackdropView {
                 var effectView: UIVisualEffectView!

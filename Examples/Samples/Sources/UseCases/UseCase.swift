@@ -29,6 +29,7 @@ enum UseCase: Int, CaseIterable {
     case showAdaptivePanelWithCompositionalCollectionView
     case showCustomStatePanel
     case showCustomBackdrop
+    case showHorizontalScrollRow
 }
 
 extension UseCase {
@@ -60,6 +61,7 @@ extension UseCase {
         case .showAdaptivePanelWithCompositionalCollectionView: return "Show Adaptive Panel (Compositional CollectionView)"
         case .showCustomStatePanel: return "Show Panel with Custom state"
         case .showCustomBackdrop: return "Show Panel with Custom Backdrop"
+        case .showHorizontalScrollRow: return "Show Horizontal Scroll Row"
         }
     }
 }
@@ -101,6 +103,7 @@ extension UseCase {
             return .viewController(vc)
         case .showCustomStatePanel: return .viewController(DebugTableViewController())
         case .showCustomBackdrop: return .viewController(UIViewController())
+        case .showHorizontalScrollRow: return .viewController(HorizontalScrollRowViewController())
         }
     }
 
